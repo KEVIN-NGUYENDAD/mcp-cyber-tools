@@ -1,0 +1,14 @@
+{
+  "name": "mcp-cyber-tools",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.4.3"
+  }
+}

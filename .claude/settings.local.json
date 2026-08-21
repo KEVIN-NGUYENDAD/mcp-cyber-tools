@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -Path \"C:\\\\Users\\\\tamng\\\\AppData\\\\Roaming\\\\Claude\\\\Projects\\\\mcp-cyber-tools\\\\modules\\\\network.js\" -ItemType File -Force)",
+      "PowerShell(New-Item -Path \"C:\\\\Users\\\\tamng\\\\AppData\\\\Roaming\\\\Claude\\\\Projects\\\\mcp-cyber-tools\\\\modules\\\\process.js\" -ItemType File -Force)"
+    ]
+  }
+}

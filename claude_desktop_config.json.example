@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "cyber-tools": {
+      "command": "node",
+      "args": [
+        "C:\\Users\\[YOUR_USERNAME]\\AppData\\Roaming\\Claude\\Projects\\mcp-cyber-tools\\server.js"
+      ]
+    }
+  }
+}
