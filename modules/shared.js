@@ -1,4 +1,7 @@
 import { execSync } from "child_process";
+import { z } from "zod";
+
+export { z };
 
 export function runPowerShell(command) {
   try {
@@ -20,12 +23,29 @@ export function runCmd(command) {
 
 export function formatResponse(success, data, error = null) {
   if (success) {
+    // Ensure data is properly formatted JSON string
+    const output = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
     return {
-      content: [{ type: "text", text: data }]
+      content: [{ type: "text", text: output }]
     };
   }
   return {
     content: [{ type: "text", text: `ERROR: ${error || "Unknown error"}` }]
+  };
+}
+
+export function standardJsonResponse(tool, success, data = null, error = null) {
+  return {
+    content: [{
+      type: "text",
+      text: JSON.stringify({
+        success,
+        tool,
+        timestamp: new Date().toISOString(),
+        data: data || null,
+        error: error || null
+      }, null, 2)
+    }]
   };
 }
 

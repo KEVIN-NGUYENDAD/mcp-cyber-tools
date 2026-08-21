@@ -9,9 +9,9 @@ export function registerDefenderTools(server) {
     {},
     async () => {
       const result = runPowerShell(`
-        Get-MpPreference |
-        Select-Object DisableRealtimeMonitoring, DisableBehaviorMonitoring, DisableBlockAtFirstSeen, DisableIOAVProtection |
-        ConvertTo-Json
+        Get-MpComputerStatus -ErrorAction SilentlyContinue |
+        Select-Object AntivirusEnabled, RealTimeProtectionEnabled, BehaviorMonitoringEnabled, IOAVProtectionEnabled, NISEnabled, TamperProtected, InitializationProgress, RebootRequired |
+        ConvertTo-Json -Depth 5 -ErrorAction SilentlyContinue
       `);
       return formatResponse(result.success, result.data, result.error);
     }
