@@ -11,6 +11,8 @@ export async function generateCaseReport(caseId) {
 **Status**: ${caseData.status.toUpperCase()}
 **Risk Level**: ${caseData.risk.toUpperCase()}
 **Created**: ${caseData.createdAt}
+**Updated**: ${caseData.updatedAt}
+**Version**: ${caseData.version}
 
 ## Findings
 
@@ -21,14 +23,24 @@ ${caseData.findings.length > 0
 ## Recommendations
 
 ${caseData.recommendations.length > 0
-  ? caseData.recommendations.map((r, i) => `[${i + 1}] ${r.title}`).join('\n')
+  ? caseData.recommendations.map(r => `[${r.id}] ${r.title} (risk: ${r.risk}${r.requiresApproval ? ', requires approval' : ''})`).join('\n')
   : 'No recommendations'}
 
-## Audit Trail
+## Event Timeline
 
-${caseData.auditTrail.map(entry =>
-  `- ${new Date(entry.timestamp).toLocaleString()} | ${entry.action}`
-).join('\n')}
+${caseData.events.map(event => {
+  const ts = new Date(event.timestamp).toLocaleString();
+  if (event.type === 'CASE_CREATED') {
+    return `- ${ts} | Case created`;
+  } else if (event.type === 'FINDING_ADDED') {
+    return `- ${ts} | Finding added: ${event.payload.title} (${event.payload.severity})`;
+  } else if (event.type === 'RECOMMENDATION_GENERATED') {
+    return `- ${ts} | Recommendations generated (${event.payload.count} total)`;
+  } else if (event.type === 'STATUS_CHANGED') {
+    return `- ${ts} | Status changed: ${event.payload.from} → ${event.payload.to}`;
+  }
+  return `- ${ts} | ${event.type}`;
+}).join('\n')}
 `;
 
   const reportPath = path.join('cases', `${caseId}.md`);
@@ -43,8 +55,8 @@ export async function renderCaseForClaude(caseData) {
     title: caseData.title,
     status: caseData.status,
     risk: caseData.risk,
-    findings: caseData.findings.map(f => `- ${f.title}`),
-    recommendations: caseData.recommendations.map((r, i) => `[${i + 1}] ${r.title}`)
+    findings: caseData.findings.map(f => `- ${f.title} (${f.severity})`),
+    recommendations: caseData.recommendations.map(r => `[${r.id}] ${r.title}${r.requiresApproval ? ' (requires approval)' : ''}`)
   };
 }
 
@@ -55,11 +67,12 @@ Case Created: ${caseData.caseId}
 Title: ${caseData.title}
 Status: ${caseData.status}
 Risk: ${caseData.risk}
+Version: ${caseData.version}
 
 Findings:
-${caseData.findings.map(f => `- ${f.title}`).join('\n')}
+${caseData.findings.map(f => `- ${f.title} (${f.severity})`).join('\n')}
 
 Recommendations:
-${caseData.recommendations.map((r, i) => `[${i + 1}] ${r.title}`).join('\n')}
+${caseData.recommendations.map(r => `[${r.id}] ${r.title} (requires approval: ${r.requiresApproval})`).join('\n')}
 `;
 }
