@@ -1,11 +1,19 @@
 {
   "name": "mcp-cyber-tools",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "main": "server.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node server.js",
+    "deploy:verify": "node scripts/deploy-verify.js",
+    "qa:tier1": "node tests/smoke/automated-suite.js && node scripts/validate-tier1-results.js",
+    "qa:regression": "node tests/tier3/regression-suite.js",
+    "report:generate": "node scripts/generate-certification-report.js",
+    "report:validate": "node scripts/validate-certification.js",
+    "certify": "npm run deploy:verify && npm run qa:tier1 && npm run qa:regression && npm run report:generate && npm run report:validate"
+  },
   "keywords": [],
-  "author": "",
+  "author": "Cyber Tools Team",
   "license": "ISC",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
