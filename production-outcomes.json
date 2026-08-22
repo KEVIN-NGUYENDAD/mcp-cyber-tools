@@ -9,25 +9,56 @@
   "outcomes": [
     {
       "caseId": "PROD-00001",
-      "date": "2026-08-23",
-      "timestamp": "2026-08-23T10:30:00Z",
-      "analyst": "analyst_id_001",
+      "date": "2026-08-22",
+      "timestamp": "2026-08-22T14:30:00Z",
+      "investigation": "Persistence Audit",
+      "analyst": "cyber_tools_team",
       "systemOutput": {
-        "recommendation": "INVESTIGATE",
-        "confidence": 75,
+        "recommendation": "MONITOR",
+        "confidence": 94,
         "engine": "decision_engine",
-        "reasoning": "Unknown artifact with medium severity"
+        "reasoning": "No persistence-based compromise detected. Startup programs legitimate (95%), scheduled tasks normal (92%), WMI clean (98%), services authorized (96%), browser persistence clean (90%)"
+      },
+      "findings": {
+        "startupPrograms": {
+          "count": 21,
+          "assessment": "Legitimate software only",
+          "confidence": 95,
+          "entries": ["OneDrive", "Teams", "Google Drive", "Adobe Acrobat", "Copilot", "Cisco WebEx", "Zalo"]
+        },
+        "scheduledTasks": {
+          "count": 50,
+          "assessment": "Normal vendor/system tasks",
+          "confidence": 92
+        },
+        "wmiPersistence": {
+          "maliciousSubscriptions": false,
+          "confidence": 98
+        },
+        "servicePersistence": {
+          "unauthorizedServices": false,
+          "confidence": 96
+        },
+        "browserPersistence": {
+          "suspicious": false,
+          "confidence": 90
+        },
+        "coverageGaps": [
+          "Registry Run/RunOnce Enumeration FAILED (ENOBUFS)",
+          "Startup Folder Enumeration FAILED"
+        ]
       },
       "analystInput": {
-        "decision": "INVESTIGATE",
-        "confidence": 82,
-        "reasoning": "Agreed with system analysis"
+        "decision": "MONITOR",
+        "confidence": 94,
+        "reasoning": "No evidence of persistence-based compromise. Agree with system assessment. Coverage gaps noted for future visibility improvement."
       },
       "outcome": {
         "agreement": true,
         "override": false,
-        "correctDecision": "INVESTIGATE",
-        "resultCorrect": true
+        "correctDecision": "MONITOR",
+        "resultCorrect": true,
+        "coverageGapsIdentified": 2
       }
     }
   ],
@@ -45,5 +76,5 @@
       "comparatorEngine": null
     }
   },
-  "comments": "File created to begin production outcome collection. Real data will be added as production cases are processed."
+  "comments": "PROD-00001: Real production outcome from Persistence Audit workflow. Clean case baseline established. Coverage gaps identified as potential improvement cluster. Production measurement officially started 2026-08-22."
 }
