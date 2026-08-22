@@ -1,7 +1,8 @@
 import fs from "fs";
 import path from "path";
+import os from "os";
 
-const REPORTS_DIR = "./reports";
+const REPORTS_DIR = path.join(os.homedir(), "Documents", "cyber-tools-reports");
 
 function ensureReportsDir() {
   if (!fs.existsSync(REPORTS_DIR)) {

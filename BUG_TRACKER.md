@@ -160,6 +160,48 @@ Test other log types to determine:
 If they work → Security log access is the issue
 If they also fail → Node process needs admin elevation
 
+### BUG-004: collectEvidence - Incorrect Output Path (OPEN 🔴)
+
+**Severity**: Medium-High  
+**Risk**: Output path assumption  
+**Tool**: collectEvidence  
+**Phase**: Tier 2 (Wave 5)  
+**Date Found**: 2026-08-21  
+**Status**: OPEN
+
+**Symptom**:
+```
+Error: EPERM: operation not permitted
+Operation: mkdir 'C:\WINDOWS\system32\reports'
+```
+
+**Issue**:
+collectEvidence attempts to create reports in `C:\Windows\System32\` which requires admin privileges
+
+**Root Cause**:
+- Hard-coded path to System32
+- Or incorrect process.cwd() resolution
+- Missing fallback to user-writable location
+
+**Impact**:
+- Evidence collection fails for non-admin users
+- DFIR tool unusable without elevation
+- False failure (not a permission issue, but design flaw)
+
+**Expected Behavior**:
+Report should be created in user-writable location:
+- `%USERPROFILE%\Documents\cyber-tools\reports`
+- `%TEMP%\cyber-tools\reports`
+- Project reports directory
+
+**Fix Required**:
+Replace hard-coded System32 path with user-writable alternative
+
+**Test Case**:
+1. Run as non-admin
+2. Call collectEvidence
+3. Should succeed with report in accessible location
+
 ---
 
 ## 🟡 MEDIUM BUGS
