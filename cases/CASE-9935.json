@@ -1,0 +1,73 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-9935",
+  "title": "Persistence Detection Case",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T20:24:25.097Z"
+    }
+  ],
+  "createdAt": "2026-08-22T20:24:25.097Z",
+  "updatedAt": "2026-08-22T20:24:25.101Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787430265098",
+      "timestamp": "2026-08-22T20:24:25.098Z",
+      "title": "Registry Run Key",
+      "severity": "high",
+      "description": "Persistence mechanism"
+    },
+    {
+      "id": "F-1787430265100",
+      "timestamp": "2026-08-22T20:24:25.100Z",
+      "title": "Scheduled Task",
+      "severity": "medium",
+      "description": "Startup task"
+    },
+    {
+      "id": "F-1787430265102",
+      "timestamp": "2026-08-22T20:24:25.101Z",
+      "title": "Service Install",
+      "severity": "high",
+      "description": "System service"
+    }
+  ],
+  "recommendations": [],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T20:24:25.097Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787430265098",
+        "title": "Registry Run Key",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-22T20:24:25.098Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787430265100",
+        "title": "Scheduled Task",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-22T20:24:25.100Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787430265102",
+        "title": "Service Install",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-22T20:24:25.101Z"
+    }
+  ],
+  "riskScore": 60
+}

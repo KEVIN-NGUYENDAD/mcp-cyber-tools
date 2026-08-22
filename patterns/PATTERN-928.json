@@ -4,13 +4,14 @@
     "Persistence",
     "Privilege Escalation"
   ],
-  "firstSeen": "2026-08-22T20:21:55.623Z",
-  "lastSeen": "2026-08-22T20:21:55.625Z",
-  "occurrences": 2,
-  "confidence": 89.5,
+  "firstSeen": "2026-08-22T20:24:25.092Z",
+  "lastSeen": "2026-08-22T20:24:25.092Z",
+  "occurrences": 1,
+  "confidence": 85,
   "casesObserved": [
-    "CASE-1001",
-    "CASE-1004"
+    "CASE-101",
+    "CASE-102",
+    "CASE-103"
   ],
   "type": "privilege-escalation-chain",
   "severity": "medium",

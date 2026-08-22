@@ -1,0 +1,18 @@
+{
+  "patternId": "PATTERN-4880",
+  "sequence": [
+    "Privilege Escalation",
+    "Lateral Movement"
+  ],
+  "firstSeen": "2026-08-22T20:24:25.094Z",
+  "lastSeen": "2026-08-22T20:24:25.094Z",
+  "occurrences": 1,
+  "confidence": 82,
+  "casesObserved": [
+    "CASE-102",
+    "CASE-105"
+  ],
+  "type": "lateral-movement-chain",
+  "severity": "medium",
+  "description": "Attack progression: Privilege Escalation → Lateral Movement"
+}

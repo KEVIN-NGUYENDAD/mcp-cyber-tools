@@ -33,7 +33,9 @@
       "Bash(node test-comparator-engine.js)",
       "Bash(git commit -m 'PHASE C: Case Comparator - Multi-Case Intelligence *)",
       "Bash(node test-pattern-engine.js)",
-      "Bash(git commit -m 'PHASE D: Pattern Engine - Attack Chain Recognition *)"
+      "Bash(git commit -m 'PHASE D: Pattern Engine - Attack Chain Recognition *)",
+      "Bash(node test-prediction-engine.js)",
+      "Bash(git commit -m 'PHASE E: Prediction Engine - Evidence-Based Forecasting *)"
     ]
   }
 }

@@ -1,0 +1,89 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-9476",
+  "title": "Escalation Chain Detection",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T20:24:05.413Z"
+    }
+  ],
+  "createdAt": "2026-08-22T20:24:05.413Z",
+  "updatedAt": "2026-08-22T20:24:05.418Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787430245414",
+      "timestamp": "2026-08-22T20:24:05.414Z",
+      "title": "Registry Run Key",
+      "severity": "high",
+      "description": "Persistence"
+    },
+    {
+      "id": "F-1787430245415",
+      "timestamp": "2026-08-22T20:24:05.415Z",
+      "title": "Privilege Escalation",
+      "severity": "critical",
+      "description": "UAC bypass"
+    },
+    {
+      "id": "F-1787430245417",
+      "timestamp": "2026-08-22T20:24:05.417Z",
+      "title": "Admin Process",
+      "severity": "high",
+      "description": "Elevation"
+    },
+    {
+      "id": "F-1787430245418",
+      "timestamp": "2026-08-22T20:24:05.418Z",
+      "title": "Network Share Access",
+      "severity": "high",
+      "description": "Lateral movement"
+    }
+  ],
+  "recommendations": [],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T20:24:05.413Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787430245414",
+        "title": "Registry Run Key",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-22T20:24:05.414Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787430245415",
+        "title": "Privilege Escalation",
+        "severity": "critical"
+      },
+      "timestamp": "2026-08-22T20:24:05.415Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787430245417",
+        "title": "Admin Process",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-22T20:24:05.417Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787430245418",
+        "title": "Network Share Access",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-22T20:24:05.418Z"
+    }
+  ],
+  "riskScore": 85
+}
