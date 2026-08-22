@@ -8,11 +8,7 @@ export function registerPersistenceTools(server) {
     "List startup programs",
     {},
     async () => {
-      const result = runPowerShell(`
-        Get-CimInstance Win32_StartupCommand |
-        Select-Object Name, Command, Location, User |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-CimInstance Win32_StartupCommand | Select-Object Name, Command, Location, User | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -23,17 +19,7 @@ export function registerPersistenceTools(server) {
     "List files in startup folders",
     {},
     async () => {
-      const result = runPowerShell(`
-        $commonStartup = @(
-          "$env:PROGRAMDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
-          "$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
-        );
-        foreach ($folder in $commonStartup) {
-          if (Test-Path $folder) {
-            Get-ChildItem $folder -Recurse | Select-Object FullName, LastWriteTime
-          }
-        } | ConvertTo-Json
-      `);
+      const result = runPowerShell(`$commonStartup = @("$env:PROGRAMDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup","$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"); foreach ($folder in $commonStartup) { if (Test-Path $folder) { Get-ChildItem $folder -Recurse | Select-Object FullName, LastWriteTime } } | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -46,13 +32,7 @@ export function registerPersistenceTools(server) {
       limit: z.coerce.number().optional()
     },
     async ({ limit = 100 }) => {
-      const result = runPowerShell(`
-        Get-ScheduledTask |
-        Where-Object { $_.State -ne 'Disabled' } |
-        Select-Object TaskName, TaskPath, State, @{Name='LastRun';Expression={$_.LastRunTime}} |
-        Select-Object -First ${limit} |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-ScheduledTask | Where-Object { $_.State -ne 'Disabled' } | Select-Object TaskName, TaskPath, State, @{Name='LastRun';Expression={$_.LastRunTime}} | Select-Object -First ${limit} | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -63,16 +43,7 @@ export function registerPersistenceTools(server) {
     "List Registry Run keys",
     {},
     async () => {
-      const result = runPowerShell(`
-        @(
-          'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run',
-          'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'
-        ) | ForEach-Object {
-          if (Test-Path $_) {
-            Get-ItemProperty $_ | ConvertTo-Json
-          }
-        }
-      `);
+      const result = runPowerShell(`@('HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run','HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run') | ForEach-Object { if (Test-Path $_) { Get-ItemProperty $_ | ConvertTo-Json -Depth 5 } }`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -83,16 +54,7 @@ export function registerPersistenceTools(server) {
     "List Registry RunOnce keys",
     {},
     async () => {
-      const result = runPowerShell(`
-        @(
-          'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce',
-          'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce'
-        ) | ForEach-Object {
-          if (Test-Path $_) {
-            Get-ItemProperty $_ | ConvertTo-Json
-          }
-        }
-      `);
+      const result = runPowerShell(`@('HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce','HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce') | ForEach-Object { if (Test-Path $_) { Get-ItemProperty $_ | ConvertTo-Json -Depth 5 } }`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
