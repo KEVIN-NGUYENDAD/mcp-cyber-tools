@@ -22,7 +22,8 @@
       "Bash(node test-knowledge-layer-sprint1.js)",
       "Bash(git commit -m 'Sprint 1: Knowledge Layer MVP - Learning & Confidence Reuse *)",
       "Bash(node test-knowledge-layer-sprint2.js)",
-      "Bash(git commit -m 'Sprint 2: Automatic Knowledge Enrichment in Playbooks *)"
+      "Bash(git commit -m 'Sprint 2: Automatic Knowledge Enrichment in Playbooks *)",
+      "Bash(git commit -m 'Session Handoff: Cross-Case Learning Sprints 1-2 Complete *)"
     ]
   }
 }
