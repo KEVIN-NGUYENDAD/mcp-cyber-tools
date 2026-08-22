@@ -9,7 +9,7 @@
 
 ## 📊 BUG SUMMARY (Daily)
 
-### Current Count (Tier 1 Complete)
+### Current Count (Tier 1 Complete, Wave 5 In Progress)
 ```
 Date:           2026-08-21
 Critical Bugs:  0
@@ -18,6 +18,10 @@ Medium Bugs:    0
 Low Bugs:       1 (BUG-001 - environment only)
 ─────────────────────────
 Total Open:     1 (non-blocking)
+
+Recent Closures:
+  BUG-003 (Empty Output) - CLOSED
+  BUG-005 (runningProcesses) - CLOSED (same root cause as BUG-003)
 ```
 
 ### Tier 1 Gate Status
@@ -57,6 +61,11 @@ BUG-003 (Empty Output) - CLOSED ✅
 Root Cause: Multiline PowerShell commands
 Fix: Single-line format conversion
 Status: VERIFIED & CLOSED
+
+BUG-005 (runningProcesses + 17 others) - CLOSED ✅
+Root Cause: Same as BUG-003 - Multiline PowerShell commands
+Fix: Converted 18 tools to single-line format across process.js & incident.js
+Status: VERIFIED & CLOSED (Commit 1174b74)
 
 Access Denied (Security Log) - EXPECTED ✅
 Classification: Windows permission boundary (not a bug)
@@ -202,30 +211,38 @@ Replace hard-coded System32 path with user-writable alternative
 2. Call collectEvidence
 3. Should succeed with report in accessible location
 
-### BUG-005: runningProcesses - No Output (OPEN 🟡)
+### BUG-005: runningProcesses - No Output (CLOSED ✅)
 
 **Severity**: Medium-High  
-**Risk**: Large output handling  
-**Tool**: runningProcesses  
+**Risk**: PowerShell serialization  
+**Tool**: runningProcesses (+ 17 other affected tools)  
 **Phase**: Tier 2 (Wave 5)  
 **Date Found**: 2026-08-21  
-**Status**: INVESTIGATING
+**Date Closed**: 2026-08-21  
+**Status**: FIXED & VERIFIED
 
-**Symptom**:
-Tool executes successfully but returns no data
+**Root Cause**: 
+IDENTICAL to BUG-003: Multiline PowerShell commands fail in PowerShell `-Command` mode
 
-**Expected**:
-List of 200+ running processes
+**Tools Affected**:
+- process.js: runningProcesses, processMonitor, processDetails, processTree, processByPid, cpuUsage, memoryUsage, topProcesses, suspiciousProcesses (9 tools)
+- incident.js: collectEvidence, collectProcesses, collectServices, collectNetworkState, collectStartupItems, collectFirewall, collectDefender, collectLogs, timeline (9 tools)
 
-**Actual**:
-Empty result
+**Fix Applied** (2026-08-21):
+- Converted all 18 multiline commands to single-line format
+- Added `-Depth 5` to all ConvertTo-Json calls for consistent nesting
+- Commit: 1174b74
 
-**Investigation Path**:
-1. Test with marker to verify code execution
-2. Test with small payload (first 3 processes)
-3. Compare with systemLogs/applicationLogs (both PASS)
+**Verification**:
+```
+Test: Get-Process | Select-Object -First 3 Name, Id, WorkingSet | ConvertTo-Json -Depth 5
+Result: ✅ Valid JSON with 3 processes returned
+Output: [{"Name":"AcrobatNotificationClient","Id":28596,"WorkingSet":4263936},...] 
+```
 
-**Similar to**: BUG-003 early stage
+**Key Learning**:
+PowerShell multiline template literals break in Node's `-Command` execution mode.
+Single-line format is required for reliable serialization.
 
 ---
 
