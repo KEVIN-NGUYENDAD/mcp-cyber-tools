@@ -1,11 +1,10 @@
 # Cyber Tools MCP - Smoke Test
-# Run trước mỗi release để verify core functionality
-# Usage: ./smoke_test.ps1
+# Usage: .\smoke_test.ps1
 
-Write-Host "╔════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║  CYBER TOOLS MCP - SMOKE TEST                             ║" -ForegroundColor Cyan
-Write-Host "║  15 Essential Tools Check Before Release                  ║" -ForegroundColor Cyan
-Write-Host "╚════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "CYBER TOOLS MCP - SMOKE TEST" -ForegroundColor Cyan
+Write-Host "15 Essential Tools Check Before Release" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -13,13 +12,10 @@ Write-Host "Timestamp: $timestamp" -ForegroundColor Gray
 Write-Host "Testing 15 core tools for stability..." -ForegroundColor Gray
 Write-Host ""
 
-# Initialize results
 $results = @()
 $passed = 0
 $failed = 0
-$total = 0
 
-# Helper function to test each tool
 function Test-Tool {
     param(
         [string]$ToolName,
@@ -27,25 +23,20 @@ function Test-Tool {
         [scriptblock]$TestScript
     )
 
-    $total++
-    Write-Host "[$total/15] Testing: $ToolName..." -NoNewline -ForegroundColor Cyan
+    Write-Host "Testing: $ToolName..." -NoNewline -ForegroundColor Cyan
 
     try {
         $result = & $TestScript
 
-        # Check if result is success
-        if ($result -and -not ($result -match "error" -or $result -match "failed" -or $result -match "exception")) {
-            Write-Host " ✅" -ForegroundColor Green
-            $passed++
+        if ($result -and -not ($result -match "error" -or $result -match "failed")) {
+            Write-Host " PASS" -ForegroundColor Green
             return @{ Tool = $ToolName; Status = "PASS"; Description = $Description }
         } else {
-            Write-Host " ❌" -ForegroundColor Red
-            $failed++
+            Write-Host " FAIL" -ForegroundColor Red
             return @{ Tool = $ToolName; Status = "FAIL"; Description = $Description; Error = $result }
         }
     } catch {
-        Write-Host " ❌ (Exception)" -ForegroundColor Red
-        $failed++
+        Write-Host " FAIL (Exception)" -ForegroundColor Red
         return @{ Tool = $ToolName; Status = "FAIL"; Description = $Description; Error = $_.Exception.Message }
     }
 }
@@ -134,23 +125,22 @@ $results += Test-Tool "scheduledTasks" "List scheduled tasks" {
     "Found $($tasks.Count) tasks"
 }
 
-# Test 15: collectEvidence (Report Generation)
+# Test 15: collectEvidence
 $results += Test-Tool "collectEvidence" "Generate evidence report" {
     $reportDir = ".\reports"
     if (Test-Path $reportDir) {
         "Reports directory exists"
     } else {
-        "Creating reports directory"
         New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
-        "OK"
+        "Created reports directory"
     }
 }
 
 # Summary
 Write-Host ""
-Write-Host "════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "SMOKE TEST RESULTS" -ForegroundColor Cyan
-Write-Host "════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 
 foreach ($result in $results) {
@@ -160,30 +150,31 @@ foreach ($result in $results) {
         Write-Host "FAIL" -ForegroundColor Red -NoNewline
     }
 
-    $toolName = $result.Tool
-    Write-Host " | $toolName" -ForegroundColor White
+    $tool = $result.Tool
+    Write-Host " | $tool" -ForegroundColor White
 
     if ($result.Error) {
-        $errorMsg = $result.Error
-        Write-Host "    Error: $errorMsg" -ForegroundColor Yellow
+        $err = $result.Error
+        Write-Host "  Error: $err" -ForegroundColor Yellow
     }
 }
 
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
 
-if ($failed -eq 0) {
+$passCount = ($results | Where-Object { $_.Status -eq "PASS" }).Count
+$failCount = ($results | Where-Object { $_.Status -eq "FAIL" }).Count
+
+if ($failCount -eq 0) {
     Write-Host "OVERALL: PASS (15/15)" -ForegroundColor Green
     Write-Host ""
     Write-Host "Status: RELEASE CANDIDATE" -ForegroundColor Green
     Write-Host "All core tools functioning correctly." -ForegroundColor Green
     exit 0
 } else {
-    $summary = "OVERALL: FAIL ($passed/15 passed)"
-    Write-Host $summary -ForegroundColor Red
+    Write-Host "OVERALL: FAIL ($passCount/15 passed)" -ForegroundColor Red
     Write-Host ""
     Write-Host "Status: NEEDS FIXING" -ForegroundColor Red
-    $fixMsg = "Fix $failed failing tool(s) before release."
-    Write-Host $fixMsg -ForegroundColor Red
+    Write-Host "Fix $failCount failing tool(s) before release." -ForegroundColor Red
     exit 1
 }
