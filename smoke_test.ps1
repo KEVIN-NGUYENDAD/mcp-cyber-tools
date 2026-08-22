@@ -153,20 +153,24 @@ Write-Host "SMOKE TEST RESULTS" -ForegroundColor Cyan
 Write-Host "════════════════════════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host ""
 
-$results | ForEach-Object {
-    $status = if ($_.Status -eq "PASS") {
-        "PASS" | Write-Host -ForegroundColor Green -NoNewline
+foreach ($result in $results) {
+    if ($result.Status -eq "PASS") {
+        Write-Host "PASS" -ForegroundColor Green -NoNewline
     } else {
-        "FAIL" | Write-Host -ForegroundColor Red -NoNewline
+        Write-Host "FAIL" -ForegroundColor Red -NoNewline
     }
-    Write-Host " | $($_.Tool)" -ForegroundColor White
-    if ($_.Error) {
-        Write-Host "    Error: $($_.Error)" -ForegroundColor Yellow
+
+    $toolName = $result.Tool
+    Write-Host " | $toolName" -ForegroundColor White
+
+    if ($result.Error) {
+        $errorMsg = $result.Error
+        Write-Host "    Error: $errorMsg" -ForegroundColor Yellow
     }
 }
 
 Write-Host ""
-Write-Host "════════════════════════════════════════════════════════════" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 
 if ($failed -eq 0) {
     Write-Host "OVERALL: PASS (15/15)" -ForegroundColor Green
@@ -175,9 +179,11 @@ if ($failed -eq 0) {
     Write-Host "All core tools functioning correctly." -ForegroundColor Green
     exit 0
 } else {
-    Write-Host "OVERALL: FAIL ($passed/15 passed)" -ForegroundColor Red
+    $summary = "OVERALL: FAIL ($passed/15 passed)"
+    Write-Host $summary -ForegroundColor Red
     Write-Host ""
     Write-Host "Status: NEEDS FIXING" -ForegroundColor Red
-    Write-Host "Fix $failed failing tool(s) before release." -ForegroundColor Red
+    $fixMsg = "Fix $failed failing tool(s) before release."
+    Write-Host $fixMsg -ForegroundColor Red
     exit 1
 }
