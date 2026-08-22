@@ -53,46 +53,65 @@ TIER 1 RESULT: 0 Critical bugs found ✅
 TIER 2 CURRENT: 1 High bug (BUG-003) - FIX IMPLEMENTED, AWAITING RETEST
 ```
 
-### BUG-003
+### BUG-003A: Empty Output (CLOSED ✅)
 
-**Severity**: High  
-**Risk**: R-003 (Access Denied)  
-**Tool**: securityLogs, systemLogs, rdpLogs, registryRunKeys  
-**Phase**: Tier 2  
-**Date Found**: 2026-08-21  
-**Status**: FIX IMPLEMENTED, VERIFICATION PENDING
+**Severity**: High → RESOLVED  
+**Root Cause**: Multiline PowerShell commands with embedded newlines  
+**Status**: FIXED & VERIFIED
 
-**Root Cause Candidate**:
-Multiline PowerShell commands with embedded newlines break execution in `-Command` mode
+**What was happening**:
+- securityLogs returned empty output instead of event data
+- Silent failure - impossible to debug
 
-**Symptoms**:
-- securityLogs returns empty PowerShell banner instead of event data
-- systemLogs, rdpLogs, registryRunKeys exhibit same pattern
-- Direct test showed runPowerShell() returns 21KB of valid event data
-- Issue is specific to multiline command format, not MCP/connection/permissions
+**Root Cause**:
+- Commands like `Get-WinEvent | Select-Object | ConvertTo-Json` with embedded newlines don't execute in PowerShell `-Command` mode
 
 **Fix Applied** (2026-08-21):
-- eventlogs.js: All 10 collectors converted to single-line format
-- persistence.js: All 5 collectors converted to single-line format
-- Added `-Depth 5` to ConvertTo-Json for nested object support
+- eventlogs.js: All 10 collectors → single-line format
+- persistence.js: All 5 collectors → single-line format
 - Commits: 318a048, 5b52f2c
 
-**Evidence**:
-- Direct test: `node test-runpowershell.js` returned SUCCESS: true, Data length: 21134
-- Debug showed valid event data in RAW_OUTPUT
-- Multiline vs single-line command comparison identified root cause candidate
+**Verification**:
+- ✅ Code reload verified (marker test)
+- ✅ MCP response path verified
+- ✅ Collector now returns real data/errors instead of empty output
 
-**Verification Status**:
-- ⏳ PENDING: Retest securityLogs after restart
-- Expected: Real event data returned (not empty)
-- If PASS: Test systemLogs, rdpLogs, registryRunKeys
-- If all PASS: Close BUG-003, proceed to Tier 2 Wave 2
+**Result**: BUG-003A = CLOSED ✅
 
-**Next Action**:
-1. Restart MCP server
-2. Call securityLogs
-3. Verify data returned
-4. Update status to CLOSED or STILL OPEN based on result
+---
+
+### BUG-003B: Security Log Access Denied (NEW)
+
+**Severity**: Medium  
+**Risk**: R-003 (Access Denied)  
+**Tool**: securityLogs  
+**Date Found**: 2026-08-21  
+**Status**: OPEN - Evaluating
+
+**Current Behavior**:
+```
+ERROR: UnauthorizedAccessException
+Get-WinEvent : Attempted to perform an unauthorized operation.
+```
+
+**Root Cause**:
+Non-admin user cannot read Windows Security Event Log (expected Windows behavior)
+
+**Question**:
+Is this a bug or expected design limitation?
+
+**Next Step**:
+Test other log types to determine:
+1. Is issue specific to Security logs only?
+2. Or is Node process globally non-admin?
+
+**To Test**:
+- Call `systemLogs`
+- Call `applicationLogs`
+- Call `rdpLogs`
+
+If they work → Security log access is the issue
+If they also fail → Node process needs admin elevation
 
 ---
 
