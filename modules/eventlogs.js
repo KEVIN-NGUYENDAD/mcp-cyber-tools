@@ -24,10 +24,14 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 100 }) => {
-      console.log("\n🔥🔥🔥 SECURITYLOGS CALLED - NEW CODE LOADED 🔥🔥🔥\n");
+      console.log("\n🔥🔥🔥 SECURITYLOGS CALLED - NEW CODE IS EXECUTING NOW 🔥🔥🔥\n");
 
-      // TEMPORARY TEST: Return hardcoded marker to prove code is executing
-      return formatResponse(true, "DEBUG_MARKER_SECURITYLOGS_KEVIN_20260821", null);
+      return {
+        content: [{
+          type: "text",
+          text: "DEBUG_MARKER_SECURITYLOGS_CODE_LOADED_KEVIN_20260821"
+        }]
+      };
     }
   );
 
