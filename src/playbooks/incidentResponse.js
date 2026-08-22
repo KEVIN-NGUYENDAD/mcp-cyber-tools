@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import { createCase, addFinding, addRecommendations } from '../cases/caseManager.js';
 import { addConfidenceMetrics } from '../intelligence/confidenceEngine.js';
 import { applyKnowledgeLayer } from '../intelligence/knowledgeLayer.js';
+import { decideFindingsForCase } from '../intelligence/decisionEngine.js';
 
 export async function incidentResponse(threatIndicator = 'suspicious-process') {
   // Step 1: Create incident case
@@ -128,6 +129,21 @@ export async function incidentResponse(threatIndicator = 'suspicious-process') {
       }
     } catch (e) {
       console.log('⚠ Knowledge enrichment skipped:', e.message);
+    }
+
+    // Step 5c: Make decisions on findings (PHASE A: Decision Engine)
+    console.log('\nGenerating recommendations...');
+    try {
+      const decisionResult = await decideFindingsForCase(caseId);
+      console.log(`✓ Decisions made: ${decisionResult.decided} findings`);
+      console.log(`  - Ignore: ${decisionResult.ignored}`);
+      console.log(`  - Investigate: ${decisionResult.investigated}`);
+      console.log(`  - Escalate: ${decisionResult.escalated}`);
+      if (decisionResult.timeSaved > 0) {
+        console.log(`  - Time estimate saved: ${decisionResult.timeSaved} minutes`);
+      }
+    } catch (e) {
+      console.log('⚠ Decision analysis skipped:', e.message);
     }
 
     // Step 6: Return incident case

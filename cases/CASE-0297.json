@@ -1,0 +1,244 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-0297",
+  "title": "Incident Response: malware",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T19:08:54.962Z"
+    }
+  ],
+  "createdAt": "2026-08-22T19:08:54.962Z",
+  "updatedAt": "2026-08-22T19:08:54.966Z",
+  "risk": "critical",
+  "findings": [
+    {
+      "id": "F-1787425734963",
+      "timestamp": "2026-08-22T19:08:54.963Z",
+      "severity": "critical",
+      "title": "Malware Detection",
+      "description": "Confirmed malware signature match",
+      "source": "incidentDetection",
+      "indicator": "malware",
+      "containmentAction": "immediate",
+      "classification": "unknown",
+      "confidence": 15,
+      "confidenceReason": "No pattern match",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 4,
+        "incidentCount": 4,
+        "confidence": 0,
+        "casesObserved": 4
+      },
+      "enhancedConfidence": 15,
+      "enhancedClassification": "unknown"
+    },
+    {
+      "id": "F-1787425734965",
+      "timestamp": "2026-08-22T19:08:54.965Z",
+      "severity": "info",
+      "title": "Incident Case Created",
+      "description": "Automated incident response case generated for malware",
+      "source": "automationEngine",
+      "classification": "unknown",
+      "confidence": 0,
+      "confidenceReason": "No pattern match",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 4,
+        "incidentCount": 4,
+        "confidence": 0,
+        "casesObserved": 4
+      },
+      "enhancedConfidence": 0,
+      "enhancedClassification": "unknown"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "EMERGENCY: Activate Incident Response Plan",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-002",
+      "title": "Isolate Affected System",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-003",
+      "title": "Collect Forensic Evidence",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-004",
+      "title": "Notify Security Team",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-005",
+      "title": "Document Incident",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-006",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T19:08:54.962Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787425734963",
+        "title": "Malware Detection",
+        "severity": "critical"
+      },
+      "timestamp": "2026-08-22T19:08:54.963Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787425734965",
+        "title": "Incident Case Created",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T19:08:54.965Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 6,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "EMERGENCY: Activate Incident Response Plan"
+          },
+          {
+            "id": "REC-002",
+            "title": "Isolate Affected System"
+          },
+          {
+            "id": "REC-003",
+            "title": "Collect Forensic Evidence"
+          },
+          {
+            "id": "REC-004",
+            "title": "Notify Security Team"
+          },
+          {
+            "id": "REC-005",
+            "title": "Document Incident"
+          },
+          {
+            "id": "REC-006",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T19:08:54.966Z"
+    },
+    {
+      "type": "DECISIONS_MADE",
+      "payload": {
+        "ignored": 0,
+        "investigated": 1,
+        "escalated": 1,
+        "totalDecisions": 2
+      },
+      "timestamp": "2026-08-22T19:08:54.973Z"
+    }
+  ],
+  "riskScore": 100,
+  "incidentSeverity": "critical",
+  "containmentAction": "immediate",
+  "confidenceAnalysis": {
+    "performedAt": "2026-08-22T19:08:54.969Z",
+    "averageConfidence": 8,
+    "classifications": {
+      "legitimate": 0,
+      "malicious": 0,
+      "suspicious": 0,
+      "unknown": 2
+    }
+  },
+  "knowledgeEnrichment": {
+    "appliedAt": "2026-08-22T19:08:54.971Z",
+    "enhancedFindings": 2,
+    "insights": [
+      {
+        "artifact": "Malware Detection",
+        "knownGood": false,
+        "seenBefore": 4,
+        "incidents": 4,
+        "confidence": 0
+      },
+      {
+        "artifact": "Incident Case Created",
+        "knownGood": false,
+        "seenBefore": 4,
+        "incidents": 4,
+        "confidence": 0
+      }
+    ]
+  },
+  "decisionAnalysis": {
+    "performedAt": "2026-08-22T19:08:54.973Z",
+    "decisions": [
+      {
+        "finding": "Malware Detection",
+        "decision": "ESCALATE",
+        "confidence": 90,
+        "reasoning": [
+          "High severity finding: critical",
+          "Requires immediate review regardless of history"
+        ],
+        "action": "ESCALATE: Malware Detection - Requires immediate attention",
+        "estimatedTime": 30
+      },
+      {
+        "finding": "Incident Case Created",
+        "decision": "INVESTIGATE",
+        "confidence": 75,
+        "reasoning": [
+          "No specific rules matched",
+          "Standard investigation recommended",
+          "Case risk level: 100/100 (increases investigation priority)"
+        ],
+        "action": "Investigate: Incident Case Created - Requires deeper analysis",
+        "estimatedTime": 15
+      }
+    ],
+    "summary": {
+      "ignored": 0,
+      "investigated": 1,
+      "escalated": 1,
+      "total": 2
+    },
+    "timeline": [
+      {
+        "finding": "Malware Detection",
+        "decision": "ESCALATE",
+        "timestamp": "2026-08-22T19:08:54.973Z"
+      },
+      {
+        "finding": "Incident Case Created",
+        "decision": "INVESTIGATE",
+        "timestamp": "2026-08-22T19:08:54.973Z"
+      }
+    ],
+    "analystTimeEstimate": 45
+  }
+}

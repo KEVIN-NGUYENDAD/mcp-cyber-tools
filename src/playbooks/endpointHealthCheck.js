@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import { createCase, addFinding, addRecommendations } from '../cases/caseManager.js';
 import { addConfidenceMetrics } from '../intelligence/confidenceEngine.js';
 import { applyKnowledgeLayer } from '../intelligence/knowledgeLayer.js';
+import { decideFindingsForCase } from '../intelligence/decisionEngine.js';
 
 function runCommand(cmd) {
   return new Promise((resolve, reject) => {
@@ -205,6 +206,18 @@ export async function endpointHealthCheck() {
       }
     } catch (e) {
       console.log('⚠ Knowledge enrichment skipped:', e.message);
+    }
+
+    // Step 5c: Make decisions on findings (PHASE A: Decision Engine)
+    console.log('\nGenerating decisions...');
+    try {
+      const decisionResult = await decideFindingsForCase(caseId);
+      console.log(`✓ Analyzed ${decisionResult.decided} findings`);
+      console.log(`  - Can ignore: ${decisionResult.ignored} (known good)`);
+      console.log(`  - Needs investigation: ${decisionResult.investigated}`);
+      console.log(`  - Requires escalation: ${decisionResult.escalated}`);
+    } catch (e) {
+      console.log('⚠ Decision analysis skipped:', e.message);
     }
 
     // Step 6: Generate recommendations
