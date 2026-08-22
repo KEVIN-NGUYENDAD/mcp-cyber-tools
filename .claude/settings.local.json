@@ -29,7 +29,9 @@
       "Bash(git commit -m 'PHASE A: Decision Engine - Knowledge to Intelligence *)",
       "Bash(git commit -m 'Session Handoff: PHASE A Complete - Decision Engine Operational *)",
       "Bash(node test-copilot-engine.js)",
-      "Bash(git commit -m 'PHASE B: Investigation Copilot - Case-Level Intelligence *)"
+      "Bash(git commit -m 'PHASE B: Investigation Copilot - Case-Level Intelligence *)",
+      "Bash(node test-comparator-engine.js)",
+      "Bash(git commit -m 'PHASE C: Case Comparator - Multi-Case Intelligence *)"
     ]
   }
 }

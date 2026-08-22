@@ -1,0 +1,237 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-4546",
+  "title": "Baseline Investigation",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T20:02:16.694Z"
+    }
+  ],
+  "createdAt": "2026-08-22T20:02:16.694Z",
+  "updatedAt": "2026-08-22T20:02:16.700Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787428936698",
+      "timestamp": "2026-08-22T20:02:16.698Z",
+      "title": "SoftLanding",
+      "severity": "low",
+      "description": "OEM artifact",
+      "classification": "legitimate",
+      "confidence": 95,
+      "confidenceReason": "Known OEM artifact",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 2,
+        "incidentCount": 0,
+        "confidence": 92.38560627359831,
+        "classification": "legitimate",
+        "casesObserved": 2
+      },
+      "enhancedConfidence": 95,
+      "enhancedClassification": "legitimate"
+    },
+    {
+      "id": "F-1787428936699",
+      "timestamp": "2026-08-22T20:02:16.699Z",
+      "title": "Windows Defender",
+      "severity": "low",
+      "description": "Security service",
+      "classification": "legitimate",
+      "confidence": 98,
+      "confidenceReason": "Microsoft security component",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 2,
+        "incidentCount": 0,
+        "confidence": 92.38560627359831,
+        "classification": "legitimate",
+        "casesObserved": 2
+      },
+      "enhancedConfidence": 98,
+      "enhancedClassification": "legitimate"
+    },
+    {
+      "id": "F-1787428936700",
+      "timestamp": "2026-08-22T20:02:16.700Z",
+      "title": "McAfee",
+      "severity": "low",
+      "description": "Antivirus",
+      "classification": "legitimate",
+      "confidence": 92,
+      "confidenceReason": "Known antivirus software"
+    }
+  ],
+  "recommendations": [],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T20:02:16.694Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787428936698",
+        "title": "SoftLanding",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T20:02:16.698Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787428936699",
+        "title": "Windows Defender",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T20:02:16.699Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787428936700",
+        "title": "McAfee",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T20:02:16.700Z"
+    },
+    {
+      "type": "DECISIONS_MADE",
+      "payload": {
+        "ignored": 2,
+        "investigated": 1,
+        "escalated": 0,
+        "totalDecisions": 3
+      },
+      "timestamp": "2026-08-22T20:02:16.707Z"
+    },
+    {
+      "type": "CASE_ANALYZED",
+      "payload": {
+        "caseRecommendation": "ESCALATE",
+        "caseHealth": "UNHEALTHY",
+        "confidence": 85
+      },
+      "timestamp": "2026-08-22T20:02:16.710Z"
+    }
+  ],
+  "confidenceAnalysis": {
+    "performedAt": "2026-08-22T20:02:16.702Z",
+    "averageConfidence": 95,
+    "classifications": {
+      "legitimate": 3,
+      "malicious": 0,
+      "suspicious": 0,
+      "unknown": 0
+    }
+  },
+  "knowledgeEnrichment": {
+    "appliedAt": "2026-08-22T20:02:16.705Z",
+    "enhancedFindings": 2,
+    "insights": [
+      {
+        "artifact": "SoftLanding",
+        "knownGood": true,
+        "seenBefore": 2,
+        "incidents": 0,
+        "confidence": 92.38560627359831
+      },
+      {
+        "artifact": "Windows Defender",
+        "knownGood": true,
+        "seenBefore": 2,
+        "incidents": 0,
+        "confidence": 92.38560627359831
+      }
+    ]
+  },
+  "decisionAnalysis": {
+    "performedAt": "2026-08-22T20:02:16.707Z",
+    "decisions": [
+      {
+        "finding": "SoftLanding",
+        "decision": "IGNORE",
+        "confidence": 90.38560627359831,
+        "reasoning": [
+          "Known good artifact: seen 2 times",
+          "Zero incidents observed",
+          "High confidence classification (92.38560627359831%)"
+        ],
+        "action": "No action required - Known benign artifact",
+        "estimatedTime": 0
+      },
+      {
+        "finding": "Windows Defender",
+        "decision": "IGNORE",
+        "confidence": 90.38560627359831,
+        "reasoning": [
+          "Known good artifact: seen 2 times",
+          "Zero incidents observed",
+          "High confidence classification (92.38560627359831%)"
+        ],
+        "action": "No action required - Known benign artifact",
+        "estimatedTime": 0
+      },
+      {
+        "finding": "McAfee",
+        "decision": "INVESTIGATE",
+        "confidence": 60,
+        "reasoning": [
+          "Unknown artifact",
+          "First observation",
+          "Recommend standard analysis"
+        ],
+        "action": "Investigate: McAfee - Requires deeper analysis",
+        "estimatedTime": 15
+      }
+    ],
+    "summary": {
+      "ignored": 2,
+      "investigated": 1,
+      "escalated": 0,
+      "total": 3
+    },
+    "timeline": [
+      {
+        "finding": "McAfee",
+        "decision": "INVESTIGATE",
+        "timestamp": "2026-08-22T20:02:16.707Z"
+      }
+    ],
+    "analystTimeEstimate": 15
+  },
+  "copilotAnalysis": {
+    "performedAt": "2026-08-22T20:02:16.710Z",
+    "caseRecommendation": "ESCALATE",
+    "caseHealth": "UNHEALTHY",
+    "confidence": 85,
+    "decisionSummary": {
+      "ignored": 2,
+      "investigate": 1,
+      "escalate": 0,
+      "total": 3
+    },
+    "analystTime": {
+      "saved": 20,
+      "estimated": 15,
+      "total": 35
+    },
+    "reasoning": [
+      "2 finding(s) are known-good artifacts (automatically cleared)",
+      "1 finding(s) require investigation"
+    ],
+    "firstAction": "Export evidence package",
+    "nextSteps": [
+      "Export evidence package",
+      "Isolate affected system",
+      "Notify security team"
+    ],
+    "quality": {
+      "coverage": 100,
+      "decision_confidence": 85,
+      "recommendation_strength": "ESCALATE (85% confident)"
+    }
+  }
+}
