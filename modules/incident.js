@@ -28,21 +28,14 @@ export function registerIncidentTools(server) {
     }
   );
 
-  // 2. COLLECTPROCESSES
+  // 2. COLLECTPROCESSES (formerly runningProcesses)
   server.tool(
-    "collectProcesses",
-    "Collect all running processes snapshot",
+    "runningProcesses",
+    "List running processes",
     {},
     async () => {
-      const result = runPowerShell(`
-        Get-Process | Select-Object Name, Id, Path, StartTime, WorkingSet, CPU |
-        ConvertTo-Json
-      `);
-      if (result.success) {
-        const report = generateJsonReport("Process Collection", result.data, "incident");
-        return formatResponse(true, `Processes collected and saved to: ${report.path}`);
-      }
-      return formatResponse(false, "", result.error);
+      console.log("\n🔥 runningProcesses CALLED - Testing marker\n");
+      return formatResponse(true, "DEBUG_MARKER_RUNNINGPROCESSES_WAVE5");
     }
   );
 

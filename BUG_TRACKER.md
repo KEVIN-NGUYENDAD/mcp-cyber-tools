@@ -202,6 +202,31 @@ Replace hard-coded System32 path with user-writable alternative
 2. Call collectEvidence
 3. Should succeed with report in accessible location
 
+### BUG-005: runningProcesses - No Output (OPEN 🟡)
+
+**Severity**: Medium-High  
+**Risk**: Large output handling  
+**Tool**: runningProcesses  
+**Phase**: Tier 2 (Wave 5)  
+**Date Found**: 2026-08-21  
+**Status**: INVESTIGATING
+
+**Symptom**:
+Tool executes successfully but returns no data
+
+**Expected**:
+List of 200+ running processes
+
+**Actual**:
+Empty result
+
+**Investigation Path**:
+1. Test with marker to verify code execution
+2. Test with small payload (first 3 processes)
+3. Compare with systemLogs/applicationLogs (both PASS)
+
+**Similar to**: BUG-003 early stage
+
 ---
 
 ## 🟡 MEDIUM BUGS
