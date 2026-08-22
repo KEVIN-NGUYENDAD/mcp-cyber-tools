@@ -16,7 +16,8 @@
       "Bash(git commit -m 'feat: 5 Playbooks - Incident Response Added *)",
       "Bash(node test-case-depth.js)",
       "Bash(git commit -m 'feat: Case Depth Engines - Transform Raw Cases to Actionable Insights *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(node test-case-intelligence.js)"
     ]
   }
 }
