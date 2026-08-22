@@ -39,6 +39,7 @@ Result:         ✅ TIER 1 PASS → Proceed to Tier 2
 
 ```
 TIER 1 RESULT: 0 Critical bugs found ✅
+TIER 2 CURRENT: 0 Critical bugs found ✅
 ```
 
 ---
@@ -50,33 +51,79 @@ TIER 1 RESULT: 0 Critical bugs found ✅
 **Release Gate**: MUST = 0
 
 ```
-TIER 2 CURRENT: 1 High bug (BUG-003) - FIX IMPLEMENTED, AWAITING RETEST
+TIER 2 RESULT: 0 High bugs found ✅
+
+BUG-003 (Empty Output) - CLOSED ✅
+Root Cause: Multiline PowerShell commands
+Fix: Single-line format conversion
+Status: VERIFIED & CLOSED
+
+Access Denied (Security Log) - EXPECTED ✅
+Classification: Windows permission boundary (not a bug)
+Evidence: systemLogs ✅, applicationLogs ✅ work fine
+Result: Explicit error handling is correct behavior
 ```
 
-### BUG-003A: Empty Output (CLOSED ✅)
+### BUG-003: Empty Output / Silent Failure (CLOSED ✅)
 
-**Severity**: High → RESOLVED  
-**Root Cause**: Multiline PowerShell commands with embedded newlines  
+**Severity**: High  
+**Risk**: Collector logic & response path  
+**Tool**: securityLogs, systemLogs, rdpLogs, registryRunKeys  
+**Phase**: Tier 2  
+**Date Found**: 2026-08-21  
+**Date Closed**: 2026-08-21  
 **Status**: FIXED & VERIFIED
 
-**What was happening**:
-- securityLogs returned empty output instead of event data
-- Silent failure - impossible to debug
+---
 
-**Root Cause**:
-- Commands like `Get-WinEvent | Select-Object | ConvertTo-Json` with embedded newlines don't execute in PowerShell `-Command` mode
+**Original Symptom**:
+```
+securityLogs → (empty output)
+systemLogs → (empty output)  
+rdpLogs → (empty output)
+```
+→ Silent failure, impossible to diagnose
+
+**Root Cause Identified**:
+Multiline PowerShell commands with embedded newlines fail to execute in PowerShell `-Command` mode
+
+**Example (Broken)**:
+```powershell
+Get-WinEvent -LogName 'Security' -MaxEvents 100 |
+Select-Object TimeCreated, Id |
+ConvertTo-Json
+```
 
 **Fix Applied** (2026-08-21):
-- eventlogs.js: All 10 collectors → single-line format
-- persistence.js: All 5 collectors → single-line format
-- Commits: 318a048, 5b52f2c
+- eventlogs.js: All 10 collectors → single-line
+- persistence.js: All 5 collectors → single-line  
+- Added `-Depth 5` to ConvertTo-Json
+- Commits: 318a048, 5b52f2c, b23fc5c
 
-**Verification**:
+**Current Behavior (After Fix)**:
+```
+securityLogs → ERROR: UnauthorizedAccessException
+              (Explicit error, clear reason)
+```
+
+**Why This is GOOD**:
+- ✅ Tool executes correctly
+- ✅ Errors are explicit (not silent)
+- ✅ User knows exactly what's wrong
+- ✅ No confusion about "no logs found" vs "permission denied"
+
+**Verification Completed**:
 - ✅ Code reload verified (marker test)
-- ✅ MCP response path verified
-- ✅ Collector now returns real data/errors instead of empty output
+- ✅ MCP response path verified  
+- ✅ Tool no longer returns empty output
+- ✅ Tool returns actual data OR clear error message
+- ✅ Permission boundary working as designed
 
-**Result**: BUG-003A = CLOSED ✅
+**Tier 2 Wave: Access Denied**
+- Status: ✅ PASSING
+- Tool handles permission errors gracefully
+- Explicit error messaging working
+- No crash, no hang, no timeout
 
 ---
 
