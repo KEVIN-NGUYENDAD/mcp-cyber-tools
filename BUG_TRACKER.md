@@ -50,8 +50,49 @@ TIER 1 RESULT: 0 Critical bugs found ✅
 **Release Gate**: MUST = 0
 
 ```
-TIER 1 RESULT: 0 High bugs found ✅
+TIER 2 CURRENT: 1 High bug (BUG-003) - FIX IMPLEMENTED, AWAITING RETEST
 ```
+
+### BUG-003
+
+**Severity**: High  
+**Risk**: R-003 (Access Denied)  
+**Tool**: securityLogs, systemLogs, rdpLogs, registryRunKeys  
+**Phase**: Tier 2  
+**Date Found**: 2026-08-21  
+**Status**: FIX IMPLEMENTED, VERIFICATION PENDING
+
+**Root Cause Candidate**:
+Multiline PowerShell commands with embedded newlines break execution in `-Command` mode
+
+**Symptoms**:
+- securityLogs returns empty PowerShell banner instead of event data
+- systemLogs, rdpLogs, registryRunKeys exhibit same pattern
+- Direct test showed runPowerShell() returns 21KB of valid event data
+- Issue is specific to multiline command format, not MCP/connection/permissions
+
+**Fix Applied** (2026-08-21):
+- eventlogs.js: All 10 collectors converted to single-line format
+- persistence.js: All 5 collectors converted to single-line format
+- Added `-Depth 5` to ConvertTo-Json for nested object support
+- Commits: 318a048, 5b52f2c
+
+**Evidence**:
+- Direct test: `node test-runpowershell.js` returned SUCCESS: true, Data length: 21134
+- Debug showed valid event data in RAW_OUTPUT
+- Multiline vs single-line command comparison identified root cause candidate
+
+**Verification Status**:
+- ⏳ PENDING: Retest securityLogs after restart
+- Expected: Real event data returned (not empty)
+- If PASS: Test systemLogs, rdpLogs, registryRunKeys
+- If all PASS: Close BUG-003, proceed to Tier 2 Wave 2
+
+**Next Action**:
+1. Restart MCP server
+2. Call securityLogs
+3. Verify data returned
+4. Update status to CLOSED or STILL OPEN based on result
 
 ---
 
