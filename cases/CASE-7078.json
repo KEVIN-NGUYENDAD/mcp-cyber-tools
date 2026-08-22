@@ -1,0 +1,169 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-7078",
+  "title": "Incident Response: malware",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T18:51:45.841Z"
+    }
+  ],
+  "createdAt": "2026-08-22T18:51:45.841Z",
+  "updatedAt": "2026-08-22T18:51:45.845Z",
+  "risk": "critical",
+  "findings": [
+    {
+      "id": "F-1787424705842",
+      "timestamp": "2026-08-22T18:51:45.842Z",
+      "severity": "critical",
+      "title": "Malware Detection",
+      "description": "Confirmed malware signature match",
+      "source": "incidentDetection",
+      "indicator": "malware",
+      "containmentAction": "immediate",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 3,
+        "incidentCount": 3,
+        "confidence": 0,
+        "casesObserved": 3
+      },
+      "enhancedConfidence": 0
+    },
+    {
+      "id": "F-1787424705844",
+      "timestamp": "2026-08-22T18:51:45.844Z",
+      "severity": "info",
+      "title": "Incident Case Created",
+      "description": "Automated incident response case generated for malware",
+      "source": "automationEngine",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 3,
+        "incidentCount": 3,
+        "confidence": 0,
+        "casesObserved": 3
+      },
+      "enhancedConfidence": 0
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "EMERGENCY: Activate Incident Response Plan",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-002",
+      "title": "Isolate Affected System",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-003",
+      "title": "Collect Forensic Evidence",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-004",
+      "title": "Notify Security Team",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-005",
+      "title": "Document Incident",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-006",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T18:51:45.841Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787424705842",
+        "title": "Malware Detection",
+        "severity": "critical"
+      },
+      "timestamp": "2026-08-22T18:51:45.842Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787424705844",
+        "title": "Incident Case Created",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T18:51:45.844Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 6,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "EMERGENCY: Activate Incident Response Plan"
+          },
+          {
+            "id": "REC-002",
+            "title": "Isolate Affected System"
+          },
+          {
+            "id": "REC-003",
+            "title": "Collect Forensic Evidence"
+          },
+          {
+            "id": "REC-004",
+            "title": "Notify Security Team"
+          },
+          {
+            "id": "REC-005",
+            "title": "Document Incident"
+          },
+          {
+            "id": "REC-006",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T18:51:45.845Z"
+    }
+  ],
+  "riskScore": 100,
+  "incidentSeverity": "critical",
+  "containmentAction": "immediate",
+  "knowledgeEnrichment": {
+    "appliedAt": "2026-08-22T18:51:45.851Z",
+    "enhancedFindings": 2,
+    "insights": [
+      {
+        "artifact": "Malware Detection",
+        "knownGood": false,
+        "seenBefore": 3,
+        "incidents": 3,
+        "confidence": 0
+      },
+      {
+        "artifact": "Incident Case Created",
+        "knownGood": false,
+        "seenBefore": 3,
+        "incidents": 3,
+        "confidence": 0
+      }
+    ]
+  }
+}

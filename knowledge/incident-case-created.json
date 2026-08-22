@@ -1,12 +1,14 @@
 {
   "artifact": "Incident Case Created",
   "firstSeen": "2026-08-22T17:32:57.892Z",
-  "lastSeen": "2026-08-22T17:32:57.905Z",
-  "seenCount": 2,
-  "incidentCount": 2,
+  "lastSeen": "2026-08-22T18:51:45.858Z",
+  "seenCount": 4,
+  "incidentCount": 4,
   "casesObserved": [
     "CASE-1747",
-    "CASE-2627"
+    "CASE-2627",
+    "CASE-0360",
+    "CASE-7078"
   ],
   "classifications": {},
   "confidence": 0

@@ -17,7 +17,8 @@
       "Bash(node test-case-depth.js)",
       "Bash(git commit -m 'feat: Case Depth Engines - Transform Raw Cases to Actionable Insights *)",
       "Bash(git commit -m ' *)",
-      "Bash(node test-case-intelligence.js)"
+      "Bash(node test-case-intelligence.js)",
+      "Bash(node test-cross-case-learning.js)"
     ]
   }
 }
