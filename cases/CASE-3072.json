@@ -1,0 +1,115 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-3072",
+  "title": "Persistence Investigation",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T17:26:36.456Z"
+    }
+  ],
+  "createdAt": "2026-08-22T17:26:36.456Z",
+  "updatedAt": "2026-08-22T17:26:37.186Z",
+  "risk": "medium",
+  "findings": [
+    {
+      "id": "F-1787419597185",
+      "timestamp": "2026-08-22T17:26:37.185Z",
+      "severity": "info",
+      "title": "No Obvious Persistence Mechanisms Detected",
+      "description": "Baseline registry, tasks, and services appear normal",
+      "source": "analysisEngine"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "Export Persistence Report",
+      "risk": "safe",
+      "requiresApproval": true,
+      "priority": 1,
+      "confidence": 85,
+      "impact": "high",
+      "recommended": true,
+      "urgency": "medium"
+    },
+    {
+      "id": "REC-002",
+      "title": "Create Persistence Baseline",
+      "risk": "safe",
+      "requiresApproval": true,
+      "priority": 3,
+      "confidence": 75,
+      "impact": "low",
+      "recommended": false,
+      "urgency": "low"
+    },
+    {
+      "id": "REC-003",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true,
+      "priority": 5,
+      "confidence": 100,
+      "impact": "none",
+      "recommended": false,
+      "urgency": "low"
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T17:26:36.456Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419597185",
+        "title": "No Obvious Persistence Mechanisms Detected",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:26:37.185Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 3,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "Export Persistence Report"
+          },
+          {
+            "id": "REC-002",
+            "title": "Create Persistence Baseline"
+          },
+          {
+            "id": "REC-003",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T17:26:37.186Z"
+    }
+  ],
+  "riskScore": 35,
+  "riskCalculation": {
+    "calculatedAt": "2026-08-22T17:26:37.196Z",
+    "breakdown": [
+      {
+        "finding": "No Obvious Persistence Mechanisms Detected",
+        "severity": "info",
+        "category": "persistence",
+        "contribution": 35
+      }
+    ],
+    "totalFindings": 1
+  },
+  "recommendationRanking": {
+    "rankedAt": "2026-08-22T17:26:37.198Z",
+    "riskScoreUsed": 35,
+    "recommendedCount": 1,
+    "totalCount": 3
+  }
+}
