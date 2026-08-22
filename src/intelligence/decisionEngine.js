@@ -83,7 +83,30 @@ function evaluateArtifact(finding, knowledge) {
     }
   }
 
-  // Rule 3: High severity findings (regardless of knowledge)
+  // Rule 3: Unknown registry entries in startup locations
+  if (finding.source === 'registryRunKeys' || finding.title?.toLowerCase().includes('registry')) {
+    const isStartupLocation = finding.source === 'registryRunKeys';
+    const isLowToMediumSeverity = finding.severity === 'low' || finding.severity === 'medium';
+
+    // Check if truly unknown (no knowledge AND not marked as legitimate)
+    const isUnknown = !knowledge && finding.classification !== 'legitimate';
+    const isClassifiedUnknown = knowledge && knowledge.classification === 'unknown';
+
+    if (isStartupLocation && isLowToMediumSeverity && (isUnknown || isClassifiedUnknown)) {
+      decisions.push({
+        decision: DECISIONS.INVESTIGATE,
+        confidence: 75,
+        reasoning: [
+          `Unknown startup registry entry: ${finding.title}`,
+          `Persistence indicator (not seen before or unknown classification)`,
+          `Requires investigation despite low severity classification`
+        ],
+        weight: 80
+      });
+    }
+  }
+
+  // Rule 3b: High severity findings (regardless of knowledge)
   if (finding.severity === 'critical' || finding.severity === 'high') {
     if (!decisions.some(d => d.decision === DECISIONS.ESCALATE)) {
       decisions.push({
