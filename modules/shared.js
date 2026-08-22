@@ -7,12 +7,12 @@ export function runPowerShell(command) {
   try {
     const fullCommand = `powershell -NoProfile -Command "${command}"`;
     console.log("\n=== DEBUG: runPowerShell ===");
-    console.log("COMMAND:", fullCommand.substring(0, 150) + "...");
+    console.log("INPUT_COMMAND:", command.substring(0, 100) + "...");
 
     const output = execSync(fullCommand, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
 
-    console.log("STDOUT_LENGTH:", output.length);
-    console.log("STDOUT_PREVIEW:", output.substring(0, 500));
+    console.log("RAW_OUTPUT_LENGTH:", output.length);
+    console.log("RAW_OUTPUT (first 1000):", output.substring(0, 1000));
     console.log("=== END DEBUG ===\n");
 
     return { success: true, data: output };
