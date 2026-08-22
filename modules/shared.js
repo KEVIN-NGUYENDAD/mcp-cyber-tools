@@ -5,7 +5,7 @@ export { z };
 
 export function runPowerShell(command) {
   try {
-    const output = execSync(`powershell ${command}`, { encoding: "utf8" });
+    const output = execSync(`powershell -NoProfile -Command "${command}"`, { encoding: "utf8" });
     return { success: true, data: output };
   } catch (error) {
     return { success: false, error: error.message };
