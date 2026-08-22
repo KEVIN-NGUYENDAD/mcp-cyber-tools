@@ -10,7 +10,9 @@
     "qa:regression": "node tests/tier3/regression-suite.js",
     "report:generate": "node scripts/generate-certification-report.js",
     "report:validate": "node scripts/validate-certification.js",
-    "certify": "npm run deploy:verify && npm run qa:tier1 && npm run qa:regression && npm run report:generate && npm run report:validate"
+    "report:clean": "node scripts/generate-clean-rebuild-report.js",
+    "certify": "npm run deploy:verify && npm run qa:tier1 && npm run qa:regression && npm run report:generate && npm run report:validate",
+    "validate": "npm run certify && npm run report:clean"
   },
   "keywords": [],
   "author": "Cyber Tools Team",
