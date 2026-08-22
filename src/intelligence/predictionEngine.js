@@ -1,5 +1,6 @@
 import { loadCase } from '../cases/caseManager.js';
 import { findPatternMatch, getAllPatterns } from './patternEngine.js';
+import { recordPrediction } from './validationEngine.js';
 
 export async function predictNextSteps(caseId) {
   const caseData = await loadCase(caseId);
@@ -34,16 +35,24 @@ export async function predictNextSteps(caseId) {
 
   // Generate predictions from pattern matches
   const predictions = generatePredictions(patternMatches, caseData);
+  const nextPrediction = predictions[0];
+
+  // Record prediction for validation tracking
+  await recordPrediction(
+    caseId,
+    nextPrediction.nextStep,
+    nextPrediction.confidence
+  );
 
   return {
     hasPrediction: true,
     currentSequence,
     predictions,
-    nextLikelyStep: predictions[0],
+    nextLikelyStep: nextPrediction,
     allPossibilities: predictions,
-    timeframe: estimateTimeframe(predictions[0]),
-    confidence: predictions[0].confidence,
-    recommendation: generateRecommendation(predictions[0], caseData)
+    timeframe: estimateTimeframe(nextPrediction),
+    confidence: nextPrediction.confidence,
+    recommendation: generateRecommendation(nextPrediction, caseData)
   };
 }
 

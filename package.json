@@ -11,8 +11,13 @@
     "report:generate": "node scripts/generate-certification-report.js",
     "report:validate": "node scripts/validate-certification.js",
     "report:clean": "node scripts/generate-clean-rebuild-report.js",
+    "test:validation": "node test-validation-engine.js",
+    "test:predictions": "node test-prediction-engine.js",
+    "test:patterns": "node test-pattern-engine.js",
+    "test:comparator": "node test-comparator-engine.js",
     "certify": "npm run deploy:verify && npm run qa:tier1 && npm run qa:regression && npm run report:generate && npm run report:validate",
-    "validate": "npm run certify && npm run report:clean"
+    "validate": "npm run certify && npm run report:clean",
+    "intelligence:validate": "npm run test:validation"
   },
   "keywords": [],
   "author": "Cyber Tools Team",
