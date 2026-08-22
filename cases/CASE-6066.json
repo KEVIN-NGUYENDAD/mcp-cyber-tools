@@ -1,0 +1,187 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-6066",
+  "title": "Incident Response: malware",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T19:03:27.922Z"
+    }
+  ],
+  "createdAt": "2026-08-22T19:03:27.922Z",
+  "updatedAt": "2026-08-22T19:03:27.928Z",
+  "risk": "critical",
+  "findings": [
+    {
+      "id": "F-1787425407925",
+      "timestamp": "2026-08-22T19:03:27.925Z",
+      "severity": "critical",
+      "title": "Malware Detection",
+      "description": "Confirmed malware signature match",
+      "source": "incidentDetection",
+      "indicator": "malware",
+      "containmentAction": "immediate",
+      "classification": "unknown",
+      "confidence": 15,
+      "confidenceReason": "No pattern match",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 4,
+        "incidentCount": 4,
+        "confidence": 0,
+        "casesObserved": 4
+      },
+      "enhancedConfidence": 15,
+      "enhancedClassification": "unknown"
+    },
+    {
+      "id": "F-1787425407926",
+      "timestamp": "2026-08-22T19:03:27.926Z",
+      "severity": "info",
+      "title": "Incident Case Created",
+      "description": "Automated incident response case generated for malware",
+      "source": "automationEngine",
+      "classification": "unknown",
+      "confidence": 0,
+      "confidenceReason": "No pattern match",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 4,
+        "incidentCount": 4,
+        "confidence": 0,
+        "casesObserved": 4
+      },
+      "enhancedConfidence": 0,
+      "enhancedClassification": "unknown"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "EMERGENCY: Activate Incident Response Plan",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-002",
+      "title": "Isolate Affected System",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-003",
+      "title": "Collect Forensic Evidence",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-004",
+      "title": "Notify Security Team",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-005",
+      "title": "Document Incident",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-006",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T19:03:27.922Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787425407925",
+        "title": "Malware Detection",
+        "severity": "critical"
+      },
+      "timestamp": "2026-08-22T19:03:27.925Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787425407926",
+        "title": "Incident Case Created",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T19:03:27.926Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 6,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "EMERGENCY: Activate Incident Response Plan"
+          },
+          {
+            "id": "REC-002",
+            "title": "Isolate Affected System"
+          },
+          {
+            "id": "REC-003",
+            "title": "Collect Forensic Evidence"
+          },
+          {
+            "id": "REC-004",
+            "title": "Notify Security Team"
+          },
+          {
+            "id": "REC-005",
+            "title": "Document Incident"
+          },
+          {
+            "id": "REC-006",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T19:03:27.928Z"
+    }
+  ],
+  "riskScore": 100,
+  "incidentSeverity": "critical",
+  "containmentAction": "immediate",
+  "confidenceAnalysis": {
+    "performedAt": "2026-08-22T19:03:27.931Z",
+    "averageConfidence": 8,
+    "classifications": {
+      "legitimate": 0,
+      "malicious": 0,
+      "suspicious": 0,
+      "unknown": 2
+    }
+  },
+  "knowledgeEnrichment": {
+    "appliedAt": "2026-08-22T19:03:27.933Z",
+    "enhancedFindings": 2,
+    "insights": [
+      {
+        "artifact": "Malware Detection",
+        "knownGood": false,
+        "seenBefore": 4,
+        "incidents": 4,
+        "confidence": 0
+      },
+      {
+        "artifact": "Incident Case Created",
+        "knownGood": false,
+        "seenBefore": 4,
+        "incidents": 4,
+        "confidence": 0
+      }
+    ]
+  }
+}

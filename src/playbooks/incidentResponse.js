@@ -1,5 +1,7 @@
 import fs from 'fs/promises';
 import { createCase, addFinding, addRecommendations } from '../cases/caseManager.js';
+import { addConfidenceMetrics } from '../intelligence/confidenceEngine.js';
+import { applyKnowledgeLayer } from '../intelligence/knowledgeLayer.js';
 
 export async function incidentResponse(threatIndicator = 'suspicious-process') {
   // Step 1: Create incident case
@@ -109,6 +111,24 @@ export async function incidentResponse(threatIndicator = 'suspicious-process') {
     await fs.writeFile(`cases/${caseId}.json`, JSON.stringify(caseObj, null, 2));
 
     console.log(`✓ Risk: ${threat.severity} (Score: ${riskLevels[threat.severity]})`);
+
+    // Step 5a: Add confidence metrics
+    console.log('\nApplying confidence analysis...');
+    await addConfidenceMetrics(caseId);
+    console.log('✓ Confidence metrics applied');
+
+    // Step 5b: Apply knowledge layer enrichment (Sprint 2)
+    console.log('\nEnriching with historical knowledge...');
+    try {
+      const enrichment = await applyKnowledgeLayer(caseId);
+      if (enrichment.enhanced > 0) {
+        console.log(`✓ Enhanced ${enrichment.enhanced} finding(s) with historical knowledge`);
+      } else {
+        console.log('✓ No historical knowledge matched (new threat indicator)');
+      }
+    } catch (e) {
+      console.log('⚠ Knowledge enrichment skipped:', e.message);
+    }
 
     // Step 6: Return incident case
     const updatedCase = await fs.readFile(`cases/${caseId}.json`, 'utf-8');

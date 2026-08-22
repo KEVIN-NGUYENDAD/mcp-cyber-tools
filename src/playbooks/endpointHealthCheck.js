@@ -1,6 +1,8 @@
 import { exec } from 'child_process';
 import fs from 'fs/promises';
 import { createCase, addFinding, addRecommendations } from '../cases/caseManager.js';
+import { addConfidenceMetrics } from '../intelligence/confidenceEngine.js';
+import { applyKnowledgeLayer } from '../intelligence/knowledgeLayer.js';
 
 function runCommand(cmd) {
   return new Promise((resolve, reject) => {
@@ -180,6 +182,30 @@ export async function endpointHealthCheck() {
     caseObj.risk = riskScore <= 20 ? 'low' : riskScore <= 50 ? 'medium' : 'high';
     caseObj.riskScore = riskScore;
     await fs.writeFile(`cases/${caseId}.json`, JSON.stringify(caseObj, null, 2));
+
+    // Step 5a: Add confidence metrics to findings
+    console.log('\nApplying confidence analysis...');
+    await addConfidenceMetrics(caseId);
+    console.log('✓ Confidence metrics applied');
+
+    // Step 5b: Apply knowledge layer enrichment (Sprint 2)
+    console.log('\nEnriching with historical knowledge...');
+    try {
+      const enrichment = await applyKnowledgeLayer(caseId);
+      if (enrichment.enhanced > 0) {
+        console.log(`✓ Enhanced ${enrichment.enhanced} finding(s) with historical knowledge`);
+        if (enrichment.insights.length > 0) {
+          console.log('  Knowledge matched:');
+          enrichment.insights.forEach(i => {
+            console.log(`    - ${i.artifact}: ${i.seenBefore}x seen, ${i.confidence}% confidence`);
+          });
+        }
+      } else {
+        console.log('✓ No historical knowledge matched');
+      }
+    } catch (e) {
+      console.log('⚠ Knowledge enrichment skipped:', e.message);
+    }
 
     // Step 6: Generate recommendations
     console.log('\nGenerating recommendations...');
