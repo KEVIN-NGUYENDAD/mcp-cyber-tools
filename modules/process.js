@@ -22,12 +22,7 @@ export function registerProcessTools(server) {
     "Monitor process metrics",
     {},
     async () => {
-      const result = runPowerShell(`
-        Get-Process | Select-Object Name, Id, Handles, @{Name='WorkingSetMB';Expression={[math]::Round($_.WorkingSet/1MB,2)}}, CPU, @{Name='CreationTime';Expression={$_.StartTime}} |
-        Sort-Object WorkingSetMB -Descending |
-        Select-Object -First 20 |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-Process | Select-Object Name, Id, Handles, @{Name='WorkingSetMB';Expression={[math]::Round($_.WorkingSet/1MB,2)}}, CPU, @{Name='CreationTime';Expression={$_.StartTime}} | Sort-Object WorkingSetMB -Descending | Select-Object -First 20 | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -40,26 +35,7 @@ export function registerProcessTools(server) {
       processId: z.coerce.number()
     },
     async ({ processId }) => {
-      const result = runPowerShell(`
-        $proc = Get-Process -Id ${processId} -ErrorAction SilentlyContinue;
-        if ($proc) {
-          @{
-            Name = $proc.Name;
-            Id = $proc.Id;
-            Path = $proc.Path;
-            CommandLine = (Get-WmiObject Win32_Process -Filter "ProcessId=${processId}" -ErrorAction SilentlyContinue).CommandLine;
-            Handles = $proc.Handles;
-            Threads = $proc.Threads.Count;
-            WorkingSetMB = [math]::Round($proc.WorkingSet/1MB,2);
-            VirtualMemoryMB = [math]::Round($proc.VirtualMemorySize/1MB,2);
-            CPU = $proc.CPU;
-            StartTime = $proc.StartTime;
-            UserName = (Get-WmiObject Win32_Process -Filter "ProcessId=${processId}" -ErrorAction SilentlyContinue).GetOwner().Domain + '\' + (Get-WmiObject Win32_Process -Filter "ProcessId=${processId}" -ErrorAction SilentlyContinue).GetOwner().User;
-          } | ConvertTo-Json
-        } else {
-          "Process not found"
-        }
-      `);
+      const result = runPowerShell(`$proc = Get-Process -Id ${processId} -ErrorAction SilentlyContinue; if ($proc) { @{ Name = $proc.Name; Id = $proc.Id; Path = $proc.Path; CommandLine = (Get-WmiObject Win32_Process -Filter "ProcessId=${processId}" -ErrorAction SilentlyContinue).CommandLine; Handles = $proc.Handles; Threads = $proc.Threads.Count; WorkingSetMB = [math]::Round($proc.WorkingSet/1MB,2); VirtualMemoryMB = [math]::Round($proc.VirtualMemorySize/1MB,2); CPU = $proc.CPU; StartTime = $proc.StartTime; UserName = (Get-WmiObject Win32_Process -Filter "ProcessId=${processId}" -ErrorAction SilentlyContinue).GetOwner().Domain + '\\' + (Get-WmiObject Win32_Process -Filter "ProcessId=${processId}" -ErrorAction SilentlyContinue).GetOwner().User; } | ConvertTo-Json -Depth 5 } else { "Process not found" }`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -70,11 +46,7 @@ export function registerProcessTools(server) {
     "Display process tree (parent-child relationships)",
     {},
     async () => {
-      const result = runPowerShell(`
-        Get-WmiObject Win32_Process |
-        Select-Object ProcessId, Name, ParentProcessId |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-WmiObject Win32_Process | Select-Object ProcessId, Name, ParentProcessId | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -87,11 +59,7 @@ export function registerProcessTools(server) {
       pid: z.coerce.number()
     },
     async ({ pid }) => {
-      const result = runPowerShell(`
-        Get-Process -Id ${pid} -ErrorAction SilentlyContinue |
-        Select-Object Name, Id, Path, StartTime, Threads, Handles |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-Process -Id ${pid} -ErrorAction SilentlyContinue | Select-Object Name, Id, Path, StartTime, Threads, Handles | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -104,12 +72,7 @@ export function registerProcessTools(server) {
       limit: z.coerce.number().optional()
     },
     async ({ limit = 50 }) => {
-      const result = runPowerShell(`
-        Get-Process |
-        Sort-Object WorkingSet -Descending |
-        Select-Object -First ${limit} Name, Id, WorkingSet, CPU, StartTime |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First ${limit} Name, Id, WorkingSet, CPU, StartTime | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -122,13 +85,7 @@ export function registerProcessTools(server) {
       limit: z.coerce.number().optional()
     },
     async ({ limit = 10 }) => {
-      const result = runPowerShell(`
-        Get-Process |
-        Where-Object { $_.CPU -ne $null } |
-        Sort-Object CPU -Descending |
-        Select-Object -First ${limit} Name, Id, CPU |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-Process | Where-Object { $_.CPU -ne $null } | Sort-Object CPU -Descending | Select-Object -First ${limit} Name, Id, CPU | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -141,12 +98,7 @@ export function registerProcessTools(server) {
       limit: z.coerce.number().optional()
     },
     async ({ limit = 10 }) => {
-      const result = runPowerShell(`
-        Get-Process |
-        Sort-Object WorkingSet -Descending |
-        Select-Object -First ${limit} Name, Id, @{Name='MemoryMB';Expression={[math]::Round($_.WorkingSet/1MB,2)}} |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First ${limit} Name, Id, @{Name='MemoryMB';Expression={[math]::Round($_.WorkingSet/1MB,2)}} | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -165,12 +117,7 @@ export function registerProcessTools(server) {
       else if (metric === "cpu") sortField = "CPU";
       else sortField = "Handles";
 
-      const result = runPowerShell(`
-        Get-Process |
-        Sort-Object ${sortField} -Descending |
-        Select-Object -First ${limit} Name, Id, ${sortField} |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-Process | Sort-Object ${sortField} -Descending | Select-Object -First ${limit} Name, Id, ${sortField} | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -181,13 +128,7 @@ export function registerProcessTools(server) {
     "Find potentially suspicious processes",
     {},
     async () => {
-      const result = runPowerShell(`
-        $suspicious = @('svchost', 'wmiprvse', 'rundll32', 'regsvcs', 'regasm', 'InstallUtil', 'regsvr32');
-        Get-Process |
-        Where-Object { $_.Name -in $suspicious -or $_.Name -like '*temp*' -or $_.Name -like '*tmp*' } |
-        Select-Object Name, Id, Path, StartTime |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`$suspicious = @('svchost', 'wmiprvse', 'rundll32', 'regsvcs', 'regasm', 'InstallUtil', 'regsvr32'); Get-Process | Where-Object { $_.Name -in $suspicious -or $_.Name -like '*temp*' -or $_.Name -like '*tmp*' } | Select-Object Name, Id, Path, StartTime | ConvertTo-Json -Depth 5`);
       return formatResponse(result.success, result.data, result.error);
     }
   );

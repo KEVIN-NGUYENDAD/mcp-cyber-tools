@@ -11,15 +11,7 @@ export function registerIncidentTools(server) {
       incidentId: z.string()
     },
     async ({ incidentId }) => {
-      const result = runPowerShell(`
-        @{
-          SystemInfo = (Get-WmiObject Win32_OperatingSystem).Caption;
-          Timestamp = Get-Date;
-          Processes = (Get-Process).Count;
-          Connections = (Get-NetTCPConnection -State Established).Count;
-          Services = (Get-Service | Where-Object { $_.Status -eq 'Running' }).Count;
-        } | ConvertTo-Json
-      `);
+      const result = runPowerShell(`@{ SystemInfo = (Get-WmiObject Win32_OperatingSystem).Caption; Timestamp = Get-Date; Processes = (Get-Process).Count; Connections = (Get-NetTCPConnection -State Established).Count; Services = (Get-Service | Where-Object { $_.Status -eq 'Running' }).Count; } | ConvertTo-Json -Depth 5`);
       if (result.success) {
         const report = generateJsonReport(`Incident ${incidentId} Evidence`, result.data, "incident");
         return formatResponse(true, `Evidence collected and saved to: ${report.path}`);
@@ -28,14 +20,18 @@ export function registerIncidentTools(server) {
     }
   );
 
-  // 2. COLLECTPROCESSES (formerly runningProcesses)
+  // 2. COLLECTPROCESSES
   server.tool(
-    "runningProcesses",
-    "List running processes",
+    "collectProcesses",
+    "Collect all running processes snapshot",
     {},
     async () => {
-      console.log("\n🔥 runningProcesses CALLED - Testing marker\n");
-      return formatResponse(true, "DEBUG_MARKER_RUNNINGPROCESSES_WAVE5");
+      const result = runPowerShell(`Get-Process | Select-Object Name, Id, Path, StartTime, WorkingSet, CPU | ConvertTo-Json -Depth 5`);
+      if (result.success) {
+        const report = generateJsonReport("Process Collection", result.data, "incident");
+        return formatResponse(true, `Processes collected and saved to: ${report.path}`);
+      }
+      return formatResponse(false, "", result.error);
     }
   );
 
@@ -45,10 +41,7 @@ export function registerIncidentTools(server) {
     "Collect all services snapshot",
     {},
     async () => {
-      const result = runPowerShell(`
-        Get-Service | Select-Object Name, DisplayName, Status, StartType |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-Service | Select-Object Name, DisplayName, Status, StartType | ConvertTo-Json -Depth 5`);
       if (result.success) {
         const report = generateJsonReport("Services Collection", result.data, "incident");
         return formatResponse(true, `Services collected and saved to: ${report.path}`);
@@ -63,11 +56,7 @@ export function registerIncidentTools(server) {
     "Collect network connections snapshot",
     {},
     async () => {
-      const result = runPowerShell(`
-        Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue |
-        Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort, State, OwningProcess |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue | Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort, State, OwningProcess | ConvertTo-Json -Depth 5`);
       if (result.success) {
         const report = generateJsonReport("Network State Collection", result.data, "incident");
         return formatResponse(true, `Network state collected and saved to: ${report.path}`);
@@ -82,13 +71,7 @@ export function registerIncidentTools(server) {
     "Collect startup items and persistence mechanisms",
     {},
     async () => {
-      const result = runPowerShell(`
-        @{
-          StartupPrograms = (Get-CimInstance Win32_StartupCommand).Count;
-          ScheduledTasks = (Get-ScheduledTask | Where-Object { $_.State -ne 'Disabled' }).Count;
-          RunKeys = (Get-ItemProperty 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run' -ErrorAction SilentlyContinue).PSObject.Properties.Count;
-        } | ConvertTo-Json
-      `);
+      const result = runPowerShell(`@{ StartupPrograms = (Get-CimInstance Win32_StartupCommand).Count; ScheduledTasks = (Get-ScheduledTask | Where-Object { $_.State -ne 'Disabled' }).Count; RunKeys = (Get-ItemProperty 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run' -ErrorAction SilentlyContinue).PSObject.Properties.Count; } | ConvertTo-Json -Depth 5`);
       if (result.success) {
         const report = generateJsonReport("Startup Items Collection", result.data, "incident");
         return formatResponse(true, `Startup items collected and saved to: ${report.path}`);
@@ -103,11 +86,7 @@ export function registerIncidentTools(server) {
     "Collect firewall configuration",
     {},
     async () => {
-      const result = runPowerShell(`
-        Get-NetFirewallProfile |
-        Select-Object Name, Enabled, DefaultInboundAction, DefaultOutboundAction |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-NetFirewallProfile | Select-Object Name, Enabled, DefaultInboundAction, DefaultOutboundAction | ConvertTo-Json -Depth 5`);
       if (result.success) {
         const report = generateJsonReport("Firewall Collection", result.data, "incident");
         return formatResponse(true, `Firewall config collected and saved to: ${report.path}`);
@@ -122,13 +101,7 @@ export function registerIncidentTools(server) {
     "Collect Windows Defender status and threats",
     {},
     async () => {
-      const result = runPowerShell(`
-        @{
-          DefenderStatus = (Get-MpComputerStatus).AntivirusEnabled;
-          LastScanTime = (Get-MpComputerStatus).LastFullScanTime;
-          Threats = (Get-MpThreat).Count;
-        } | ConvertTo-Json
-      `);
+      const result = runPowerShell(`@{ DefenderStatus = (Get-MpComputerStatus).AntivirusEnabled; LastScanTime = (Get-MpComputerStatus).LastFullScanTime; Threats = (Get-MpThreat).Count; } | ConvertTo-Json -Depth 5`);
       if (result.success) {
         const report = generateJsonReport("Defender Collection", result.data, "incident");
         return formatResponse(true, `Defender info collected and saved to: ${report.path}`);
@@ -145,11 +118,7 @@ export function registerIncidentTools(server) {
       logName: z.enum(["Security", "System", "Application"]).optional()
     },
     async ({ logName = "Security" }) => {
-      const result = runPowerShell(`
-        Get-WinEvent -LogName '${logName}' -MaxEvents 1000 -ErrorAction SilentlyContinue |
-        Select-Object TimeCreated, Id, LevelDisplayName, Message |
-        ConvertTo-Json
-      `);
+      const result = runPowerShell(`Get-WinEvent -LogName '${logName}' -MaxEvents 1000 -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`);
       if (result.success) {
         const report = generateJsonReport(`${logName} Logs Collection`, result.data, "incident");
         return formatResponse(true, `Logs collected and saved to: ${report.path}`);
@@ -166,14 +135,7 @@ export function registerIncidentTools(server) {
       days: z.coerce.number().optional()
     },
     async ({ days = 7 }) => {
-      const result = runPowerShell(`
-        $startDate = (Get-Date).AddDays(-${days});
-        @{
-          EventLogs = (Get-WinEvent -FilterHashtable @{LogName='Security'} -MaxEvents 500 -ErrorAction SilentlyContinue | Where-Object { $_.TimeCreated -gt $startDate }).Count;
-          RecentFiles = (Get-ChildItem -Path "$env:USERPROFILE" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt $startDate }).Count;
-          StartupChanges = (Get-ScheduledTask | Where-Object { $_.LastRunTime -gt $startDate }).Count;
-        } | ConvertTo-Json
-      `);
+      const result = runPowerShell(`$startDate = (Get-Date).AddDays(-${days}); @{ EventLogs = (Get-WinEvent -FilterHashtable @{LogName='Security'} -MaxEvents 500 -ErrorAction SilentlyContinue | Where-Object { $_.TimeCreated -gt $startDate }).Count; RecentFiles = (Get-ChildItem -Path "$env:USERPROFILE" -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt $startDate }).Count; StartupChanges = (Get-ScheduledTask | Where-Object { $_.LastRunTime -gt $startDate }).Count; } | ConvertTo-Json -Depth 5`);
       if (result.success) {
         const report = generateJsonReport(`Incident Timeline - Last ${days} days`, result.data, "incident");
         return formatResponse(true, `Timeline generated and saved to: ${report.path}`);
