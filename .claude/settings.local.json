@@ -18,7 +18,9 @@
       "Bash(git commit -m 'feat: Case Depth Engines - Transform Raw Cases to Actionable Insights *)",
       "Bash(git commit -m ' *)",
       "Bash(node test-case-intelligence.js)",
-      "Bash(node test-cross-case-learning.js)"
+      "Bash(node test-cross-case-learning.js)",
+      "Bash(node test-knowledge-layer-sprint1.js)",
+      "Bash(git commit -m 'Sprint 1: Knowledge Layer MVP - Learning & Confidence Reuse *)"
     ]
   }
 }

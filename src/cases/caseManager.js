@@ -1,5 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { learnFromCase } from '../intelligence/knowledgeLayer.js';
 
 const CASES_DIR = 'cases';
 
@@ -167,5 +168,14 @@ export async function closeCase(caseId) {
     timestamp: now
   });
 
-  return await saveCase(caseId, caseData);
+  const saved = await saveCase(caseId, caseData);
+
+  // Sprint 2: Learning Hook - When case closes, learn from it
+  try {
+    await learnFromCase(caseId);
+  } catch (e) {
+    console.error(`Failed to learn from case ${caseId}:`, e.message);
+  }
+
+  return saved;
 }

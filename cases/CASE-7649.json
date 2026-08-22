@@ -1,0 +1,94 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-7649",
+  "title": "SoftLanding Detection Case",
+  "status": "closed",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T19:01:44.332Z"
+    },
+    {
+      "status": "closed",
+      "timestamp": "2026-08-22T19:01:44.340Z"
+    }
+  ],
+  "createdAt": "2026-08-22T19:01:44.332Z",
+  "updatedAt": "2026-08-22T19:01:44.340Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787425304334",
+      "timestamp": "2026-08-22T19:01:44.334Z",
+      "title": "SoftLanding",
+      "severity": "medium",
+      "description": "Detected SoftLanding registry artifact",
+      "source": "registry",
+      "classification": "legitimate",
+      "confidence": 95,
+      "confidenceReason": "Known OEM artifact"
+    },
+    {
+      "id": "F-1787425304336",
+      "timestamp": "2026-08-22T19:01:44.336Z",
+      "title": "Windows Defender",
+      "severity": "low",
+      "description": "Windows Defender service running",
+      "source": "servicesCheck",
+      "classification": "legitimate",
+      "confidence": 98,
+      "confidenceReason": "Microsoft security component"
+    }
+  ],
+  "recommendations": [],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T19:01:44.332Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787425304334",
+        "title": "SoftLanding",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-22T19:01:44.334Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787425304336",
+        "title": "Windows Defender",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T19:01:44.336Z"
+    },
+    {
+      "type": "STATUS_CHANGED",
+      "payload": {
+        "from": "open",
+        "to": "closed"
+      },
+      "timestamp": "2026-08-22T19:01:44.340Z"
+    },
+    {
+      "type": "CASE_LEARNED",
+      "payload": {
+        "artifactsLearned": 2
+      },
+      "timestamp": "2026-08-22T19:01:44.344Z"
+    }
+  ],
+  "confidenceAnalysis": {
+    "performedAt": "2026-08-22T19:01:44.337Z",
+    "averageConfidence": 97,
+    "classifications": {
+      "legitimate": 2,
+      "malicious": 0,
+      "suspicious": 0,
+      "unknown": 0
+    }
+  },
+  "closedAt": "2026-08-22T19:01:44.340Z"
+}
