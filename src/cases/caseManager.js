@@ -113,6 +113,37 @@ export async function addRecommendations(caseId, recommendations) {
   return await saveCase(caseId, caseData);
 }
 
+export async function approveRecommendation(caseId, recommendationId, approver = 'user') {
+  const caseData = await loadCase(caseId);
+  const now = new Date().toISOString();
+
+  // Find the recommendation
+  const rec = caseData.recommendations.find(r => r.id === recommendationId);
+  if (!rec) {
+    throw new Error(`Recommendation ${recommendationId} not found`);
+  }
+
+  // Mark as approved
+  rec.approved = true;
+  rec.approvedAt = now;
+  rec.approvedBy = approver;
+
+  // Record approval event
+  caseData.events.push({
+    type: 'RECOMMENDATION_APPROVED',
+    payload: {
+      recommendationId,
+      title: rec.title,
+      approver,
+      risk: rec.risk
+    },
+    timestamp: now
+  });
+
+  caseData.updatedAt = now;
+  return await saveCase(caseId, caseData);
+}
+
 export async function closeCase(caseId) {
   const caseData = await loadCase(caseId);
   const now = new Date().toISOString();

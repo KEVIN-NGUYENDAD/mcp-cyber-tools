@@ -1,0 +1,114 @@
+{
+  "caseId": "CASE-1149",
+  "exportedAt": "2026-08-22T17:15:42.976Z",
+  "findings": [
+    {
+      "id": "F-1787418942965",
+      "timestamp": "2026-08-22T17:15:42.965Z",
+      "severity": "info",
+      "title": "Operational Readiness Verified",
+      "description": "System passed all validation gates"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "Create System Baseline",
+      "risk": "safe",
+      "requiresApproval": true,
+      "approved": true,
+      "approvedAt": "2026-08-22T17:15:42.971Z",
+      "approvedBy": "tamngankevin@gmail.com",
+      "executed": true,
+      "executedAt": "2026-08-22T17:15:42.974Z",
+      "executionResult": {
+        "success": true,
+        "action": "REC-001",
+        "result": "System baseline created",
+        "file": "baseline\\BASELINE-2026-08-22.json",
+        "timestamp": "2026-08-22T17:15:42.974Z"
+      }
+    },
+    {
+      "id": "REC-002",
+      "title": "Export Evidence Package",
+      "risk": "safe",
+      "requiresApproval": true,
+      "approved": true,
+      "approvedAt": "2026-08-22T17:15:42.973Z",
+      "approvedBy": "tamngankevin@gmail.com"
+    },
+    {
+      "id": "REC-003",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T17:15:33.692Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787418942965",
+        "title": "Operational Readiness Verified",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:15:42.965Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 3,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "Create System Baseline"
+          },
+          {
+            "id": "REC-002",
+            "title": "Export Evidence Package"
+          },
+          {
+            "id": "REC-003",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T17:15:42.966Z"
+    },
+    {
+      "type": "RECOMMENDATION_APPROVED",
+      "payload": {
+        "recommendationId": "REC-001",
+        "title": "Create System Baseline",
+        "approver": "tamngankevin@gmail.com",
+        "risk": "safe"
+      },
+      "timestamp": "2026-08-22T17:15:42.971Z"
+    },
+    {
+      "type": "RECOMMENDATION_APPROVED",
+      "payload": {
+        "recommendationId": "REC-002",
+        "title": "Export Evidence Package",
+        "approver": "tamngankevin@gmail.com",
+        "risk": "safe"
+      },
+      "timestamp": "2026-08-22T17:15:42.973Z"
+    },
+    {
+      "type": "ACTION_EXECUTED",
+      "payload": {
+        "recommendationId": "REC-001",
+        "title": "Create System Baseline",
+        "success": true,
+        "result": "System baseline created"
+      },
+      "timestamp": "2026-08-22T17:15:42.974Z"
+    }
+  ]
+}
