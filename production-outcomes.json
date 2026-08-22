@@ -1,0 +1,49 @@
+{
+  "metadata": {
+    "collectionStartDate": "2026-08-22",
+    "environment": "production",
+    "status": "collection_active",
+    "casesCollected": 0,
+    "lastUpdated": "2026-08-22T00:00:00Z"
+  },
+  "outcomes": [
+    {
+      "caseId": "PROD-00001",
+      "date": "2026-08-23",
+      "timestamp": "2026-08-23T10:30:00Z",
+      "analyst": "analyst_id_001",
+      "systemOutput": {
+        "recommendation": "INVESTIGATE",
+        "confidence": 75,
+        "engine": "decision_engine",
+        "reasoning": "Unknown artifact with medium severity"
+      },
+      "analystInput": {
+        "decision": "INVESTIGATE",
+        "confidence": 82,
+        "reasoning": "Agreed with system analysis"
+      },
+      "outcome": {
+        "agreement": true,
+        "override": false,
+        "correctDecision": "INVESTIGATE",
+        "resultCorrect": true
+      }
+    }
+  ],
+  "statistics": {
+    "totalCases": 1,
+    "agreementRate": 100.0,
+    "overrideRate": 0.0,
+    "accuracyRate": 100.0,
+    "engineScores": {
+      "decisionEngine": 100.0,
+      "predictionEngine": null,
+      "copilotEngine": null,
+      "patternEngine": null,
+      "knowledgeLayer": null,
+      "comparatorEngine": null
+    }
+  },
+  "comments": "File created to begin production outcome collection. Real data will be added as production cases are processed."
+}
