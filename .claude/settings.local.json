@@ -31,7 +31,9 @@
       "Bash(node test-copilot-engine.js)",
       "Bash(git commit -m 'PHASE B: Investigation Copilot - Case-Level Intelligence *)",
       "Bash(node test-comparator-engine.js)",
-      "Bash(git commit -m 'PHASE C: Case Comparator - Multi-Case Intelligence *)"
+      "Bash(git commit -m 'PHASE C: Case Comparator - Multi-Case Intelligence *)",
+      "Bash(node test-pattern-engine.js)",
+      "Bash(git commit -m 'PHASE D: Pattern Engine - Attack Chain Recognition *)"
     ]
   }
 }

@@ -1,0 +1,18 @@
+{
+  "patternId": "PATTERN-928",
+  "sequence": [
+    "Persistence",
+    "Privilege Escalation"
+  ],
+  "firstSeen": "2026-08-22T20:21:55.623Z",
+  "lastSeen": "2026-08-22T20:21:55.625Z",
+  "occurrences": 2,
+  "confidence": 89.5,
+  "casesObserved": [
+    "CASE-1001",
+    "CASE-1004"
+  ],
+  "type": "privilege-escalation-chain",
+  "severity": "medium",
+  "description": "Attack progression: Persistence → Privilege Escalation"
+}

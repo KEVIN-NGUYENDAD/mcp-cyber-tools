@@ -1,0 +1,18 @@
+{
+  "patternId": "PATTERN-2640",
+  "sequence": [
+    "Privilege Escalation",
+    "Lateral Movement",
+    "Data Exfiltration"
+  ],
+  "firstSeen": "2026-08-22T20:21:55.627Z",
+  "lastSeen": "2026-08-22T20:21:55.627Z",
+  "occurrences": 1,
+  "confidence": 82,
+  "casesObserved": [
+    "CASE-1010"
+  ],
+  "type": "lateral-movement-chain",
+  "severity": "critical",
+  "description": "Attack progression: Privilege Escalation → Lateral Movement → Data Exfiltration"
+}
