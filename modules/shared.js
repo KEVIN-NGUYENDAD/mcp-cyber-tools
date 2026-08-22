@@ -5,9 +5,14 @@ export { z };
 
 export function runPowerShell(command) {
   try {
-    const output = execSync(`powershell -NoProfile -Command "${command}"`, { encoding: "utf8" });
+    const fullCommand = `powershell -NoProfile -Command "${command}"`;
+    console.log("DEBUG: Executing command:", fullCommand.substring(0, 100) + "...");
+    const output = execSync(fullCommand, { encoding: "utf8" });
+    console.log("DEBUG: Raw output length:", output.length);
+    console.log("DEBUG: First 200 chars:", output.substring(0, 200));
     return { success: true, data: output };
   } catch (error) {
+    console.log("DEBUG: Command failed:", error.message.substring(0, 100));
     return { success: false, error: error.message };
   }
 }
