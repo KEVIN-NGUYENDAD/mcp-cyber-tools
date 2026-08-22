@@ -3,6 +3,7 @@ import { createCase, addFinding, addRecommendations } from '../cases/caseManager
 import { addConfidenceMetrics } from '../intelligence/confidenceEngine.js';
 import { applyKnowledgeLayer } from '../intelligence/knowledgeLayer.js';
 import { decideFindingsForCase } from '../intelligence/decisionEngine.js';
+import { analyzeCaseFindings } from '../intelligence/copilotEngine.js';
 
 export async function incidentResponse(threatIndicator = 'suspicious-process') {
   // Step 1: Create incident case
@@ -144,6 +145,19 @@ export async function incidentResponse(threatIndicator = 'suspicious-process') {
       }
     } catch (e) {
       console.log('⚠ Decision analysis skipped:', e.message);
+    }
+
+    // Step 5d: Analyze case-level (PHASE B: Investigation Copilot)
+    console.log('\nAnalyzing case...');
+    try {
+      const copilotAnalysis = await analyzeCaseFindings(caseId);
+      console.log(`✓ Copilot analysis complete`);
+      console.log(`  - Case Recommendation: ${copilotAnalysis.caseRecommendation}`);
+      console.log(`  - Case Health: ${copilotAnalysis.caseHealth}`);
+      console.log(`  - Confidence: ${copilotAnalysis.confidence}%`);
+      console.log(`  - First Action: ${copilotAnalysis.firstAction}`);
+    } catch (e) {
+      console.log('⚠ Copilot analysis skipped:', e.message);
     }
 
     // Step 6: Return incident case

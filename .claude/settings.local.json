@@ -27,7 +27,9 @@
       "Bash(node test-decision-engine.js)",
       "Bash(node test-decision-engine-integration.js)",
       "Bash(git commit -m 'PHASE A: Decision Engine - Knowledge to Intelligence *)",
-      "Bash(git commit -m 'Session Handoff: PHASE A Complete - Decision Engine Operational *)"
+      "Bash(git commit -m 'Session Handoff: PHASE A Complete - Decision Engine Operational *)",
+      "Bash(node test-copilot-engine.js)",
+      "Bash(git commit -m 'PHASE B: Investigation Copilot - Case-Level Intelligence *)"
     ]
   }
 }
