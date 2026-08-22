@@ -1,6 +1,7 @@
 import { validateMachine } from './validateMachine.js';
 import { investigatePersistence } from './investigatePersistence.js';
 import { threatHuntPowerShell } from './threatHuntPowerShell.js';
+import { endpointHealthCheck } from './endpointHealthCheck.js';
 
 export const playbookRegistry = {
   // QA/Validation Playbooks
@@ -51,7 +52,7 @@ export const playbookRegistry = {
     }
   },
 
-  // Assessment Playbooks (Template)
+  // Assessment Playbooks
   endpointHealthCheck: {
     id: 'endpointHealthCheck',
     name: 'Endpoint Health Assessment',
@@ -59,7 +60,7 @@ export const playbookRegistry = {
     description: 'Comprehensive security posture assessment across Defender, Firewall, Services, Persistence',
     trigger: 'User: "Assess system security"',
     severity: 'high',
-    execute: null, // Not yet implemented
+    execute: endpointHealthCheck,
     expectedOutput: {
       caseType: 'Assessment',
       findings: ['Defender status', 'Firewall rules', 'Service anomalies'],
