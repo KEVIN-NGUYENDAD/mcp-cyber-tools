@@ -24,14 +24,8 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 100 }) => {
-      console.log("\n🔥🔥🔥 SECURITYLOGS CALLED - NEW CODE IS EXECUTING NOW 🔥🔥🔥\n");
-
-      return {
-        content: [{
-          type: "text",
-          text: "DEBUG_MARKER_SECURITYLOGS_CODE_LOADED_KEVIN_20260821"
-        }]
-      };
+      const result = runPowerShell(`Get-WinEvent -LogName 'Security' -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`);
+      return formatResponse(result.success, result.data, result.error);
     }
   );
 
