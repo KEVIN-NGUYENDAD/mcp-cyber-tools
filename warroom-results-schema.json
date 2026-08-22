@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-08-22T22:30:00Z",
+  "date": "2026-08-22",
+  "metadata": {
+    "casesAnalyzed": 50,
+    "decisionAccuracy": 68,
+    "previousDecisionAccuracy": 68,
+    "delta": 0,
+    "targetAccuracy": 90,
+    "gapToTarget": 22
+  },
+  "engineScores": {
+    "comparatorEngine": {
+      "score": 88,
+      "rank": 1,
+      "status": "STRONG",
+      "correctCases": 44,
+      "totalCases": 50
+    },
+    "knowledgeLayer": {
+      "score": 85,
+      "rank": 2,
+      "status": "STRONG",
+      "correctCases": 42,
+      "totalCases": 50
+    },
+    "patternEngine": {
+      "score": 82,
+      "rank": 3,
+      "status": "STRONG",
+      "correctCases": 41,
+      "totalCases": 50
+    },
+    "copilotEngine": {
+      "score": 50,
+      "rank": 4,
+      "status": "DEVELOPING",
+      "correctCases": 25,
+      "totalCases": 50
+    },
+    "predictionEngine": {
+      "score": 42.5,
+      "rank": 5,
+      "status": "DEVELOPING",
+      "correctCases": 21,
+      "totalCases": 50
+    },
+    "decisionEngine": {
+      "score": 40,
+      "rank": 6,
+      "status": "BOTTLENECK",
+      "correctCases": 20,
+      "totalCases": 50
+    }
+  },
+  "bottleneck": {
+    "engine": "Decision Engine",
+    "currentScore": 40,
+    "targetScore": 55,
+    "gap": 15,
+    "priority": 1
+  },
+  "nextAction": {
+    "type": "ROOT_CAUSE_ANALYSIS",
+    "target": "Decision Engine",
+    "method": "Data Discovery + Schema Verification",
+    "expectedOutcome": "Identify Why Decision Engine Fails"
+  }
+}
