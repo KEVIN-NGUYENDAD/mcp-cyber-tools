@@ -49,138 +49,190 @@ if (finding.title && finding.title.toLowerCase().includes('registry')) {
 
 ---
 
-## UNKNOWN SCHEMA (To Be Discovered)
+## ACTUAL SCHEMA (VERIFIED)
 
-### Questions for Real Data Inspection
+### Finding Object Structure (From Real Playbooks)
 
-```
-Actual Registry Path Field:
-  ❓ Is it finding.registryPath?
-  ❓ Is it finding.path?
-  ❓ Is it in finding.metadata?
-  ❓ Format and structure?
-
-Actual Signature Status Field:
-  ❓ Is it finding.signatureStatus?
-  ❓ Is it finding.signed?
-  ❓ Is it finding.signature.status?
-  ❓ Possible values?
-
-Actual Publisher/Vendor Field:
-  ❓ Is it finding.publisher?
-  ❓ Is it finding.vendor?
-  ❓ Is it finding.author?
-  ❓ Possible values (Unknown, System, Custom)?
-
-Actual Confidence Field:
-  ❓ Is it finding.confidence?
-  ❓ Is it in finding.metadata?
-  ❓ Scale (0-100, 0-1)?
-
-Actual Startup Location Field:
-  ❓ Is it finding.registryLocation?
-  ❓ How are startup locations identified?
-  ❓ Possible values (Run, RunOnce, Startup, etc)?
-
-Metadata Structure:
-  ❓ What fields exist in finding.metadata?
-  ❓ How is risk information stored?
-  ❓ How is history stored?
-```
-
----
-
-## SCHEMA DISCOVERY CHECKLIST
-
-### Phase 1: Inspect Real Findings
-- [ ] Open actual registry false-ignore cases
-- [ ] Extract 5 sample finding objects
-- [ ] Print full object structure
-- [ ] Document all top-level fields
-- [ ] Document all nested fields
-
-### Phase 2: Map Decision Engine Inputs
-- [ ] Trace what fields Decision Engine receives
-- [ ] Verify field names
-- [ ] Verify field types
-- [ ] Verify field availability for registry findings
-
-### Phase 3: Identify Rule Conditions
-- [ ] What field indicates "registry"?
-- [ ] What field indicates "unsigned"?
-- [ ] What field indicates "startup location"?
-- [ ] What field indicates "unknown vendor"?
-- [ ] What field indicates "not seen before"?
-
-### Phase 4: Build Evidence-Based Rule
-- [ ] Using ACTUAL fields (not assumptions)
-- [ ] Map each rule condition to real field
-- [ ] Validate on sample data
-- [ ] Test on 50-case suite
-- [ ] Accept only if delta > 0
-
----
-
-## DISCOVERY OUTPUT (To Create)
-
-When real data is inspected, this file will be updated with:
-
-```
-ACTUAL REGISTRY FINDING SCHEMA
-
-Finding.title: "[string]"
-Finding.description: "[string]"
-Finding.severity: "[high|medium|low]"
-Finding.registryPath: "[string or nested?]"
-Finding.publisher: "[Unknown|System|[vendor]]"
-Finding.signatureStatus: "[unsigned|signed|unknown]"
-Finding.confidence: "[number 0-100 or 0-1]"
-Finding.metadata: {
-  [to be documented]
+```javascript
+{
+  id: string (UUID)
+  timestamp: string (ISO 8601)
+  title: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  description: string
+  source: 'registryRunKeys' | 'registryRunOnce' | 'scheduledTasks' | 'servicesChecker'
+  classification: string (optional, from knowledge layer)
+  confidence: number (optional, from knowledge layer)
+  knowledgeContext: {
+    seenBefore: boolean
+    seenCount: number
+    incidentCount: number
+    confidence: number
+    classification: string
+  }
 }
-
-RULE CONDITIONS (MAPPED TO ACTUAL FIELDS)
-
-Rule: Unknown Unsigned Startup Registry
-  Condition 1: registryPath includes "Run" or "RunOnce"
-    Maps to: [actual field name]
-  Condition 2: signatureStatus = "unsigned"
-    Maps to: [actual field name]
-  Condition 3: publisher = "Unknown"
-    Maps to: [actual field name]
-  Action: INVESTIGATE (instead of IGNORE)
 ```
+
+### Fields That DO NOT EXIST ❌
+
+```
+vendor_confidence - ❌ NOT in finding
+is_unsigned - ❌ NOT in finding
+vendor_unknown - ❌ NOT in finding
+registryPath - ❌ NOT in finding
+publisher - ❌ NOT in finding
+signatureStatus - ❌ NOT in finding
+registryLocation - ❌ NOT in finding
+metadata - ❌ NOT in finding (not used)
+```
+
+These were assumed based on problem domain, but schema is simpler.
+
+### Actual Data Available for Registry Rule
+
+**From finding object:**
+- `finding.source` = 'registryRunKeys' ✅ (indicates registry)
+- `finding.title` = "Registry Startup: HKLM\..." ✅ (contains path as text)
+- `finding.description` = "Found startup entry in registry" ✅
+- `finding.severity` = 'low' | 'medium' | 'high' ✅
+- `finding.classification` = 'legitimate' | 'unknown' | etc ✅ (from knowledge layer)
+
+**From knowledge context (if available):**
+- `finding.knowledgeContext.classification` = 'legitimate' | 'malicious' | 'unknown' ✅
+- `finding.knowledgeContext.confidence` = 0-99 ✅
+- `finding.knowledgeContext.seenCount` ✅
+- `finding.knowledgeContext.incidentCount` ✅
 
 ---
 
-## NEXT STEP (Not This Session)
+## SCHEMA INSPECTION COMPLETE ✅
 
-**When real data is available:**
+### Phase 1: Real Findings Inspected ✓
+- ✅ Opened 41+ actual case files (cases/CASE-*.json)
+- ✅ Inspected playbook output (investigatePersistence.js)
+- ✅ Traced knowledge layer enrichment (knowledgeLayer.js)
+- ✅ Verified finding structure in Decision Engine inputs
 
-1. Inspect actual finding objects
-2. Fill in this schema document
-3. Update rule conditions with real field names
-4. Validate rule on sample data
-5. Run 50-case validation
-6. Commit only if delta > 0
+### Phase 2: Schema Verified ✓
+- ✅ Confirmed basic fields: id, timestamp, title, severity, description, source
+- ✅ Confirmed enrichment fields: classification, confidence, knowledgeContext
+- ✅ Confirmed MISSING fields: registryPath, publisher, signatureStatus, metadata
+
+### Phase 3: Rule Conditions Identified ✓
+What field indicates "registry"?
+  → `finding.source === 'registryRunKeys'` ✅
+
+What field indicates "unknown vendor"?
+  → `finding.classification === 'unknown'` (from knowledge layer) ✅
+  → OR `!finding.knowledgeContext` (not seen before) ✅
+
+What field indicates "startup location"?
+  → `finding.title.includes('Registry Run')` or `finding.source === 'registryRunKeys'` ✅
+
+What field indicates "confidence level"?
+  → `finding.knowledgeContext.confidence` (0-99) ✅
+  → OR `finding.severity` as fallback ✅
+
+### Phase 4: Evidence-Based Rule Ready ✓
+Using ACTUAL fields only:
+- `finding.source` = 'registryRunKeys' ✅
+- `finding.severity` = 'low' | 'medium' | 'high' ✅
+- `finding.classification` = 'unknown' | 'legitimate' ✅ (from knowledge layer)
 
 ---
 
-## PHILOSOPHY (Locked)
+## VERIFIED REGISTRY FINDING SCHEMA
+
+```javascript
+{
+  id: "F-1787430245403",
+  timestamp: "2026-08-22T20:24:05.403Z",
+  
+  // Core fields (always present)
+  title: "Registry Run Key",
+  description: "Persistence mechanism",
+  severity: "high",
+  source: "registryRunKeys",
+  
+  // Enrichment from knowledge layer (optional)
+  classification: "unknown" | "legitimate" | "malicious",
+  confidence: 55,
+  
+  // Knowledge context (if available)
+  knowledgeContext: {
+    seenBefore: false,
+    seenCount: 0,
+    incidentCount: 0,
+    confidence: 0,
+    classification: "unknown",
+    casesObserved: 0
+  }
+}
+```
+
+## RULE CONDITIONS (MAPPED TO ACTUAL FIELDS)
+
+### Rule: Unknown Registry Entry in Startup Location
+
+**Current False Ignore Pattern:**
+```
+Title includes "Registry"
+Severity = low
+Classification = unknown (or not in knowledge base)
+→ Decision = IGNORE (WRONG)
+```
+
+**Correct Decision Logic:**
+```javascript
+IF finding.source === 'registryRunKeys' 
+   AND (
+     finding.severity === 'low' 
+     OR finding.severity === 'medium'
+   )
+   AND (
+     !finding.knowledgeContext.seenBefore
+     OR finding.knowledgeContext.classification === 'unknown'
+   )
+THEN recommendation = INVESTIGATE (not IGNORE)
+```
+
+**Reason:** Unknown startup registry entries are persistence indicators,
+not known-safe OEM entries. They should be investigated, not ignored.
+
+---
+
+## NEXT STEP (Schema Discovery Complete)
+
+✅ Real data inspected (41+ case files + playbook sources)  
+✅ Schema documented (actual finding structure confirmed)  
+✅ Rule conditions mapped (to real fields: source, severity, classification)  
+
+**READY FOR IMPLEMENTATION:**
+
+1. ✅ Inspect actual finding objects → DONE
+2. ✅ Fill in this schema document → DONE (fields verified)
+3. ✅ Map rule conditions to real fields → DONE
+4. → Implement rule in Decision Engine (next)
+5. → Test on sample data (next)
+6. → Run 50-case validation (next)
+7. → Commit only if delta > 0 (gate)
+
+**Key Finding:** Schema is simpler than assumed.
+- No registryPath, publisher, signatureStatus fields.
+- Use existing: source, severity, classification, knowledgeContext.
+- Rule condition: unknown registry startup → INVESTIGATE (not IGNORE).
+
+---
+
+## PHILOSOPHY (Verified)
 
 ```
-Data before assumptions
-Evidence before rules
-Delta before merges
+Data before assumptions ✅
+Evidence before rules ✅
+Delta before merges → NEXT
 
-Do not guess at schema.
-Do not infer from synthetic data.
-Wait for ground truth.
-
-This regression taught us:
-Wrong schema assumptions → wrong implementation → regression caught
-
-Better to wait for real data than repeat the mistake.
+Schema inspection prevented repeat mistake.
+Now implementing with verified facts.
 ```
 
 ---
@@ -188,20 +240,32 @@ Better to wait for real data than repeat the mistake.
 ## CURRENT STATE
 
 ```
-Ground Truth Schema: ⏳ UNKNOWN (awaiting inspection)
-Failed Assumptions: ✅ DOCUMENTED
-Discovery Checklist: ✅ PREPARED
-Next Rule: 🚫 BLOCKED until schema known
+Ground Truth Schema: ✅ VERIFIED
+  - Finding structure: confirmed
+  - Available fields: documented
+  - Missing fields: identified (don't exist)
+  
+Failed Assumptions: ✅ ROOT CAUSE KNOWN
+  - vendor_confidence → use classification + knowledgeContext
+  - is_unsigned → not needed (use source + classification)
+  - vendor_unknown → use knowledgeContext.classification === 'unknown'
 
-Decision Accuracy: 68% (unchanged)
-Production Impact: ZERO (gate worked)
-System Health: EXCELLENT (rollback proved)
+Rule Ready: ✅ MAPPED TO REAL FIELDS
+  - Condition 1: source === 'registryRunKeys' ✅
+  - Condition 2: severity in ['low', 'medium', 'high'] ✅
+  - Condition 3: classification === 'unknown' OR !seenBefore ✅
+
+Decision Accuracy: 68% (target: 71% with this fix)
+Production Risk: ZERO (gate validated on previous regression)
+System Health: EXCELLENT
 ```
 
 ---
 
-**This is the highest-ROI work available right now.**
+**Schema discovery complete. Ready to implement.**
 
-Not coding. Understanding data. Preparing for correct implementation.
+🔬✅ Data understood.  
+📋✅ Rule conditions mapped.  
+⚙️→ Implementation next.
 
-🔬📊🧠
+🏆
