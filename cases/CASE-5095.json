@@ -1,6 +1,17 @@
 {
+  "version": "1.1.1-alpha",
   "caseId": "CASE-5095",
-  "exportedAt": "2026-08-22T17:18:15.705Z",
+  "title": "Persistence Investigation",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T17:18:14.971Z"
+    }
+  ],
+  "createdAt": "2026-08-22T17:18:14.971Z",
+  "updatedAt": "2026-08-22T17:18:15.707Z",
+  "risk": "low",
   "findings": [
     {
       "id": "F-1787419095690",
@@ -37,7 +48,16 @@
       "requiresApproval": true,
       "approved": true,
       "approvedAt": "2026-08-22T17:18:15.698Z",
-      "approvedBy": "tamngankevin@gmail.com"
+      "approvedBy": "tamngankevin@gmail.com",
+      "executed": true,
+      "executedAt": "2026-08-22T17:18:15.704Z",
+      "executionResult": {
+        "success": true,
+        "action": "REC-002",
+        "result": "Evidence package exported",
+        "file": "evidence\\EVIDENCE-2026-08-22.json",
+        "timestamp": "2026-08-22T17:18:15.705Z"
+      }
     },
     {
       "id": "REC-003",
@@ -46,7 +66,15 @@
       "requiresApproval": true,
       "approved": true,
       "approvedAt": "2026-08-22T17:18:15.700Z",
-      "approvedBy": "tamngankevin@gmail.com"
+      "approvedBy": "tamngankevin@gmail.com",
+      "executed": true,
+      "executedAt": "2026-08-22T17:18:15.707Z",
+      "executionResult": {
+        "success": true,
+        "action": "REC-003",
+        "result": "Case closed",
+        "timestamp": "2026-08-22T17:18:15.708Z"
+      }
     }
   ],
   "events": [
@@ -123,6 +151,26 @@
         "result": "System baseline created"
       },
       "timestamp": "2026-08-22T17:18:15.702Z"
+    },
+    {
+      "type": "ACTION_EXECUTED",
+      "payload": {
+        "recommendationId": "REC-002",
+        "title": "Create Persistence Baseline",
+        "success": true,
+        "result": "Evidence package exported"
+      },
+      "timestamp": "2026-08-22T17:18:15.704Z"
+    },
+    {
+      "type": "ACTION_EXECUTED",
+      "payload": {
+        "recommendationId": "REC-003",
+        "title": "Close Case",
+        "success": true,
+        "result": "Case closed"
+      },
+      "timestamp": "2026-08-22T17:18:15.707Z"
     }
   ]
 }

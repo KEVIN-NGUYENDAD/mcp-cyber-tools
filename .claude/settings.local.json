@@ -5,7 +5,8 @@
       "PowerShell(New-Item -Path \"C:\\\\Users\\\\tamng\\\\AppData\\\\Roaming\\\\Claude\\\\Projects\\\\mcp-cyber-tools\\\\modules\\\\process.js\" -ItemType File -Force)",
       "Bash(git add *)",
       "Bash(git commit -m 'feat: v1.1.1 Alpha Foundation Ready *)",
-      "Bash(git commit -m 'feat: Phase 1 - Approval Engine Complete *)"
+      "Bash(git commit -m 'feat: Phase 1 - Approval Engine Complete *)",
+      "Bash(git commit -m 'feat: Persistence Playbook - Digital DFIR Analyst Begins *)"
     ]
   }
 }

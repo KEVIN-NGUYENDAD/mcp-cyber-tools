@@ -1,6 +1,6 @@
 {
-  "caseId": "CASE-1149",
-  "createdAt": "2026-08-22T17:15:42.974Z",
+  "caseId": "CASE-5095",
+  "createdAt": "2026-08-22T17:18:15.702Z",
   "type": "SYSTEM_BASELINE",
   "description": "System state snapshot for comparison",
   "processes": "system",
