@@ -25,6 +25,35 @@ export function registerEventLogsTools(server) {
     },
     async ({ count = 100 }) => {
       const result = runPowerShell(`Get-WinEvent -LogName 'Security' -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`);
+
+      console.log("\n=== SECURITYLOGS DEBUG ===");
+      console.log("SUCCESS:", result.success);
+      console.log("DATA TYPE:", typeof result.data);
+      console.log("DATA LENGTH:", result.data?.length);
+
+      if (result.success && result.data) {
+        try {
+          const parsed = JSON.parse(result.data);
+          console.log("PARSED TYPE:", Array.isArray(parsed) ? "array" : typeof parsed);
+          console.log("PARSED LENGTH:", Array.isArray(parsed) ? parsed.length : "single object");
+
+          // Test: Return only first 3 items to see if small payload works
+          const sliced = Array.isArray(parsed) ? parsed.slice(0, 3) : [parsed];
+          console.log("RETURNING:", sliced.length, "items");
+          console.log("=== END DEBUG ===\n");
+
+          return {
+            content: [{
+              type: "text",
+              text: JSON.stringify(sliced, null, 2)
+            }]
+          };
+        } catch (e) {
+          console.log("PARSE ERROR:", e.message);
+          console.log("=== END DEBUG ===\n");
+        }
+      }
+
       return formatResponse(result.success, result.data, result.error);
     }
   );
