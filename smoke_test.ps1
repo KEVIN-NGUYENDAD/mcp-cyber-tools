@@ -155,9 +155,9 @@ Write-Host ""
 
 $results | ForEach-Object {
     $status = if ($_.Status -eq "PASS") {
-        "✅ PASS" | Write-Host -ForegroundColor Green -NoNewline
+        "PASS" | Write-Host -ForegroundColor Green -NoNewline
     } else {
-        "❌ FAIL" | Write-Host -ForegroundColor Red -NoNewline
+        "FAIL" | Write-Host -ForegroundColor Red -NoNewline
     }
     Write-Host " | $($_.Tool)" -ForegroundColor White
     if ($_.Error) {
@@ -169,15 +169,15 @@ Write-Host ""
 Write-Host "════════════════════════════════════════════════════════════" -ForegroundColor Cyan
 
 if ($failed -eq 0) {
-    Write-Host "OVERALL: ✅ PASS (15/15)" -ForegroundColor Green
+    Write-Host "OVERALL: PASS (15/15)" -ForegroundColor Green
     Write-Host ""
-    Write-Host "Status: RELEASE CANDIDATE ✅" -ForegroundColor Green
+    Write-Host "Status: RELEASE CANDIDATE" -ForegroundColor Green
     Write-Host "All core tools functioning correctly." -ForegroundColor Green
     exit 0
 } else {
-    Write-Host "OVERALL: ❌ FAIL ($passed/15 passed)" -ForegroundColor Red
+    Write-Host "OVERALL: FAIL ($passed/15 passed)" -ForegroundColor Red
     Write-Host ""
-    Write-Host "Status: NEEDS FIXING ❌" -ForegroundColor Red
+    Write-Host "Status: NEEDS FIXING" -ForegroundColor Red
     Write-Host "Fix $failed failing tool(s) before release." -ForegroundColor Red
     exit 1
 }
