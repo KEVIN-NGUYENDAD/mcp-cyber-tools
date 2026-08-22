@@ -1,0 +1,133 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-3341",
+  "title": "Incident Response: credential-dump",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T17:24:17.152Z"
+    }
+  ],
+  "createdAt": "2026-08-22T17:24:17.152Z",
+  "updatedAt": "2026-08-22T17:24:17.156Z",
+  "risk": "critical",
+  "findings": [
+    {
+      "id": "F-1787419457153",
+      "timestamp": "2026-08-22T17:24:17.153Z",
+      "severity": "critical",
+      "title": "Credential Dumping Attempt",
+      "description": "LSASS process access pattern detected",
+      "source": "incidentDetection",
+      "indicator": "credential-dump",
+      "containmentAction": "immediate"
+    },
+    {
+      "id": "F-1787419457154",
+      "timestamp": "2026-08-22T17:24:17.154Z",
+      "severity": "info",
+      "title": "Incident Case Created",
+      "description": "Automated incident response case generated for credential-dump",
+      "source": "automationEngine"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "EMERGENCY: Activate Incident Response Plan",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-002",
+      "title": "Isolate Affected System",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-003",
+      "title": "Collect Forensic Evidence",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-004",
+      "title": "Notify Security Team",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-005",
+      "title": "Document Incident",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-006",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T17:24:17.152Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419457153",
+        "title": "Credential Dumping Attempt",
+        "severity": "critical"
+      },
+      "timestamp": "2026-08-22T17:24:17.153Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419457154",
+        "title": "Incident Case Created",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:24:17.154Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 6,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "EMERGENCY: Activate Incident Response Plan"
+          },
+          {
+            "id": "REC-002",
+            "title": "Isolate Affected System"
+          },
+          {
+            "id": "REC-003",
+            "title": "Collect Forensic Evidence"
+          },
+          {
+            "id": "REC-004",
+            "title": "Notify Security Team"
+          },
+          {
+            "id": "REC-005",
+            "title": "Document Incident"
+          },
+          {
+            "id": "REC-006",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T17:24:17.156Z"
+    }
+  ],
+  "riskScore": 100,
+  "incidentSeverity": "critical",
+  "containmentAction": "immediate"
+}

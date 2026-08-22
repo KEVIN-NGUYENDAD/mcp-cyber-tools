@@ -11,7 +11,9 @@
       "Bash(node test-three-playbooks.js)",
       "Bash(git commit -m 'feat: Three Playbooks Proven - Digital DFIR Analyst Framework Complete *)",
       "Bash(git commit -m 'docs: Memory milestone - v1.1.1 Alpha framework complete *)",
-      "Bash(git commit -m 'feat: 4/4 Playbooks Complete - Framework Fully Operational *)"
+      "Bash(git commit -m 'feat: 4/4 Playbooks Complete - Framework Fully Operational *)",
+      "Bash(node test-five-playbooks.js)",
+      "Bash(git commit -m 'feat: 5 Playbooks - Incident Response Added *)"
     ]
   }
 }

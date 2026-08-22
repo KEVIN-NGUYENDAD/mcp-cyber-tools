@@ -1,0 +1,143 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-6042",
+  "title": "Endpoint Health Assessment",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T17:24:14.838Z"
+    }
+  ],
+  "createdAt": "2026-08-22T17:24:14.838Z",
+  "updatedAt": "2026-08-22T17:24:17.143Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787419457136",
+      "timestamp": "2026-08-22T17:24:17.136Z",
+      "severity": "info",
+      "title": "Windows Defender Active",
+      "description": "Antivirus protection is enabled",
+      "source": "defenderCheck"
+    },
+    {
+      "id": "F-1787419457137",
+      "timestamp": "2026-08-22T17:24:17.137Z",
+      "severity": "info",
+      "title": "Windows Firewall Active",
+      "description": "Host-based firewall is enabled",
+      "source": "firewallCheck"
+    },
+    {
+      "id": "F-1787419457139",
+      "timestamp": "2026-08-22T17:24:17.139Z",
+      "severity": "medium",
+      "title": "Persistence Indicators Detected",
+      "description": "Some unusual registry or task entries found",
+      "source": "persistenceCheck"
+    },
+    {
+      "id": "F-1787419457141",
+      "timestamp": "2026-08-22T17:24:17.141Z",
+      "severity": "info",
+      "title": "Overall System Health: Good",
+      "description": "No critical security issues detected",
+      "source": "healthEngine"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "Create System Baseline",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-002",
+      "title": "Export Health Package",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-003",
+      "title": "Schedule Weekly Assessment",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-004",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T17:24:14.838Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419457136",
+        "title": "Windows Defender Active",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:24:17.136Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419457137",
+        "title": "Windows Firewall Active",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:24:17.137Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419457139",
+        "title": "Persistence Indicators Detected",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-22T17:24:17.139Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419457141",
+        "title": "Overall System Health: Good",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:24:17.141Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 4,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "Create System Baseline"
+          },
+          {
+            "id": "REC-002",
+            "title": "Export Health Package"
+          },
+          {
+            "id": "REC-003",
+            "title": "Schedule Weekly Assessment"
+          },
+          {
+            "id": "REC-004",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T17:24:17.143Z"
+    }
+  ],
+  "riskScore": 15
+}
