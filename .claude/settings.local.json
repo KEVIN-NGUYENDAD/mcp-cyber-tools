@@ -7,7 +7,9 @@
       "Bash(git commit -m 'feat: v1.1.1 Alpha Foundation Ready *)",
       "Bash(git commit -m 'feat: Phase 1 - Approval Engine Complete *)",
       "Bash(git commit -m 'feat: Persistence Playbook - Digital DFIR Analyst Begins *)",
-      "Bash(git commit -m 'feat: Playbook Registry - Investigation Framework Ready *)"
+      "Bash(git commit -m 'feat: Playbook Registry - Investigation Framework Ready *)",
+      "Bash(node test-three-playbooks.js)",
+      "Bash(git commit -m 'feat: Three Playbooks Proven - Digital DFIR Analyst Framework Complete *)"
     ]
   }
 }

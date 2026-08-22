@@ -1,5 +1,6 @@
 import { validateMachine } from './validateMachine.js';
 import { investigatePersistence } from './investigatePersistence.js';
+import { threatHuntPowerShell } from './threatHuntPowerShell.js';
 
 export const playbookRegistry = {
   // QA/Validation Playbooks
@@ -34,7 +35,7 @@ export const playbookRegistry = {
     }
   },
 
-  // Threat Hunt Playbooks (Template)
+  // Threat Hunt Playbooks
   threatHuntPowerShell: {
     id: 'threatHuntPowerShell',
     name: 'Hunt PowerShell Activity',
@@ -42,7 +43,7 @@ export const playbookRegistry = {
     description: 'Hunt for suspicious encoded PowerShell commands and execution patterns',
     trigger: 'User: "Investigate PowerShell activity"',
     severity: 'medium',
-    execute: null, // Not yet implemented
+    execute: threatHuntPowerShell,
     expectedOutput: {
       caseType: 'Hunt',
       findings: ['PowerShell commands', 'Execution sources', 'Encoded payloads'],
