@@ -5,33 +5,15 @@ export { z };
 
 export function runPowerShell(command) {
   try {
-    // Layer 2 fix (IC-003A): Normalize multi-line PowerShell commands
-    // Replaces internal newlines + indentation with single spaces
-    // Preserves pipes and logical structure while preventing "empty pipe element" errors
     const normalizedCommand = command
       .trim()
       .replace(/\r?\n\s+/g, ' ');
 
     const fullCommand = `powershell -NoProfile -Command "${normalizedCommand}"`;
-
-    console.error("\n=== DEBUG: runPowerShell ===");
-    console.error("INPUT_COMMAND:", normalizedCommand.substring(0, 100) + "...");
-
     const output = execSync(fullCommand, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
-
-    console.error("RAW_OUTPUT_LENGTH:", output.length);
-    console.error("RAW_OUTPUT (first 1000):", output.substring(0, 1000));
-    console.error("=== END DEBUG ===\n");
 
     return { success: true, data: output };
   } catch (error) {
-    console.error("\n=== DEBUG: Command Failed ===");
-    console.error("ERROR_TYPE:", error.constructor.name);
-    console.error("ERROR_MESSAGE:", error.message.substring(0, 300));
-    if (error.stdout) console.error("ERROR_STDOUT:", error.stdout.substring(0, 300));
-    if (error.stderr) console.error("ERROR_STDERR:", error.stderr.substring(0, 300));
-    console.error("=== END DEBUG ===\n");
-
     return { success: false, error: error.message };
   }
 }

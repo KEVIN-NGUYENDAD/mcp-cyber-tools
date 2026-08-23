@@ -122,7 +122,18 @@
       "Bash(git commit -m 'docs: IC-003 Framework Analysis - Reframe as Successful Hardening Cycle *)",
       "Bash(git commit -m 'docs: Session Capstone - Framework Maturity Checkpoint Locked *)",
       "Bash(node \"C:\\\\Users\\\\tamng\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-tamng-AppData-Roaming-Claude-Projects-mcp-cyber-tools\\\\4ae596b7-5701-43fb-97b7-2e7ac353c0a0\\\\scratchpad\\\\test-escaping-v2.js\")",
-      "Bash(git commit -m 'fix: IC-003 Complete - Framework Layer 2 Normalization Proven *)"
+      "Bash(git commit -m 'fix: IC-003 Complete - Framework Layer 2 Normalization Proven *)",
+      "Bash(node \"C:\\\\Users\\\\tamng\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-tamng-AppData-Roaming-Claude-Projects-mcp-cyber-tools\\\\4ae596b7-5701-43fb-97b7-2e7ac353c0a0\\\\scratchpad\\\\test-encoded-command.js\")",
+      "Bash(git commit -m 'docs: IC-003 Completion Report - Framework Hardening Proven *)",
+      "Bash(node \"C:\\\\Users\\\\tamng\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-tamng-AppData-Roaming-Claude-Projects-mcp-cyber-tools\\\\4ae596b7-5701-43fb-97b7-2e7ac353c0a0\\\\scratchpad\\\\test-current-escaping.js\")",
+      "Bash(npm test *)",
+      "Bash(npm run *)",
+      "Bash(node test-ic003b-comprehensive.js)",
+      "Bash(git commit -m 'docs: IC-002 Remediation Plan & Baseline Validation *)",
+      "Bash(node \"C:\\\\Users\\\\tamng\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-tamng-AppData-Roaming-Claude-Projects-mcp-cyber-tools\\\\4ae596b7-5701-43fb-97b7-2e7ac353c0a0\\\\scratchpad\\\\test-null-redirect.js\")",
+      "Bash(powershell -NoProfile -Command 'quser 2>$null | ConvertFrom-String | Select-Object P1, P2, P3 | ConvertTo-Json')",
+      "Bash(git commit -m 'docs: Session Summary - IC-003 Closed, IC-002 Ready *)",
+      "Bash(git commit -m 'feat: IC-003B Complete - PowerShell Variable Escaping Verification *)"
     ]
   }
 }
