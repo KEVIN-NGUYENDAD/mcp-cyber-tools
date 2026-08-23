@@ -259,21 +259,117 @@
         "coverageGapsIdentified": 2,
         "notablePattern": "Office Update failure also seen in PROD-00002"
       }
+    },
+    {
+      "caseId": "PROD-00006",
+      "date": "2026-08-22",
+      "timestamp": "2026-08-22T18:45:00Z",
+      "investigation": "Authentication & Account Security Audit",
+      "analyst": "cyber_tools_team",
+      "systemOutput": {
+        "recommendation": "ESCALATE_VISIBILITY_GAP",
+        "confidence": 98,
+        "engine": "decision_engine",
+        "reasoning": "Authentication audit blocked: Security event log access denied. Cannot perform full authentication analysis."
+      },
+      "findings": {
+        "authenticationAnalysis": {
+          "status": "BLOCKED",
+          "blockedBy": "UnauthorizedAccessException",
+          "securityLogAccess": "DENIED",
+          "failedLogonData": "UNAVAILABLE",
+          "successfulLogonData": "UNAVAILABLE"
+        },
+        "coverageGaps": [
+          "Security Event Log Access Denied",
+          "Authentication History Unavailable",
+          "Failed Logon Tracking Blocked"
+        ]
+      },
+      "analystInput": {
+        "decision": "ESCALATE_VISIBILITY_GAP",
+        "confidence": 98,
+        "override": true,
+        "reasoning": "Agree: Visibility gap confirmed (access denied). Disagree with threat classification. This is infrastructure limitation, not security incident. Escalate as Visibility Gap, not Compromise Indicator."
+      },
+      "outcome": {
+        "agreement": false,
+        "override": true,
+        "correctDecision": "ESCALATE_VISIBILITY_GAP",
+        "resultCorrect": true,
+        "overrideReason": "System escalation appropriate for visibility gap. Not for threat level.",
+        "coverageGapsIdentified": 3,
+        "classification": "Visibility Gap, Not Incident"
+      }
+    },
+    {
+      "caseId": "PROD-00007",
+      "date": "2026-08-22",
+      "timestamp": "2026-08-22T19:30:00Z",
+      "investigation": "Browser Security Assessment",
+      "analyst": "cyber_tools_team",
+      "systemOutput": {
+        "recommendation": "MONITOR",
+        "confidence": 92,
+        "engine": "decision_engine",
+        "reasoning": "Browser security healthy. No malicious extensions, no hijacking, no compromise indicators. Performance concern: high memory usage."
+      },
+      "findings": {
+        "browsers": {
+          "installed": 3,
+          "edge": "Running",
+          "chrome": "Running",
+          "coccoc": "Installed",
+          "maliciousExtensions": 0,
+          "hijackingIndicators": 0
+        },
+        "extensions": {
+          "scanned": "Yes",
+          "malicious": 0,
+          "suspicious": 0,
+          "assessment": "Clean"
+        },
+        "performance": {
+          "memoryUsage": "6+ GB (high)",
+          "severity": "MEDIUM (performance not security)",
+          "assessment": "High browser memory consumption"
+        }
+      },
+      "analystInput": {
+        "decision": "MONITOR",
+        "confidence": 92,
+        "reasoning": "Browser security is strong. No compromise indicators. Memory usage is performance issue, not security risk."
+      },
+      "outcome": {
+        "agreement": true,
+        "override": false,
+        "correctDecision": "MONITOR",
+        "resultCorrect": true,
+        "threatsDetected": 0,
+        "hijackingDetected": false,
+        "assessment": "Browser integrity intact"
+      }
     }
   ],
   "statistics": {
-    "totalCases": 5,
-    "agreementRate": 100.0,
-    "overrideRate": 0.0,
+    "totalCases": 7,
+    "agreementRate": 85.7,
+    "overrideRate": 14.3,
     "accuracyRate": 100.0,
-    "engineScores": {
+    "enginesScores": {
       "decisionEngine": 100.0,
       "predictionEngine": null,
       "copilotEngine": null,
       "patternEngine": null,
       "knowledgeLayer": null,
       "comparatorEngine": null
+    },
+    "observationSummary": {
+      "threatsDetected": 0,
+      "threatsFalseNegatives": 0,
+      "visibilityGapsDetected": 5,
+      "bottleneckCandidates": 1
     }
   },
-  "comments": "PROD-00001-00005: Five real production outcomes collected. FIRST PATTERN REVIEW COMPLETE. Key discovery: Visibility Gap is repeating (40%), not threats. No IOC in 5 cases. Observations emerging: Firewall (2/5), Office Update (2/5), Inventory (1/5). Hypothesis forming: Visibility may be bottleneck, not detection. PROD-00006 designed to test visibility hypothesis via Authentication Audit."
+  "comments": "PROD-00001-00007: Seven production outcomes collected. Dataset coverage: Persistence, Endpoint, Network, Threat Hunt, Software, Authentication, Browser. Key discovery: Decision Quality is NOT the bottleneck. Visibility Quality IS emerging bottleneck. Evidence: 0 threats detected, 5 visibility gaps across cases, 1 bottleneck candidate (Authentication Visibility Gap at 2/7 frequency). PROD-00006 first analyst override: classified as Visibility Gap, not Incident. PROD-00007: Browser security clean. Moving toward PROD-00008-00010 for baseline confirmation."
 }
