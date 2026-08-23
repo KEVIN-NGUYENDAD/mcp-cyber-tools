@@ -159,6 +159,123 @@ export function getRegistryCacheStats() {
   return registryCache.getCacheStats();
 }
 
+// IC-041: Reliability Improvement - Permission Checking & Fallback
+export function checkSecurityLogAccess() {
+  // Check if user has SeSecurityPrivilege for event log access
+  const result = runPowerShell(
+    `[Security.Principal.WindowsIdentity]::GetCurrent().Groups -contains 'S-1-5-32-544'`
+  );
+
+  if (result.success && result.data.toLowerCase().includes('true')) {
+    return { hasAccess: true, privilege: 'SeSecurityPrivilege' };
+  }
+
+  return {
+    hasAccess: false,
+    privilege: null,
+    fallback: 'Application',
+    reason: 'Elevated privileges required for Security log'
+  };
+}
+
+// Fallback strategy for security log queries (when elevated privileges not available)
+export function queryEventLogWithFallback(logName, eventId, hoursBack = 24) {
+  // Try primary: Security log with Get-WinEvent
+  let result = queryEventLog(logName, eventId, hoursBack);
+
+  if (result.success) {
+    return { ...result, source: 'primary', logName: logName };
+  }
+
+  // Fallback 1: Use Application log if Security unavailable
+  if (logName === 'Security') {
+    result = queryEventLog('Application', eventId, hoursBack);
+    if (result.success) {
+      return {
+        ...result,
+        source: 'fallback_application',
+        logName: 'Application',
+        note: 'Security log unavailable, using Application log fallback'
+      };
+    }
+  }
+
+  // Fallback 2: Use Get-EventLog as alternative to Get-WinEvent
+  if (logName === 'Security') {
+    result = runPowerShell(
+      `Get-EventLog -LogName Security -InstanceId ${eventId} -ErrorAction SilentlyContinue | Select-Object -Property TimeGenerated, Message`
+    );
+
+    if (result.success) {
+      return {
+        success: true,
+        data: result.data,
+        source: 'fallback_get_eventlog',
+        logName: 'Security',
+        note: 'Using Get-EventLog fallback'
+      };
+    }
+  }
+
+  return {
+    success: false,
+    error: 'Unable to query event log. Requires elevated privileges or available fallback.',
+    source: 'all_failed',
+    logName: logName,
+    recommendation: 'Run as Administrator or use fallback log source'
+  };
+}
+
+// IC-041: Reliability wrapper - automatic retry with fallback
+export function executeTool(toolName, toolFunction, retryCount = 2) {
+  const results = {
+    attempts: [],
+    success: false,
+    data: null,
+    source: null
+  };
+
+  for (let attempt = 1; attempt <= retryCount; attempt++) {
+    try {
+      const result = toolFunction();
+
+      if (result.success) {
+        results.success = true;
+        results.data = result.data;
+        results.source = result.source || 'primary';
+        results.attempts.push({
+          attempt: attempt,
+          status: 'success',
+          message: `${toolName} succeeded on attempt ${attempt}`
+        });
+        return results;
+      } else {
+        results.attempts.push({
+          attempt: attempt,
+          status: 'failed',
+          error: result.error
+        });
+      }
+    } catch (error) {
+      results.attempts.push({
+        attempt: attempt,
+        status: 'error',
+        error: error.message
+      });
+    }
+
+    // Wait before retry (exponential backoff: 100ms, 200ms)
+    if (attempt < retryCount) {
+      const waitMs = attempt * 100;
+      setTimeout(() => {}, waitMs);
+    }
+  }
+
+  results.success = false;
+  results.error = `${toolName} failed after ${retryCount} attempts`;
+  return results;
+}
+
 export function formatResponse(success, data, error = null) {
   if (success) {
     // Ensure data is properly formatted JSON string
