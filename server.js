@@ -1,5 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { instrumentTool, TelemetryEngine } from "./modules/telemetry.js";
 
 // Import Phase 1 modules
 import { registerHostTools } from "./modules/host.js";
@@ -24,6 +25,15 @@ const server = new McpServer({
   name: "cyber-tools",
   version: "1.0.0"
 });
+
+// Initialize telemetry engine (creates telemetry directory)
+const telemetryEngine = new TelemetryEngine();
+
+// Wrap server.tool to automatically instrument all tools
+const originalTool = server.tool.bind(server);
+server.tool = (name, description, schema, handler) => {
+  return originalTool(name, description, schema, instrumentTool(name, handler));
+};
 
 console.error("Loading Phase 1 modules...");
 registerHostTools(server);

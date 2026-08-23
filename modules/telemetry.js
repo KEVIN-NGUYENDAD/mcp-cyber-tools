@@ -1,8 +1,8 @@
 // CYBER-TOOLS TELEMETRY SYSTEM
 // Records every tool execution with full context
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 class TelemetryEngine {
   constructor(telemetryPath = './telemetry') {
@@ -129,7 +129,4 @@ function instrumentTool(toolName, toolFunction) {
   };
 }
 
-module.exports = {
-  TelemetryEngine,
-  instrumentTool
-};
+export { TelemetryEngine, instrumentTool };
