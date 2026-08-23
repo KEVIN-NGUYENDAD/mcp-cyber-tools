@@ -18,6 +18,7 @@
     "delta": "node scripts/delta.js",
     "check:tools": "node scripts/validate.js",
     "gate": "node scripts/gate.js",
+    "recommend": "node scripts/recommend.js",
     "certify": "npm run deploy:verify && npm run qa:tier1 && npm run qa:regression && npm run report:generate && npm run report:validate",
     "validate": "npm run certify && npm run report:clean",
     "intelligence:validate": "npm run test:validation"

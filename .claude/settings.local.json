@@ -139,7 +139,10 @@
       "Bash(node test-ic002-node.js)",
       "Bash(git commit -m 'docs: IC-003 Framework Hardening Complete - Full Delta Measurement *)",
       "Bash(git commit -m 'docs: Session Handoff - IC-003 Framework Hardening Complete *)",
-      "Bash(git commit -m 'feat: Delta Engine MVP v0.1 - Measurement Automation Complete *)"
+      "Bash(git commit -m 'feat: Delta Engine MVP v0.1 - Measurement Automation Complete *)",
+      "Bash(git commit -m 'feat: Sprint 1 - Validation Runner Complete *)",
+      "Bash(git commit -m 'feat: Sprint 2 - PASS/FAIL Gate Complete *)",
+      "Bash(git commit -m 'feat: Sprint 3 - Recommendation Factory Complete *)"
     ]
   }
 }

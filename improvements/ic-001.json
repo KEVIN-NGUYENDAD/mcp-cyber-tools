@@ -1,8 +1,25 @@
 {
   "cycle": "IC-001",
-  "title": "Account Visibility",
-  "metric": "Tools working reliably",
+  "problem": "Account Visibility Gap",
+  "evidence": [
+    "localUsers command failing silently",
+    "localAdmins command failing silently",
+    "MCP stdout protocol corrupted"
+  ],
+  "cause": "stdout protocol corruption (console.log mixed with MCP stream)",
+  "confidence": 99,
+  "recommended_actions": [
+    {
+      "action": "Replace console.log() with console.error() for debug logs",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
   "before": 0,
   "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
   "date": "2026-08-22"
 }

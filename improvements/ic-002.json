@@ -1,8 +1,38 @@
 {
   "cycle": "IC-002",
-  "title": "Authentication Visibility",
-  "metric": "Security Event Log access",
+  "problem": "Authentication Visibility Gap",
+  "evidence": [
+    "Get-WinEvent -ListLog Security throws UnauthorizedAccessException",
+    "securityLogs tool returns empty",
+    "failedLogons tool returns empty",
+    "successfulLogons tool returns empty"
+  ],
+  "cause": "Privilege boundary (SeSecurityPrivilege required)",
+  "confidence": 97,
+  "recommended_actions": [
+    {
+      "action": "Run PowerShell as Administrator",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    },
+    {
+      "action": "Verify user has SeSecurityPrivilege",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    },
+    {
+      "action": "Refresh logon token (logoff/logon)",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
   "before": 0,
   "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
   "date": "2026-08-23"
 }
