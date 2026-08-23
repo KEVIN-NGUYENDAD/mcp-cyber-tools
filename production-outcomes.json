@@ -60,10 +60,98 @@
         "resultCorrect": true,
         "coverageGapsIdentified": 2
       }
+    },
+    {
+      "caseId": "PROD-00002",
+      "date": "2026-08-22",
+      "timestamp": "2026-08-22T15:45:00Z",
+      "investigation": "Endpoint Health Check",
+      "analyst": "cyber_tools_team",
+      "systemOutput": {
+        "recommendation": "MONITOR",
+        "confidence": 91,
+        "engine": "decision_engine",
+        "reasoning": "Endpoint health nominal. Security services running, defender active, network normal."
+      },
+      "findings": {
+        "securityServices": {
+          "defenderStatus": "Active",
+          "firewallStatus": "Unknown",
+          "confidence": 85,
+          "notes": "Firewall visibility limited - access denied"
+        },
+        "eventLogs": {
+          "securityLogs": "Access Denied",
+          "systemLogs": "Normal",
+          "notes": "Cannot verify recent security events"
+        },
+        "coverageGaps": [
+          "Security Event Log Access Denied",
+          "Firewall Status Unknown"
+        ]
+      },
+      "analystInput": {
+        "decision": "MONITOR",
+        "confidence": 91,
+        "reasoning": "No obvious compromise. Coverage gaps are access limitation, not security finding."
+      },
+      "outcome": {
+        "agreement": true,
+        "override": false,
+        "correctDecision": "MONITOR",
+        "resultCorrect": true,
+        "coverageGapsIdentified": 2
+      }
+    },
+    {
+      "caseId": "PROD-00003",
+      "date": "2026-08-22",
+      "timestamp": "2026-08-22T16:30:00Z",
+      "investigation": "Network Security Assessment",
+      "analyst": "cyber_tools_team",
+      "systemOutput": {
+        "recommendation": "MONITOR",
+        "confidence": 88,
+        "engine": "decision_engine",
+        "reasoning": "Network baseline normal. Active connections expected, listening ports appropriate."
+      },
+      "findings": {
+        "activeConnections": {
+          "count": 95,
+          "assessment": "Expected for business operations",
+          "confidence": 92
+        },
+        "listeningPorts": {
+          "count": 8,
+          "assessment": "Standard services",
+          "confidence": 94
+        },
+        "firewallRules": {
+          "status": "Unknown",
+          "notes": "Cannot verify firewall rule configuration",
+          "confidence": 60
+        },
+        "coverageGaps": [
+          "Firewall Status Unknown",
+          "Firewall Rules Visibility Limited"
+        ]
+      },
+      "analystInput": {
+        "decision": "MONITOR",
+        "confidence": 88,
+        "reasoning": "Network traffic normal. Firewall gap is operational constraint, not security issue."
+      },
+      "outcome": {
+        "agreement": true,
+        "override": false,
+        "correctDecision": "MONITOR",
+        "resultCorrect": true,
+        "coverageGapsIdentified": 2
+      }
     }
   ],
   "statistics": {
-    "totalCases": 1,
+    "totalCases": 3,
     "agreementRate": 100.0,
     "overrideRate": 0.0,
     "accuracyRate": 100.0,
@@ -76,5 +164,5 @@
       "comparatorEngine": null
     }
   },
-  "comments": "PROD-00001: Real production outcome from Persistence Audit workflow. Clean case baseline established. Coverage gaps identified as potential improvement cluster. Production measurement officially started 2026-08-22."
+  "comments": "PROD-00001-00003: Three real production outcomes collected. Pattern emerging: Firewall visibility gap in 2/3 cases (PROD-00002, PROD-00003). Coverage gap cluster identified. Production baseline building (n=3)."
 }
