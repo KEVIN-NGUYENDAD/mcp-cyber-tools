@@ -349,14 +349,64 @@
         "hijackingDetected": false,
         "assessment": "Browser integrity intact"
       }
+    },
+    {
+      "caseId": "PROD-00008",
+      "date": "2026-08-22",
+      "timestamp": "2026-08-22T20:15:00Z",
+      "investigation": "Removable Media & USB Security Audit",
+      "analyst": "cyber_tools_team",
+      "systemOutput": {
+        "recommendation": "MONITOR",
+        "confidence": 94,
+        "engine": "decision_engine",
+        "reasoning": "USB security healthy. No malicious USB devices, no data exfiltration, no BadUSB indicators detected."
+      },
+      "findings": {
+        "usbDevices": {
+          "connected": 0,
+          "detected": false,
+          "assessment": "No USB devices currently connected"
+        },
+        "removableStorage": {
+          "accessed": false,
+          "recentActivity": "None",
+          "assessment": "No recent removable media access"
+        },
+        "malwareIndicators": {
+          "usbMalware": false,
+          "badusb": false,
+          "dataExfiltration": false,
+          "assessment": "No USB-based malware indicators"
+        },
+        "operationalPatterns": {
+          "officeHubFailure": true,
+          "frequency": "3/8",
+          "status": "Recurring but not USB-related",
+          "assessment": "Office update failures confirmed recurring (PROD-00002, PROD-00005, PROD-00008)"
+        }
+      },
+      "analystInput": {
+        "decision": "MONITOR",
+        "confidence": 94,
+        "reasoning": "USB security is clean. No malware, no exfiltration. Office update failure is operational issue, not security risk."
+      },
+      "outcome": {
+        "agreement": true,
+        "override": false,
+        "correctDecision": "MONITOR",
+        "resultCorrect": true,
+        "usbThreats": 0,
+        "assessment": "USB security verified clean"
+      }
     }
   ],
   "statistics": {
-    "totalCases": 7,
-    "agreementRate": 85.7,
-    "overrideRate": 14.3,
+    "totalCases": 8,
+    "agreementRate": 87.5,
+    "overrideRate": 12.5,
     "accuracyRate": 100.0,
-    "enginesScores": {
+    "engineScores": {
       "decisionEngine": 100.0,
       "predictionEngine": null,
       "copilotEngine": null,
@@ -367,9 +417,10 @@
     "observationSummary": {
       "threatsDetected": 0,
       "threatsFalseNegatives": 0,
-      "visibilityGapsDetected": 5,
+      "visibilityGapsDetected": 4,
+      "operationalIssuesDetected": 2,
       "bottleneckCandidates": 1
     }
   },
-  "comments": "PROD-00001-00007: Seven production outcomes collected. Dataset coverage: Persistence, Endpoint, Network, Threat Hunt, Software, Authentication, Browser. Key discovery: Decision Quality is NOT the bottleneck. Visibility Quality IS emerging bottleneck. Evidence: 0 threats detected, 5 visibility gaps across cases, 1 bottleneck candidate (Authentication Visibility Gap at 2/7 frequency). PROD-00006 first analyst override: classified as Visibility Gap, not Incident. PROD-00007: Browser security clean. Moving toward PROD-00008-00010 for baseline confirmation."
+  "comments": "PROD-00001-00008: Eight production outcomes collected (5/8 clean, 1/8 with gaps, 1/8 blocked, 1/8 issues). Dataset coverage complete: Persistence, Endpoint, Network, Threat Hunt, Software, Authentication, Browser, USB. PATTERN RANKING EMERGING: #1 Office Hub Failures (3/8=37.5%, operational), #2 Auth Visibility Gap (2/8=25%, bottleneck candidate), #3 Firewall Visibility Gap (2/8=25%, monitor). Key insight: Visibility gaps NOT classified as incidents. Operational issues NOT over-escalated. Moving to PROD-00009-00010 for n=10 baseline confirmation."
 }
