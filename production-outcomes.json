@@ -207,10 +207,62 @@
         "resultCorrect": true,
         "notableAbsence": "No firewall gap in threat hunt (only appears in endpoint/network investigations)"
       }
+    },
+    {
+      "caseId": "PROD-00005",
+      "date": "2026-08-22",
+      "timestamp": "2026-08-22T18:00:00Z",
+      "investigation": "Software Inventory & Vulnerability Assessment",
+      "analyst": "cyber_tools_team",
+      "systemOutput": {
+        "recommendation": "MONITOR",
+        "confidence": 87,
+        "engine": "decision_engine",
+        "reasoning": "Software inventory baseline acceptable. No critical vulnerabilities detected. Minor update failures noted but non-blocking."
+      },
+      "findings": {
+        "softwareInventory": {
+          "totalInstalled": 118,
+          "critical": 0,
+          "high": 1,
+          "medium": 3,
+          "assessment": "Acceptable baseline"
+        },
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 1,
+          "medium": 3,
+          "total": 4,
+          "description": "Minor vulnerabilities, no active exploits"
+        },
+        "updateFailures": {
+          "detected": true,
+          "details": "Microsoft Office Hub Update Failure 0x80073D02",
+          "severity": "low",
+          "status": "Non-blocking"
+        },
+        "coverageGaps": [
+          "Software Inventory Unavailable (partial)",
+          "Microsoft Office Hub Update Failure"
+        ]
+      },
+      "analystInput": {
+        "decision": "MONITOR",
+        "confidence": 87,
+        "reasoning": "Software baseline acceptable. Minor issues noted but no urgent patches required. Update failure is environmental, not security."
+      },
+      "outcome": {
+        "agreement": true,
+        "override": false,
+        "correctDecision": "MONITOR",
+        "resultCorrect": true,
+        "coverageGapsIdentified": 2,
+        "notablePattern": "Office Update failure also seen in PROD-00002"
+      }
     }
   ],
   "statistics": {
-    "totalCases": 4,
+    "totalCases": 5,
     "agreementRate": 100.0,
     "overrideRate": 0.0,
     "accuracyRate": 100.0,
@@ -223,5 +275,5 @@
       "comparatorEngine": null
     }
   },
-  "comments": "PROD-00001-00004: Four real production outcomes collected. Correlation emerging: All four investigation types show CLEAN/MONITOR pattern. Firewall visibility gap now at 2/4 cases (50%, appearing in network-focused investigations). Production baseline building (n=4, target n=10). First pattern review possible at n=5."
+  "comments": "PROD-00001-00005: Five real production outcomes collected. FIRST PATTERN REVIEW COMPLETE. Key discovery: Visibility Gap is repeating (40%), not threats. No IOC in 5 cases. Observations emerging: Firewall (2/5), Office Update (2/5), Inventory (1/5). Hypothesis forming: Visibility may be bottleneck, not detection. PROD-00006 designed to test visibility hypothesis via Authentication Audit."
 }
