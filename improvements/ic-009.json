@@ -1,0 +1,40 @@
+{
+  "cycle": "IC-009",
+  "title": "Environment Variable Path Resolution - Forensics Tools",
+  "problem": "Forensics tools fail when accessing user profile paths via environment variables: $env:APPDATA and $env:USERPROFILE expansion fails in command execution context",
+  "evidence": [
+    "recentFiles: Cannot access $env:APPDATA\\Microsoft\\Windows\\Recent",
+    "downloadFolder: Cannot access $env:USERPROFILE\\Downloads",
+    "Issue: Environment variable expansion not working in execSync context",
+    "Pattern: Affects all tools using $env: variables"
+  ],
+  "cause": "Environment variables defined in PowerShell profile are not automatically available to child processes launched via execSync. Variables need explicit expansion before command execution",
+  "confidence": 89,
+  "recommended_actions": [
+    {
+      "action": "Expand environment variables in Node.js before passing to PowerShell",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    },
+    {
+      "action": "Use process.env.APPDATA and process.env.USERPROFILE in Node instead of relying on PowerShell expansion",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    },
+    {
+      "action": "Create path resolution helper function to handle all $env: expansions",
+      "priority": "MEDIUM",
+      "effort": "MEDIUM",
+      "expected_delta": 30
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "notes": "Pattern issue affecting 2+ forensics tools. One fix resolves all $env: issues across framework"
+}

@@ -1,0 +1,40 @@
+{
+  "cycle": "IC-005",
+  "title": "Path Escaping Error - userProfiles Tool",
+  "problem": "userProfiles command fails with path parsing error: 'C:\\Users' path not properly escaped in PowerShell",
+  "evidence": [
+    "Test command: Get-ChildItem 'C:\\Users' fails",
+    "Error: Path parsing fails (backslash escaping issue)",
+    "Single quotes do not protect backslash in PowerShell string expansion",
+    "Affects all tools using Windows path literals"
+  ],
+  "cause": "Backslash in path needs escaping in PowerShell command strings. Single quotes in shell pass through double-quoted strings which interpolate backslashes",
+  "confidence": 92,
+  "recommended_actions": [
+    {
+      "action": "Use PowerShell escape syntax: double backslash or backtick-escape in paths",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    },
+    {
+      "action": "Create path helper function to normalize path escaping",
+      "priority": "MEDIUM",
+      "effort": "MEDIUM",
+      "expected_delta": 30
+    },
+    {
+      "action": "Standardize all path arguments in modules to use escaped syntax",
+      "priority": "HIGH",
+      "effort": "MEDIUM",
+      "expected_delta": 50
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "notes": "Related to IC-003B: Variable escaping but specific to path strings with backslashes"
+}

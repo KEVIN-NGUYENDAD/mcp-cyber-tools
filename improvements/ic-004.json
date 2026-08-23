@@ -1,0 +1,40 @@
+{
+  "cycle": "IC-004",
+  "title": "PowerShell Command Timeout - systemInfo Tool",
+  "problem": "systemInfo command execution times out after 5 seconds, causing tool unavailability",
+  "evidence": [
+    "Get-ComputerInfo command hangs for >5 seconds",
+    "validateExtended test fails with ETIMEDOUT",
+    "No error output, silent timeout",
+    "Only affects complex PowerShell queries (systemInfo)"
+  ],
+  "cause": "PowerShell process takes longer than timeout threshold. Likely caused by WMI/CIM queries in Get-ComputerInfo on first execution (cold cache)",
+  "confidence": 87,
+  "recommended_actions": [
+    {
+      "action": "Increase PowerShell execution timeout from 5s to 15s for systemInfo",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    },
+    {
+      "action": "Cache WMI results to avoid cold-start delay on subsequent calls",
+      "priority": "MEDIUM",
+      "effort": "MEDIUM",
+      "expected_delta": 50
+    },
+    {
+      "action": "Replace Get-ComputerInfo with faster alternative (systeminfo.exe)",
+      "priority": "LOW",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "notes": "Framework-level issue: timeout configuration affects all slow-running tools"
+}

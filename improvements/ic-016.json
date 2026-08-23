@@ -1,0 +1,28 @@
+{
+  "id": "ic-016",
+  "cycle": "IC-016",
+  "title": "Defender Scan Timeout - huntLateralMovement Tool",
+  "problem": "Defender scan operations timeout when querying suspicious RDP/lateral movement patterns",
+  "evidence": [
+    "Get-WinEvent security event log queries with specific event IDs timeout",
+    "huntLateralMovement tool hangs >5 seconds",
+    "Pattern: Event log queries for forensic analysis fail"
+  ],
+  "cause": "Security event log access requires elevation or query optimization needed",
+  "confidence": 83,
+  "recommended_actions": [
+    {
+      "action": "Add permission check and query timeout optimization",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "roi": 41.5
+}

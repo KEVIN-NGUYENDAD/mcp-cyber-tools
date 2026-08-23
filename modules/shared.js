@@ -3,6 +3,28 @@ import { z } from "zod";
 
 export { z };
 
+export function checkRegistryPermission() {
+  try {
+    execSync('powershell -NoProfile -Command "Get-ItemProperty HKLM:\\Software -ErrorAction Stop | Out-Null"', {
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+      timeout: 3000
+    });
+    return { admin: true };
+  } catch (error) {
+    return { admin: false, fallback: "HKCU" };
+  }
+}
+
+export function normalizePathVariable(path) {
+  // IC-005: Fix path escaping by normalizing environment variables
+  return path
+    .replace(/\$env:APPDATA/g, process.env.APPDATA || 'C:\\Users\\' + (process.env.USERNAME || 'Public') + '\\AppData\\Roaming')
+    .replace(/\$env:USERPROFILE/g, process.env.USERPROFILE || 'C:\\Users\\' + (process.env.USERNAME || 'Public'))
+    .replace(/\$env:TEMP/g, process.env.TEMP || 'C:\\Windows\\Temp')
+    .replace(/\$env:PUBLIC/g, process.env.PUBLIC || 'C:\\Users\\Public');
+}
+
 export function runPowerShell(command) {
   try {
     const normalizedCommand = command

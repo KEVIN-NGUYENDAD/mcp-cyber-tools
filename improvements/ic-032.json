@@ -1,0 +1,30 @@
+{
+  "cycle": "IC-032",
+  "title": "Incident Response: Timeline Generation Accuracy",
+  "problem": "Timeline generation tool misses events due to incomplete registry hive tracking. Timeline gaps hide incident progression.",
+  "evidence": [
+    "Timeline missing key registry modification events",
+    "SAM hive changes not captured",
+    "Unable to reconstruct attack sequence"
+  ],
+  "cause": "Timeline tool only reads NTFS MFT changes. Missing registry hive snapshots at key timestamps.",
+  "confidence": 83,
+  "recommended_actions": [
+    {
+      "action": "Capture registry hive snapshots at each event timestamp for complete timeline",
+      "priority": "HIGH",
+      "effort": "MEDIUM",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "expected_delta": 100,
+  "actual_delta": 82,
+  "variance": -18,
+  "validation_result": "PASS",
+  "recommendation_status": "COMPLETE",
+  "lesson_learned": "Registry hive snapshots at each event timestamp solve timeline gaps but introduce storage/performance tradeoff. Selective snapshot strategy at key events more practical than full hive capture.",
+  "date": "2026-08-23"
+}

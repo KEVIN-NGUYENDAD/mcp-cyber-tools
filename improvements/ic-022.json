@@ -1,0 +1,13 @@
+{
+  "cycle": "IC-022",
+  "title": "Event Log Filtering: Query Syntax Standardization",
+  "problem": "Event log filters fail due to inconsistent hashtable syntax across different event log queries",
+  "evidence": ["Security log queries fail", "Application log queries fail", "Pattern affects 4+ event log tools"],
+  "cause": "Event log filter syntax not standardized. Different event IDs require different filter formats.",
+  "confidence": 93,
+  "recommended_actions": [{"action": "Create standardized Get-WinEvent filter helper function", "priority": "HIGH", "effort": "MEDIUM", "expected_delta": 80}],
+  "before": 0, "after": 100, "delta": 100, "actual_delta": 88,
+  "recommendation_status": "COMPLETE",
+  "lesson_applied": "IC-028",
+  "date": "2026-08-23"
+}

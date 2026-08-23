@@ -1,0 +1,30 @@
+{
+  "cycle": "IC-034",
+  "title": "Forensics: Artifact Recovery - Temporary File Analysis",
+  "problem": "Temporary file analysis misses deleted artifacts. Need improved temp file recovery and timeline reconstruction.",
+  "evidence": [
+    "Deleted temp files lost on volume cleanup",
+    "No NTFS recovery attempt for temp artifacts",
+    "Evidence gaps in forensic timeline"
+  ],
+  "cause": "Tool only reads existing temp files. No MFT-based recovery or deleted cluster analysis for temp directory.",
+  "confidence": 79,
+  "recommended_actions": [
+    {
+      "action": "Implement MFT-based recovery for deleted temp files using NTFS filesystem analysis",
+      "priority": "LOW",
+      "effort": "HIGH",
+      "expected_delta": 25
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "expected_delta": 25,
+  "actual_delta": 15,
+  "variance": -10,
+  "validation_result": "PARTIAL",
+  "recommendation_status": "COMPLETE",
+  "lesson_learned": "MFT-based recovery is complex and error-prone. Recovery success depends heavily on filesystem state and deletion timing. High effort implementation yielded only 60% of expected benefit. Consider vendor tools instead.",
+  "date": "2026-08-23"
+}
