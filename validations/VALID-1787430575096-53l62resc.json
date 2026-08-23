@@ -1,0 +1,21 @@
+{
+  "validationId": "VALID-1787430575096-53l62resc",
+  "caseId": "CASE-001",
+  "prediction": "Privilege Escalation",
+  "confidence": 85,
+  "predictedAt": "2026-08-22T20:29:35.095Z",
+  "actual": "Privilege Escalation",
+  "actualAt": "2026-08-22T20:29:35.213Z",
+  "correct": true,
+  "scoreData": {
+    "predictionCorrect": 1,
+    "confidenceScore": 85,
+    "timeToOutcome": "0s",
+    "metrics": {
+      "isHit": true,
+      "confidence": 85,
+      "accuracy": 100
+    }
+  },
+  "status": "scored"
+}

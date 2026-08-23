@@ -1,0 +1,16 @@
+{
+  "feedbackId": "FB-1787440165270-62x81ztrc",
+  "caseId": "HIST-049",
+  "timestamp": "2026-08-22T23:09:25.270Z",
+  "recommended": "Pattern Match Found",
+  "actual": "Pattern Match Found",
+  "agreement": true,
+  "score": 1,
+  "confidence": 80,
+  "learned": false,
+  "engineScoreImpact": {
+    "decision": 1,
+    "prediction": 0.5,
+    "copilot": 1
+  }
+}

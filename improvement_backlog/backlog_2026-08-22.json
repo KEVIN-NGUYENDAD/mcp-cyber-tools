@@ -1,0 +1,73 @@
+[
+  {
+    "issueId": "BACKLOG-1787432484229-weak-0",
+    "type": "ENGINE_WEAKNESS",
+    "priority": 1,
+    "title": "Improve Decision Engine: 40% → 90%",
+    "description": "Decision Engine has 40% trust score. Needs improvement.",
+    "affectedEngine": "Decision Engine",
+    "metric": "Decision Accuracy",
+    "impactEstimate": "+50% engine accuracy",
+    "currentScore": 40,
+    "targetScore": 90,
+    "createdAt": "2026-08-22T21:01:24.229Z",
+    "status": "OPEN",
+    "reproducible": false
+  },
+  {
+    "issueId": "BACKLOG-1787432484229-weak-1",
+    "type": "ENGINE_WEAKNESS",
+    "priority": 1,
+    "title": "Improve Prediction Engine: 42.5% → 90%",
+    "description": "Prediction Engine has 42.5% trust score. Needs improvement.",
+    "affectedEngine": "Prediction Engine",
+    "metric": "Prediction Accuracy",
+    "impactEstimate": "+47.5% engine accuracy",
+    "currentScore": 42.5,
+    "targetScore": 90,
+    "createdAt": "2026-08-22T21:01:24.229Z",
+    "status": "OPEN",
+    "reproducible": false
+  },
+  {
+    "issueId": "BACKLOG-1787432484229-weak-2",
+    "type": "ENGINE_WEAKNESS",
+    "priority": 1,
+    "title": "Improve Copilot Engine: 50% → 90%",
+    "description": "Copilot Engine has 50% trust score. Needs improvement.",
+    "affectedEngine": "Copilot Engine",
+    "metric": "Recommendation Quality",
+    "impactEstimate": "+40% engine accuracy",
+    "currentScore": 50,
+    "targetScore": 90,
+    "createdAt": "2026-08-22T21:01:24.229Z",
+    "status": "OPEN",
+    "reproducible": false
+  },
+  {
+    "issueId": "BACKLOG-1787432484229-0",
+    "type": "DECISION_DISAGREEMENT",
+    "priority": 2,
+    "title": "Fix Decision: IGNORE vs Analyst prefers INVESTIGATE",
+    "description": "System recommended \"IGNORE\" but analyst overrode to \"INVESTIGATE\" 3 times.",
+    "affectedEngine": "Decision Engine",
+    "impactEstimate": "+6% accuracy if fixed",
+    "occurrences": 3,
+    "createdAt": "2026-08-22T21:01:24.229Z",
+    "status": "OPEN",
+    "reproducible": true
+  },
+  {
+    "issueId": "BACKLOG-1787432484229-1",
+    "type": "DECISION_DISAGREEMENT",
+    "priority": 3,
+    "title": "Fix Decision: IGNORE vs Analyst prefers ESCALATE",
+    "description": "System recommended \"IGNORE\" but analyst overrode to \"ESCALATE\" 2 times.",
+    "affectedEngine": "Decision Engine",
+    "impactEstimate": "+4% accuracy if fixed",
+    "occurrences": 2,
+    "createdAt": "2026-08-22T21:01:24.229Z",
+    "status": "OPEN",
+    "reproducible": true
+  }
+]

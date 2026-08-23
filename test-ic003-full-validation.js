@@ -74,7 +74,8 @@ import('./modules/shared.js').then(m => {
   console.log();
 
   const firewallRulesCmd = `
-    Get-NetFirewallRule -Enabled $true |
+    Get-NetFirewallRule |
+    Where-Object {$_.Enabled -eq 1} |
     Select-Object Name, DisplayName, Direction, Action, Enabled |
     Select-Object -First 10 |
     ConvertTo-Json

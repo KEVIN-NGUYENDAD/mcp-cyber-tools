@@ -1,0 +1,21 @@
+{
+  "validationId": "VALID-1787430575215-vsphe596d",
+  "caseId": "CASE-002",
+  "prediction": "Lateral Movement",
+  "confidence": 78,
+  "predictedAt": "2026-08-22T20:29:35.215Z",
+  "actual": "Network Share Access",
+  "actualAt": "2026-08-22T20:29:35.323Z",
+  "correct": true,
+  "scoreData": {
+    "predictionCorrect": 1,
+    "confidenceScore": 78,
+    "timeToOutcome": "0s",
+    "metrics": {
+      "isHit": true,
+      "confidence": 78,
+      "accuracy": 100
+    }
+  },
+  "status": "scored"
+}

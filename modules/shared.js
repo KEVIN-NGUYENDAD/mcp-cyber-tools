@@ -5,10 +5,15 @@ export { z };
 
 export function runPowerShell(command) {
   try {
+    // Layer 2 fix (IC-003A): Normalize multi-line PowerShell commands
+    // Replaces internal newlines + indentation with single spaces
+    // Preserves pipes and logical structure while preventing "empty pipe element" errors
     const normalizedCommand = command
       .trim()
       .replace(/\r?\n\s+/g, ' ');
+
     const fullCommand = `powershell -NoProfile -Command "${normalizedCommand}"`;
+
     console.error("\n=== DEBUG: runPowerShell ===");
     console.error("INPUT_COMMAND:", normalizedCommand.substring(0, 100) + "...");
 

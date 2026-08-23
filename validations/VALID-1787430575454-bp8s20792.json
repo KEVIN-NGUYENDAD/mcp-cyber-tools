@@ -1,0 +1,21 @@
+{
+  "validationId": "VALID-1787430575454-bp8s20792",
+  "caseId": "CASE-004",
+  "prediction": "Persistence",
+  "confidence": 92,
+  "predictedAt": "2026-08-22T20:29:35.453Z",
+  "actual": "Registry Run Key",
+  "actualAt": "2026-08-22T20:29:35.571Z",
+  "correct": true,
+  "scoreData": {
+    "predictionCorrect": 1,
+    "confidenceScore": 92,
+    "timeToOutcome": "0s",
+    "metrics": {
+      "isHit": true,
+      "confidence": 92,
+      "accuracy": 100
+    }
+  },
+  "status": "scored"
+}

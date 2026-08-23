@@ -1,0 +1,16 @@
+{
+  "feedbackId": "FB-1787440165253-e1intd9jr",
+  "caseId": "HIST-026",
+  "timestamp": "2026-08-22T23:09:25.253Z",
+  "recommended": "Privilege Escalation",
+  "actual": "Persistence",
+  "agreement": false,
+  "score": -1,
+  "confidence": 80,
+  "learned": false,
+  "engineScoreImpact": {
+    "decision": -3,
+    "prediction": -2,
+    "copilot": -1
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "validationId": "VALID-1787430575576-n7xa9332p",
+  "caseId": "CASE-005",
+  "prediction": "Credential Access",
+  "confidence": 68,
+  "predictedAt": "2026-08-22T20:29:35.575Z",
+  "actual": "Lateral Movement Activity",
+  "actualAt": "2026-08-22T20:29:35.681Z",
+  "correct": false,
+  "scoreData": {
+    "predictionCorrect": 0,
+    "confidenceScore": 32,
+    "timeToOutcome": "0s",
+    "metrics": {
+      "isHit": false,
+      "confidence": 68,
+      "accuracy": 0
+    }
+  },
+  "status": "scored"
+}
