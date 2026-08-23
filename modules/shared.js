@@ -75,6 +75,90 @@ export function queryEventLog(logName, eventId, hoursBack = 24) {
   return runPowerShell(filter.psCommand);
 }
 
+// IC-036: Registry Query Caching
+// Solves cold-start registry queries (8-10s) with TTL-based caching
+class RegistryQueryCache {
+  constructor(ttlSeconds = 300) {
+    this.cache = new Map();
+    this.ttlMs = ttlSeconds * 1000;
+  }
+
+  getCacheKey(hive, path) {
+    return `${hive}:${path}`;
+  }
+
+  isCached(hive, path) {
+    const key = this.getCacheKey(hive, path);
+    if (!this.cache.has(key)) return false;
+
+    const cached = this.cache.get(key);
+    const isExpired = Date.now() - cached.timestamp > this.ttlMs;
+
+    if (isExpired) {
+      this.cache.delete(key);
+      return false;
+    }
+
+    return true;
+  }
+
+  get(hive, path) {
+    if (this.isCached(hive, path)) {
+      const key = this.getCacheKey(hive, path);
+      return this.cache.get(key).data;
+    }
+    return null;
+  }
+
+  set(hive, path, data) {
+    const key = this.getCacheKey(hive, path);
+    this.cache.set(key, {
+      data: data,
+      timestamp: Date.now()
+    });
+  }
+
+  clear() {
+    this.cache.clear();
+  }
+
+  getCacheStats() {
+    return {
+      entries: this.cache.size,
+      ttlSeconds: this.ttlMs / 1000
+    };
+  }
+}
+
+// Global cache instance (5-minute TTL)
+const registryCache = new RegistryQueryCache(300);
+
+export function getCachedRegistryQuery(hive, path, queryFunction) {
+  // Check cache first
+  const cached = registryCache.get(hive, path);
+  if (cached) {
+    return { success: true, data: cached, fromCache: true };
+  }
+
+  // Execute query
+  const result = queryFunction();
+
+  if (result.success) {
+    registryCache.set(hive, path, result.data);
+    return { success: true, data: result.data, fromCache: false };
+  }
+
+  return result;
+}
+
+export function clearRegistryCache() {
+  registryCache.clear();
+}
+
+export function getRegistryCacheStats() {
+  return registryCache.getCacheStats();
+}
+
 export function formatResponse(success, data, error = null) {
   if (success) {
     // Ensure data is properly formatted JSON string
