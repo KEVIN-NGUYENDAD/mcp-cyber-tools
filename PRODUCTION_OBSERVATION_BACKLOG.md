@@ -113,8 +113,8 @@ This is NOT an IOC. But it appears in 2/3 consecutive cases.
 
 | Observation | Cases | Frequency | Trend | Status |
 |------------|-------|-----------|-------|--------|
-| Security Event Log Access | 1 | 33% | ? | Monitor |
-| Firewall Visibility Gap | 2 | 67% | 📈 Rising | Watch |
+| Security Event Log Access | 1 | 25% | ↓ Declining | Monitor |
+| Firewall Visibility Gap | 2 | 50% | 📊 Stable | Watch Closely |
 
 ---
 

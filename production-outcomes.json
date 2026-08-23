@@ -148,10 +148,69 @@
         "resultCorrect": true,
         "coverageGapsIdentified": 2
       }
+    },
+    {
+      "caseId": "PROD-00004",
+      "date": "2026-08-22",
+      "timestamp": "2026-08-22T17:15:00Z",
+      "investigation": "Threat Hunting",
+      "analyst": "cyber_tools_team",
+      "systemOutput": {
+        "recommendation": "NO_ACTION_REQUIRED",
+        "confidence": 96,
+        "engine": "decision_engine",
+        "reasoning": "Comprehensive threat hunt completed. 9/9 threat hunting modules clean. No IOC, no persistence, no beaconing, no credential dumping detected."
+      },
+      "findings": {
+        "suspiciousProcesses": {
+          "detected": false,
+          "count": 0,
+          "confidence": 95
+        },
+        "suspiciousPersistence": {
+          "detected": false,
+          "count": 0,
+          "confidence": 96
+        },
+        "unusualServices": {
+          "detected": false,
+          "count": 0,
+          "confidence": 94
+        },
+        "suspiciousNetwork": {
+          "detectedBeacons": false,
+          "suspiciousC2": false,
+          "confidence": 92
+        },
+        "knownAttackTechniques": {
+          "detected": false,
+          "confidence": 93
+        },
+        "credentialDumping": {
+          "detected": false,
+          "confidence": 98
+        },
+        "indicatorsOfCompromise": {
+          "count": 0,
+          "assessment": "No IOC"
+        }
+      },
+      "analystInput": {
+        "decision": "NO_ACTION_REQUIRED",
+        "confidence": 96,
+        "reasoning": "9/9 threat hunting modules clean. No detections, no IOC, no evidence of compromise. Agree with system assessment."
+      },
+      "outcome": {
+        "agreement": true,
+        "override": false,
+        "correctDecision": "NO_ACTION_REQUIRED",
+        "resultCorrect": true,
+        "notableAbsence": "No firewall gap in threat hunt (only appears in endpoint/network investigations)"
+      }
     }
   ],
   "statistics": {
-    "totalCases": 3,
+    "totalCases": 4,
     "agreementRate": 100.0,
     "overrideRate": 0.0,
     "accuracyRate": 100.0,
@@ -164,5 +223,5 @@
       "comparatorEngine": null
     }
   },
-  "comments": "PROD-00001-00003: Three real production outcomes collected. Pattern emerging: Firewall visibility gap in 2/3 cases (PROD-00002, PROD-00003). Coverage gap cluster identified. Production baseline building (n=3)."
+  "comments": "PROD-00001-00004: Four real production outcomes collected. Correlation emerging: All four investigation types show CLEAN/MONITOR pattern. Firewall visibility gap now at 2/4 cases (50%, appearing in network-focused investigations). Production baseline building (n=4, target n=10). First pattern review possible at n=5."
 }
