@@ -5,10 +5,12 @@ export { z };
 
 export function runPowerShell(command) {
   try {
-    const trimmedCommand = command.trim();
-    const fullCommand = `powershell -NoProfile -Command "${trimmedCommand}"`;
+    const normalizedCommand = command
+      .trim()
+      .replace(/\r?\n\s+/g, ' ');
+    const fullCommand = `powershell -NoProfile -Command "${normalizedCommand}"`;
     console.error("\n=== DEBUG: runPowerShell ===");
-    console.error("INPUT_COMMAND:", trimmedCommand.substring(0, 100) + "...");
+    console.error("INPUT_COMMAND:", normalizedCommand.substring(0, 100) + "...");
 
     const output = execSync(fullCommand, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
 
