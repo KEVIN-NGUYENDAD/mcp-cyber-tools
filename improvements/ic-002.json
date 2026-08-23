@@ -1,0 +1,8 @@
+{
+  "cycle": "IC-002",
+  "title": "Authentication Visibility",
+  "metric": "Security Event Log access",
+  "before": 0,
+  "after": 100,
+  "date": "2026-08-23"
+}

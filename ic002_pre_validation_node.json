@@ -1,0 +1,9 @@
+{
+  "SeSecurityPrivilege": "ERROR",
+  "SecurityLog": "BLOCKED",
+  "SecurityLogEventCount": 0,
+  "FailedLogons": "BLOCKED",
+  "SuccessfulLogons": "BLOCKED",
+  "AuthenticationVisibility": "0%",
+  "Timestamp": "2026-08-23T06:44:32.753Z"
+}

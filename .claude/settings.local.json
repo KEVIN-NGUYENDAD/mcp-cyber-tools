@@ -133,7 +133,13 @@
       "Bash(node \"C:\\\\Users\\\\tamng\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-tamng-AppData-Roaming-Claude-Projects-mcp-cyber-tools\\\\4ae596b7-5701-43fb-97b7-2e7ac353c0a0\\\\scratchpad\\\\test-null-redirect.js\")",
       "Bash(powershell -NoProfile -Command 'quser 2>$null | ConvertFrom-String | Select-Object P1, P2, P3 | ConvertTo-Json')",
       "Bash(git commit -m 'docs: Session Summary - IC-003 Closed, IC-002 Ready *)",
-      "Bash(git commit -m 'feat: IC-003B Complete - PowerShell Variable Escaping Verification *)"
+      "Bash(git commit -m 'feat: IC-003B Complete - PowerShell Variable Escaping Verification *)",
+      "Bash(powershell -NoProfile -File \"test-ic002-validation.ps1\" -Test Pre)",
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File \"test-ic002-validation.ps1\" -Test Pre)",
+      "Bash(node test-ic002-node.js)",
+      "Bash(git commit -m 'docs: IC-003 Framework Hardening Complete - Full Delta Measurement *)",
+      "Bash(git commit -m 'docs: Session Handoff - IC-003 Framework Hardening Complete *)",
+      "Bash(git commit -m 'feat: Delta Engine MVP v0.1 - Measurement Automation Complete *)"
     ]
   }
 }

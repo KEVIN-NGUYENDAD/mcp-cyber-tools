@@ -1,0 +1,8 @@
+{
+  "cycle": "IC-003",
+  "title": "Framework Maturity",
+  "metric": "Multi-line PowerShell support",
+  "before": 60,
+  "after": 95,
+  "date": "2026-08-23"
+}
