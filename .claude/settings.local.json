@@ -154,7 +154,15 @@
       "Bash(git push *)",
       "Bash(mkdir -p ~/Desktop/CyberTools-Backup && echo \"✓ Backup directory created\")",
       "Bash(mkdir -p ~/Desktop/CyberTools-Backup/documentation && cp *.md ~/Desktop/CyberTools-Backup/documentation/ 2>/dev/null && echo \"✓ Documentation copied\" || echo \"✓ Documentation copy attempted\")",
-      "Bash(awk '{print $9, $5}')"
+      "Bash(awk '{print $9, $5}')",
+      "Bash(mkdir -p C:/Users/tamng/Desktop/CyberTools-Backup/documentation && cp *.md C:/Users/tamng/Desktop/CyberTools-Backup/documentation/ 2>/dev/null && echo \"✓ Documentation backed up\")",
+      "Bash(git tag -a v1.0-learning-factory -m 'Cyber Tools - Learning Factory v1.0 *)",
+      "Bash(gh release create v1.0-learning-factory --title 'Cyber Tools - Learning Factory v1.0' --notes ' *)",
+      "Bash(gh release *)",
+      "Bash(curl -s https://api.github.com/repos/KEVIN-NGUYENDAD/mcp-cyber-tools/releases/tags/v1.0-learning-factory)",
+      "Bash(curl -s -I https://github.com/KEVIN-NGUYENDAD/mcp-cyber-tools/releases/tag/v1.0-learning-factory)",
+      "Bash(git ls-remote *)",
+      "Bash(git checkout *)"
     ]
   }
 }
