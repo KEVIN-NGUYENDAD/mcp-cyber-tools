@@ -1,0 +1,32 @@
+[
+  {
+    "lessonId": "LESSON-DFIR-001",
+    "title": "RunAsPPL Requires Context Validation",
+    "category": "DFIR Investigation",
+    "severity": "High",
+    "finding": "RunAsPPL registry value = 2",
+    "detection": "Correct",
+    "incorrectConclusion": "LSA Protection misconfigured, requires immediate remediation",
+    "correctConclusion": "RunAsPPL = 2 is valid state when Device Guard (HVCI) is enforced",
+    "validationEvidence": {
+      "tool": "cyber-tools systemInfo + registry",
+      "commands": [
+        "Get-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa -Name RunAsPPL",
+        "Get-ComputerInfo | Select-Object DeviceGuard*"
+      ],
+      "findings": {
+        "RunAsPPL": 2,
+        "DeviceGuardSecurityServicesRunning": "HypervisorEnforcedCodeIntegrity, 3, 3, 4, 7",
+        "DeviceGuardCodeIntegrityPolicyEnforcementStatus": "EnforcementMode"
+      }
+    },
+    "recommendedLogic": "IF RunAsPPL = 2 THEN check DeviceGuard status BEFORE recommending remediation",
+    "falsePositiveRate": "20-30% of RunAsPPL findings when HVCI is active",
+    "confidence": 95,
+    "validationStatus": "Verified",
+    "validationDate": "2026-08-23",
+    "validatorRole": "DFIR Analyst",
+    "keyPrinciple": "Artifact detection != Threat determination. Finding != Incident. Recommendation requires context.",
+    "airlift": "NEVER recommend RunAsPPL remediation without verifying Device Guard + HVCI state first"
+  }
+]

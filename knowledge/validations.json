@@ -1,0 +1,55 @@
+[
+  {
+    "validationId": "VAL-DFIR-001",
+    "caseId": "DFIR-001-20260823",
+    "finding": "RunAsPPL = 2 detected",
+    "originalRecommendation": {
+      "action": "Remediate LSA Protection misconfiguration",
+      "severity": "Medium",
+      "confidence": "40%",
+      "rationale": "RunAsPPL value indicates protection not enabled"
+    },
+    "humanVerification": {
+      "verified": true,
+      "verificationMethod": "Full system context review",
+      "verificationDate": "2026-08-23",
+      "verifierRole": "DFIR Analyst",
+      "verificationNotes": "Checked Device Guard status before proceeding"
+    },
+    "findings": [
+      {
+        "finding": "RunAsPPL = 2",
+        "value": 2,
+        "registry_path": "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Lsa",
+        "severity": "Low",
+        "verified_correct": true
+      },
+      {
+        "finding": "Device Guard (HVCI) enabled",
+        "detection_method": "Get-ComputerInfo",
+        "value": "HypervisorEnforcedCodeIntegrity active",
+        "verified_correct": true
+      },
+      {
+        "finding": "Code Integrity in Enforcement Mode",
+        "detection_method": "DeviceGuard API",
+        "value": "EnforcementMode",
+        "verified_correct": true
+      }
+    ],
+    "finalVerdict": "Finding accurate, recommendation incorrect",
+    "correctedRecommendation": {
+      "action": "No remediation required - valid configuration",
+      "reason": "RunAsPPL = 2 is correct when Device Guard/HVCI enforcing Code Integrity",
+      "confidence": "95%",
+      "validationStatus": "Verified"
+    },
+    "lesson_extracted": "LESSON-DFIR-001",
+    "recommendationAccuracy": {
+      "falsePositive": true,
+      "preventableFalsePositives": 1,
+      "timeWasted": 30,
+      "timeWastedUnit": "minutes"
+    }
+  }
+]
