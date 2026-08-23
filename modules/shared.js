@@ -49,6 +49,32 @@ export function runCmd(command) {
   }
 }
 
+// IC-035: Event Log Filter Standardization
+export function buildEventLogFilter(logName, eventId, hoursBack = 24) {
+  // Standardized event log filter builder for consistent Get-WinEvent queries
+  // Eliminates hashtable syntax errors across different tools
+  const xpathFilter = `*[System[(EventID=${eventId}) and TimeCreated[timediff(@SystemTime) <= ${hoursBack * 60 * 60 * 1000}]]]`;
+
+  return {
+    logName: logName,
+    filterHashtable: {
+      LogName: logName,
+      ID: eventId,
+      StartTime: new Date(Date.now() - hoursBack * 60 * 60 * 1000)
+    },
+    xpath: xpathFilter,
+    // PowerShell command using standardized filter
+    psCommand: `Get-WinEvent -FilterHashtable @{LogName='${logName}'; ID=${eventId}} -ErrorAction SilentlyContinue | Select-Object -Property TimeCreated, Message, ProviderName`,
+    psCommandXPath: `Get-WinEvent -FilterXPath "${xpathFilter}" -LogName ${logName} -ErrorAction SilentlyContinue | Select-Object -Property TimeCreated, Message, ProviderName`
+  };
+}
+
+// IC-035 Companion: Execute standardized event log query
+export function queryEventLog(logName, eventId, hoursBack = 24) {
+  const filter = buildEventLogFilter(logName, eventId, hoursBack);
+  return runPowerShell(filter.psCommand);
+}
+
 export function formatResponse(success, data, error = null) {
   if (success) {
     // Ensure data is properly formatted JSON string
