@@ -5,9 +5,10 @@ export { z };
 
 export function runPowerShell(command) {
   try {
-    const fullCommand = `powershell -NoProfile -Command "${command}"`;
+    const trimmedCommand = command.trim();
+    const fullCommand = `powershell -NoProfile -Command "${trimmedCommand}"`;
     console.error("\n=== DEBUG: runPowerShell ===");
-    console.error("INPUT_COMMAND:", command.substring(0, 100) + "...");
+    console.error("INPUT_COMMAND:", trimmedCommand.substring(0, 100) + "...");
 
     const output = execSync(fullCommand, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
 
