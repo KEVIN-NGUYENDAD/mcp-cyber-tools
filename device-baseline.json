@@ -1,0 +1,130 @@
+{
+  "lastUpdated": "2026-08-24T20:00:00Z",
+  "networkSegments": [
+    {
+      "range": "192.168.1.0/24",
+      "name": "Home LAN",
+      "purpose": "Primary home network",
+      "gateway": "192.168.1.1"
+    }
+  ],
+  "knownDevices": {
+    "router": {
+      "id": "router",
+      "name": "Router",
+      "ip": "192.168.1.1",
+      "mac": "aa:bb:cc:dd:ee:01",
+      "vendor": "TP-Link",
+      "model": "Archer C7",
+      "type": "router",
+      "expectedPorts": [80, 443, 53],
+      "firmware": "1.6.0",
+      "lastSeen": "2026-08-24T20:00:00Z",
+      "riskLevel": "MEDIUM"
+    },
+    "desktop": {
+      "id": "desktop",
+      "name": "Desktop PC",
+      "ip": "192.168.1.10",
+      "mac": "aa:bb:cc:dd:ee:02",
+      "vendor": "Windows",
+      "os": "Windows 11",
+      "type": "desktop",
+      "expectedPorts": [],
+      "lastSeen": "2026-08-24T20:00:00Z",
+      "riskLevel": "LOW"
+    },
+    "laptop": {
+      "id": "laptop",
+      "name": "Laptop",
+      "ip": "192.168.1.11",
+      "mac": "aa:bb:cc:dd:ee:03",
+      "vendor": "Apple",
+      "os": "macOS",
+      "type": "laptop",
+      "expectedPorts": [],
+      "lastSeen": "2026-08-24T20:00:00Z",
+      "riskLevel": "LOW"
+    },
+    "iphone": {
+      "id": "iphone",
+      "name": "iPhone",
+      "ip": "192.168.1.12",
+      "mac": "aa:bb:cc:dd:ee:04",
+      "vendor": "Apple",
+      "os": "iOS 18.0",
+      "type": "mobile",
+      "expectedPorts": [],
+      "lastSeen": "2026-08-24T20:00:00Z",
+      "riskLevel": "LOW"
+    },
+    "camera1": {
+      "id": "camera1",
+      "name": "Front Door Camera",
+      "ip": "192.168.1.100",
+      "mac": "aa:bb:cc:dd:ee:10",
+      "vendor": "Hikvision",
+      "model": "DS-2CD2143FWD-I",
+      "type": "camera",
+      "expectedPorts": [554, 80, 443],
+      "firmware": "9.100.0000.0.0",
+      "features": ["RTSP", "ONVIF", "HTTPS"],
+      "lastSeen": "2026-08-24T20:00:00Z",
+      "riskLevel": "MEDIUM"
+    },
+    "camera2": {
+      "id": "camera2",
+      "name": "Back Door Camera",
+      "ip": "192.168.1.101",
+      "mac": "aa:bb:cc:dd:ee:11",
+      "vendor": "Hikvision",
+      "model": "DS-2CD2143FWD-I",
+      "type": "camera",
+      "expectedPorts": [554, 80, 443],
+      "firmware": "9.100.0000.0.0",
+      "features": ["RTSP", "ONVIF", "HTTPS"],
+      "lastSeen": "2026-08-24T20:00:00Z",
+      "riskLevel": "MEDIUM"
+    },
+    "camera3": {
+      "id": "camera3",
+      "name": "Living Room Camera",
+      "ip": "192.168.1.102",
+      "mac": "aa:bb:cc:dd:ee:12",
+      "vendor": "Hikvision",
+      "model": "DS-2CD2143FWD-I",
+      "type": "camera",
+      "expectedPorts": [554, 80, 443],
+      "firmware": "9.100.0000.0.0",
+      "features": ["RTSP", "ONVIF", "HTTPS"],
+      "lastSeen": "2026-08-24T20:00:00Z",
+      "riskLevel": "MEDIUM"
+    }
+  },
+  "expectedVendors": [
+    "TP-Link",
+    "Netgear",
+    "Apple",
+    "Windows",
+    "Hikvision",
+    "Dahua",
+    "ASUS",
+    "Google",
+    "Amazon"
+  ],
+  "ignoredMacPrefixes": [],
+  "ignoredDevices": [],
+  "securityPolicies": {
+    "allowDefaultCredentials": false,
+    "requireHttps": true,
+    "requireAuthentication": true,
+    "allowPublicRtsp": false,
+    "allowUpnp": false,
+    "allowWpsEnabled": false
+  },
+  "metadata": {
+    "createdAt": "2026-08-24T00:00:00Z",
+    "version": "1.0.0",
+    "purpose": "Home network security baseline and device inventory"
+  }
+}
