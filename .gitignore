@@ -5,6 +5,7 @@ package-lock.json
 # Reports and generated briefs
 reports/
 nightly-security-brief-*.html
+soc-chief-briefing-*.html
 morning-briefing-*.html
 
 # OS
