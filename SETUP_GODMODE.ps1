@@ -93,5 +93,6 @@ Write-Host "  3. View reports in reports/ directory"
 Write-Host ""
 
 $collectorLog = Join-Path $logPath "collector.log"
-Write-Host "Monitor collection: Get-Content '$collectorLog' -Tail 10 -Wait"
+$monitorCmd = "Get-Content `"$collectorLog`" -Tail 10 -Wait"
+Write-Host "Monitor collection: $monitorCmd"
 Write-Host ""
