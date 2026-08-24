@@ -2,10 +2,10 @@
 node_modules/
 package-lock.json
 
-# Reports
-reports/*.json
-reports/*.html
-reports/*.txt
+# Reports and generated briefs
+reports/
+nightly-security-brief-*.html
+morning-briefing-*.html
 
 # OS
 .DS_Store
