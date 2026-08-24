@@ -70,6 +70,38 @@ class HomeSocBrief {
     };
   }
 
+  loadRouterStatus() {
+    // Load router status from router-agent output
+    const routerStatusPath = path.join(this.stateDir, 'router-status.json');
+
+    const defaultStatus = {
+      gateway: 'unknown',
+      isOnline: false,
+      deviceCount: 0,
+      dnsConfig: { primary: 'unknown' },
+      firmware: { version: 'unknown' }
+    };
+
+    if (fs.existsSync(routerStatusPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(routerStatusPath, 'utf8'));
+        return {
+          gateway: data.router?.status?.gateway || 'unknown',
+          isOnline: data.router?.status?.healthCheck === 'ONLINE',
+          deviceCount: data.devices?.count || 0,
+          dnsConfig: data.network?.dns || { primary: 'unknown' },
+          firmware: data.router?.firmware || { version: 'unknown' },
+          upnp: data.network?.upnp?.enabled || false,
+          guestWiFi: data.network?.guestWiFi?.detected || false
+        };
+      } catch (e) {
+        return defaultStatus;
+      }
+    }
+
+    return defaultStatus;
+  }
+
   calculateHomeScore(networkScore, deviceScores) {
     // Weighted: Network 30%, Desktop 25%, Laptop 25%, iPhone 20%
     const homeScore = Math.round(
@@ -391,6 +423,9 @@ class HomeSocBrief {
     // Load device scores
     const deviceScores = this.loadDeviceBriefs();
 
+    // Load router status from router-agent
+    const routerStatus = this.loadRouterStatus();
+
     // Calculate home score
     const homeScore = this.calculateHomeScore(networkReport.score, deviceScores);
     const threatLevel = this.determineThreatLevel(homeScore);
@@ -427,6 +462,8 @@ class HomeSocBrief {
     console.log(`  Laptop Score: ${deviceScores.laptop}/100`);
     console.log(`  iPhone Score: ${deviceScores.iphone}/100`);
     console.log(`  Devices Online: ${networkReport.onlineCount}/${networkReport.deviceCount}`);
+    console.log(`  Router Status: ${routerStatus.isOnline ? 'ONLINE' : 'OFFLINE'}`);
+    console.log(`  Router Gateway: ${routerStatus.gateway}`);
     console.log(`  Cameras: ${networkReport.cameras}`);
     console.log(`  Top Risks: ${networkReport.risks.length}`);
   }
