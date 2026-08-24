@@ -91,6 +91,11 @@ class LinuxMCPDemo {
         name: "processTimeline",
         description: "Get recently started processes",
         params: { minutes: "number (default: 30)" }
+      },
+      {
+        name: "whoami",
+        description: "Get current user identity and system information",
+        params: {}
       }
     ];
   }
@@ -393,6 +398,32 @@ class LinuxMCPDemo {
         count: processes.length,
         data: processes,
         timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  async whoami() {
+    try {
+      const { stdout: user } = await execAsync("whoami");
+      const { stdout: uid } = await execAsync("id -u");
+      const { stdout: gid } = await execAsync("id -g");
+      const { stdout: groups } = await execAsync("id -G");
+      const { stdout: hostname } = await execAsync("hostname");
+      const { stdout: pwd } = await execAsync("pwd");
+
+      return {
+        success: true,
+        data: {
+          user: user.trim(),
+          uid: parseInt(uid.trim()),
+          gid: parseInt(gid.trim()),
+          groups: groups.trim().split(/\s+/).map(g => parseInt(g)),
+          hostname: hostname.trim(),
+          workingDirectory: pwd.trim(),
+          timestamp: new Date().toISOString()
+        }
       };
     } catch (error) {
       return { success: false, error: error.message };
