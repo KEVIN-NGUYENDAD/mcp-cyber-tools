@@ -1,0 +1,58 @@
+{
+  "trigger": {
+    "name": "iPhone Security Brief 8:10 PM",
+    "description": "Daily iPhone security posture briefing generated 10 minutes after SOC Chief Briefing",
+    "type": "scheduled",
+    "schedule": {
+      "cron": "10 20 * * *",
+      "timezone": "UTC",
+      "description": "Every day at 8:10 PM UTC (10 minutes after chief briefing)"
+    },
+    "dependencies": [
+      "soc-chief-briefing.js"
+    ],
+    "action": {
+      "type": "generate_briefing",
+      "command": "node iphone-security-brief.js",
+      "workdir": "/home/user/mcp-cyber-tools"
+    },
+    "delivery": {
+      "format": "html_artifact",
+      "method": "claude_session",
+      "archive": true,
+      "archivePath": "./reports/iphone-briefs/"
+    },
+    "content": {
+      "sections": [
+        "Security Score & Threat Level",
+        "Changes Since Yesterday",
+        "Risk Findings",
+        "Recommendations",
+        "Trend Summary"
+      ]
+    },
+    "audience": {
+      "role": "Device Owner / Security Team / BYOD Manager",
+      "readTime": "< 30 seconds",
+      "format": "Device Health Brief"
+    },
+    "notifications": {
+      "onComplete": true,
+      "onFailure": true,
+      "channels": ["session"]
+    },
+    "dataSource": {
+      "primary": "./reports/iphone-state/current-device.json",
+      "baseline": "./reports/iphone-state/previous-device-state.json",
+      "trends": "./reports/iphone-state/trends.json",
+      "description": "Device data populated from MDM API, iCloud, or manual JSON import"
+    },
+    "metadata": {
+      "createdAt": "2026-08-24T00:00:00Z",
+      "version": "1.0.0",
+      "basedOn": "nightly-security-brief + ios-security-assessor",
+      "status": "active",
+      "purpose": "BYOD security posture tracking"
+    }
+  }
+}
