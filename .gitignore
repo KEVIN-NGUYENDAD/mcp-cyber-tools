@@ -6,6 +6,7 @@ package-lock.json
 reports/
 nightly-security-brief-*.html
 soc-chief-briefing-*.html
+iphone-security-brief-*.html
 morning-briefing-*.html
 
 # OS
