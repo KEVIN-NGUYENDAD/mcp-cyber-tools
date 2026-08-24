@@ -1,28 +1,25 @@
 #!/usr/bin/env node
 
 /**
- * HOME SOC MCP SERVER
+ * HOME SOC MCP SERVER - MCP Protocol Implementation
  *
- * Local MCP server running on your laptop that exposes HOME SOC data.
- * Claude can query live device status, network state, and security posture
- * without cloud sandbox limitations.
- *
- * Tools:
- * - discoverDevices: Current devices on network
- * - networkStatus: Gateway, device count, stability
- * - cameraStatus: Camera online/offline status
- * - gatewayStatus: Router/gateway information
- * - deviceHistory: Timeline of device events
- * - changeHistory: Recent network changes
- * - homeSocStatus: Overall security score and recommendations
+ * Implements JSON-RPC 2.0 over stdio for Claude Code integration.
+ * Exposes HOME SOC tools for querying live network data from laptop.
  */
 
 import fs from 'fs';
 import path from 'path';
+import readline from 'readline';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false
+});
 
 class HomeSocMcpServer {
   constructor() {
@@ -263,31 +260,11 @@ class HomeSocMcpServer {
   }
 }
 
-// MCP Server Implementation
+// MCP Protocol Handler
 class McpServer {
   constructor() {
     this.homeSoc = new HomeSocMcpServer();
-  }
-
-  async handleCall(toolName, toolInput) {
-    switch (toolName) {
-      case 'discoverDevices':
-        return this.homeSoc.discoverDevices();
-      case 'networkStatus':
-        return this.homeSoc.networkStatus();
-      case 'cameraStatus':
-        return this.homeSoc.cameraStatus();
-      case 'gatewayStatus':
-        return this.homeSoc.gatewayStatus();
-      case 'deviceHistory':
-        return this.homeSoc.deviceHistory();
-      case 'changeHistory':
-        return this.homeSoc.changeHistory();
-      case 'homeSocStatus':
-        return this.homeSoc.homeSocStatus();
-      default:
-        throw new Error(`Unknown tool: ${toolName}`);
-    }
+    this.requestId = 0;
   }
 
   getToolsList() {
@@ -330,28 +307,121 @@ class McpServer {
     ];
   }
 
-  async start() {
-    console.log('🏠 HOME SOC MCP SERVER');
-    console.log('======================\n');
-    console.log('📡 MCP Tools Registered:');
-    this.getToolsList().forEach(tool => {
-      console.log(`   ✅ ${tool.name}`);
+  async handleCall(toolName, toolInput) {
+    switch (toolName) {
+      case 'discoverDevices':
+        return this.homeSoc.discoverDevices();
+      case 'networkStatus':
+        return this.homeSoc.networkStatus();
+      case 'cameraStatus':
+        return this.homeSoc.cameraStatus();
+      case 'gatewayStatus':
+        return this.homeSoc.gatewayStatus();
+      case 'deviceHistory':
+        return this.homeSoc.deviceHistory();
+      case 'changeHistory':
+        return this.homeSoc.changeHistory();
+      case 'homeSocStatus':
+        return this.homeSoc.homeSocStatus();
+      default:
+        throw new Error(`Unknown tool: ${toolName}`);
+    }
+  }
+
+  sendMessage(message) {
+    process.stdout.write(JSON.stringify(message) + '\n');
+  }
+
+  handleInitialize(id) {
+    this.sendMessage({
+      jsonrpc: '2.0',
+      id: id,
+      result: {
+        protocolVersion: '2024-11-05',
+        capabilities: {
+          tools: {}
+        },
+        serverInfo: {
+          name: 'home-soc',
+          version: '1.0.0'
+        }
+      }
     });
-    console.log('\n💬 Waiting for Claude to connect...\n');
+  }
+
+  handleListTools(id) {
+    this.sendMessage({
+      jsonrpc: '2.0',
+      id: id,
+      result: {
+        tools: this.getToolsList()
+      }
+    });
+  }
+
+  async handleCallTool(id, name, args) {
+    try {
+      const result = await this.handleCall(name, args);
+      this.sendMessage({
+        jsonrpc: '2.0',
+        id: id,
+        result: {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result)
+            }
+          ]
+        }
+      });
+    } catch (error) {
+      this.sendMessage({
+        jsonrpc: '2.0',
+        id: id,
+        error: {
+          code: -32603,
+          message: error.message
+        }
+      });
+    }
+  }
+
+  async handleRequest(message) {
+    try {
+      const data = JSON.parse(message);
+
+      if (data.method === 'initialize') {
+        this.handleInitialize(data.id);
+      } else if (data.method === 'tools/list') {
+        this.handleListTools(data.id);
+      } else if (data.method === 'tools/call') {
+        await this.handleCallTool(data.id, data.params.name, data.params.arguments);
+      } else {
+        this.sendMessage({
+          jsonrpc: '2.0',
+          id: data.id,
+          error: {
+            code: -32601,
+            message: 'Method not found'
+          }
+        });
+      }
+    } catch (error) {
+      // Silently ignore parse errors
+    }
+  }
+
+  start() {
+    rl.on('line', async (line) => {
+      await this.handleRequest(line);
+    });
+
+    rl.on('close', () => {
+      process.exit(0);
+    });
   }
 }
 
-// Export for MCP integration
-export { McpServer, HomeSocMcpServer };
-
-// Standalone execution
+// Start MCP server
 const server = new McpServer();
-await server.start();
-
-// Test all tools
-const homeSoc = new HomeSocMcpServer();
-console.log('📊 Testing Tools:\n');
-console.log('1. discoverDevices:', JSON.stringify(homeSoc.discoverDevices(), null, 2));
-console.log('\n2. networkStatus:', JSON.stringify(homeSoc.networkStatus(), null, 2));
-console.log('\n3. cameraStatus:', JSON.stringify(homeSoc.cameraStatus(), null, 2));
-console.log('\n4. homeSocStatus:', JSON.stringify(homeSoc.homeSocStatus(), null, 2));
+server.start();
