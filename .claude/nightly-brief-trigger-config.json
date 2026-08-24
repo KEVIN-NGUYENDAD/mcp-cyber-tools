@@ -1,0 +1,46 @@
+{
+  "trigger": {
+    "name": "Nightly Security Brief 8PM",
+    "description": "Daily automated security briefing generated at 8:00 PM UTC",
+    "type": "scheduled",
+    "schedule": {
+      "cron": "0 20 * * *",
+      "timezone": "UTC",
+      "description": "Every day at 8:00 PM UTC"
+    },
+    "action": {
+      "type": "generate_briefing",
+      "command": "node nightly-security-brief-trigger.js",
+      "workdir": "/home/user/mcp-cyber-tools"
+    },
+    "delivery": {
+      "format": "html_artifact",
+      "method": "claude_session",
+      "archive": true,
+      "archivePath": "./reports/nightly-briefs/"
+    },
+    "content": {
+      "sections": [
+        "Security Score",
+        "New Findings",
+        "Process Findings",
+        "Persistence Findings",
+        "Network Findings",
+        "Recommendations",
+        "Lessons Learned",
+        "Telemetry Summary"
+      ]
+    },
+    "notifications": {
+      "onComplete": true,
+      "onFailure": true,
+      "channels": ["session"]
+    },
+    "metadata": {
+      "createdAt": "2026-08-24T00:00:00Z",
+      "version": "1.0.0",
+      "basedOn": "morning-briefing-skill",
+      "status": "active"
+    }
+  }
+}
