@@ -102,6 +102,54 @@ class HomeSocBrief {
     return defaultStatus;
   }
 
+  generateReportFromHistory(deviceHistory) {
+    // Generate network report from accumulated history
+    const devices = deviceHistory.devices || [];
+    const cameraStatus = deviceHistory.cameraStatus || [];
+    const changes = this.loadChangesLog();
+
+    // Count devices and cameras
+    const onlineCount = devices.length;
+    const cameraCount = cameraStatus.filter(c => c.status === 'online').length;
+
+    // Assess risks from accumulated data
+    const cameraRisks = [];
+    const routerRisks = [];
+
+    // Simple risk assessment from camera status
+    if (cameraCount === 0 && cameraStatus.length > 0) {
+      cameraRisks.push({
+        device: 'cameras',
+        type: 'camera',
+        severity: 'HIGH',
+        title: 'All Cameras Offline',
+        description: 'No cameras responding to network pings',
+        confidence: 95
+      });
+    }
+
+    // Score calculation based on state
+    let score = 80;
+    if (changes.length > 5) score -= 5; // Multiple changes
+    if (cameraRisks.length > 0) score -= 10;
+
+    return {
+      score: Math.max(0, Math.min(100, score)),
+      threatLevel: this.determineThreatLevel(score),
+      deviceCount: onlineCount,
+      onlineCount: onlineCount,
+      offlineCount: 0,
+      cameras: cameraCount,
+      changes: {
+        newDevices: changes.filter(c => c.type === 'new-device'),
+        offlineDevices: changes.filter(c => c.type === 'device-offline'),
+        portChanges: [],
+        vendorChanges: []
+      },
+      risks: [...cameraRisks, ...routerRisks].slice(0, 5)
+    };
+  }
+
   calculateHomeScore(networkScore, deviceScores) {
     // Weighted: Network 30%, Desktop 25%, Laptop 25%, iPhone 20%
     const homeScore = Math.round(
@@ -412,13 +460,56 @@ class HomeSocBrief {
     return html;
   }
 
+  loadDeviceHistory() {
+    // Load accumulated evidence from network collector
+    const historyPath = path.join(this.stateDir, 'device-history.json');
+
+    if (fs.existsSync(historyPath)) {
+      try {
+        return JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+      } catch (e) {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  loadChangesLog() {
+    // Load recorded changes
+    const changesPath = path.join(this.stateDir, 'changes.json');
+
+    if (fs.existsSync(changesPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(changesPath, 'utf8'));
+        return data.changes || [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    return [];
+  }
+
   generateBrief() {
     const today = new Date().toISOString().split('T')[0];
 
-    console.log('Generating Home SOC Brief...');
+    console.log('Generating Home SOC Brief from accumulated evidence...');
 
-    // Run network discovery
-    const networkReport = this.discovery.discover();
+    // Load accumulated history from collector (not full scan)
+    const deviceHistory = this.loadDeviceHistory();
+
+    // Fallback to network discovery if no history
+    let networkReport;
+    if (deviceHistory && deviceHistory.devices && deviceHistory.devices.length > 0) {
+      // Use accumulated evidence
+      console.log('  (using device history from collector)');
+      networkReport = this.generateReportFromHistory(deviceHistory);
+    } else {
+      // First run - do full discovery
+      console.log('  (first run - performing full discovery)');
+      networkReport = this.discovery.discover();
+    }
 
     // Load device scores
     const deviceScores = this.loadDeviceBriefs();
