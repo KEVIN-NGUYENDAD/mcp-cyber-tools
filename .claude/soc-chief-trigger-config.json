@@ -1,0 +1,53 @@
+{
+  "trigger": {
+    "name": "SOC Chief Briefing 8:05 PM",
+    "description": "Daily executive security briefing generated 5 minutes after nightly security brief",
+    "type": "scheduled",
+    "schedule": {
+      "cron": "5 20 * * *",
+      "timezone": "UTC",
+      "description": "Every day at 8:05 PM UTC (5 minutes after nightly brief)"
+    },
+    "dependencies": [
+      "nightly-security-brief-trigger.js"
+    ],
+    "action": {
+      "type": "generate_briefing",
+      "command": "node soc-chief-briefing.js",
+      "workdir": "/home/user/mcp-cyber-tools"
+    },
+    "delivery": {
+      "format": "html_artifact",
+      "method": "claude_session",
+      "archive": true,
+      "archivePath": "./reports/nightly-briefs/"
+    },
+    "content": {
+      "sections": [
+        "Security Score & Threat Level",
+        "What Changed Today",
+        "What Should I Care About (Top 3 Risks)",
+        "What Did Tools Learn",
+        "What Is Wasting Time",
+        "What Should We Improve Next"
+      ]
+    },
+    "audience": {
+      "role": "CISO/SOC Director/Security Leadership",
+      "readTime": "< 60 seconds",
+      "format": "Executive Summary"
+    },
+    "notifications": {
+      "onComplete": true,
+      "onFailure": true,
+      "channels": ["session"]
+    },
+    "metadata": {
+      "createdAt": "2026-08-24T00:00:00Z",
+      "version": "1.0.0",
+      "basedOn": "nightly-security-brief-trigger",
+      "status": "active",
+      "purpose": "Leadership briefing"
+    }
+  }
+}
