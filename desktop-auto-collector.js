@@ -269,7 +269,7 @@ async function main() {
 
       // Generate comprehensive report
       console.log('\n🔄 Generating comprehensive multi-device report...\n');
-      generateComprehensiveReport().then(() => {
+      generateComprehensiveReport().then(async () => {
         console.log('\n' + '='.repeat(70));
         console.log('🎉 AUTO COLLECTION COMPLETE');
         console.log('='.repeat(70));
@@ -279,7 +279,15 @@ async function main() {
         console.log(`📋 Comprehensive Report: COMPREHENSIVE-REPORT-8PM.md`);
         console.log(`📝 Log: collection-log.json`);
         console.log('\n✅ Tất cả báo cáo đã sẵn sàng!');
-        console.log('📧 Sẽ gửi báo cáo tổng hợp cho bạn ngay...');
+        console.log('📧 Gửi báo cáo qua email...\n');
+
+        // Send email report
+        try {
+          const { execSync } = await import('child_process');
+          execSync('node email-report-sender.js', { stdio: 'inherit' });
+        } catch (err) {
+          console.log('\n⚠️  Email sending skipped');
+        }
 
         process.exit(0);
       });
