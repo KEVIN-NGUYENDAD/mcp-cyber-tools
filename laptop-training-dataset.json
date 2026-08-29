@@ -1,0 +1,132 @@
+{
+  "timestamp": "2026-08-29T22:45:40.782Z",
+  "device": "LAPTOP",
+  "trainingData": [
+    {
+      "scenario": "high-cpu-load",
+      "timestamp": "2026-08-29T22:46:15.604Z",
+      "file": "laptop-training-data\\high-cpu-load-1788043591799.json",
+      "dataPoints": {
+        "processes": 30,
+        "connections": 20,
+        "services": 132,
+        "memory": "yes",
+        "cpu": "yes",
+        "battery": "yes"
+      }
+    },
+    {
+      "scenario": "normal-idle",
+      "timestamp": "2026-08-29T22:46:48.354Z",
+      "file": "laptop-training-data\\normal-idle-1788043625630.json",
+      "dataPoints": {
+        "processes": 30,
+        "connections": 20,
+        "services": 132,
+        "memory": "yes",
+        "cpu": "yes",
+        "battery": "yes"
+      }
+    },
+    {
+      "scenario": "normal-idle",
+      "timestamp": "2026-08-29T22:47:56.179Z",
+      "file": "laptop-training-data\\normal-idle-1788043693561.json",
+      "dataPoints": {
+        "processes": 30,
+        "connections": 20,
+        "services": 131,
+        "memory": "yes",
+        "cpu": "yes",
+        "battery": "yes"
+      }
+    },
+    {
+      "scenario": "high-cpu-load",
+      "timestamp": "2026-08-29T22:51:11.122Z",
+      "file": "laptop-training-data\\high-cpu-load-1788043890268.json",
+      "dataPoints": {
+        "processes": 30,
+        "connections": 0,
+        "services": 133,
+        "memory": "yes",
+        "cpu": "yes",
+        "battery": "yes"
+      }
+    },
+    {
+      "scenario": "network-heavy",
+      "timestamp": "2026-08-29T22:53:09.883Z",
+      "file": "laptop-training-data\\network-heavy-1788044006201.json",
+      "dataPoints": {
+        "processes": 30,
+        "connections": 20,
+        "services": 131,
+        "memory": "yes",
+        "cpu": "yes",
+        "battery": "yes"
+      }
+    },
+    {
+      "scenario": "memory-intensive",
+      "timestamp": "2026-08-29T22:55:04.867Z",
+      "file": "laptop-training-data\\memory-intensive-1788044123464.json",
+      "dataPoints": {
+        "processes": 30,
+        "connections": 0,
+        "services": 132,
+        "memory": "yes",
+        "cpu": "yes",
+        "battery": "yes"
+      }
+    },
+    {
+      "scenario": "background-processes",
+      "timestamp": "2026-08-29T22:55:31.263Z",
+      "file": "laptop-training-data\\background-processes-1788044148959.json",
+      "dataPoints": {
+        "processes": 30,
+        "connections": 20,
+        "services": 131,
+        "memory": "yes",
+        "cpu": "yes",
+        "battery": "yes"
+      }
+    },
+    {
+      "scenario": "TEST",
+      "timestamp": "2026-08-29T22:56:29.720Z",
+      "file": "laptop-training-data\\TEST-1788044207070.json",
+      "dataPoints": {
+        "processes": 30,
+        "connections": 20,
+        "services": 131,
+        "memory": "yes",
+        "cpu": "yes",
+        "battery": "yes"
+      }
+    }
+  ],
+  "scenarios": {
+    "high-cpu-load": [
+      "laptop-training-data\\high-cpu-load-1788043591799.json",
+      "laptop-training-data\\high-cpu-load-1788043890268.json"
+    ],
+    "normal-idle": [
+      "laptop-training-data\\normal-idle-1788043625630.json",
+      "laptop-training-data\\normal-idle-1788043693561.json"
+    ],
+    "network-heavy": [
+      "laptop-training-data\\network-heavy-1788044006201.json"
+    ],
+    "memory-intensive": [
+      "laptop-training-data\\memory-intensive-1788044123464.json"
+    ],
+    "background-processes": [
+      "laptop-training-data\\background-processes-1788044148959.json"
+    ],
+    "TEST": [
+      "laptop-training-data\\TEST-1788044207070.json"
+    ]
+  }
+}

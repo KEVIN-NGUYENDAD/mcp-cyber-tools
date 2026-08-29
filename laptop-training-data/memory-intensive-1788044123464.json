@@ -1,0 +1,732 @@
+{
+  "timestamp": "2026-08-29T22:55:04.867Z",
+  "scenario": "memory-intensive",
+  "data": {
+    "processes": [
+      {
+        "Name": "AggregatorHost",
+        "Id": 5972,
+        "WorkingSet": 10092544,
+        "CPU": 0.140625
+      },
+      {
+        "Name": "aihost",
+        "Id": 11808,
+        "WorkingSet": 25645056,
+        "CPU": 0.90625
+      },
+      {
+        "Name": "AIXHost",
+        "Id": 11492,
+        "WorkingSet": 58081280,
+        "CPU": 0.734375
+      },
+      {
+        "Name": "AppActions",
+        "Id": 1320,
+        "WorkingSet": 42360832,
+        "CPU": 0.984375
+      },
+      {
+        "Name": "ApplicationFrameHost",
+        "Id": 21620,
+        "WorkingSet": 51650560,
+        "CPU": 0.4375
+      },
+      {
+        "Name": "audiodg",
+        "Id": 23880,
+        "WorkingSet": 37195776,
+        "CPU": 21.5625
+      },
+      {
+        "Name": "browser",
+        "Id": 1412,
+        "WorkingSet": 134070272,
+        "CPU": 1.875
+      },
+      {
+        "Name": "browser",
+        "Id": 2256,
+        "WorkingSet": 193089536,
+        "CPU": 7.546875
+      },
+      {
+        "Name": "browser",
+        "Id": 8780,
+        "WorkingSet": 32260096,
+        "CPU": 0.09375
+      },
+      {
+        "Name": "browser",
+        "Id": 9080,
+        "WorkingSet": 176930816,
+        "CPU": 8.796875
+      },
+      {
+        "Name": "browser",
+        "Id": 9092,
+        "WorkingSet": 73461760,
+        "CPU": 1.84375
+      },
+      {
+        "Name": "browser",
+        "Id": 10592,
+        "WorkingSet": 166268928,
+        "CPU": 9.59375
+      },
+      {
+        "Name": "browser",
+        "Id": 11224,
+        "WorkingSet": 94932992,
+        "CPU": 5.9375
+      },
+      {
+        "Name": "browser",
+        "Id": 11468,
+        "WorkingSet": 171810816,
+        "CPU": 8.9375
+      },
+      {
+        "Name": "browser",
+        "Id": 12300,
+        "WorkingSet": 148275200,
+        "CPU": 26.015625
+      },
+      {
+        "Name": "browser",
+        "Id": 12312,
+        "WorkingSet": 687587328,
+        "CPU": 1054.515625
+      },
+      {
+        "Name": "browser",
+        "Id": 12428,
+        "WorkingSet": 22155264,
+        "CPU": 7.390625
+      },
+      {
+        "Name": "browser",
+        "Id": 13048,
+        "WorkingSet": 172335104,
+        "CPU": 10.75
+      },
+      {
+        "Name": "browser",
+        "Id": 15444,
+        "WorkingSet": 83005440,
+        "CPU": 2
+      },
+      {
+        "Name": "browser",
+        "Id": 15464,
+        "WorkingSet": 63217664,
+        "CPU": 1.03125
+      },
+      {
+        "Name": "browser",
+        "Id": 16188,
+        "WorkingSet": 258347008,
+        "CPU": 14.359375
+      },
+      {
+        "Name": "browser",
+        "Id": 16404,
+        "WorkingSet": 200687616,
+        "CPU": 153.40625
+      },
+      {
+        "Name": "browser",
+        "Id": 16504,
+        "WorkingSet": 190103552,
+        "CPU": 9.953125
+      },
+      {
+        "Name": "browser",
+        "Id": 17576,
+        "WorkingSet": 192585728,
+        "CPU": 8.21875
+      },
+      {
+        "Name": "browser",
+        "Id": 17684,
+        "WorkingSet": 62623744,
+        "CPU": 57.53125
+      },
+      {
+        "Name": "browser",
+        "Id": 17876,
+        "WorkingSet": 349777920,
+        "CPU": 362.609375
+      },
+      {
+        "Name": "browser",
+        "Id": 18300,
+        "WorkingSet": 173158400,
+        "CPU": 5.15625
+      },
+      {
+        "Name": "browser",
+        "Id": 18372,
+        "WorkingSet": 9306112,
+        "CPU": 0.015625
+      },
+      {
+        "Name": "browser",
+        "Id": 18524,
+        "WorkingSet": 75489280,
+        "CPU": 5.875
+      },
+      {
+        "Name": "browser",
+        "Id": 18532,
+        "WorkingSet": 86339584,
+        "CPU": 22.109375
+      }
+    ],
+    "services": [
+      {
+        "Name": "AppIDSvc",
+        "Status": 4
+      },
+      {
+        "Name": "Appinfo",
+        "Status": 4
+      },
+      {
+        "Name": "AppXSvc",
+        "Status": 4
+      },
+      {
+        "Name": "AudioEndpointBuilder",
+        "Status": 4
+      },
+      {
+        "Name": "Audiosrv",
+        "Status": 4
+      },
+      {
+        "Name": "BDESVC",
+        "Status": 4
+      },
+      {
+        "Name": "BFE",
+        "Status": 4
+      },
+      {
+        "Name": "BrokerInfrastructure",
+        "Status": 4
+      },
+      {
+        "Name": "bthserv",
+        "Status": 4
+      },
+      {
+        "Name": "camsvc",
+        "Status": 4
+      },
+      {
+        "Name": "CaptureService_139878",
+        "Status": 4
+      },
+      {
+        "Name": "cbdhsvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "CDPSvc",
+        "Status": 4
+      },
+      {
+        "Name": "CDPUserSvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "CertPropSvc",
+        "Status": 4
+      },
+      {
+        "Name": "ClickToRunSvc",
+        "Status": 4
+      },
+      {
+        "Name": "CoreMessagingRegistrar",
+        "Status": 4
+      },
+      {
+        "Name": "CryptSvc",
+        "Status": 4
+      },
+      {
+        "Name": "DcomLaunch",
+        "Status": 4
+      },
+      {
+        "Name": "DeviceAssociationService",
+        "Status": 4
+      },
+      {
+        "Name": "DevicesFlowUserSvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "DevQueryBroker",
+        "Status": 4
+      },
+      {
+        "Name": "Dhcp",
+        "Status": 4
+      },
+      {
+        "Name": "DiagTrack",
+        "Status": 4
+      },
+      {
+        "Name": "DispBrokerDesktopSvc",
+        "Status": 4
+      },
+      {
+        "Name": "DisplayEnhancementService",
+        "Status": 4
+      },
+      {
+        "Name": "Dnscache",
+        "Status": 4
+      },
+      {
+        "Name": "DolbyDAXAPI",
+        "Status": 4
+      },
+      {
+        "Name": "DoSvc",
+        "Status": 4
+      },
+      {
+        "Name": "DPS",
+        "Status": 4
+      },
+      {
+        "Name": "dptftcs",
+        "Status": 4
+      },
+      {
+        "Name": "DusmSvc",
+        "Status": 4
+      },
+      {
+        "Name": "ELANFPService",
+        "Status": 4
+      },
+      {
+        "Name": "EventLog",
+        "Status": 4
+      },
+      {
+        "Name": "EventSystem",
+        "Status": 4
+      },
+      {
+        "Name": "fdPHost",
+        "Status": 4
+      },
+      {
+        "Name": "FDResPub",
+        "Status": 4
+      },
+      {
+        "Name": "FileSyncHelper",
+        "Status": 4
+      },
+      {
+        "Name": "FontCache",
+        "Status": 4
+      },
+      {
+        "Name": "FrameServer",
+        "Status": 4
+      },
+      {
+        "Name": "hidserv",
+        "Status": 4
+      },
+      {
+        "Name": "hns",
+        "Status": 4
+      },
+      {
+        "Name": "HvHost",
+        "Status": 4
+      },
+      {
+        "Name": "icssvc",
+        "Status": 4
+      },
+      {
+        "Name": "IDBWM",
+        "Status": 4
+      },
+      {
+        "Name": "igccservice",
+        "Status": 4
+      },
+      {
+        "Name": "IKEEXT",
+        "Status": 4
+      },
+      {
+        "Name": "InstallService",
+        "Status": 4
+      },
+      {
+        "Name": "Intel Analytics Service",
+        "Status": 4
+      },
+      {
+        "Name": "Intel Connectivity Network Service",
+        "Status": 4
+      },
+      {
+        "Name": "IntelAudioService",
+        "Status": 4
+      },
+      {
+        "Name": "IntelConnectService",
+        "Status": 4
+      },
+      {
+        "Name": "InventorySvc",
+        "Status": 4
+      },
+      {
+        "Name": "ipfsvc",
+        "Status": 4
+      },
+      {
+        "Name": "iphlpsvc",
+        "Status": 4
+      },
+      {
+        "Name": "KeyIso",
+        "Status": 4
+      },
+      {
+        "Name": "LanmanServer",
+        "Status": 4
+      },
+      {
+        "Name": "LanmanWorkstation",
+        "Status": 4
+      },
+      {
+        "Name": "lfsvc",
+        "Status": 4
+      },
+      {
+        "Name": "LG Device Managers",
+        "Status": 4
+      },
+      {
+        "Name": "LGUWPService",
+        "Status": 4
+      },
+      {
+        "Name": "LicenseManager",
+        "Status": 4
+      },
+      {
+        "Name": "lmhosts",
+        "Status": 4
+      },
+      {
+        "Name": "LSM",
+        "Status": 4
+      },
+      {
+        "Name": "MaximAudioService",
+        "Status": 4
+      },
+      {
+        "Name": "mc-fw-host",
+        "Status": 4
+      },
+      {
+        "Name": "MDCoreSvc",
+        "Status": 4
+      },
+      {
+        "Name": "mpssvc",
+        "Status": 4
+      },
+      {
+        "Name": "NcbService",
+        "Status": 4
+      },
+      {
+        "Name": "Netman",
+        "Status": 4
+      },
+      {
+        "Name": "netprofm",
+        "Status": 4
+      },
+      {
+        "Name": "NgcCtnrSvc",
+        "Status": 4
+      },
+      {
+        "Name": "NgcSvc",
+        "Status": 4
+      },
+      {
+        "Name": "NPSMSvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "nsi",
+        "Status": 4
+      },
+      {
+        "Name": "nvagent",
+        "Status": 4
+      },
+      {
+        "Name": "PcaSvc",
+        "Status": 4
+      },
+      {
+        "Name": "PhoneSvc",
+        "Status": 4
+      },
+      {
+        "Name": "PimIndexMaintenanceSvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "PlatformMgrService",
+        "Status": 4
+      },
+      {
+        "Name": "PlugPlay",
+        "Status": 4
+      },
+      {
+        "Name": "Power",
+        "Status": 4
+      },
+      {
+        "Name": "ProfSvc",
+        "Status": 4
+      },
+      {
+        "Name": "RasMan",
+        "Status": 4
+      },
+      {
+        "Name": "RmSvc",
+        "Status": 4
+      },
+      {
+        "Name": "RpcEptMapper",
+        "Status": 4
+      },
+      {
+        "Name": "RpcSs",
+        "Status": 4
+      },
+      {
+        "Name": "RtkAudioUniversalService",
+        "Status": 4
+      },
+      {
+        "Name": "SamSs",
+        "Status": 4
+      },
+      {
+        "Name": "SCardSvr",
+        "Status": 4
+      },
+      {
+        "Name": "Schedule",
+        "Status": 4
+      },
+      {
+        "Name": "SecurityHealthService",
+        "Status": 4
+      },
+      {
+        "Name": "SENS",
+        "Status": 4
+      },
+      {
+        "Name": "SharedAccess",
+        "Status": 4
+      },
+      {
+        "Name": "ShellHWDetection",
+        "Status": 4
+      },
+      {
+        "Name": "Spooler",
+        "Status": 4
+      },
+      {
+        "Name": "sppsvc",
+        "Status": 4
+      },
+      {
+        "Name": "SSDPSRV",
+        "Status": 4
+      },
+      {
+        "Name": "SstpSvc",
+        "Status": 4
+      },
+      {
+        "Name": "StateRepository",
+        "Status": 4
+      },
+      {
+        "Name": "StorSvc",
+        "Status": 4
+      },
+      {
+        "Name": "SysMain",
+        "Status": 4
+      },
+      {
+        "Name": "SystemEventsBroker",
+        "Status": 4
+      },
+      {
+        "Name": "TextInputManagementService",
+        "Status": 4
+      },
+      {
+        "Name": "Themes",
+        "Status": 4
+      },
+      {
+        "Name": "TimeBrokerSvc",
+        "Status": 4
+      },
+      {
+        "Name": "TokenBroker",
+        "Status": 4
+      },
+      {
+        "Name": "TrkWks",
+        "Status": 4
+      },
+      {
+        "Name": "UdkUserSvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "UnistoreSvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "UserDataSvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "UserManager",
+        "Status": 4
+      },
+      {
+        "Name": "UsoSvc",
+        "Status": 4
+      },
+      {
+        "Name": "VaultSvc",
+        "Status": 4
+      },
+      {
+        "Name": "Wcmsvc",
+        "Status": 4
+      },
+      {
+        "Name": "WdiSystemHost",
+        "Status": 4
+      },
+      {
+        "Name": "WdNisSvc",
+        "Status": 4
+      },
+      {
+        "Name": "webthreatdefsvc",
+        "Status": 4
+      },
+      {
+        "Name": "webthreatdefusersvc_139878",
+        "Status": 4
+      },
+      {
+        "Name": "WFDSConMgrSvc",
+        "Status": 4
+      },
+      {
+        "Name": "whesvc",
+        "Status": 4
+      },
+      {
+        "Name": "WinDefend",
+        "Status": 4
+      },
+      {
+        "Name": "WinHttpAutoProxySvc",
+        "Status": 4
+      },
+      {
+        "Name": "Winmgmt",
+        "Status": 4
+      },
+      {
+        "Name": "WlanSvc",
+        "Status": 4
+      },
+      {
+        "Name": "wlidsvc",
+        "Status": 4
+      },
+      {
+        "Name": "WMIRegistrationService",
+        "Status": 4
+      },
+      {
+        "Name": "WpnService",
+        "Status": 4
+      },
+      {
+        "Name": "WpnUserService_139878",
+        "Status": 4
+      },
+      {
+        "Name": "WSAIFabricSvc",
+        "Status": 4
+      },
+      {
+        "Name": "wscsvc",
+        "Status": 4
+      },
+      {
+        "Name": "WSearch",
+        "Status": 4
+      }
+    ],
+    "memory": {
+      "total": 33070444,
+      "free": 16621032,
+      "usagePercent": 50
+    },
+    "cpu": {
+      "Name": "Intel(R) Core(TM) Ultra 9 288V",
+      "NumberOfCores": 8,
+      "NumberOfLogicalProcessors": 8
+    },
+    "battery": {
+      "EstimatedChargeRemaining": 67,
+      "Status": "OK"
+    }
+  }
+}
