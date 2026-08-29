@@ -1,0 +1,23 @@
+{
+  "paths": {
+    "stateDir": "./reports/home-soc-state",
+    "logsDir": "./logs",
+    "reportsDir": "./reports"
+  },
+  "mcp": {
+    "protocolVersion": "2024-11-05",
+    "name": "home-soc",
+    "version": "1.0.0"
+  },
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "maxFiles": 7,
+    "maxSize": "10MB"
+  },
+  "network": {
+    "collectionInterval": 1800000,
+    "gatewayIP": "192.168.1.1",
+    "cameraIPs": ["192.168.1.100", "192.168.1.101", "192.168.1.102"]
+  }
+}
