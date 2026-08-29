@@ -60,6 +60,11 @@ try {
   console.error('Warning: Failed to load config.json, using defaults');
 }
 
+// Resolve paths against this script's directory, not process.cwd() —
+// some launchers (Task Scheduler, MCP clients) start the process with an unrelated cwd.
+config.paths.stateDir = path.resolve(__dirname, config.paths.stateDir);
+config.paths.logsDir = path.resolve(__dirname, config.paths.logsDir);
+
 class NetworkCollector {
   constructor() {
     this.stateDir = config.paths.stateDir;

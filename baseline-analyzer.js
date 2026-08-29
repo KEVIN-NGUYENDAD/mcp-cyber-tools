@@ -27,6 +27,9 @@ try {
   // Use defaults
 }
 
+// Resolve against this script's directory, not process.cwd().
+config.paths.stateDir = path.resolve(__dirname, config.paths.stateDir);
+
 class BaselineAnalyzer {
   constructor() {
     this.stateDir = config.paths.stateDir;
