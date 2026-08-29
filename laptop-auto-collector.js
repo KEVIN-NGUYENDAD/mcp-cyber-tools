@@ -100,17 +100,55 @@ function collectData(iterationNum) {
       snapshot.data.battery = { note: 'No battery info (might be desktop)' };
     }
 
-    // 4. WiFi status
-    console.log('  • Capturing WiFi...');
+    // 4. IPv4 Address (NEW)
+    console.log('  • Capturing IPv4 address...');
     try {
-      const wifiOutput = execSync('Get-NetAdapter -Physical | Where-Object {$_.MediaType -eq "802.11"} | Select-Object Name, Status | ConvertTo-Json',
+      const ipOutput = execSync('Get-NetIPAddress -AddressFamily IPv4 -PrefixLength 24 | Select-Object IPAddress, InterfaceAlias | ConvertTo-Json',
         { encoding: 'utf-8', shell: 'powershell', timeout: 5000 });
-      snapshot.data.wifi = JSON.parse(wifiOutput);
+      const ips = JSON.parse(ipOutput);
+      snapshot.data.ipv4 = Array.isArray(ips) ? ips : [ips];
     } catch (e) {
-      console.log('    ⚠️  WiFi capture failed');
+      console.log('    ⚠️  IPv4 capture failed');
     }
 
-    // 5. System memory
+    // 5. WiFi SSID and Status (IMPROVED)
+    console.log('  • Capturing WiFi SSID...');
+    try {
+      const wifiOutput = execSync('netsh wlan show interfaces',
+        { encoding: 'utf-8', shell: 'cmd', timeout: 5000 });
+      const lines = wifiOutput.split('\n');
+      const wifiData = {};
+      lines.forEach(line => {
+        if (line.includes('SSID')) {
+          const ssid = line.split(':')[1]?.trim() || 'Hidden/None';
+          wifiData.ssid = ssid;
+        }
+        if (line.includes('State')) {
+          const state = line.split(':')[1]?.trim() || 'Unknown';
+          wifiData.state = state;
+        }
+        if (line.includes('Signal')) {
+          const signal = line.split(':')[1]?.trim() || 'N/A';
+          wifiData.signal = signal;
+        }
+      });
+      snapshot.data.wifiStatus = wifiData.ssid ? wifiData : { note: 'No WiFi connected' };
+    } catch (e) {
+      console.log('    ⚠️  WiFi SSID capture failed');
+      snapshot.data.wifiStatus = { note: 'WiFi check failed' };
+    }
+
+    // 6. DNS Servers (NEW)
+    console.log('  • Capturing DNS servers...');
+    try {
+      const dnsOutput = execSync('Get-DnsClientServerAddress -AddressFamily IPv4 | Select-Object ServerAddresses, InterfaceAlias | ConvertTo-Json',
+        { encoding: 'utf-8', shell: 'powershell', timeout: 5000 });
+      snapshot.data.dns = JSON.parse(dnsOutput);
+    } catch (e) {
+      console.log('    ⚠️  DNS capture failed');
+    }
+
+    // 7. System memory
     console.log('  • Capturing system metrics...');
     try {
       const memOutput = execSync('Get-CimInstance Win32_OperatingSystem | Select-Object TotalVisibleMemorySize, FreePhysicalMemory | ConvertTo-Json',
