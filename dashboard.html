@@ -1,363 +1,353 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cyber Tools MCP - Dashboard</title>
+  <title>HOME SOC Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f1419;
       color: #e0e0e0;
-      min-height: 100vh;
-      padding: 20px;
+      line-height: 1.6;
     }
+
     .container {
       max-width: 1400px;
       margin: 0 auto;
+      padding: 20px;
     }
+
     header {
-      background: rgba(0,0,0,0.5);
-      border: 2px solid #00d4ff;
+      background: linear-gradient(135deg, #1a1f2e 0%, #2d3748 100%);
       padding: 30px;
-      border-radius: 10px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 20px rgba(0,212,255,0.3);
-    }
-    h1 {
-      color: #00d4ff;
-      font-size: 2.5em;
-      margin-bottom: 10px;
-    }
-    .version {
-      color: #00ff88;
-      font-size: 0.9em;
-      font-weight: bold;
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    .stat-card {
-      background: rgba(0,212,255,0.1);
-      border: 1px solid #00d4ff;
-      padding: 20px;
       border-radius: 8px;
-      text-align: center;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
-    .stat-number {
+
+    h1 {
       font-size: 2.5em;
-      color: #00ff88;
-      font-weight: bold;
-    }
-    .stat-label {
-      color: #00d4ff;
-      margin-top: 10px;
-      font-size: 0.9em;
-    }
-    .phases {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 20px;
-      margin: 30px 0;
-    }
-    .phase-card {
-      background: rgba(255,255,255,0.05);
-      border: 2px solid #00d4ff;
-      border-radius: 10px;
-      padding: 25px;
-      box-shadow: 0 0 15px rgba(0,212,255,0.2);
-    }
-    .phase-title {
-      font-size: 1.5em;
-      color: #00ff88;
-      margin-bottom: 15px;
-      border-bottom: 2px solid #00d4ff;
-      padding-bottom: 10px;
-    }
-    .tool-category {
-      margin-bottom: 20px;
-    }
-    .category-name {
-      color: #00d4ff;
-      font-weight: bold;
       margin-bottom: 10px;
-      font-size: 0.95em;
+      background: linear-gradient(135deg, #00d4ff, #0099ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .tool-count {
+
+    .status-badge {
       display: inline-block;
-      background: #00ff88;
-      color: #1a1a2e;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-weight: bold;
-      margin-left: 10px;
-      font-size: 0.85em;
-    }
-    .reports-section {
-      background: rgba(255,255,255,0.05);
-      border: 2px solid #ff6b6b;
-      border-radius: 10px;
-      padding: 25px;
-      margin: 30px 0;
-      box-shadow: 0 0 15px rgba(255,107,107,0.2);
-    }
-    .reports-title {
-      font-size: 1.5em;
-      color: #ff6b6b;
-      margin-bottom: 15px;
-    }
-    .report-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 15px;
-    }
-    .report-item {
-      background: rgba(255,107,107,0.1);
-      border: 1px solid #ff6b6b;
-      padding: 15px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .report-item:hover {
-      background: rgba(255,107,107,0.2);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(255,107,107,0.3);
-    }
-    .report-name {
-      color: #ff6b6b;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-    .report-desc {
-      color: #a0a0a0;
-      font-size: 0.85em;
-      line-height: 1.4;
-    }
-    .tools-section {
-      background: rgba(255,255,255,0.05);
-      border: 2px solid #00d4ff;
-      border-radius: 10px;
-      padding: 25px;
-      margin: 30px 0;
-    }
-    .tools-title {
-      font-size: 1.5em;
-      color: #00d4ff;
-      margin-bottom: 20px;
-    }
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-    }
-    .tool-badge {
-      background: rgba(0,212,255,0.1);
-      border: 1px solid #00d4ff;
-      padding: 10px;
-      border-radius: 4px;
-      font-size: 0.85em;
-      color: #00d4ff;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    footer {
-      text-align: center;
-      margin-top: 40px;
-      padding: 20px;
-      border-top: 1px solid #00d4ff;
-      color: #808080;
-      font-size: 0.9em;
-    }
-    .status {
-      display: inline-block;
-      background: #00ff88;
-      color: #1a1a2e;
       padding: 8px 16px;
       border-radius: 20px;
       font-weight: bold;
-      margin-left: 10px;
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+
+    .status-green { background: #10b981; }
+    .status-yellow { background: #f59e0b; }
+    .status-orange { background: #f97316; }
+    .status-red { background: #ef4444; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      border-color: #00d4ff;
+      box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+    }
+
+    .card-title {
+      font-size: 0.9em;
+      color: #88ccee;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #00d4ff;
+      margin-bottom: 10px;
+    }
+
+    .card-subtitle {
       font-size: 0.85em;
+      color: #888;
+    }
+
+    .alert-box {
+      background: #2d3748;
+      border-left: 4px solid #ef4444;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .alert-high { border-left-color: #ef4444; }
+    .alert-medium { border-left-color: #f59e0b; }
+    .alert-info { border-left-color: #3b82f6; }
+
+    .chart-container {
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-title {
+      font-size: 1.1em;
+      margin-bottom: 20px;
+      color: #00d4ff;
+    }
+
+    canvas {
+      max-height: 300px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 0.85em;
+    }
+
+    .timestamp {
+      color: #888;
+      font-size: 0.85em;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #888;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div>
-        <h1>🛡️ Cyber Tools MCP</h1>
-        <p>Windows SOC/DFIR Security Analysis Server</p>
-        <div class="version">
-          Version 1.0.0 <span class="status">PRODUCTION</span>
-        </div>
-      </div>
-      <div class="stats">
-        <div class="stat-card">
-          <div class="stat-number">90+</div>
-          <div class="stat-label">Total Tools</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">11</div>
-          <div class="stat-label">Modules</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">4</div>
-          <div class="stat-label">Phases</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">3</div>
-          <div class="stat-label">Report Types</div>
-        </div>
-      </div>
+      <h1>🏠 HOME SOC Dashboard</h1>
+      <p>Real-time network security monitoring</p>
+      <div id="status-display"></div>
     </header>
 
-    <div class="phases">
-      <div class="phase-card">
-        <div class="phase-title">📊 Phase 1: Core Analysis</div>
-        <div class="tool-category">
-          <div class="category-name">Host Enumeration <span class="tool-count">10</span></div>
-          <div style="font-size: 0.8em; color: #a0a0a0;">whoami, hostname, systemInfo, localUsers, localAdmins, installedSoftware...</div>
-        </div>
-        <div class="tool-category">
-          <div class="category-name">Network Analysis <span class="tool-count">10</span></div>
-          <div style="font-size: 0.8em; color: #a0a0a0;">ipconfig, netstat, ping, tracert, scanPort, activeConnections...</div>
-        </div>
-        <div class="tool-category">
-          <div class="category-name">Process Analysis <span class="tool-count">10</span></div>
-          <div style="font-size: 0.8em; color: #a0a0a0;">tasklist, processMonitor, cpuUsage, memoryUsage, suspiciousProcesses...</div>
-        </div>
+    <div class="grid">
+      <div class="card">
+        <div class="card-title">🖥️ Devices Online</div>
+        <div class="card-value" id="device-count">0</div>
+        <div class="card-subtitle" id="device-avg">Avg: 0</div>
       </div>
 
-      <div class="phase-card">
-        <div class="phase-title">🔒 Phase 2: System Security</div>
-        <div class="tool-category">
-          <div class="category-name">Services <span class="tool-count">5</span></div>
-        </div>
-        <div class="tool-category">
-          <div class="category-name">Event Logs <span class="tool-count">10</span></div>
-          <div style="font-size: 0.8em; color: #a0a0a0;">securityLogs, rdpLogs, powershellLogs, failedLogons...</div>
-        </div>
-        <div class="tool-category">
-          <div class="category-name">Firewall <span class="tool-count">5</span></div>
-        </div>
-        <div class="tool-category">
-          <div class="category-name">Defender <span class="tool-count">5</span></div>
-        </div>
+      <div class="card">
+        <div class="card-title">📹 Cameras</div>
+        <div class="card-value" id="camera-count">0</div>
+        <div class="card-subtitle" id="camera-status">0 offline</div>
       </div>
 
-      <div class="phase-card">
-        <div class="phase-title">🔍 Phase 3: Forensics & Persistence</div>
-        <div class="tool-category">
-          <div class="category-name">Persistence <span class="tool-count">10</span></div>
-          <div style="font-size: 0.8em; color: #a0a0a0;">registryRunKeys, scheduledTasks, wmiPersistence, browserPersistence...</div>
-        </div>
-        <div class="tool-category">
-          <div class="category-name">Forensics <span class="tool-count">10</span></div>
-          <div style="font-size: 0.8em; color: #a0a0a0;">checkHash, fileMetadata, alternateDataStreams, recentFiles...</div>
-        </div>
+      <div class="card">
+        <div class="card-title">🚨 Alerts</div>
+        <div class="card-value" id="alert-count">0</div>
+        <div class="card-subtitle" id="alert-critical">0 critical</div>
       </div>
 
-      <div class="phase-card">
-        <div class="phase-title">🎯 Phase 4: Threat Hunting & IR</div>
-        <div class="tool-category">
-          <div class="category-name">Threat Hunting <span class="tool-count">10</span></div>
-          <div style="font-size: 0.8em; color: #a0a0a0;">huntEncodedPowerShell, huntPersistence, huntNetworkBeacons...</div>
-        </div>
-        <div class="tool-category">
-          <div class="category-name">Incident Response <span class="tool-count">10</span></div>
-          <div style="font-size: 0.8em; color: #a0a0a0;">collectEvidence, timeline, securityAudit, collectNetworkState...</div>
-        </div>
+      <div class="card">
+        <div class="card-title">📊 Network Stability</div>
+        <div class="card-value" id="stability">0%</div>
+        <div class="card-subtitle" id="stability-detail">Calculating...</div>
       </div>
     </div>
 
-    <div class="reports-section">
-      <div class="reports-title">📄 Generate Reports</div>
-      <p style="color: #a0a0a0; margin-bottom: 20px;">Run tools in Claude to generate reports automatically:</p>
-      <div class="report-list">
-        <div class="report-item">
-          <div class="report-name">🔐 Security Audit</div>
-          <div class="report-desc">Comprehensive security assessment with firewall, defender, and access controls</div>
-        </div>
-        <div class="report-item">
-          <div class="report-name">📅 Incident Timeline</div>
-          <div class="report-desc">7-day or custom timeline of system events and changes</div>
-        </div>
-        <div class="report-item">
-          <div class="report-name">📦 Evidence Collection</div>
-          <div class="report-desc">Full forensic evidence snapshot for incident investigation</div>
-        </div>
-        <div class="report-item">
-          <div class="report-name">🕵️ Threat Hunt Report</div>
-          <div class="report-desc">IOC detection, persistence mechanisms, suspicious activity</div>
-        </div>
-        <div class="report-item">
-          <div class="report-name">📊 Network State</div>
-          <div class="report-desc">Snapshot of active connections and network configuration</div>
-        </div>
-        <div class="report-item">
-          <div class="report-name">🛡️ Defender Status</div>
-          <div class="report-desc">Malware threats, scan history, and protection status</div>
-        </div>
+    <div class="chart-container">
+      <div class="chart-title">📈 Device Count Timeline (Last 48 Hours)</div>
+      <canvas id="timeline-chart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">⏰ Hourly Baseline Pattern</div>
+      <canvas id="baseline-chart"></canvas>
+    </div>
+
+    <div class="chart-container">
+      <div class="chart-title">🚨 Recent Alerts</div>
+      <div id="alerts-container">
+        <div class="no-data">No alerts</div>
       </div>
     </div>
 
-    <div class="tools-section">
-      <div class="tools-title">📌 Quick Access Tools</div>
-      <div class="tool-grid">
-        <!-- Phase 1 -->
-        <div class="tool-badge" title="Get current user">whoami</div>
-        <div class="tool-badge" title="Get computer name">hostname</div>
-        <div class="tool-badge" title="System information">systemInfo</div>
-        <div class="tool-badge" title="Local users">localUsers</div>
-        <div class="tool-badge" title="Network config">ipconfig</div>
-        <div class="tool-badge" title="Connections">netstat</div>
-        <div class="tool-badge" title="Active connections">activeConnections</div>
-        <div class="tool-badge" title="Running processes">tasklist</div>
-        <div class="tool-badge" title="Process monitor">processMonitor</div>
-        <div class="tool-badge" title="CPU usage">cpuUsage</div>
-        <!-- Phase 2 -->
-        <div class="tool-badge" title="Security logs">securityLogs</div>
-        <div class="tool-badge" title="Firewall status">firewallStatus</div>
-        <div class="tool-badge" title="Firewall rules">firewallRules</div>
-        <div class="tool-badge" title="Defender status">defenderStatus</div>
-        <div class="tool-badge" title="Threats found">defenderThreats</div>
-        <div class="tool-badge" title="Running services">runningServices</div>
-        <div class="tool-badge" title="RDP logs">rdpLogs</div>
-        <div class="tool-badge" title="PowerShell logs">powershellLogs</div>
-        <!-- Phase 3 -->
-        <div class="tool-badge" title="Persistence audit">persistenceAudit</div>
-        <div class="tool-badge" title="Registry Run keys">registryRunKeys</div>
-        <div class="tool-badge" title="Scheduled tasks">scheduledTasks</div>
-        <div class="tool-badge" title="File hash">checkHash</div>
-        <div class="tool-badge" title="File metadata">fileMetadata</div>
-        <div class="tool-badge" title="Recent files">recentFiles</div>
-        <div class="tool-badge" title="ADS detection">alternateDataStreams</div>
-        <!-- Phase 4 -->
-        <div class="tool-badge" title="PowerShell hunting">huntEncodedPowerShell</div>
-        <div class="tool-badge" title="Persistence hunting">huntPersistence</div>
-        <div class="tool-badge" title="Suspicious services">huntSuspiciousServices</div>
-        <div class="tool-badge" title="Network beacons">huntNetworkBeacons</div>
-        <div class="tool-badge" title="Collect evidence">collectEvidence</div>
-        <div class="tool-badge" title="Timeline">timeline</div>
-        <div class="tool-badge" title="Security audit">securityAudit</div>
-      </div>
-    </div>
-
-    <footer>
-      <p>MCP Cyber Tools v1.0.0 | Windows SOC/DFIR Security Analysis</p>
-      <p style="margin-top: 10px; color: #606060;">Generated reports are saved to: <code>./reports/</code></p>
-      <p style="margin-top: 10px;">Status: ✅ Production Ready | Tools: 90+ | Last Updated: 2026-08-21</p>
+    <footer class="footer">
+      <p>Last update: <span class="timestamp" id="last-update">--:--:--</span></p>
     </footer>
   </div>
+
+  <script>
+    let timelineChart, baselineChart;
+
+    async function loadData() {
+      try {
+        const response = await fetch('./reports/home-soc-state/network-history.json');
+        if (!response.ok) throw new Error('Network data not found');
+
+        const networkData = await response.json();
+        const baselineResp = await fetch('./reports/home-soc-state/baseline.json');
+        const baseline = baselineResp.ok ? await baselineResp.json() : null;
+        const alertsResp = await fetch('./reports/home-soc-state/alerts.json');
+        const alerts = alertsResp.ok ? await alertsResp.json() : { alerts: [] };
+        const deviceResp = await fetch('./reports/home-soc-state/device-history.json');
+        const devices = deviceResp.ok ? await deviceResp.json() : { cameraStatus: [] };
+
+        updateDashboard({
+          networkData,
+          baseline,
+          alerts: alerts.alerts || [],
+          cameras: devices.cameraStatus || []
+        });
+      } catch (e) {
+        console.error('Failed to load data:', e);
+      }
+    }
+
+    function updateDashboard(data) {
+      const latest = data.networkData.snapshots?.[data.networkData.snapshots.length - 1];
+      const avg = data.networkData.averageDevices || 0;
+
+      // Update cards
+      document.getElementById('device-count').textContent = latest?.deviceCount || 0;
+      document.getElementById('device-avg').textContent = `Avg: ${avg}`;
+
+      const onlineCameras = data.cameras.filter(c => c.status === 'online').length;
+      const offlineCameras = data.cameras.length - onlineCameras;
+      document.getElementById('camera-count').textContent = onlineCameras;
+      document.getElementById('camera-status').textContent = `${offlineCameras} offline`;
+
+      const criticalAlerts = data.alerts.filter(a => a.severity === 'high' && !a.acknowledged).length;
+      document.getElementById('alert-count').textContent = data.alerts.length;
+      document.getElementById('alert-critical').textContent = `${criticalAlerts} critical`;
+
+      // Timeline chart
+      updateTimelineChart(data.networkData.snapshots);
+
+      // Baseline chart
+      if (data.baseline) {
+        updateBaselineChart(data.baseline);
+      }
+
+      // Alerts
+      updateAlerts(data.alerts);
+
+      // Timestamp
+      const now = new Date();
+      document.getElementById('last-update').textContent = now.toLocaleTimeString('vi-VN');
+    }
+
+    function updateTimelineChart(snapshots) {
+      if (!snapshots || snapshots.length === 0) return;
+
+      const ctx = document.getElementById('timeline-chart').getContext('2d');
+      if (timelineChart) timelineChart.destroy();
+
+      timelineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: snapshots.map(s => {
+            const d = new Date(s.timestamp);
+            return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+          }),
+          datasets: [{
+            label: 'Device Count',
+            data: snapshots.map(s => s.deviceCount),
+            borderColor: '#00d4ff',
+            backgroundColor: 'rgba(0, 212, 255, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: '#2d3748' } },
+            x: { ticks: { color: '#888' }, grid: { color: '#2d3748' } }
+          }
+        }
+      });
+    }
+
+    function updateBaselineChart(baseline) {
+      if (!baseline?.hourly) return;
+
+      const ctx = document.getElementById('baseline-chart').getContext('2d');
+      const hours = Object.keys(baseline.hourly).sort((a, b) => parseInt(a) - parseInt(b));
+
+      if (baselineChart) baselineChart.destroy();
+
+      baselineChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: hours.map(h => h + ':00'),
+          datasets: [{
+            label: 'Average Devices',
+            data: hours.map(h => baseline.hourly[h]?.avg || 0),
+            backgroundColor: '#00d4ff',
+            borderColor: '#0099ff',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: true } },
+          scales: {
+            y: { beginAtZero: true, ticks: { color: '#888' }, grid: { color: '#2d3748' } },
+            x: { ticks: { color: '#888' }, grid: { color: '#2d3748' } }
+          }
+        }
+      });
+    }
+
+    function updateAlerts(alerts) {
+      const container = document.getElementById('alerts-container');
+
+      if (!alerts || alerts.length === 0) {
+        container.innerHTML = '<div class="no-data">✓ No recent alerts</div>';
+        return;
+      }
+
+      container.innerHTML = alerts.slice(-10).reverse().map(a => `
+        <div class="alert-box alert-${a.severity}">
+          <strong>${a.type}</strong>
+          <div style="font-size: 0.85em; color: #aaa; margin-top: 5px;">
+            ${new Date(a.timestamp).toLocaleString('vi-VN')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Load data
+    loadData();
+    setInterval(loadData, 30000);
+  </script>
 </body>
 </html>

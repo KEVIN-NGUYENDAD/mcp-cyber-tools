@@ -291,6 +291,112 @@ class HomeSocMcpServer {
     };
   }
 
+  // Tool: Predict Threat Level
+  predictThreatLevel() {
+    const baselinePath = path.join(this.stateDir, 'baseline.json');
+    const networkPath = path.join(this.stateDir, 'network-history.json');
+    const alertsPath = path.join(this.stateDir, 'alerts.json');
+
+    let baseline = { overall: { avg: 5, min: 0, max: 20 } };
+    let networkData = { snapshots: [] };
+    let alerts = [];
+
+    if (fs.existsSync(baselinePath)) {
+      try {
+        baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
+      } catch (e) {}
+    }
+
+    if (fs.existsSync(networkPath)) {
+      try {
+        networkData = JSON.parse(fs.readFileSync(networkPath, 'utf8'));
+      } catch (e) {}
+    }
+
+    if (fs.existsSync(alertsPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(alertsPath, 'utf8'));
+        alerts = data.alerts || [];
+      } catch (e) {}
+    }
+
+    const latest = networkData.snapshots?.[networkData.snapshots.length - 1];
+    const currentDeviceCount = latest?.deviceCount || 0;
+    const expectedCount = baseline.overall?.avg || 5;
+    const deviation = Math.abs(currentDeviceCount - expectedCount);
+    const deviationPercent = (deviation / expectedCount) * 100;
+
+    // Critical alerts count
+    const criticalAlerts = alerts.filter(a => a.severity === 'high').length;
+    const recentAlerts = alerts.filter(a => {
+      const alertTime = new Date(a.timestamp);
+      const now = new Date();
+      return (now - alertTime) < 3600000; // Last hour
+    }).length;
+
+    // Calculate threat score (0-100)
+    let threatScore = 20; // Base score
+
+    // Device anomaly (0-30 points)
+    if (deviationPercent > 50) threatScore += 30;
+    else if (deviationPercent > 25) threatScore += 20;
+    else if (deviationPercent > 10) threatScore += 10;
+
+    // Critical alerts (0-25 points)
+    threatScore += Math.min(criticalAlerts * 5, 25);
+
+    // Recent alerts in last hour (0-20 points)
+    threatScore += Math.min(recentAlerts * 4, 20);
+
+    // Network stability (0-15 points)
+    const stabilityScore = networkData.snapshots?.length > 1
+      ? Math.round((Math.max(...networkData.snapshots.map(s => s.deviceCount)) - Math.min(...networkData.snapshots.map(s => s.deviceCount))) * 5)
+      : 0;
+    if (stabilityScore > 10) threatScore += 15;
+    else if (stabilityScore > 5) threatScore += 10;
+    else if (stabilityScore > 0) threatScore += 5;
+
+    threatScore = Math.min(100, threatScore);
+
+    // Determine threat level
+    let threatLevel = 'GREEN';
+    let recommendation = '';
+
+    if (threatScore >= 80) {
+      threatLevel = 'RED';
+      recommendation = 'CRITICAL: Mạng có dấu hiệu bất thường. Kiểm tra ngay!';
+    } else if (threatScore >= 60) {
+      threatLevel = 'ORANGE';
+      recommendation = 'WARNING: Phát hiện nhiều thay đổi. Tăng cường giám sát.';
+    } else if (threatScore >= 40) {
+      threatLevel = 'YELLOW';
+      recommendation = 'CAUTION: Có một số cảnh báo. Kiểm tra lịch sử thiết bị.';
+    } else {
+      threatLevel = 'GREEN';
+      recommendation = 'OK: Mạng bình thường. Tiếp tục giám sát.';
+    }
+
+    return {
+      timestamp: new Date().toISOString(),
+      threatScore: Math.round(threatScore),
+      threatLevel: threatLevel,
+      prediction: {
+        currentDevices: currentDeviceCount,
+        expectedDevices: Math.round(expectedCount),
+        deviation: Math.round(deviation * 10) / 10,
+        deviationPercent: Math.round(deviationPercent),
+        criticalAlerts: criticalAlerts,
+        recentAlerts: recentAlerts
+      },
+      factors: {
+        deviceAnomaly: deviationPercent > 10 ? 'HIGH' : 'NORMAL',
+        alertTrend: criticalAlerts > 3 ? 'HIGH' : 'NORMAL',
+        networkStability: stabilityScore > 5 ? 'UNSTABLE' : 'STABLE'
+      },
+      recommendation: recommendation
+    };
+  }
+
   // Tool: HOME SOC Status
   homeSocStatus() {
     const devices = this.discoverDevices();
@@ -380,6 +486,11 @@ class McpServer {
         inputSchema: { type: 'object', properties: {} }
       },
       {
+        name: 'predictThreatLevel',
+        description: 'Predict network threat level based on baseline anomalies and alerts',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
         name: 'homeSocStatus',
         description: 'Get overall HOME SOC security status and recommendations',
         inputSchema: { type: 'object', properties: {} }
@@ -403,6 +514,8 @@ class McpServer {
         return this.homeSoc.changeHistory();
       case 'getAlerts':
         return this.homeSoc.getAlerts();
+      case 'predictThreatLevel':
+        return this.homeSoc.predictThreatLevel();
       case 'homeSocStatus':
         return this.homeSoc.homeSocStatus();
       default:

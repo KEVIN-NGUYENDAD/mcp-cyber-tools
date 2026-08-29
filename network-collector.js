@@ -219,7 +219,7 @@ class NetworkCollector {
     fs.writeFileSync(changesPath, JSON.stringify(history, null, 2));
   }
 
-  updateNetworkHistory(devices) {
+  updateNetworkHistory(devices, metrics = {}) {
     const networkPath = path.join(this.stateDir, 'network-history.json');
     let history = { snapshots: [] };
 
@@ -234,7 +234,8 @@ class NetworkCollector {
     const snapshot = {
       timestamp: new Date().toISOString(),
       deviceCount: devices.length,
-      devices: devices.map(d => ({ ip: d.ip, mac: d.mac }))
+      devices: devices.map(d => ({ ip: d.ip, mac: d.mac })),
+      metrics: metrics
     };
 
     history.snapshots = [...history.snapshots, snapshot].slice(-config.jsonManagement.maxHistoryEntries);
@@ -295,6 +296,39 @@ class NetworkCollector {
       config.network.fastScanEnabled = false;
       this.logMessage('info', 'Fast scan mode DISABLED');
       console.log('✓ Fast scan mode disabled, returning to normal schedule');
+    }
+  }
+
+  measurePingLatency(ip) {
+    try {
+      const start = Date.now();
+      const isWindows = process.platform === 'win32';
+      const pingCmd = isWindows ? `ping -n 1 ${ip}` : `ping -c 1 ${ip}`;
+      execSync(pingCmd, { stdio: 'ignore' });
+      return Date.now() - start;
+    } catch {
+      return null;
+    }
+  }
+
+  getGatewayMetrics() {
+    try {
+      if (process.platform === 'win32') {
+        // Windows: Get basic network adapter info
+        const output = execSync('netstat -e', { encoding: 'utf-8' });
+        return {
+          platform: 'windows',
+          collected: new Date().toISOString()
+        };
+      } else {
+        // Linux: Get interface stats
+        return {
+          platform: 'linux',
+          collected: new Date().toISOString()
+        };
+      }
+    } catch (e) {
+      return null;
     }
   }
 
@@ -370,27 +404,65 @@ class NetworkCollector {
       this.updateChangesLog(changes);
     }
 
-    // 7. Update network history
-    this.updateNetworkHistory(currentDevices);
+    // 7. Measure performance metrics
+    console.log('\n📊 Measuring metrics...');
+    const metrics = {
+      gatewayLatency: this.measurePingLatency(config.network.gatewayIP),
+      cameraLatencies: {}
+    };
+    for (const ip of this.cameraIPs) {
+      const latency = this.measurePingLatency(ip);
+      if (latency !== null) {
+        metrics.cameraLatencies[ip] = latency;
+      }
+    }
+    console.log(`   Gateway latency: ${metrics.gatewayLatency}ms`);
+
+    // 8. Update network history with metrics
+    this.updateNetworkHistory(currentDevices, metrics);
+
+    // 9. Run baseline analysis
+    console.log('\n📈 Updating baseline...');
+    try {
+      const { BaselineAnalyzer } = await import('./baseline-analyzer.js');
+      const analyzer = new BaselineAnalyzer();
+      const analysis = analyzer.analyze();
+      if (analysis.anomalies.length > 0) {
+        console.log(`   ⚠️  Anomalies detected: ${analysis.anomalies.length}`);
+        analysis.anomalies.forEach(a => {
+          this.createAlert('anomaly-detected', {
+            type: a.type,
+            deviation: a.deviation,
+            expected: a.expectedAvg,
+            actual: a.deviceCount,
+            severity: a.severity
+          });
+        });
+      }
+    } catch (e) {
+      this.logMessage('warn', `Baseline analysis failed: ${e.message}`);
+    }
 
     console.log('\n✅ Collection complete');
     console.log(`   Stored to:`);
-    console.log(`   - device-history.json`);
-    console.log(`   - changes.json`);
-    console.log(`   - network-history.json`);
-    console.log(`   - alerts.json`);
+    console.log(`   - device-history.json (devices + camera status)`);
+    console.log(`   - changes.json (change log)`);
+    console.log(`   - network-history.json (snapshots + metrics)`);
+    console.log(`   - baseline.json (hourly/daily patterns)`);
+    console.log(`   - alerts.json (security alerts)`);
     console.log(`   - Timestamp: ${timestamp}`);
 
     if (config.network.fastScanEnabled) {
-      console.log(`\n   📊 Fast scan mode: ACTIVE`);
+      console.log(`\n   ⚡ Fast scan mode: ACTIVE`);
     }
 
-    this.logMessage('info', `Collection (${scanMode}): ${currentDevices.length} devices, ${changes.length} changes`);
+    this.logMessage('info', `Collection (${scanMode}): ${currentDevices.length} devices, ${changes.length} changes, latency=${metrics.gatewayLatency}ms`);
 
     return {
       devices: currentDevices,
       changes,
       cameras,
+      metrics,
       timestamp,
       mode: scanMode
     };
