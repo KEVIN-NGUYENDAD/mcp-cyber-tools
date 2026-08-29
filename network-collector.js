@@ -94,6 +94,14 @@ class NetworkCollector {
     }
   }
 
+  isRealDevice(ip) {
+    const octets = ip.split('.').map(Number);
+    if (ip === '255.255.255.255') return false; // limited broadcast
+    if (octets[3] === 255) return false; // subnet broadcast (x.x.x.255)
+    if (octets[0] >= 224 && octets[0] <= 239) return false; // multicast range
+    return true;
+  }
+
   getARPTable() {
     const devices = [];
     const isWindows = process.platform === 'win32';
@@ -113,7 +121,7 @@ class NetworkCollector {
           match = line.match(/\((\d+\.\d+\.\d+\.\d+)\).*?([0-9a-f]{2}(?::[0-9a-f]{2}){5})/i);
           mac = match && match[2];
         }
-        if (match) {
+        if (match && this.isRealDevice(match[1])) {
           devices.push({
             ip: match[1],
             mac: mac.toLowerCase(),
