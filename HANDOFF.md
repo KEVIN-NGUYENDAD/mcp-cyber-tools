@@ -14,7 +14,7 @@ MCP server `home-soc` đã kết nối thành công với Claude Desktop và thu
 - Devices phát hiện: 3 (`192.168.0.1`, `.21`, `.25`)
 - 9 MCP tools hoạt động
 
-## Các bug đã sửa trong session này
+## Các bug đã sửa trong SESSION 1
 
 1. **EPERM crash khi khởi động** — code resolve `./logs`, `./reports` theo
    `process.cwd()`, nhưng Claude Desktop launch process với cwd không liên
@@ -36,62 +36,91 @@ MCP server `home-soc` đã kết nối thành công với Claude Desktop và thu
    `224.x.x.x`, `239.255.255.250`, `x.x.x.255`. Chúng làm phồng device count,
    méo baseline, và bắn alert HIGH giả mỗi lần chạy. Đã lọc qua `isRealDevice()`.
 
+## Các bug đã sửa trong SESSION 2
+
+1. **Hai tool threat level mâu thuẫn** — `homeSocStatus()` dùng thang điểm ngược
+   chiều so với `predictThreatLevel()`. Một tool nói GREEN khi score cao (bảo mật),
+   tool kia nói GREEN khi score thấp (an toàn). Đã căn chỉnh cả hai dùng thang
+   0-100 của `predictThreatLevel`: 0-40=GREEN, 60-80=ORANGE, 80-100=RED.
+   Bỏ luôn penalty "vĩnh viễn" cho số thiết bị — chỉ đếm DEVIATION từ baseline.
+
+2. **Outdated setup scripts** — RUN-ME.bat, HOME-SOC-AUTO-SETUP.ps1, SETUP.ps1,
+   SETUP_GODMODE.ps1 đều tham chiếu `src/` không tồn tại và `~/.claude/mcp.json`
+   sai. Đã xóa toàn bộ. Tạo DEPLOYMENT.md hướng dẫn chính xác cho Windows.
+
+3. **README.md outdated** — Tham chiếu `~/.claude/profiles/claude_desktop_config.json`
+   sai (đúng là `%APPDATA%\Claude\claude_desktop_config.json`). Đã cập nhật,
+   thêm note về hai server riêng (cyber-tools + home-soc).
+
+4. **home-soc-phase1-package deprecated** — Thư mục này chứa cấu trúc cũ với `src/`.
+   Đánh dấu "DEPRECATED" ở README, hướng dẫn dùng root-level files thay thế.
+
 ## VIỆC CÒN DANG DỞ
 
-### 1. Hai tool báo threat level mâu thuẫn nhau (chưa sửa)
+### 1. ✅ ĐÃ SỬA: Hai tool báo threat level mâu thuẫn nhau
 
-Cùng một dữ liệu nhưng cho kết quả trái ngược, vì dùng thang điểm ngược chiều:
+**Status:** FIXED in session 2
 
-| Tool | Base | Hướng | Đọc ra |
-|---|---|---|---|
-| `homeSocStatus` | 85 | cao = tốt | 83 → YELLOW |
-| `predictThreatLevel` | 20 | cao = xấu | 20 → GREEN |
+Đã căn chỉnh `homeSocStatus()` để dùng cùng thang điểm với `predictThreatLevel()`:
+- Cả hai giờ dùng thang 0-100 với: 0-40=GREEN, 40-60=YELLOW, 60-80=ORANGE, 80-100=RED
+- Cao = THREAT (xấu), thấp = NORMAL (tốt) — đồng nhất
+- Bỏ penalty "vĩnh viễn" cho số thiết bị hợp lệ
+- Chỉ đếm device count khi DEVIATION từ baseline (không phải số tuyệt đối)
 
-Thêm nữa, `homeSocStatus()` có dòng:
-
-```js
-homeScore -= Math.min(devices.totalDevices * 2, 15);
-```
-
-→ mỗi thiết bị hợp lệ trong nhà bị trừ 2 điểm **vĩnh viễn**. Nhà càng nhiều
-thiết bị càng bị chấm là nguy hiểm. Đây là lỗi thiết kế, không phải trạng
-thái tạm thời sẽ tự hết.
-
-**Đề xuất:** bỏ penalty theo số thiết bị; cho `homeSocStatus` dùng chung
-thang với `predictThreatLevel` để chỉ còn một nguồn sự thật về threat level.
-
-### 2. Gateway model / firmware không bao giờ có dữ liệu
+### 2. Gateway model / firmware không bao giờ có dữ liệu (BACKLOG)
 
 `gatewayStatus()` đọc `data.gateway.model` và `.firmwareVersion`, nhưng
 collector không ghi hai field này → luôn trả `unknown`. Hoặc implement thật,
 hoặc bỏ khỏi output để không gây hiểu nhầm là "có firmware check".
 
-### 3. ARP chỉ thấy thiết bị vừa liên lạc gần đây
+### 3. ARP chỉ thấy thiết bị vừa liên lạc gần đây (BACKLOG)
 
 3 devices không có nghĩa nhà chỉ có 3 máy. Điện thoại/TV/máy in đang online
 nhưng chưa nói chuyện với laptop sẽ không nằm trong ARP cache. Muốn thấy đủ
 cần ping sweep cả subnet (`192.168.0.1-254`) trước khi đọc ARP. Chưa làm.
 
-### 4. Vendor lookup chưa tồn tại
+### 4. Vendor lookup chưa tồn tại (BACKLOG)
 
 Phần tra MAC → vendor (Realtek / Arris / SEI Robotics) là do Claude tự suy từ
 OUI prefix, không phải tool trả về. Nếu muốn thành tính năng thật thì cần
 implement OUI database lookup.
 
-## Cách tiếp tục ở session mới
+## Tóm Tắt SESSION 2
+
+**Xong:**
+- ✅ Fix threat level contradiction (homeSocStatus ↔ predictThreatLevel)
+- ✅ Xóa outdated setup scripts (4 files)
+- ✅ Tạo DEPLOYMENT.md hướng dẫn đúng
+- ✅ Update README.md (path + server clarification)
+- ✅ Mark legacy directories deprecated
+- **Total commits this session:** 4
+
+**Remaining backlog (3 items):**
+1. Gateway firmware detection
+2. Full subnet ping sweep (ARP limitation)
+3. OUI/vendor lookup tool
+
+---
+
+## Cách tiếp tục ở session tiếp theo
 
 ```bash
 git checkout claude/dfir-triage-investigation-xhgwz7
 git pull
 ```
 
-Trên Windows, chạy collector thủ công để cập nhật dữ liệu:
+Trên Windows, verify MCP server with fixed threat levels:
 
 ```powershell
 cd C:\mcp-cyber-tools
 git pull origin claude/dfir-triage-investigation-xhgwz7
 node network-collector.js
+
+# Test both tools now return consistent threat levels
+# @homeSocStatus
+# @predictThreatLevel
+# → Cả hai = GREEN, YELLOW, ORANGE, hoặc RED (đồng nhất)
 ```
 
 Task Scheduler cho auto-collect mỗi 30 phút **chưa được setup** — hiện phải
-chạy tay.
+chạy tay hoặc dùng DEPLOYMENT.md hướng dẫn.
