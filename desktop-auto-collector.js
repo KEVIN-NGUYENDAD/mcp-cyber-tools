@@ -130,11 +130,29 @@ function collectData(iterationNum) {
 }
 
 /**
+ * Generate comprehensive report (call external generator)
+ */
+async function generateComprehensiveReport() {
+  console.log('\n\n' + '='.repeat(70));
+  console.log('📋 GENERATING COMPREHENSIVE REPORT (Desktop + Laptop + WiFi + iPhone)...');
+  console.log('='.repeat(70) + '\n');
+
+  try {
+    const { execSync } = await import('child_process');
+    execSync('node comprehensive-report-generator.js', { stdio: 'inherit' });
+    return true;
+  } catch (err) {
+    console.error('Error generating comprehensive report:', err.message);
+    return false;
+  }
+}
+
+/**
  * Generate final report
  */
 function generateReport() {
   console.log('\n\n' + '='.repeat(70));
-  console.log('📋 GENERATING FINAL REPORT...');
+  console.log('📋 GENERATING BASIC DESKTOP REPORT...');
   console.log('='.repeat(70) + '\n');
 
   const collectionCount = collectionLog.collections.length;
@@ -249,16 +267,24 @@ async function main() {
       // Save collection log
       fs.writeFileSync('collection-log.json', JSON.stringify(collectionLog, null, 2));
 
-      console.log('\n' + '='.repeat(70));
-      console.log('🎉 AUTO COLLECTION COMPLETE');
-      console.log('='.repeat(70));
-      console.log(`\n📊 Collected: ${collectionLog.collections.length} snapshots`);
-      console.log(`📁 Data: ${CONFIG.dataDir}/`);
-      console.log(`📋 Report: ${CONFIG.reportFile}`);
-      console.log(`📝 Log: collection-log.json`);
-      console.log('\n✅ Ready to send report to user');
+      // Generate comprehensive report
+      console.log('\n🔄 Generating comprehensive multi-device report...\n');
+      generateComprehensiveReport().then(() => {
+        console.log('\n' + '='.repeat(70));
+        console.log('🎉 AUTO COLLECTION COMPLETE');
+        console.log('='.repeat(70));
+        console.log(`\n📊 Desktop Collected: ${collectionLog.collections.length} snapshots`);
+        console.log(`📁 Data: ${CONFIG.dataDir}/`);
+        console.log(`📋 Basic Report: ${CONFIG.reportFile}`);
+        console.log(`📋 Comprehensive Report: COMPREHENSIVE-REPORT-8PM.md`);
+        console.log(`📝 Log: collection-log.json`);
+        console.log('\n✅ Tất cả báo cáo đã sẵn sàng!');
+        console.log('📧 Sẽ gửi báo cáo tổng hợp cho bạn ngay...');
 
-      process.exit(0);
+        process.exit(0);
+      });
+    } else {
+      collectData(iteration++);
     } else {
       collectData(iteration++);
     }
