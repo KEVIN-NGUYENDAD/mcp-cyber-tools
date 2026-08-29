@@ -38,6 +38,14 @@ try {
   console.error('Warning: Failed to load config.json, using defaults');
 }
 
+// Resolve paths against this script's directory, not process.cwd() —
+// some MCP clients launch the server with an unrelated working directory.
+config.paths.stateDir = path.resolve(__dirname, config.paths.stateDir);
+config.paths.logsDir = path.resolve(__dirname, config.paths.logsDir);
+if (config.paths.reportsDir) {
+  config.paths.reportsDir = path.resolve(__dirname, config.paths.reportsDir);
+}
+
 // Ensure logs directory exists
 const logsDir = config.paths.logsDir;
 if (!fs.existsSync(logsDir)) {
