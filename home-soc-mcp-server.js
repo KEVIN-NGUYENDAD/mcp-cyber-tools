@@ -406,44 +406,118 @@ class HomeSocMcpServer {
   }
 
   // Tool: HOME SOC Status
+  // Uses same threat scale as predictThreatLevel: 0-100 where high = threat (bad)
+  // This ensures consistency between homeSocStatus and predictThreatLevel tools
   homeSocStatus() {
+    const baselinePath = path.join(this.stateDir, 'baseline.json');
+    const networkPath = path.join(this.stateDir, 'network-history.json');
+    const alertsPath = path.join(this.stateDir, 'alerts.json');
+
+    let baseline = { overall: { avg: 5, min: 0, max: 20 } };
+    let networkData = { snapshots: [] };
+    let alerts = [];
+
+    if (fs.existsSync(baselinePath)) {
+      try {
+        baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
+      } catch (e) {}
+    }
+
+    if (fs.existsSync(networkPath)) {
+      try {
+        networkData = JSON.parse(fs.readFileSync(networkPath, 'utf8'));
+      } catch (e) {}
+    }
+
+    if (fs.existsSync(alertsPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(alertsPath, 'utf8'));
+        alerts = data.alerts || [];
+      } catch (e) {}
+    }
+
     const devices = this.discoverDevices();
     const cameras = this.cameraStatus();
-    const network = this.networkStatus();
-    const changes = this.changeHistory();
 
-    // Calculate home score (0-100)
-    let homeScore = 85;
-    homeScore -= Math.min(devices.totalDevices * 2, 15); // Device count reduces score
-    homeScore -= changes.totalChanges > 0 ? 5 : 0; // Changes reduce score
-    homeScore -= cameras.offlineCount > 0 ? 5 : 0; // Offline cameras reduce score
-    homeScore += Math.min(network.stabilityScore / 10, 10); // Stability increases score
-    homeScore = Math.max(0, Math.min(100, homeScore));
+    const latest = networkData.snapshots?.[networkData.snapshots.length - 1];
+    const currentDeviceCount = latest?.deviceCount || 0;
+    const expectedCount = baseline.overall?.avg || 5;
+    const deviation = Math.abs(currentDeviceCount - expectedCount);
+    const deviationPercent = (deviation / expectedCount) * 100;
 
-    // Threat level
+    // Critical alerts count
+    const criticalAlerts = alerts.filter(a => a.severity === 'high').length;
+    const recentAlerts = alerts.filter(a => {
+      const alertTime = new Date(a.timestamp);
+      const now = new Date();
+      return (now - alertTime) < 3600000; // Last hour
+    }).length;
+
+    // Calculate threat score (0-100) — consistent with predictThreatLevel
+    let threatScore = 20; // Base score
+
+    // Device anomaly (0-30 points)
+    if (deviationPercent > 50) threatScore += 30;
+    else if (deviationPercent > 25) threatScore += 20;
+    else if (deviationPercent > 10) threatScore += 10;
+
+    // Offline cameras (0-15 points)
+    if (cameras.offlineCount > 0) threatScore += Math.min(cameras.offlineCount * 5, 15);
+
+    // Critical alerts (0-25 points)
+    threatScore += Math.min(criticalAlerts * 5, 25);
+
+    // Recent alerts in last hour (0-20 points)
+    threatScore += Math.min(recentAlerts * 4, 20);
+
+    // Network stability (0-15 points)
+    const stabilityScore = networkData.snapshots?.length > 1
+      ? Math.round((Math.max(...networkData.snapshots.map(s => s.deviceCount)) - Math.min(...networkData.snapshots.map(s => s.deviceCount))) * 5)
+      : 0;
+    if (stabilityScore > 10) threatScore += 15;
+    else if (stabilityScore > 5) threatScore += 10;
+    else if (stabilityScore > 0) threatScore += 5;
+
+    threatScore = Math.min(100, threatScore);
+
+    // Determine threat level (same scale as predictThreatLevel)
     let threatLevel = 'GREEN';
-    if (homeScore >= 85) threatLevel = 'GREEN';
-    else if (homeScore >= 70) threatLevel = 'YELLOW';
-    else if (homeScore >= 50) threatLevel = 'ORANGE';
-    else threatLevel = 'RED';
+    let recommendation = '';
 
-    // Recommendations
-    const recommendations = [];
-    if (cameras.offlineCount > 0) recommendations.push('Kiểm tra camera ngoại tuyến');
-    if (changes.totalChanges > 10) recommendations.push('Kiểm tra các thay đổi mạng gần đây');
-    if (network.stabilityScore < 70) recommendations.push('Mạng không ổn định - kiểm tra kết nối');
-    if (devices.totalDevices > 15) recommendations.push('Quá nhiều thiết bị - xem xét bảo mật');
-    if (recommendations.length === 0) recommendations.push('Hệ thống ổn định - tiếp tục giám sát');
+    if (threatScore >= 80) {
+      threatLevel = 'RED';
+      recommendation = 'CRITICAL: Mạng có dấu hiệu bất thường. Kiểm tra ngay!';
+    } else if (threatScore >= 60) {
+      threatLevel = 'ORANGE';
+      recommendation = 'WARNING: Phát hiện nhiều thay đổi. Tăng cường giám sát.';
+    } else if (threatScore >= 40) {
+      threatLevel = 'YELLOW';
+      recommendation = 'CAUTION: Có một số cảnh báo. Kiểm tra lịch sử thiết bị.';
+    } else {
+      threatLevel = 'GREEN';
+      recommendation = 'OK: Mạng bình thường. Tiếp tục giám sát.';
+    }
 
     return {
       timestamp: new Date().toISOString(),
-      homeScore: Math.round(homeScore),
+      threatScore: Math.round(threatScore),
       threatLevel: threatLevel,
-      devicesOnline: devices.totalDevices,
-      camerasOnline: cameras.onlineCount,
-      networkStability: network.stabilityScore,
-      recentChanges: changes.totalChanges,
-      recommendations: recommendations,
+      summary: {
+        devicesOnline: devices.totalDevices,
+        camerasOnline: cameras.onlineCount,
+        camerasOffline: cameras.offlineCount,
+        networkStability: networkData.snapshots?.length > 1
+          ? Math.round(100 - Math.min((stabilityScore / 100) * 100, 100))
+          : 100,
+        recentAlerts: recentAlerts
+      },
+      factors: {
+        deviceAnomaly: deviationPercent > 10 ? 'HIGH' : 'NORMAL',
+        offlineCameras: cameras.offlineCount > 0 ? 'YES' : 'NO',
+        alertTrend: criticalAlerts > 3 ? 'HIGH' : 'NORMAL',
+        networkStability: stabilityScore > 5 ? 'UNSTABLE' : 'STABLE'
+      },
+      recommendation: recommendation,
       status: 'operational'
     };
   }
