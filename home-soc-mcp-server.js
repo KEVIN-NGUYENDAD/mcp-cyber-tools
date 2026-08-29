@@ -62,7 +62,7 @@ class HomeSocMcpServer {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] ${level.toUpperCase()}: ${message}`;
 
-    const logFile = path.join(this.logsDir, `mcp-server-${new Date().toISOString().split('T')[0]}.log`);
+    const logFile = path.join(this.logsDir, config.logging.singleFile || 'mcp-server.log');
     try {
       fs.appendFileSync(logFile, logEntry + '\n');
     } catch (e) {
@@ -260,6 +260,37 @@ class HomeSocMcpServer {
     };
   }
 
+  // Tool: Alerts
+  getAlerts() {
+    const alertsPath = path.join(this.stateDir, 'alerts.json');
+    let alerts = [];
+
+    if (fs.existsSync(alertsPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(alertsPath, 'utf8'));
+        alerts = data.alerts || [];
+      } catch (e) {
+        // Continue
+      }
+    }
+
+    const unacknowledged = alerts.filter(a => !a.acknowledged);
+    return {
+      timestamp: new Date().toISOString(),
+      totalAlerts: alerts.length,
+      unacknowledgedCount: unacknowledged.length,
+      recentAlerts: alerts.slice(-10).map(a => ({
+        id: a.id,
+        type: a.type,
+        severity: a.severity,
+        timestamp: a.timestamp,
+        data: a.data,
+        acknowledged: a.acknowledged
+      })),
+      critical: alerts.filter(a => a.severity === 'high' && !a.acknowledged)
+    };
+  }
+
   // Tool: HOME SOC Status
   homeSocStatus() {
     const devices = this.discoverDevices();
@@ -344,6 +375,11 @@ class McpServer {
         inputSchema: { type: 'object', properties: {} }
       },
       {
+        name: 'getAlerts',
+        description: 'Get security alerts (new devices, suspicious activity)',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
         name: 'homeSocStatus',
         description: 'Get overall HOME SOC security status and recommendations',
         inputSchema: { type: 'object', properties: {} }
@@ -365,6 +401,8 @@ class McpServer {
         return this.homeSoc.deviceHistory();
       case 'changeHistory':
         return this.homeSoc.changeHistory();
+      case 'getAlerts':
+        return this.homeSoc.getAlerts();
       case 'homeSocStatus':
         return this.homeSoc.homeSocStatus();
       default:

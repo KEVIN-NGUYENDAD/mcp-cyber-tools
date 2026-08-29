@@ -12,12 +12,26 @@
   "logging": {
     "enabled": true,
     "level": "info",
-    "maxFiles": 7,
-    "maxSize": "10MB"
+    "noRotation": true,
+    "singleFile": "mcp-server.log"
   },
   "network": {
     "collectionInterval": 1800000,
+    "fastScanInterval": 300000,
+    "fastScanEnabled": false,
     "gatewayIP": "192.168.1.1",
     "cameraIPs": ["192.168.1.100", "192.168.1.101", "192.168.1.102"]
+  },
+  "alerts": {
+    "enabled": true,
+    "onNewDevice": true,
+    "onDeviceOffline": true,
+    "onSuspiciousActivity": true,
+    "maxAlerts": 1000
+  },
+  "jsonManagement": {
+    "maxHistoryEntries": 100,
+    "archiveOldChanges": true,
+    "keepChangesForDays": 7
   }
 }
