@@ -283,6 +283,48 @@ function generateReport() {
 }
 
 /**
+ * Auto-push data to GitHub
+ */
+function autoPushToGitHub() {
+  console.log('\n' + '='.repeat(70));
+  console.log('📤 AUTO-PUSHING TO GITHUB...');
+  console.log('='.repeat(70));
+
+  try {
+    // Stage all snapshot files and reports
+    console.log('  • Staging files...');
+    execSync('git add laptop-collection-data/', { cwd: CONFIG.projectDir, stdio: 'pipe' });
+    execSync('git add laptop-collection-log.json', { cwd: CONFIG.projectDir, stdio: 'pipe' });
+    execSync('git add LAPTOP-AUTO-COLLECTION-REPORT.md', { cwd: CONFIG.projectDir, stdio: 'pipe' });
+
+    // Commit
+    console.log('  • Committing...');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    execSync(`git commit -m "data: Laptop collection complete - ${timestamp}"`, {
+      cwd: CONFIG.projectDir,
+      stdio: 'pipe'
+    });
+
+    // Push
+    console.log('  • Pushing to origin/learning-factory-v2...');
+    execSync('git push origin learning-factory-v2', {
+      cwd: CONFIG.projectDir,
+      stdio: 'pipe'
+    });
+
+    console.log('\n✅ AUTO-PUSH SUCCESSFUL!');
+    console.log('📊 Data now available on GitHub for Desktop sync');
+    return true;
+  } catch (error) {
+    console.log('\n⚠️  AUTO-PUSH FAILED');
+    console.log(`   Error: ${error.message}`);
+    console.log('   You can push manually:');
+    console.log('   git add laptop-collection-data/ && git commit -m "data: Laptop collection" && git push origin learning-factory-v2');
+    return false;
+  }
+}
+
+/**
  * Main collection loop
  */
 async function main() {
@@ -314,6 +356,9 @@ async function main() {
       console.log(`📝 Log: ${path.join(CONFIG.projectDir, 'laptop-collection-log.json')}`);
       console.log('\n✅ Laptop data ready for Desktop sync!');
       console.log('💡 Files saved to project directory for easy access');
+
+      // Auto-push to GitHub
+      autoPushToGitHub();
 
       process.exit(0);
     } else {
