@@ -96,16 +96,27 @@ class NetworkCollector {
 
   getARPTable() {
     const devices = [];
+    const isWindows = process.platform === 'win32';
     try {
       const output = execSync('arp -a', { encoding: 'utf-8' });
       const lines = output.split('\n');
 
       for (const line of lines) {
-        const match = line.match(/\((\d+\.\d+\.\d+\.\d+)\).*?([0-9a-f:]+)/i);
+        let match;
+        let mac;
+        if (isWindows) {
+          // Windows format: "  192.168.0.1          aa-bb-cc-dd-ee-ff     dynamic"
+          match = line.match(/^\s*(\d+\.\d+\.\d+\.\d+)\s+([0-9a-f]{2}(?:-[0-9a-f]{2}){5})/i);
+          mac = match && match[2].replace(/-/g, ':');
+        } else {
+          // macOS/Linux format: "? (192.168.0.1) at aa:bb:cc:dd:ee:ff on en0 ..."
+          match = line.match(/\((\d+\.\d+\.\d+\.\d+)\).*?([0-9a-f]{2}(?::[0-9a-f]{2}){5})/i);
+          mac = match && match[2];
+        }
         if (match) {
           devices.push({
             ip: match[1],
-            mac: match[2].toLowerCase(),
+            mac: mac.toLowerCase(),
             timestamp: new Date().toISOString()
           });
         }
@@ -388,10 +399,30 @@ class NetworkCollector {
     const onlineCameras = cameras.filter(c => c.status === 'online').length;
     console.log(`   Online: ${onlineCameras}/${cameras.length}`);
 
-    // 5. Update device history
+    // 5. Measure performance metrics (gateway must be measured before saving history)
+    console.log('\n📊 Measuring metrics...');
+    const gatewayLatency = this.measurePingLatency(config.network.gatewayIP);
+    const metrics = {
+      gatewayLatency,
+      cameraLatencies: {}
+    };
+    for (const ip of this.cameraIPs) {
+      const latency = this.measurePingLatency(ip);
+      if (latency !== null) {
+        metrics.cameraLatencies[ip] = latency;
+      }
+    }
+    console.log(`   Gateway latency: ${metrics.gatewayLatency}ms`);
+
+    // 6. Update device history (includes gateway status, read by the gatewayStatus MCP tool)
     const newHistory = {
       devices: currentDevices,
       cameraStatus: cameras,
+      gateway: {
+        ip: config.network.gatewayIP,
+        status: gatewayLatency !== null ? 'online' : 'unreachable',
+        lastSeen: gatewayLatency !== null ? timestamp : (previousHistory.gateway?.lastSeen || null)
+      },
       lastCollected: timestamp,
       timeline: [
         ...(previousHistory.timeline || []),
@@ -404,24 +435,10 @@ class NetworkCollector {
     };
     this.saveDeviceHistory(newHistory);
 
-    // 6. Update changes log
+    // 7. Update changes log
     if (changes.length > 0) {
       this.updateChangesLog(changes);
     }
-
-    // 7. Measure performance metrics
-    console.log('\n📊 Measuring metrics...');
-    const metrics = {
-      gatewayLatency: this.measurePingLatency(config.network.gatewayIP),
-      cameraLatencies: {}
-    };
-    for (const ip of this.cameraIPs) {
-      const latency = this.measurePingLatency(ip);
-      if (latency !== null) {
-        metrics.cameraLatencies[ip] = latency;
-      }
-    }
-    console.log(`   Gateway latency: ${metrics.gatewayLatency}ms`);
 
     // 8. Update network history with metrics
     this.updateNetworkHistory(currentDevices, metrics);
