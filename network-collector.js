@@ -337,7 +337,7 @@ class NetworkCollector {
     }
   }
 
-  collect(scanMode = 'normal') {
+  async collect(scanMode = 'normal') {
     const timestamp = new Date().toISOString();
     const modeLabel = scanMode === 'fast' ? '⚡ FAST' : '📡';
 
@@ -476,12 +476,10 @@ class NetworkCollector {
 
 // Execute
 const collector = new NetworkCollector();
-try {
-  const scanMode = process.argv[2] === 'fast' ? 'fast' : 'normal';
-  collector.collect(scanMode);
-} catch (err) {
+const scanMode = process.argv[2] === 'fast' ? 'fast' : 'normal';
+collector.collect(scanMode).catch(err => {
   console.error('❌ Collection failed:', err.message);
   process.exit(1);
-}
+});
 
 export { NetworkCollector };
