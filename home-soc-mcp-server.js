@@ -15,6 +15,35 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load config
+let config = {
+  paths: {
+    stateDir: './reports/home-soc-state',
+    logsDir: './logs'
+  },
+  mcp: {
+    protocolVersion: '2024-11-05',
+    name: 'home-soc',
+    version: '1.0.0'
+  },
+  logging: { enabled: true }
+};
+
+try {
+  const configPath = path.join(__dirname, 'config.json');
+  if (fs.existsSync(configPath)) {
+    config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  }
+} catch (e) {
+  console.error('Warning: Failed to load config.json, using defaults');
+}
+
+// Ensure logs directory exists
+const logsDir = config.paths.logsDir;
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -23,7 +52,22 @@ const rl = readline.createInterface({
 
 class HomeSocMcpServer {
   constructor() {
-    this.stateDir = './reports/home-soc-state';
+    this.stateDir = config.paths.stateDir;
+    this.logsDir = config.paths.logsDir;
+    this.logMessage('info', 'HOME SOC MCP Server initialized');
+  }
+
+  logMessage(level, message) {
+    if (!config.logging.enabled) return;
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${level.toUpperCase()}: ${message}`;
+
+    const logFile = path.join(this.logsDir, `mcp-server-${new Date().toISOString().split('T')[0]}.log`);
+    try {
+      fs.appendFileSync(logFile, logEntry + '\n');
+    } catch (e) {
+      // Silently fail if can't write log
+    }
   }
 
   // Tool: Discover Devices
@@ -337,13 +381,13 @@ class McpServer {
       jsonrpc: '2.0',
       id: id,
       result: {
-        protocolVersion: '2024-11-05',
+        protocolVersion: config.mcp.protocolVersion,
         capabilities: {
           tools: {}
         },
         serverInfo: {
-          name: 'home-soc',
-          version: '1.0.0'
+          name: config.mcp.name,
+          version: config.mcp.version
         }
       }
     });

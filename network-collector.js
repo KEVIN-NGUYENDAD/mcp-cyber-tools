@@ -25,9 +25,29 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load config
+let config = {
+  paths: {
+    stateDir: './reports/home-soc-state'
+  },
+  network: {
+    cameraIPs: ['192.168.1.100', '192.168.1.101', '192.168.1.102']
+  }
+};
+
+try {
+  const configPath = path.join(__dirname, 'config.json');
+  if (fs.existsSync(configPath)) {
+    config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  }
+} catch (e) {
+  console.error('Warning: Failed to load config.json, using defaults');
+}
+
 class NetworkCollector {
   constructor() {
-    this.stateDir = './reports/home-soc-state';
+    this.stateDir = config.paths.stateDir;
+    this.cameraIPs = config.network.cameraIPs;
     this.ensureDirectories();
   }
 
@@ -62,14 +82,8 @@ class NetworkCollector {
 
   checkCameraPresence() {
     // Check if known camera IPs respond to ping
-    const cameraIPs = [
-      '192.168.1.100',
-      '192.168.1.101',
-      '192.168.1.102'
-    ];
-
     const cameras = [];
-    for (const ip of cameraIPs) {
+    for (const ip of this.cameraIPs) {
       try {
         execSync(`ping -c 1 -W 1 ${ip}`, { stdio: 'ignore' });
         cameras.push({
