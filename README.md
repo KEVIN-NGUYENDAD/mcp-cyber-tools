@@ -2,6 +2,12 @@
 
 A comprehensive **Model Context Protocol (MCP)** server providing 90+ security analysis tools for Windows incident response, threat hunting, and forensics. Built for SOC analysts, DFIR teams, and security researchers.
 
+> **📌 NOTE:** This repository contains **TWO separate MCP servers**:
+> - **`cyber-tools`** (this README) — 90+ general Windows security analysis tools
+> - **`home-soc`** (see [DEPLOYMENT.md](./DEPLOYMENT.md)) — Home network monitoring + threat prediction (Phase 1-4)
+>
+> For HOME SOC deployment, see **[DEPLOYMENT.md](./DEPLOYMENT.md)** for detailed setup instructions.
+
 ## Features
 
 ✅ **90+ Tools** across 4 phases
@@ -64,21 +70,26 @@ node server.js
 
 ### Integration with Claude Desktop
 
-1. Edit `~/.claude/profiles/claude_desktop_config.json`:
+1. Edit `%APPDATA%\Claude\claude_desktop_config.json` (on Windows):
 
 ```json
 {
   "mcpServers": {
     "cyber-tools": {
       "command": "node",
-      "args": ["C:\\Users\\[username]\\AppData\\Roaming\\Claude\\Projects\\mcp-cyber-tools\\server.js"]
+      "args": ["C:\\mcp-cyber-tools\\server.js"],
+      "cwd": "C:\\mcp-cyber-tools"
     }
   }
 }
 ```
 
+**Note:** On Windows, Claude Desktop reads from `%APPDATA%\Claude\claude_desktop_config.json`, NOT `~/.claude/mcp.json`.
+
 2. Restart Claude Desktop
 3. Tools will appear in Claude's tool palette
+
+**For HOME SOC deployment,** see [DEPLOYMENT.md](./DEPLOYMENT.md) for step-by-step MCP registration instructions.
 
 ---
 
