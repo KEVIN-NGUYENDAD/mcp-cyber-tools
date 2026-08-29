@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "home-soc": {
+      "command": "node",
+      "args": ["home-soc-mcp-server.js"],
+      "cwd": "C:\\mcp-cyber-tools",
+      "description": "HOME SOC MCP Server - Live network monitoring and device discovery",
+      "env": {
+        "HOME_SOC_STATE": "./reports/home-soc-state"
+      }
+    }
+  }
+}
