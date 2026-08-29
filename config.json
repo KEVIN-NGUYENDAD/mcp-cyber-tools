@@ -1,0 +1,37 @@
+{
+  "paths": {
+    "stateDir": "./reports/home-soc-state",
+    "logsDir": "./logs",
+    "reportsDir": "./reports"
+  },
+  "mcp": {
+    "protocolVersion": "2024-11-05",
+    "name": "home-soc",
+    "version": "1.0.0"
+  },
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "noRotation": true,
+    "singleFile": "mcp-server.log"
+  },
+  "network": {
+    "collectionInterval": 1800000,
+    "fastScanInterval": 300000,
+    "fastScanEnabled": false,
+    "gatewayIP": "192.168.0.1",
+    "cameraIPs": []
+  },
+  "alerts": {
+    "enabled": true,
+    "onNewDevice": true,
+    "onDeviceOffline": true,
+    "onSuspiciousActivity": true,
+    "maxAlerts": 1000
+  },
+  "jsonManagement": {
+    "maxHistoryEntries": 100,
+    "archiveOldChanges": true,
+    "keepChangesForDays": 7
+  }
+}

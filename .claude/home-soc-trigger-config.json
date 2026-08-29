@@ -1,0 +1,104 @@
+{
+  "trigger": {
+    "name": "Home SOC Brief 8:20 PM",
+    "description": "Complete home network security briefing combining network discovery, Desktop, Laptop, and iPhone into unified home security overview with cross-device risk analysis",
+    "type": "scheduled",
+    "schedule": {
+      "cron": "20 20 * * *",
+      "timezone": "UTC",
+      "description": "Every day at 8:20 PM UTC (after all device and network sensors report)"
+    },
+    "dependencies": [
+      "nightly-security-brief-trigger.js",
+      "soc-chief-briefing.js",
+      "iphone-security-brief.js",
+      "multi-device-security-brief.js",
+      "home-network-discovery.js"
+    ],
+    "action": {
+      "type": "generate_briefing",
+      "command": "node home-soc-brief.js",
+      "workdir": "/home/user/mcp-cyber-tools"
+    },
+    "delivery": {
+      "format": "html_artifact",
+      "method": "claude_session",
+      "archive": true,
+      "archivePath": "./reports/home-soc-briefs/"
+    },
+    "content": {
+      "sections": [
+        "Overall Home Security Score & Network + Device Scores",
+        "Network Status (Devices, Cameras, Online Count)",
+        "Device Health (Desktop, Laptop, iPhone)",
+        "Changes Detected Today (New Devices, Offline, Port Changes)",
+        "Top Risks (Network + Device Combined)",
+        "SOC Summary (5 Executive Questions)",
+        "Recommendations (Prioritized)"
+      ]
+    },
+    "audience": {
+      "role": "Home Security Chief / Network Owner",
+      "readTime": "< 60 seconds",
+      "format": "Unified Home Security Executive Summary"
+    },
+    "notifications": {
+      "onComplete": true,
+      "onFailure": true,
+      "channels": ["session"]
+    },
+    "scoring": {
+      "algorithm": "weighted-average",
+      "weights": {
+        "network": 0.30,
+        "desktop": 0.25,
+        "laptop": 0.25,
+        "iphone": 0.20
+      },
+      "threatLevels": {
+        "GREEN": "≥85",
+        "YELLOW": "70-84",
+        "ORANGE": "50-69",
+        "RED": "<50"
+      }
+    },
+    "sensors": [
+      {
+        "name": "network",
+        "type": "infrastructure",
+        "component": "home-network-discovery.js",
+        "discoverySource": "reports/home-soc-state/discovery-*.json",
+        "baselineSource": "reports/home-soc-state/device-baseline.json"
+      },
+      {
+        "name": "desktop",
+        "type": "endpoint",
+        "component": "nightly-security-brief.js",
+        "briefSource": "nightly-security-brief-YYYY-MM-DD.html",
+        "stateSource": "reports/nightly-state/system-state.json"
+      },
+      {
+        "name": "laptop",
+        "type": "endpoint",
+        "component": "nightly-security-brief.js",
+        "briefSource": "nightly-security-brief-YYYY-MM-DD.html",
+        "stateSource": "reports/nightly-state/system-state.json"
+      },
+      {
+        "name": "iphone",
+        "type": "mobile",
+        "component": "iphone-security-brief.js",
+        "briefSource": "iphone-security-brief-YYYY-MM-DD.html",
+        "stateSource": "reports/iphone-state/current-device.json"
+      }
+    ],
+    "metadata": {
+      "createdAt": "2026-08-24T00:00:00Z",
+      "version": "1.0.0",
+      "basedOn": "home-network-discovery + nightly-security-brief + iphone-security-brief + multi-device-security-brief",
+      "status": "active",
+      "purpose": "Home SOC unified briefing covering network and all devices",
+      "scope": "Router + WiFi + Desktop + Laptop + iPhone + Cameras"
+    }
+  }
+}

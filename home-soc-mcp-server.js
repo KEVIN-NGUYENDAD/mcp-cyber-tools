@@ -1,0 +1,704 @@
+#!/usr/bin/env node
+
+/**
+ * HOME SOC MCP SERVER - MCP Protocol Implementation
+ *
+ * Implements JSON-RPC 2.0 over stdio for Claude Code integration.
+ * Exposes HOME SOC tools for querying live network data from laptop.
+ */
+
+import fs from 'fs';
+import path from 'path';
+import readline from 'readline';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load config
+let config = {
+  paths: {
+    stateDir: './reports/home-soc-state',
+    logsDir: './logs'
+  },
+  mcp: {
+    protocolVersion: '2024-11-05',
+    name: 'home-soc',
+    version: '1.0.0'
+  },
+  logging: { enabled: true }
+};
+
+try {
+  const configPath = path.join(__dirname, 'config.json');
+  if (fs.existsSync(configPath)) {
+    config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  }
+} catch (e) {
+  console.error('Warning: Failed to load config.json, using defaults');
+}
+
+// Resolve paths against this script's directory, not process.cwd() —
+// some MCP clients launch the server with an unrelated working directory.
+config.paths.stateDir = path.resolve(__dirname, config.paths.stateDir);
+config.paths.logsDir = path.resolve(__dirname, config.paths.logsDir);
+if (config.paths.reportsDir) {
+  config.paths.reportsDir = path.resolve(__dirname, config.paths.reportsDir);
+}
+
+// Ensure logs directory exists
+const logsDir = config.paths.logsDir;
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false
+});
+
+class HomeSocMcpServer {
+  constructor() {
+    this.stateDir = config.paths.stateDir;
+    this.logsDir = config.paths.logsDir;
+    this.logMessage('info', 'HOME SOC MCP Server initialized');
+  }
+
+  logMessage(level, message) {
+    if (!config.logging.enabled) return;
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${level.toUpperCase()}: ${message}`;
+
+    const logFile = path.join(this.logsDir, config.logging.singleFile || 'mcp-server.log');
+    try {
+      fs.appendFileSync(logFile, logEntry + '\n');
+    } catch (e) {
+      // Silently fail if can't write log
+    }
+  }
+
+  // Tool: Discover Devices
+  discoverDevices() {
+    const historyPath = path.join(this.stateDir, 'device-history.json');
+    const devices = [];
+
+    if (fs.existsSync(historyPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+        // In a real network, this would have actual devices
+        // In sandbox, devices array is empty
+        if (data.devices && data.devices.length > 0) {
+          devices.push(...data.devices);
+        }
+      } catch (e) {
+        // Continue
+      }
+    }
+
+    return {
+      timestamp: new Date().toISOString(),
+      totalDevices: devices.length,
+      devices: devices.map(d => ({
+        ip: d.ip,
+        mac: d.mac,
+        vendor: d.vendor || 'Unknown',
+        lastSeen: d.lastSeen,
+        deviceType: d.deviceType || 'unknown'
+      }))
+    };
+  }
+
+  // Tool: Camera Status
+  cameraStatus() {
+    const historyPath = path.join(this.stateDir, 'device-history.json');
+    let cameras = [];
+
+    if (fs.existsSync(historyPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+        cameras = data.cameraStatus || [];
+      } catch (e) {
+        // Continue
+      }
+    }
+
+    const online = cameras.filter(c => c.status === 'online').length;
+    const offline = cameras.filter(c => c.status === 'offline').length;
+
+    return {
+      timestamp: new Date().toISOString(),
+      camerasMonitored: cameras.length,
+      onlineCount: online,
+      offlineCount: offline,
+      onlinePercentage: cameras.length > 0 ? Math.round((online / cameras.length) * 100) : 0,
+      cameras: cameras.map(c => ({
+        ip: c.ip,
+        status: c.status,
+        lastSeen: c.lastSeen
+      }))
+    };
+  }
+
+  // Tool: Network Status
+  networkStatus() {
+    const networkPath = path.join(this.stateDir, 'network-history.json');
+    const metrics = {
+      timestamp: new Date().toISOString(),
+      gateway: 'unknown',
+      deviceCount: 0,
+      averageDevices: 0,
+      stabilityScore: 0,
+      snapshots: 0
+    };
+
+    if (fs.existsSync(networkPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(networkPath, 'utf8'));
+        metrics.snapshots = (data.snapshots || []).length;
+        metrics.averageDevices = data.averageDevices || 0;
+        metrics.deviceCount = data.snapshots && data.snapshots.length > 0
+          ? data.snapshots[data.snapshots.length - 1].deviceCount
+          : 0;
+
+        // Calculate stability (0-100)
+        const snapshots = data.snapshots || [];
+        if (snapshots.length > 1) {
+          const counts = snapshots.map(s => s.deviceCount);
+          const avg = metrics.averageDevices;
+          const variance = counts.reduce((sum, c) => sum + Math.pow(c - avg, 2), 0) / counts.length;
+
+          if (variance < 1) metrics.stabilityScore = 95;
+          else if (variance < 5) metrics.stabilityScore = 80;
+          else if (variance < 10) metrics.stabilityScore = 65;
+          else metrics.stabilityScore = 50;
+        } else if (snapshots.length === 1) {
+          metrics.stabilityScore = 90;
+        }
+      } catch (e) {
+        // Continue
+      }
+    }
+
+    return metrics;
+  }
+
+  // Tool: Gateway Status
+  gatewayStatus() {
+    const historyPath = path.join(this.stateDir, 'device-history.json');
+    let gateway = {
+      status: 'unknown',
+      ip: 'unknown',
+      lastSeen: null
+    };
+
+    if (fs.existsSync(historyPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+        if (data.gateway) {
+          gateway = {
+            status: data.gateway.status || 'online',
+            ip: data.gateway.ip || 'unknown',
+            lastSeen: data.gateway.lastSeen,
+            model: data.gateway.model || 'unknown',
+            firmwareVersion: data.gateway.firmwareVersion || 'unknown'
+          };
+        }
+      } catch (e) {
+        // Continue
+      }
+    }
+
+    return {
+      timestamp: new Date().toISOString(),
+      gateway: gateway,
+      accessible: gateway.status === 'online'
+    };
+  }
+
+  // Tool: Device History
+  deviceHistory() {
+    const historyPath = path.join(this.stateDir, 'device-history.json');
+    let timeline = [];
+
+    if (fs.existsSync(historyPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
+        timeline = data.timeline || [];
+      } catch (e) {
+        // Continue
+      }
+    }
+
+    return {
+      timestamp: new Date().toISOString(),
+      totalCollections: timeline.length,
+      timeline: timeline.map(t => ({
+        timestamp: t.timestamp,
+        deviceCount: t.deviceCount,
+        changes: t.changes || 0
+      }))
+    };
+  }
+
+  // Tool: Change History
+  changeHistory() {
+    const changesPath = path.join(this.stateDir, 'changes.json');
+    let changes = [];
+
+    if (fs.existsSync(changesPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(changesPath, 'utf8'));
+        changes = data.changes || [];
+      } catch (e) {
+        // Continue
+      }
+    }
+
+    return {
+      timestamp: new Date().toISOString(),
+      totalChanges: changes.length,
+      recentChanges: changes.slice(-10).map(c => ({
+        type: c.type,
+        ip: c.ip,
+        mac: c.mac,
+        timestamp: c.timestamp,
+        severity: c.severity || 'info'
+      }))
+    };
+  }
+
+  // Tool: Alerts
+  getAlerts() {
+    const alertsPath = path.join(this.stateDir, 'alerts.json');
+    let alerts = [];
+
+    if (fs.existsSync(alertsPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(alertsPath, 'utf8'));
+        alerts = data.alerts || [];
+      } catch (e) {
+        // Continue
+      }
+    }
+
+    const unacknowledged = alerts.filter(a => !a.acknowledged);
+    return {
+      timestamp: new Date().toISOString(),
+      totalAlerts: alerts.length,
+      unacknowledgedCount: unacknowledged.length,
+      recentAlerts: alerts.slice(-10).map(a => ({
+        id: a.id,
+        type: a.type,
+        severity: a.severity,
+        timestamp: a.timestamp,
+        data: a.data,
+        acknowledged: a.acknowledged
+      })),
+      critical: alerts.filter(a => a.severity === 'high' && !a.acknowledged)
+    };
+  }
+
+  // Tool: Predict Threat Level
+  predictThreatLevel() {
+    const baselinePath = path.join(this.stateDir, 'baseline.json');
+    const networkPath = path.join(this.stateDir, 'network-history.json');
+    const alertsPath = path.join(this.stateDir, 'alerts.json');
+
+    let baseline = { overall: { avg: 5, min: 0, max: 20 } };
+    let networkData = { snapshots: [] };
+    let alerts = [];
+
+    if (fs.existsSync(baselinePath)) {
+      try {
+        baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
+      } catch (e) {}
+    }
+
+    if (fs.existsSync(networkPath)) {
+      try {
+        networkData = JSON.parse(fs.readFileSync(networkPath, 'utf8'));
+      } catch (e) {}
+    }
+
+    if (fs.existsSync(alertsPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(alertsPath, 'utf8'));
+        alerts = data.alerts || [];
+      } catch (e) {}
+    }
+
+    const latest = networkData.snapshots?.[networkData.snapshots.length - 1];
+    const currentDeviceCount = latest?.deviceCount || 0;
+    const expectedCount = baseline.overall?.avg || 5;
+    const deviation = Math.abs(currentDeviceCount - expectedCount);
+    const deviationPercent = (deviation / expectedCount) * 100;
+
+    // Critical alerts count
+    const criticalAlerts = alerts.filter(a => a.severity === 'high').length;
+    const recentAlerts = alerts.filter(a => {
+      const alertTime = new Date(a.timestamp);
+      const now = new Date();
+      return (now - alertTime) < 3600000; // Last hour
+    }).length;
+
+    // Calculate threat score (0-100)
+    let threatScore = 20; // Base score
+
+    // Device anomaly (0-30 points)
+    if (deviationPercent > 50) threatScore += 30;
+    else if (deviationPercent > 25) threatScore += 20;
+    else if (deviationPercent > 10) threatScore += 10;
+
+    // Critical alerts (0-25 points)
+    threatScore += Math.min(criticalAlerts * 5, 25);
+
+    // Recent alerts in last hour (0-20 points)
+    threatScore += Math.min(recentAlerts * 4, 20);
+
+    // Network stability (0-15 points)
+    const stabilityScore = networkData.snapshots?.length > 1
+      ? Math.round((Math.max(...networkData.snapshots.map(s => s.deviceCount)) - Math.min(...networkData.snapshots.map(s => s.deviceCount))) * 5)
+      : 0;
+    if (stabilityScore > 10) threatScore += 15;
+    else if (stabilityScore > 5) threatScore += 10;
+    else if (stabilityScore > 0) threatScore += 5;
+
+    threatScore = Math.min(100, threatScore);
+
+    // Determine threat level
+    let threatLevel = 'GREEN';
+    let recommendation = '';
+
+    if (threatScore >= 80) {
+      threatLevel = 'RED';
+      recommendation = 'CRITICAL: Mạng có dấu hiệu bất thường. Kiểm tra ngay!';
+    } else if (threatScore >= 60) {
+      threatLevel = 'ORANGE';
+      recommendation = 'WARNING: Phát hiện nhiều thay đổi. Tăng cường giám sát.';
+    } else if (threatScore >= 40) {
+      threatLevel = 'YELLOW';
+      recommendation = 'CAUTION: Có một số cảnh báo. Kiểm tra lịch sử thiết bị.';
+    } else {
+      threatLevel = 'GREEN';
+      recommendation = 'OK: Mạng bình thường. Tiếp tục giám sát.';
+    }
+
+    return {
+      timestamp: new Date().toISOString(),
+      threatScore: Math.round(threatScore),
+      threatLevel: threatLevel,
+      prediction: {
+        currentDevices: currentDeviceCount,
+        expectedDevices: Math.round(expectedCount),
+        deviation: Math.round(deviation * 10) / 10,
+        deviationPercent: Math.round(deviationPercent),
+        criticalAlerts: criticalAlerts,
+        recentAlerts: recentAlerts
+      },
+      factors: {
+        deviceAnomaly: deviationPercent > 10 ? 'HIGH' : 'NORMAL',
+        alertTrend: criticalAlerts > 3 ? 'HIGH' : 'NORMAL',
+        networkStability: stabilityScore > 5 ? 'UNSTABLE' : 'STABLE'
+      },
+      recommendation: recommendation
+    };
+  }
+
+  // Tool: HOME SOC Status
+  // Uses same threat scale as predictThreatLevel: 0-100 where high = threat (bad)
+  // This ensures consistency between homeSocStatus and predictThreatLevel tools
+  homeSocStatus() {
+    const baselinePath = path.join(this.stateDir, 'baseline.json');
+    const networkPath = path.join(this.stateDir, 'network-history.json');
+    const alertsPath = path.join(this.stateDir, 'alerts.json');
+
+    let baseline = { overall: { avg: 5, min: 0, max: 20 } };
+    let networkData = { snapshots: [] };
+    let alerts = [];
+
+    if (fs.existsSync(baselinePath)) {
+      try {
+        baseline = JSON.parse(fs.readFileSync(baselinePath, 'utf8'));
+      } catch (e) {}
+    }
+
+    if (fs.existsSync(networkPath)) {
+      try {
+        networkData = JSON.parse(fs.readFileSync(networkPath, 'utf8'));
+      } catch (e) {}
+    }
+
+    if (fs.existsSync(alertsPath)) {
+      try {
+        const data = JSON.parse(fs.readFileSync(alertsPath, 'utf8'));
+        alerts = data.alerts || [];
+      } catch (e) {}
+    }
+
+    const devices = this.discoverDevices();
+    const cameras = this.cameraStatus();
+
+    const latest = networkData.snapshots?.[networkData.snapshots.length - 1];
+    const currentDeviceCount = latest?.deviceCount || 0;
+    const expectedCount = baseline.overall?.avg || 5;
+    const deviation = Math.abs(currentDeviceCount - expectedCount);
+    const deviationPercent = (deviation / expectedCount) * 100;
+
+    // Critical alerts count
+    const criticalAlerts = alerts.filter(a => a.severity === 'high').length;
+    const recentAlerts = alerts.filter(a => {
+      const alertTime = new Date(a.timestamp);
+      const now = new Date();
+      return (now - alertTime) < 3600000; // Last hour
+    }).length;
+
+    // Calculate threat score (0-100) — consistent with predictThreatLevel
+    let threatScore = 20; // Base score
+
+    // Device anomaly (0-30 points)
+    if (deviationPercent > 50) threatScore += 30;
+    else if (deviationPercent > 25) threatScore += 20;
+    else if (deviationPercent > 10) threatScore += 10;
+
+    // Offline cameras (0-15 points)
+    if (cameras.offlineCount > 0) threatScore += Math.min(cameras.offlineCount * 5, 15);
+
+    // Critical alerts (0-25 points)
+    threatScore += Math.min(criticalAlerts * 5, 25);
+
+    // Recent alerts in last hour (0-20 points)
+    threatScore += Math.min(recentAlerts * 4, 20);
+
+    // Network stability (0-15 points)
+    const stabilityScore = networkData.snapshots?.length > 1
+      ? Math.round((Math.max(...networkData.snapshots.map(s => s.deviceCount)) - Math.min(...networkData.snapshots.map(s => s.deviceCount))) * 5)
+      : 0;
+    if (stabilityScore > 10) threatScore += 15;
+    else if (stabilityScore > 5) threatScore += 10;
+    else if (stabilityScore > 0) threatScore += 5;
+
+    threatScore = Math.min(100, threatScore);
+
+    // Determine threat level (same scale as predictThreatLevel)
+    let threatLevel = 'GREEN';
+    let recommendation = '';
+
+    if (threatScore >= 80) {
+      threatLevel = 'RED';
+      recommendation = 'CRITICAL: Mạng có dấu hiệu bất thường. Kiểm tra ngay!';
+    } else if (threatScore >= 60) {
+      threatLevel = 'ORANGE';
+      recommendation = 'WARNING: Phát hiện nhiều thay đổi. Tăng cường giám sát.';
+    } else if (threatScore >= 40) {
+      threatLevel = 'YELLOW';
+      recommendation = 'CAUTION: Có một số cảnh báo. Kiểm tra lịch sử thiết bị.';
+    } else {
+      threatLevel = 'GREEN';
+      recommendation = 'OK: Mạng bình thường. Tiếp tục giám sát.';
+    }
+
+    return {
+      timestamp: new Date().toISOString(),
+      threatScore: Math.round(threatScore),
+      threatLevel: threatLevel,
+      summary: {
+        devicesOnline: devices.totalDevices,
+        camerasOnline: cameras.onlineCount,
+        camerasOffline: cameras.offlineCount,
+        networkStability: networkData.snapshots?.length > 1
+          ? Math.round(100 - Math.min((stabilityScore / 100) * 100, 100))
+          : 100,
+        recentAlerts: recentAlerts
+      },
+      factors: {
+        deviceAnomaly: deviationPercent > 10 ? 'HIGH' : 'NORMAL',
+        offlineCameras: cameras.offlineCount > 0 ? 'YES' : 'NO',
+        alertTrend: criticalAlerts > 3 ? 'HIGH' : 'NORMAL',
+        networkStability: stabilityScore > 5 ? 'UNSTABLE' : 'STABLE'
+      },
+      recommendation: recommendation,
+      status: 'operational'
+    };
+  }
+}
+
+// MCP Protocol Handler
+class McpServer {
+  constructor() {
+    this.homeSoc = new HomeSocMcpServer();
+    this.requestId = 0;
+  }
+
+  getToolsList() {
+    return [
+      {
+        name: 'discoverDevices',
+        description: 'Discover all devices currently on the network',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
+        name: 'networkStatus',
+        description: 'Get current network status including gateway, device count, and stability',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
+        name: 'cameraStatus',
+        description: 'Get status of monitored cameras (online/offline)',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
+        name: 'gatewayStatus',
+        description: 'Get gateway/router status',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
+        name: 'deviceHistory',
+        description: 'Get device discovery history timeline',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
+        name: 'changeHistory',
+        description: 'Get recent network changes (new devices, offline events)',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
+        name: 'getAlerts',
+        description: 'Get security alerts (new devices, suspicious activity)',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
+        name: 'predictThreatLevel',
+        description: 'Predict network threat level based on baseline anomalies and alerts',
+        inputSchema: { type: 'object', properties: {} }
+      },
+      {
+        name: 'homeSocStatus',
+        description: 'Get overall HOME SOC security status and recommendations',
+        inputSchema: { type: 'object', properties: {} }
+      }
+    ];
+  }
+
+  async handleCall(toolName, toolInput) {
+    switch (toolName) {
+      case 'discoverDevices':
+        return this.homeSoc.discoverDevices();
+      case 'networkStatus':
+        return this.homeSoc.networkStatus();
+      case 'cameraStatus':
+        return this.homeSoc.cameraStatus();
+      case 'gatewayStatus':
+        return this.homeSoc.gatewayStatus();
+      case 'deviceHistory':
+        return this.homeSoc.deviceHistory();
+      case 'changeHistory':
+        return this.homeSoc.changeHistory();
+      case 'getAlerts':
+        return this.homeSoc.getAlerts();
+      case 'predictThreatLevel':
+        return this.homeSoc.predictThreatLevel();
+      case 'homeSocStatus':
+        return this.homeSoc.homeSocStatus();
+      default:
+        throw new Error(`Unknown tool: ${toolName}`);
+    }
+  }
+
+  sendMessage(message) {
+    process.stdout.write(JSON.stringify(message) + '\n');
+  }
+
+  handleInitialize(id) {
+    this.sendMessage({
+      jsonrpc: '2.0',
+      id: id,
+      result: {
+        protocolVersion: config.mcp.protocolVersion,
+        capabilities: {
+          tools: {}
+        },
+        serverInfo: {
+          name: config.mcp.name,
+          version: config.mcp.version
+        }
+      }
+    });
+  }
+
+  handleListTools(id) {
+    this.sendMessage({
+      jsonrpc: '2.0',
+      id: id,
+      result: {
+        tools: this.getToolsList()
+      }
+    });
+  }
+
+  async handleCallTool(id, name, args) {
+    try {
+      const result = await this.handleCall(name, args);
+      this.sendMessage({
+        jsonrpc: '2.0',
+        id: id,
+        result: {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result)
+            }
+          ]
+        }
+      });
+    } catch (error) {
+      this.sendMessage({
+        jsonrpc: '2.0',
+        id: id,
+        error: {
+          code: -32603,
+          message: error.message
+        }
+      });
+    }
+  }
+
+  async handleRequest(message) {
+    try {
+      const data = JSON.parse(message);
+
+      if (data.method === 'initialize') {
+        this.handleInitialize(data.id);
+      } else if (data.method === 'tools/list') {
+        this.handleListTools(data.id);
+      } else if (data.method === 'tools/call') {
+        await this.handleCallTool(data.id, data.params.name, data.params.arguments);
+      } else {
+        this.sendMessage({
+          jsonrpc: '2.0',
+          id: data.id,
+          error: {
+            code: -32601,
+            message: 'Method not found'
+          }
+        });
+      }
+    } catch (error) {
+      // Silently ignore parse errors
+    }
+  }
+
+  start() {
+    rl.on('line', async (line) => {
+      await this.handleRequest(line);
+    });
+
+    rl.on('close', () => {
+      process.exit(0);
+    });
+  }
+}
+
+// Start MCP server
+const server = new McpServer();
+server.start();

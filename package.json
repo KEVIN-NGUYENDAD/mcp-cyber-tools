@@ -1,14 +1,21 @@
 {
-  "name": "mcp-cyber-tools",
+  "name": "home-soc-mcp",
   "version": "1.0.0",
+  "description": "HOME SOC MCP Server - Network monitoring and threat prediction",
   "type": "module",
-  "main": "server.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "zod": "^4.4.3"
-  }
+  "main": "src/home-soc-mcp-server.js",
+  "scripts": {
+    "start": "node src/home-soc-mcp-server.js",
+    "collect": "node src/network-collector.js",
+    "collect:fast": "node src/network-collector.js fast"
+  },
+  "keywords": [
+    "mcp",
+    "network-monitoring",
+    "security",
+    "soc",
+    "home-network"
+  ],
+  "author": "Kevin Nguyen",
+  "license": "MIT"
 }

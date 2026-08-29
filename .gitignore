@@ -2,10 +2,14 @@
 node_modules/
 package-lock.json
 
-# Reports
-reports/*.json
-reports/*.html
-reports/*.txt
+# Reports and generated briefs
+reports/
+nightly-security-brief-*.html
+soc-chief-briefing-*.html
+iphone-security-brief-*.html
+multi-device-security-brief-*.html
+home-soc-brief-*.html
+morning-briefing-*.html
 
 # OS
 .DS_Store
@@ -41,3 +45,5 @@ build/
 
 # Cache
 .cache/
+home-soc-executive-brief-*.html
+home-soc-ops-brief-*.html

@@ -1,0 +1,88 @@
+{
+  "trigger": {
+    "name": "Multi-Device Security Brief 8:15 PM",
+    "description": "Unified security briefing aggregating Desktop, Laptop, and iPhone reports into one executive summary",
+    "type": "scheduled",
+    "schedule": {
+      "cron": "15 20 * * *",
+      "timezone": "UTC",
+      "description": "Every day at 8:15 PM UTC (after all device briefs complete)"
+    },
+    "dependencies": [
+      "nightly-security-brief-trigger.js",
+      "iphone-security-brief.js"
+    ],
+    "action": {
+      "type": "generate_briefing",
+      "command": "node multi-device-security-brief.js",
+      "workdir": "/home/user/mcp-cyber-tools"
+    },
+    "delivery": {
+      "format": "html_artifact",
+      "method": "claude_session",
+      "archive": true,
+      "archivePath": "./reports/multi-device-briefs/"
+    },
+    "content": {
+      "sections": [
+        "Overall Security Score & Device Scores",
+        "Device Security Status",
+        "Summary Statistics",
+        "Top Risks (Cross-Device)",
+        "Recommendations (Prioritized)",
+        "Lessons Learned (Aggregated)"
+      ]
+    },
+    "audience": {
+      "role": "Personal SOC Chief / Device Owner",
+      "readTime": "< 60 seconds",
+      "format": "Unified Executive Summary"
+    },
+    "notifications": {
+      "onComplete": true,
+      "onFailure": true,
+      "channels": ["session"]
+    },
+    "scoring": {
+      "algorithm": "weighted-average",
+      "weights": {
+        "desktop": 0.4,
+        "laptop": 0.4,
+        "iphone": 0.2
+      },
+      "threatLevels": {
+        "GREEN": "≥85",
+        "YELLOW": "70-84",
+        "ORANGE": "50-69",
+        "RED": "<50"
+      }
+    },
+    "deviceSensors": [
+      {
+        "name": "desktop",
+        "type": "system",
+        "briefSource": "nightly-security-brief-YYYY-MM-DD.html",
+        "stateSource": "reports/nightly-state/system-state.json"
+      },
+      {
+        "name": "laptop",
+        "type": "system",
+        "briefSource": "nightly-security-brief-YYYY-MM-DD.html",
+        "stateSource": "reports/nightly-state/system-state.json"
+      },
+      {
+        "name": "iphone",
+        "type": "device",
+        "briefSource": "iphone-security-brief-YYYY-MM-DD.html",
+        "stateSource": "reports/iphone-state/current-device.json"
+      }
+    ],
+    "metadata": {
+      "createdAt": "2026-08-24T00:00:00Z",
+      "version": "1.0.0",
+      "basedOn": "nightly-security-brief + soc-chief-briefing + iphone-security-brief",
+      "status": "active",
+      "purpose": "Personal SOC unified briefing"
+    }
+  }
+}
