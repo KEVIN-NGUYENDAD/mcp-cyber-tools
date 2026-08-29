@@ -1,0 +1,254 @@
+{
+  "timestamp": "2026-08-29T23:31:55.091Z",
+  "device": "LAPTOP",
+  "iteration": 1,
+  "data": {
+    "processes": [
+      {
+        "Name": "AggregatorHost",
+        "Id": 7004,
+        "WorkingSet": 10637312
+      },
+      {
+        "Name": "aihost",
+        "Id": 5704,
+        "WorkingSet": 35684352
+      },
+      {
+        "Name": "AIXHost",
+        "Id": 9332,
+        "WorkingSet": 79511552
+      },
+      {
+        "Name": "AppActions",
+        "Id": 10808,
+        "WorkingSet": 46432256
+      },
+      {
+        "Name": "ApplicationFrameHost",
+        "Id": 11400,
+        "WorkingSet": 88567808
+      },
+      {
+        "Name": "audiodg",
+        "Id": 9872,
+        "WorkingSet": 26697728
+      },
+      {
+        "Name": "browser",
+        "Id": 1180,
+        "WorkingSet": 116543488
+      },
+      {
+        "Name": "browser",
+        "Id": 1728,
+        "WorkingSet": 102502400
+      },
+      {
+        "Name": "browser",
+        "Id": 2276,
+        "WorkingSet": 58347520
+      },
+      {
+        "Name": "browser",
+        "Id": 4368,
+        "WorkingSet": 275615744
+      },
+      {
+        "Name": "browser",
+        "Id": 4736,
+        "WorkingSet": 9986048
+      },
+      {
+        "Name": "browser",
+        "Id": 6184,
+        "WorkingSet": 255250432
+      },
+      {
+        "Name": "browser",
+        "Id": 7872,
+        "WorkingSet": 73437184
+      },
+      {
+        "Name": "browser",
+        "Id": 18968,
+        "WorkingSet": 54181888
+      },
+      {
+        "Name": "browser",
+        "Id": 19740,
+        "WorkingSet": 119574528
+      },
+      {
+        "Name": "browser",
+        "Id": 19796,
+        "WorkingSet": 127803392
+      },
+      {
+        "Name": "browser",
+        "Id": 19804,
+        "WorkingSet": 21372928
+      },
+      {
+        "Name": "browser",
+        "Id": 19972,
+        "WorkingSet": 119644160
+      },
+      {
+        "Name": "browser",
+        "Id": 20776,
+        "WorkingSet": 53710848
+      },
+      {
+        "Name": "browser",
+        "Id": 21196,
+        "WorkingSet": 32657408
+      }
+    ],
+    "connections": [
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 64471,
+        "RemoteAddress": "2607:6bc0::10",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 63442,
+        "RemoteAddress": "2600:1405:8400:12::173e:e289",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 61512,
+        "RemoteAddress": "2603:1063:2001:2b0a::365:ff1",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 61511,
+        "RemoteAddress": "2603:1063:2001:2b25::365:ff1",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 60978,
+        "RemoteAddress": "2603:1030:b:8::20",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 49408,
+        "RemoteAddress": "2603:1030:40c:e::2",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 48766,
+        "RemoteAddress": "2607:6bc0::10",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 23585,
+        "RemoteAddress": "2607:f8b0:4023:200d::bc",
+        "RemotePort": 5228
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 21004,
+        "RemoteAddress": "2600:1901:0:5ae7::",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 19019,
+        "RemoteAddress": "2603:1030:40c:e::1",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 7230,
+        "RemoteAddress": "2607:6bc0::10",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 49691,
+        "RemoteAddress": "127.0.0.1",
+        "RemotePort": 49690
+      },
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 49690,
+        "RemoteAddress": "127.0.0.1",
+        "RemotePort": 49691
+      },
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 49681,
+        "RemoteAddress": "127.0.0.1",
+        "RemotePort": 49680
+      },
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 49680,
+        "RemoteAddress": "127.0.0.1",
+        "RemotePort": 49681
+      }
+    ],
+    "battery": {
+      "EstimatedChargeRemaining": 61,
+      "Status": "OK"
+    },
+    "ipv4": [
+      {
+        "IPAddress": "192.168.56.1",
+        "InterfaceAlias": "Ethernet"
+      },
+      {
+        "IPAddress": "192.168.0.233",
+        "InterfaceAlias": "Wi-Fi"
+      }
+    ],
+    "wifiStatus": {
+      "state": "connected",
+      "ssid": "4a",
+      "signal": "99%"
+    },
+    "dns": [
+      {
+        "ServerAddresses": [],
+        "InterfaceAlias": "Ethernet"
+      },
+      {
+        "ServerAddresses": [],
+        "InterfaceAlias": "McAfee VPN"
+      },
+      {
+        "ServerAddresses": [],
+        "InterfaceAlias": "Wi-Fi 2"
+      },
+      {
+        "ServerAddresses": [],
+        "InterfaceAlias": "Wi-Fi 3"
+      },
+      {
+        "ServerAddresses": [
+          "68.105.28.11",
+          "68.105.29.11"
+        ],
+        "InterfaceAlias": "Wi-Fi"
+      },
+      {
+        "ServerAddresses": [],
+        "InterfaceAlias": "Loopback Pseudo-Interface 1"
+      }
+    ],
+    "memory": {
+      "total": 33070444,
+      "free": 17913904,
+      "usagePercent": 46
+    }
+  }
+}
