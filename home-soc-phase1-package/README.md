@@ -1,4 +1,17 @@
-# 🏠 HOME SOC Phase 1-4 Complete Package
+# ⚠️ DEPRECATED - HOME SOC Phase 1-4 Complete Package
+
+**This directory is DEPRECATED.** It contains an old package structure with files in `src/` subdirectories.
+
+**➡️ USE INSTEAD:** See [DEPLOYMENT.md](../DEPLOYMENT.md) at the repository root for current setup instructions.
+
+The actual source files are now at the root level:
+- `home-soc-mcp-server.js` (not `src/home-soc-mcp-server.js`)
+- `network-collector.js` (not `src/network-collector.js`)
+- `baseline-analyzer.js` (not `src/baseline-analyzer.js`)
+
+This directory is kept for historical reference only.
+
+---
 
 **Hệ thống giám sát an ninh mạng nhà thông minh**
 
