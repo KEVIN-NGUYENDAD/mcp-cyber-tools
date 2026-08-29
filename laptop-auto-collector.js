@@ -8,19 +8,27 @@
 import fs from 'fs';
 import { execSync } from 'child_process';
 import path from 'path';
+import os from 'os';
+
+// Use absolute paths to avoid issues when run from different directories
+const projectDir = path.join(process.env.APPDATA, 'Claude', 'Projects', 'mcp-cyber-tools');
 
 const CONFIG = {
   collectionInterval: 30 * 60 * 1000,  // 30 minutes
   targetEndTime: '20:00',               // 8PM
-  dataDir: 'laptop-collection-data',
+  dataDir: path.join(projectDir, 'laptop-collection-data'),
   deviceName: 'LAPTOP',
-  reportFile: 'LAPTOP-AUTO-COLLECTION-REPORT.md'
+  reportFile: path.join(projectDir, 'LAPTOP-AUTO-COLLECTION-REPORT.md'),
+  projectDir: projectDir
 };
 
 // Create data directory
 if (!fs.existsSync(CONFIG.dataDir)) {
   fs.mkdirSync(CONFIG.dataDir, { recursive: true });
 }
+
+console.log(`📁 Project Directory: ${CONFIG.projectDir}`);
+console.log(`📂 Data Directory: ${CONFIG.dataDir}\n`);
 
 const collectionLog = {
   device: 'LAPTOP',
@@ -255,18 +263,19 @@ async function main() {
       collectionLog.status = 'COMPLETED';
       collectionLog.endTime = new Date().toISOString();
 
-      // Save collection log
-      fs.writeFileSync('laptop-collection-log.json', JSON.stringify(collectionLog, null, 2));
+      // Save collection log with absolute path
+      const logFilePath = path.join(CONFIG.projectDir, 'laptop-collection-log.json');
+      fs.writeFileSync(logFilePath, JSON.stringify(collectionLog, null, 2));
 
       console.log('\n' + '='.repeat(70));
       console.log('🎉 LAPTOP AUTO COLLECTION COMPLETE');
       console.log('='.repeat(70));
       console.log(`\n📊 Collected: ${collectionLog.collections.length} snapshots`);
-      console.log(`📁 Data: ${CONFIG.dataDir}/`);
+      console.log(`📁 Data: ${CONFIG.dataDir}`);
       console.log(`📋 Report: ${CONFIG.reportFile}`);
-      console.log(`📝 Log: laptop-collection-log.json`);
+      console.log(`📝 Log: ${path.join(CONFIG.projectDir, 'laptop-collection-log.json')}`);
       console.log('\n✅ Laptop data ready for Desktop sync!');
-      console.log('💡 Copy laptop-collection-data/ to Desktop for comprehensive report');
+      console.log('💡 Files saved to project directory for easy access');
 
       process.exit(0);
     } else {
