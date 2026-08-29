@@ -1,0 +1,24 @@
+[
+  {
+    "timestamp": "2026-08-23T22:32:48.474Z",
+    "toolName": "testTool",
+    "startTime": 1787524368474,
+    "duration": 1,
+    "success": true,
+    "errorMessage": null,
+    "errorCode": null,
+    "executionContext": {
+      "userId": "tamng",
+      "systemInfo": "win32",
+      "nodeVersion": "v24.19.0",
+      "argumentCount": 1,
+      "argumentTypes": [
+        "string"
+      ]
+    },
+    "metadata": {
+      "toolCategory": "Uncategorized",
+      "toolPriority": "STANDARD"
+    }
+  }
+]

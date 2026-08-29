@@ -54,20 +54,29 @@ class TelemetryEngine {
   }
 
   saveRecord(record) {
+    console.error(`[TRACE-SAVE] Saving record for: ${record.toolName}`);
     const dateKey = record.timestamp.split('T')[0];
     const dailyFile = path.join(this.telemetryPath, `telemetry-${dateKey}.json`);
+    console.error(`[TRACE-SAVE] File path: ${dailyFile}`);
 
     let records = [];
     if (fs.existsSync(dailyFile)) {
       try {
         records = JSON.parse(fs.readFileSync(dailyFile, 'utf8'));
+        console.error(`[TRACE-SAVE] Read ${records.length} existing records`);
       } catch (e) {
+        console.error(`[TRACE-SAVE] Error reading file: ${e.message}`);
         records = [];
       }
     }
 
     records.push(record);
-    fs.writeFileSync(dailyFile, JSON.stringify(records, null, 2));
+    try {
+      fs.writeFileSync(dailyFile, JSON.stringify(records, null, 2));
+      console.error(`[TRACE-SAVE] ✓ Wrote ${records.length} records to ${dailyFile}`);
+    } catch (err) {
+      console.error(`[TRACE-SAVE] ✗ WRITE FAILED: ${err.message}`);
+    }
   }
 
   categorizeToolByName(toolName) {
@@ -111,18 +120,23 @@ class TelemetryEngine {
 // Usage Pattern
 function instrumentTool(toolName, toolFunction) {
   const telemetry = new TelemetryEngine();
+  console.error(`[TRACE-INSTRUMENT] Creating wrapper for: ${toolName}`);
 
   return async function instrumentedTool(...args) {
+    console.error(`[TRACE-EXECUTE] Tool called: ${toolName}`);
     const execution = telemetry.recordExecution(toolName, {
       argumentCount: args.length,
       argumentTypes: args.map(a => typeof a)
     });
+    console.error(`[TRACE-RECORD] Execution tracked, calling complete()`);
 
     try {
       const result = await toolFunction(...args);
+      console.error(`[TRACE-SUCCESS] Tool succeeded: ${toolName}`);
       execution.complete(true);
       return result;
     } catch (error) {
+      console.error(`[TRACE-ERROR] Tool failed: ${toolName}, error: ${error.message}`);
       execution.complete(false, error);
       throw error;
     }
@@ -130,3 +144,4 @@ function instrumentTool(toolName, toolFunction) {
 }
 
 export { TelemetryEngine, instrumentTool };
+
