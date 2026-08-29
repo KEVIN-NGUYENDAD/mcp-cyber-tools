@@ -19,8 +19,8 @@
     "collectionInterval": 1800000,
     "fastScanInterval": 300000,
     "fastScanEnabled": false,
-    "gatewayIP": "192.168.1.1",
-    "cameraIPs": ["192.168.1.100", "192.168.1.101", "192.168.1.102"]
+    "gatewayIP": "192.168.0.1",
+    "cameraIPs": []
   },
   "alerts": {
     "enabled": true,
