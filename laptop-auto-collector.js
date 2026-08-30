@@ -111,27 +111,38 @@ function collectData(iterationNum) {
       console.log('    ⚠️  IPv4 capture failed');
     }
 
-    // 5. WiFi SSID and Status (IMPROVED)
+    // 5. WiFi SSID and Status (FIXED PARSING)
     console.log('  • Capturing WiFi SSID...');
     try {
       const wifiOutput = execSync('netsh wlan show interfaces',
         { encoding: 'utf-8', shell: 'cmd', timeout: 5000 });
-      const lines = wifiOutput.split('\n');
+
       const wifiData = {};
+      const lines = wifiOutput.split('\n');
+
       lines.forEach(line => {
-        if (line.includes('SSID')) {
-          const ssid = line.split(':')[1]?.trim() || 'Hidden/None';
-          wifiData.ssid = ssid;
+        // Match "SSID" followed by colon and value (but NOT "SSID :" alone)
+        if (line.match(/^\s*SSID\s+:\s+(.+)$/i)) {
+          const match = line.match(/^\s*SSID\s+:\s+(.+)$/i);
+          wifiData.ssid = match ? match[1].trim() : 'Hidden/None';
         }
-        if (line.includes('State')) {
-          const state = line.split(':')[1]?.trim() || 'Unknown';
-          wifiData.state = state;
+        // Match "State" line
+        if (line.match(/^\s*State\s+:\s+(.+)$/i)) {
+          const match = line.match(/^\s*State\s+:\s+(.+)$/i);
+          wifiData.state = match ? match[1].trim() : 'Unknown';
         }
-        if (line.includes('Signal')) {
-          const signal = line.split(':')[1]?.trim() || 'N/A';
-          wifiData.signal = signal;
+        // Match "Signal" line
+        if (line.match(/^\s*Signal\s+:\s+(.+)$/i)) {
+          const match = line.match(/^\s*Signal\s+:\s+(.+)$/i);
+          wifiData.signal = match ? match[1].trim() : 'N/A';
+        }
+        // Match "BSSID" for additional info
+        if (line.match(/^\s*BSSID\s+:\s+(.+)$/i)) {
+          const match = line.match(/^\s*BSSID\s+:\s+(.+)$/i);
+          wifiData.bssid = match ? match[1].trim() : 'N/A';
         }
       });
+
       snapshot.data.wifiStatus = wifiData.ssid ? wifiData : { note: 'No WiFi connected' };
     } catch (e) {
       console.log('    ⚠️  WiFi SSID capture failed');
