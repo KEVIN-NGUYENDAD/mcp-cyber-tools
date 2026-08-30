@@ -68,6 +68,10 @@ abandon in a week.
    ```
    Should be within 24 hours.
 
+   Use the API, not the raw URL. `raw.githubusercontent.com` caches for about
+   five minutes and can serve a superseded file that still reports
+   `stale: false` — see limitation 10 in the release notes.
+
 5. **No new port forwarding** on the router. The scanner cannot see router
    config — this one is manual.
 

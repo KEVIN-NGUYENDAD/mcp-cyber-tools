@@ -162,6 +162,22 @@ Past 48 hours the feed sets `stale: true` and the bulletin says so. It does not
 raise the risk level. A collector that stopped a week ago still reports GREEN
 with a staleness note.
 
+**10. A CDN-cached read can be silently out of date.**
+`raw.githubusercontent.com` caches for roughly five minutes. The freshness check
+reads the timestamp *inside* the file, not whether that file is the newest
+version — so a superseded copy carries its own recent timestamp and reports
+`stale: false`.
+
+Observed on 2026-08-30: a bulletin reported `data age 0 h, stale: false` while
+reading `source_scan_at 21:55:53Z` and `controls_unknown: 4`, when the published
+feed was already at `22:10:01Z` with `controls_unknown: 0`.
+
+The 24-minute gap between the 19:45 chain and the 20:10 bulletin is wider than
+the cache window, so the scheduled path is not affected. Manually triggering an
+export and a bulletin within a few minutes of each other is. After fixing an
+incident and re-running the chain, verify against the API rather than the raw
+URL — the runbook command does this.
+
 ---
 
 ## Operational status
