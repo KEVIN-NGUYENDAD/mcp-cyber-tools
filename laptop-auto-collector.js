@@ -111,35 +111,55 @@ function collectData(iterationNum) {
       console.log('    ⚠️  IPv4 capture failed');
     }
 
-    // 5. WiFi SSID and Status (FIXED PARSING)
+    // 5. WiFi SSID and Status (ROBUST PARSING)
     console.log('  • Capturing WiFi SSID...');
     try {
       const wifiOutput = execSync('netsh wlan show interfaces',
         { encoding: 'utf-8', shell: 'cmd', timeout: 5000 });
 
       const wifiData = {};
-      const lines = wifiOutput.split('\n');
+      // Split by various line endings and filter empty lines
+      const lines = wifiOutput.split(/[\r\n]+/).filter(l => l.trim());
 
       lines.forEach(line => {
-        // Match "SSID" followed by colon and value (but NOT "SSID :" alone)
-        if (line.match(/^\s*SSID\s+:\s+(.+)$/i)) {
-          const match = line.match(/^\s*SSID\s+:\s+(.+)$/i);
-          wifiData.ssid = match ? match[1].trim() : 'Hidden/None';
+        const trimmed = line.trim();
+
+        // Match "SSID" - handle multiple spaces around colon
+        if (trimmed.toLowerCase().includes('ssid') && trimmed.includes(':')) {
+          const parts = trimmed.split(':');
+          if (parts.length === 2) {
+            const value = parts[1].trim();
+            if (value && !value.toLowerCase().includes('ssid')) {
+              wifiData.ssid = value || 'Hidden/None';
+            }
+          }
         }
-        // Match "State" line
-        if (line.match(/^\s*State\s+:\s+(.+)$/i)) {
-          const match = line.match(/^\s*State\s+:\s+(.+)$/i);
-          wifiData.state = match ? match[1].trim() : 'Unknown';
+
+        // Match "State"
+        if (trimmed.toLowerCase().startsWith('state') && trimmed.includes(':')) {
+          const parts = trimmed.split(':');
+          if (parts.length === 2) {
+            wifiData.state = parts[1].trim() || 'Unknown';
+          }
         }
-        // Match "Signal" line
-        if (line.match(/^\s*Signal\s+:\s+(.+)$/i)) {
-          const match = line.match(/^\s*Signal\s+:\s+(.+)$/i);
-          wifiData.signal = match ? match[1].trim() : 'N/A';
+
+        // Match "Signal"
+        if (trimmed.toLowerCase().startsWith('signal') && trimmed.includes('%')) {
+          const parts = trimmed.split(':');
+          if (parts.length === 2) {
+            wifiData.signal = parts[1].trim() || 'N/A';
+          }
         }
-        // Match "BSSID" for additional info
-        if (line.match(/^\s*BSSID\s+:\s+(.+)$/i)) {
-          const match = line.match(/^\s*BSSID\s+:\s+(.+)$/i);
-          wifiData.bssid = match ? match[1].trim() : 'N/A';
+
+        // Match "AP BSSID"
+        if (trimmed.toLowerCase().includes('bssid') && trimmed.includes(':')) {
+          const parts = trimmed.split(':');
+          if (parts.length >= 2) {
+            const value = parts.slice(1).join(':').trim();
+            if (value && value.match(/^[0-9a-f:]+$/i)) {
+              wifiData.bssid = value;
+            }
+          }
         }
       });
 
