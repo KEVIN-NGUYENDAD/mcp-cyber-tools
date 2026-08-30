@@ -1,0 +1,118 @@
+{
+  "timestamp": "2026-08-30T00:24:16.804Z",
+  "scanType": "IOT_NETWORK_SCAN",
+  "deviceCount": 5,
+  "identifiedCount": 5,
+  "totalRisks": 2,
+  "devices": [
+    {
+      "ip": "192.168.0.1",
+      "mac": "48-bd-ce-0e-1e-3c",
+      "arpType": "dynamic",
+      "vendor": "ARRIS / CommScope",
+      "deviceType": "Router / Gateway",
+      "identified": true,
+      "openPorts": [
+        {
+          "port": 80,
+          "service": "HTTP (Web UI)"
+        },
+        {
+          "port": 443,
+          "service": "HTTPS (Web UI)"
+        },
+        {
+          "port": 1883,
+          "service": "MQTT (IoT Broker)"
+        }
+      ],
+      "risks": [
+        {
+          "port": 1883,
+          "service": "MQTT (IoT Broker)",
+          "warning": "MEDIUM - MQTT broker without TLS"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.0.21",
+      "mac": "ec-71-db-0b-49-37",
+      "arpType": "dynamic",
+      "vendor": "Reolink",
+      "deviceType": "IP Camera",
+      "identified": true,
+      "openPorts": [
+        {
+          "port": 80,
+          "service": "HTTP (Web UI)"
+        },
+        {
+          "port": 443,
+          "service": "HTTPS (Web UI)"
+        },
+        {
+          "port": 554,
+          "service": "RTSP (Camera Stream)"
+        },
+        {
+          "port": 8000,
+          "service": "HTTP Alt (Camera/NVR)"
+        },
+        {
+          "port": 9000,
+          "service": "Reolink / NVR"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "ip": "192.168.0.25",
+      "mac": "1c-bf-ce-74-b4-51",
+      "arpType": "dynamic",
+      "vendor": "Shenzhen Ecom",
+      "deviceType": "IP Camera (RTSP detected)",
+      "identified": true,
+      "openPorts": [
+        {
+          "port": 80,
+          "service": "HTTP (Web UI)"
+        },
+        {
+          "port": 554,
+          "service": "RTSP (Camera Stream)"
+        },
+        {
+          "port": 23,
+          "service": "Telnet"
+        }
+      ],
+      "risks": [
+        {
+          "port": 23,
+          "service": "Telnet",
+          "warning": "CRITICAL - Telnet sends credentials in plaintext"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.0.33",
+      "mac": "1c-d6-be-d6-b4-d9",
+      "arpType": "dynamic",
+      "vendor": "Amazon Technologies",
+      "deviceType": "Smart Speaker / IoT",
+      "identified": true,
+      "openPorts": [],
+      "risks": []
+    },
+    {
+      "ip": "192.168.0.233",
+      "mac": "9c-b1-50-fe-04-20",
+      "arpType": "dynamic",
+      "vendor": "Intel",
+      "deviceType": "Computer (Laptop/Desktop)",
+      "identified": true,
+      "openPorts": [],
+      "risks": []
+    }
+  ]
+}
