@@ -177,7 +177,14 @@
       "Bash(timeout 2 node \"C:\\\\Users\\\\tamng\\\\AppData\\\\Roaming\\\\Claude\\\\Projects\\\\mcp-cyber-tools\\\\server.js\")",
       "Bash(git commit -m 'docs: Phase Transition Summary - Telemetry to Intelligence *)",
       "Bash(git commit -m 'ops: Daily operations framework for 7-day collection phase *)",
-      "Bash(git commit -m 'feat: Learning System - Capture validated knowledge and recommendation confidence *)"
+      "Bash(git commit -m 'feat: Learning System - Capture validated knowledge and recommendation confidence *)",
+      "Bash(tee test-home-soc-validation.log)",
+      "Bash(node test-laptop-collection.js)",
+      "Bash(xargs cat)",
+      "PowerShell($collectDir = \"$env:APPDATA\\\\Claude\\\\Projects\\\\mcp-cyber-tools\\\\laptop-collection-data\"; Write-Host \"Checking: $collectDir\"; if \\(Test-Path $collectDir\\) { Get-ChildItem $collectDir -File | ForEach-Object { Write-Host \"Found: $\\($_.Name\\) - $\\($_.Length\\) bytes\" } } else { Write-Host \"Directory doesn't exist yet. Checking parent...\"; $parent = \"$env:APPDATA\\\\Claude\\\\Projects\\\\mcp-cyber-tools\"; if \\(Test-Path $parent\\) { Get-ChildItem $parent -Directory | ForEach-Object { Write-Host \"Dir: $\\($_.Name\\)\" } } })",
+      "PowerShell($file = \"C:\\\\Windows\\\\system32\\\\mcp-cyber-tools\\\\laptop-collection-data\\\\snapshot-1.json\"; if \\(Test-Path $file\\) { Get-Content $file | ConvertFrom-Json | ConvertTo-Json -Depth 10 } else { \"File not found at: $file\" })",
+      "Bash(git pull *)",
+      "Bash(grep -o \"[^ ]*\\\\.[a-z]*$\")"
     ]
   }
 }

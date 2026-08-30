@@ -5,13 +5,15 @@
     "Privilege Escalation"
   ],
   "firstSeen": "2026-08-22T20:24:25.092Z",
-  "lastSeen": "2026-08-22T20:24:25.092Z",
-  "occurrences": 1,
-  "confidence": 85,
+  "lastSeen": "2026-08-29T21:55:49.545Z",
+  "occurrences": 4,
+  "confidence": 92.5,
   "casesObserved": [
     "CASE-101",
     "CASE-102",
-    "CASE-103"
+    "CASE-103",
+    "CASE-1001",
+    "CASE-1004"
   ],
   "type": "privilege-escalation-chain",
   "severity": "medium",

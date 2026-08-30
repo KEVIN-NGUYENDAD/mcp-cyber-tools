@@ -5,9 +5,9 @@
     "Lateral Movement"
   ],
   "firstSeen": "2026-08-22T20:24:25.094Z",
-  "lastSeen": "2026-08-22T20:24:25.094Z",
-  "occurrences": 1,
-  "confidence": 82,
+  "lastSeen": "2026-08-29T21:55:46.522Z",
+  "occurrences": 2,
+  "confidence": 83.5,
   "casesObserved": [
     "CASE-102",
     "CASE-105"
