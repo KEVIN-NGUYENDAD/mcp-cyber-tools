@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-29T23:31:55.091Z",
+  "timestamp": "2026-08-30T00:02:38.986Z",
   "device": "LAPTOP",
   "iteration": 1,
   "data": {
@@ -7,52 +7,67 @@
       {
         "Name": "AggregatorHost",
         "Id": 7004,
-        "WorkingSet": 10637312
+        "WorkingSet": 10678272
       },
       {
         "Name": "aihost",
         "Id": 5704,
-        "WorkingSet": 35684352
+        "WorkingSet": 35700736
       },
       {
         "Name": "AIXHost",
         "Id": 9332,
-        "WorkingSet": 79511552
+        "WorkingSet": 79581184
       },
       {
         "Name": "AppActions",
         "Id": 10808,
-        "WorkingSet": 46432256
+        "WorkingSet": 45727744
       },
       {
         "Name": "ApplicationFrameHost",
         "Id": 11400,
-        "WorkingSet": 88567808
+        "WorkingSet": 88580096
       },
       {
         "Name": "audiodg",
-        "Id": 9872,
-        "WorkingSet": 26697728
+        "Id": 25316,
+        "WorkingSet": 24752128
+      },
+      {
+        "Name": "backgroundTaskHost",
+        "Id": 2400,
+        "WorkingSet": 68423680
+      },
+      {
+        "Name": "bash",
+        "Id": 4784,
+        "WorkingSet": 10252288
+      },
+      {
+        "Name": "bash",
+        "Id": 23592,
+        "WorkingSet": 12181504
       },
       {
         "Name": "browser",
         "Id": 1180,
-        "WorkingSet": 116543488
+        "WorkingSet": 119943168
       },
       {
         "Name": "browser",
         "Id": 1728,
-        "WorkingSet": 102502400
+        "WorkingSet": 93941760
       },
       {
         "Name": "browser",
         "Id": 2276,
-        "WorkingSet": 58347520
+        "WorkingSet": 59019264
       },
       {
         "Name": "browser",
         "Id": 4368,
-        "WorkingSet": 275615744
+        "WorkingSet": 275914752
       },
       {
         "Name": "browser",
@@ -62,22 +77,22 @@
       {
         "Name": "browser",
         "Id": 6184,
-        "WorkingSet": 255250432
+        "WorkingSet": 255262720
       },
       {
         "Name": "browser",
         "Id": 7872,
-        "WorkingSet": 73437184
+        "WorkingSet": 75636736
       },
       {
         "Name": "browser",
         "Id": 18968,
-        "WorkingSet": 54181888
+        "WorkingSet": 54194176
       },
       {
         "Name": "browser",
         "Id": 19740,
-        "WorkingSet": 119574528
+        "WorkingSet": 120717312
       },
       {
         "Name": "browser",
@@ -88,21 +103,6 @@
         "Name": "browser",
         "Id": 19804,
         "WorkingSet": 21372928
-      },
-      {
-        "Name": "browser",
-        "Id": 19972,
-        "WorkingSet": 119644160
-      },
-      {
-        "Name": "browser",
-        "Id": 20776,
-        "WorkingSet": 53710848
-      },
-      {
-        "Name": "browser",
-        "Id": 21196,
-        "WorkingSet": 32657408
       }
     ],
     "connections": [
@@ -114,8 +114,8 @@
       },
       {
         "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
-        "LocalPort": 63442,
-        "RemoteAddress": "2600:1405:8400:12::173e:e289",
+        "LocalPort": 63248,
+        "RemoteAddress": "2600:1406:5e00:39e::57",
         "RemotePort": 443
       },
       {
@@ -144,8 +144,14 @@
       },
       {
         "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
-        "LocalPort": 48766,
-        "RemoteAddress": "2607:6bc0::10",
+        "LocalPort": 26861,
+        "RemoteAddress": "2600:1901:0:5ae7::",
+        "RemotePort": 443
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
+        "LocalPort": 24732,
+        "RemoteAddress": "2001:578:3f::30",
         "RemotePort": 443
       },
       {
@@ -156,8 +162,8 @@
       },
       {
         "LocalAddress": "2600:8800:529e:3b00:7577:92d0:728c:537f",
-        "LocalPort": 21004,
-        "RemoteAddress": "2600:1901:0:5ae7::",
+        "LocalPort": 21940,
+        "RemoteAddress": "2600:1406:5e00:39e::57",
         "RemotePort": 443
       },
       {
@@ -189,16 +195,10 @@
         "LocalPort": 49681,
         "RemoteAddress": "127.0.0.1",
         "RemotePort": 49680
-      },
-      {
-        "LocalAddress": "127.0.0.1",
-        "LocalPort": 49680,
-        "RemoteAddress": "127.0.0.1",
-        "RemotePort": 49681
       }
     ],
     "battery": {
-      "EstimatedChargeRemaining": 61,
+      "EstimatedChargeRemaining": 57,
       "Status": "OK"
     },
     "ipv4": [
@@ -212,9 +212,7 @@
       }
     ],
     "wifiStatus": {
-      "state": "connected",
-      "ssid": "4a",
-      "signal": "99%"
+      "note": "No WiFi connected"
     },
     "dns": [
       {
@@ -247,8 +245,8 @@
     ],
     "memory": {
       "total": 33070444,
-      "free": 17913904,
-      "usagePercent": 46
+      "free": 17429852,
+      "usagePercent": 47
     }
   }
 }
