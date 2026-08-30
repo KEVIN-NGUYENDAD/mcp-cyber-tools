@@ -35,7 +35,17 @@ const OUI_MAP = {
   'f4-f5-d8': { vendor: 'Google', type: 'Chromecast / Nest' },
   '18-b4-30': { vendor: 'Nest Labs', type: 'Thermostat / Camera' },
   '54-2a-1b': { vendor: 'TP-Link', type: 'Router / Smart Plug' },
-  'a4-cf-12': { vendor: 'Espressif (ESP32)', type: 'DIY IoT Device' }
+  'a4-cf-12': { vendor: 'Espressif (ESP32)', type: 'DIY IoT Device' },
+  // Apple devices (private/randomized MACs)
+  '3a-45-17': { vendor: 'Apple', type: 'iPhone / iPad (Private MAC)' },
+  '1e-37-1e': { vendor: 'Apple', type: 'iPhone / iPad (Private MAC)' },
+  '20-91-df': { vendor: 'Apple', type: 'iPhone / iPad (Private MAC)' },
+  '9e-53-d4': { vendor: 'Apple', type: 'iPhone / iPad (Private MAC)' },
+  // Samsung devices
+  '70-3a-95': { vendor: 'Samsung Electronics', type: 'Smartphone / Tablet' },
+  'c0-bd-d9': { vendor: 'Samsung Electronics', type: 'Smartphone / Tablet' },
+  '88-ae-dd': { vendor: 'Samsung Electronics', type: 'Smart TV / Device' },
+  '34-e6-d7': { vendor: 'Samsung', type: 'Device' }
 };
 
 // Ports that reveal what a device actually is.

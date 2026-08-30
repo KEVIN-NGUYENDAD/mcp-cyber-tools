@@ -1,0 +1,12 @@
+{
+  "validationId": "VALID-1788040546535-fhe8ygbur",
+  "caseId": "CASE-0573",
+  "prediction": "Privilege Escalation",
+  "confidence": 86.5,
+  "predictedAt": "2026-08-29T21:55:46.535Z",
+  "actual": null,
+  "actualAt": null,
+  "correct": null,
+  "scoreData": null,
+  "status": "pending"
+}

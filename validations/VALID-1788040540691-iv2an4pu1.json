@@ -1,11 +1,11 @@
 {
-  "validationId": "VALID-1787430575331-8zxgahwjb",
+  "validationId": "VALID-1788040540691-iv2an4pu1",
   "caseId": "CASE-003",
   "prediction": "Data Exfiltration",
   "confidence": 72,
-  "predictedAt": "2026-08-22T20:29:35.330Z",
+  "predictedAt": "2026-08-29T21:55:40.690Z",
   "actual": "Persistence Mechanism",
-  "actualAt": "2026-08-22T20:29:35.446Z",
+  "actualAt": "2026-08-29T21:55:40.798Z",
   "correct": false,
   "scoreData": {
     "predictionCorrect": 0,

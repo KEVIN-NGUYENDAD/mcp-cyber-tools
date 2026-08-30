@@ -184,7 +184,18 @@
       "PowerShell($collectDir = \"$env:APPDATA\\\\Claude\\\\Projects\\\\mcp-cyber-tools\\\\laptop-collection-data\"; Write-Host \"Checking: $collectDir\"; if \\(Test-Path $collectDir\\) { Get-ChildItem $collectDir -File | ForEach-Object { Write-Host \"Found: $\\($_.Name\\) - $\\($_.Length\\) bytes\" } } else { Write-Host \"Directory doesn't exist yet. Checking parent...\"; $parent = \"$env:APPDATA\\\\Claude\\\\Projects\\\\mcp-cyber-tools\"; if \\(Test-Path $parent\\) { Get-ChildItem $parent -Directory | ForEach-Object { Write-Host \"Dir: $\\($_.Name\\)\" } } })",
       "PowerShell($file = \"C:\\\\Windows\\\\system32\\\\mcp-cyber-tools\\\\laptop-collection-data\\\\snapshot-1.json\"; if \\(Test-Path $file\\) { Get-Content $file | ConvertFrom-Json | ConvertTo-Json -Depth 10 } else { \"File not found at: $file\" })",
       "Bash(git pull *)",
-      "Bash(grep -o \"[^ ]*\\\\.[a-z]*$\")"
+      "Bash(grep -o \"[^ ]*\\\\.[a-z]*$\")",
+      "Bash(timeout 20 node wifi-network-analyzer.js)",
+      "Bash(arp -a)",
+      "Bash(node iot-device-scanner.js)",
+      "Bash(powershell -NoProfile -Command \"Test-NetConnection -ComputerName 192.168.0.25 -Port 80 -InformationLevel Quiet; Test-NetConnection -ComputerName 192.168.0.25 -Port 554 -InformationLevel Quiet; Test-NetConnection -ComputerName 192.168.0.25 -Port 23 -InformationLevel Quiet\")",
+      "Bash(powershell -NoProfile -Command \"'port 12345: ' + \\(Test-NetConnection -ComputerName 192.168.0.25 -Port 12345 -InformationLevel Quiet\\); 'port 54321: ' + \\(Test-NetConnection -ComputerName 192.168.0.25 -Port 54321 -InformationLevel Quiet\\); 'port 31337: ' + \\(Test-NetConnection -ComputerName 192.168.0.25 -Port 31337 -InformationLevel Quiet\\)\")",
+      "Bash(powershell -NoProfile -Command 'try { $r = Invoke-WebRequest -Uri '\\\\''http://192.168.0.25'\\\\'' -TimeoutSec 8 -UseBasicParsing; '\\\\''STATUS: '\\\\'' + $r.StatusCode; '\\\\''SERVER: '\\\\'' + $r.Headers['\\\\''Server'\\\\'']; '\\\\''LENGTH: '\\\\'' + $r.RawContentLength } catch { '\\\\''HTTP FAILED: '\\\\'' + $_.Exception.Message }')",
+      "Bash(powershell -NoProfile -Command \"Get-NetAdapter | Where-Object Status -eq 'Up' | Format-Table Name, InterfaceDescription, Status -AutoSize\")",
+      "Bash(powershell -NoProfile -Command 'Get-Process | Where-Object { $_.Name -match '\\\\''expressvpn|mcafee|vpn|openvpn|wireguard'\\\\'' } | Format-Table Name, Id -AutoSize')",
+      "Bash(powershell -NoProfile -Command \"'ping: ' + \\(Test-Connection -ComputerName 192.168.0.25 -Count 2 -Quiet\\); 'port 23: ' + \\(Test-NetConnection -ComputerName 192.168.0.25 -Port 23 -InformationLevel Quiet\\); 'port 80: ' + \\(Test-NetConnection -ComputerName 192.168.0.25 -Port 80 -InformationLevel Quiet\\)\")",
+      "Bash(node startup-router-scan.js)",
+      "Bash(npm install *)"
     ]
   }
 }

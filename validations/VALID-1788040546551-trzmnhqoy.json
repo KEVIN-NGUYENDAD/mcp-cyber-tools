@@ -1,0 +1,12 @@
+{
+  "validationId": "VALID-1788040546551-trzmnhqoy",
+  "caseId": "CASE-3021",
+  "prediction": "Unknown Continuation",
+  "confidence": 93.5,
+  "predictedAt": "2026-08-29T21:55:46.551Z",
+  "actual": null,
+  "actualAt": null,
+  "correct": null,
+  "scoreData": null,
+  "status": "pending"
+}

@@ -1,0 +1,345 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-5067",
+  "title": "Escalation Detection",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-29T21:55:52.888Z"
+    }
+  ],
+  "createdAt": "2026-08-29T21:55:52.888Z",
+  "updatedAt": "2026-08-29T21:55:52.897Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1788040552890",
+      "timestamp": "2026-08-29T21:55:52.890Z",
+      "title": "SoftLanding",
+      "severity": "low",
+      "description": "OEM artifact",
+      "classification": "legitimate",
+      "confidence": 95,
+      "confidenceReason": "Known OEM artifact",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 2,
+        "incidentCount": 0,
+        "confidence": 92.38560627359831,
+        "classification": "legitimate",
+        "casesObserved": 2
+      },
+      "enhancedConfidence": 95,
+      "enhancedClassification": "legitimate"
+    },
+    {
+      "id": "F-1788040552891",
+      "timestamp": "2026-08-29T21:55:52.891Z",
+      "title": "Windows Defender",
+      "severity": "low",
+      "description": "Security service",
+      "classification": "legitimate",
+      "confidence": 98,
+      "confidenceReason": "Microsoft security component",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 2,
+        "incidentCount": 0,
+        "confidence": 92.38560627359831,
+        "classification": "legitimate",
+        "casesObserved": 2
+      },
+      "enhancedConfidence": 98,
+      "enhancedClassification": "legitimate"
+    },
+    {
+      "id": "F-1788040552892",
+      "timestamp": "2026-08-29T21:55:52.892Z",
+      "title": "McAfee",
+      "severity": "low",
+      "description": "Antivirus",
+      "classification": "legitimate",
+      "confidence": 92,
+      "confidenceReason": "Known antivirus software"
+    },
+    {
+      "id": "F-1788040552894",
+      "timestamp": "2026-08-29T21:55:52.894Z",
+      "title": "Unknown Registry Key",
+      "severity": "high",
+      "description": "Persistence mechanism",
+      "classification": "unknown",
+      "confidence": 10,
+      "confidenceReason": "No pattern match"
+    },
+    {
+      "id": "F-1788040552896",
+      "timestamp": "2026-08-29T21:55:52.896Z",
+      "title": "Suspicious Service",
+      "severity": "high",
+      "description": "Unknown system service",
+      "classification": "unknown",
+      "confidence": 10,
+      "confidenceReason": "No pattern match"
+    },
+    {
+      "id": "F-1788040552897",
+      "timestamp": "2026-08-29T21:55:52.897Z",
+      "title": "New Run Key Entry",
+      "severity": "medium",
+      "description": "Startup persistence",
+      "classification": "unknown",
+      "confidence": 0,
+      "confidenceReason": "No pattern match"
+    }
+  ],
+  "recommendations": [],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-29T21:55:52.888Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1788040552890",
+        "title": "SoftLanding",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-29T21:55:52.890Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1788040552891",
+        "title": "Windows Defender",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-29T21:55:52.891Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1788040552892",
+        "title": "McAfee",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-29T21:55:52.892Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1788040552894",
+        "title": "Unknown Registry Key",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-29T21:55:52.894Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1788040552896",
+        "title": "Suspicious Service",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-29T21:55:52.896Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1788040552897",
+        "title": "New Run Key Entry",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-29T21:55:52.897Z"
+    },
+    {
+      "type": "DECISIONS_MADE",
+      "payload": {
+        "ignored": 2,
+        "investigated": 2,
+        "escalated": 2,
+        "totalDecisions": 6
+      },
+      "timestamp": "2026-08-29T21:55:52.903Z"
+    },
+    {
+      "type": "CASE_ANALYZED",
+      "payload": {
+        "caseRecommendation": "ESCALATE",
+        "caseHealth": "CRITICAL",
+        "confidence": 95
+      },
+      "timestamp": "2026-08-29T21:55:52.905Z"
+    }
+  ],
+  "confidenceAnalysis": {
+    "performedAt": "2026-08-29T21:55:52.898Z",
+    "averageConfidence": 51,
+    "classifications": {
+      "legitimate": 3,
+      "malicious": 0,
+      "suspicious": 0,
+      "unknown": 3
+    }
+  },
+  "knowledgeEnrichment": {
+    "appliedAt": "2026-08-29T21:55:52.902Z",
+    "enhancedFindings": 2,
+    "insights": [
+      {
+        "artifact": "SoftLanding",
+        "knownGood": true,
+        "seenBefore": 2,
+        "incidents": 0,
+        "confidence": 92.38560627359831
+      },
+      {
+        "artifact": "Windows Defender",
+        "knownGood": true,
+        "seenBefore": 2,
+        "incidents": 0,
+        "confidence": 92.38560627359831
+      }
+    ]
+  },
+  "decisionAnalysis": {
+    "performedAt": "2026-08-29T21:55:52.903Z",
+    "decisions": [
+      {
+        "finding": "SoftLanding",
+        "decision": "IGNORE",
+        "confidence": 90.38560627359831,
+        "reasoning": [
+          "Known good artifact: seen 2 times",
+          "Zero incidents observed",
+          "High confidence classification (92.38560627359831%)"
+        ],
+        "action": "No action required - Known benign artifact",
+        "estimatedTime": 0
+      },
+      {
+        "finding": "Windows Defender",
+        "decision": "IGNORE",
+        "confidence": 90.38560627359831,
+        "reasoning": [
+          "Known good artifact: seen 2 times",
+          "Zero incidents observed",
+          "High confidence classification (92.38560627359831%)"
+        ],
+        "action": "No action required - Known benign artifact",
+        "estimatedTime": 0
+      },
+      {
+        "finding": "McAfee",
+        "decision": "INVESTIGATE",
+        "confidence": 60,
+        "reasoning": [
+          "Unknown artifact",
+          "First observation",
+          "Recommend standard analysis"
+        ],
+        "action": "Investigate: McAfee - Requires deeper analysis",
+        "estimatedTime": 15
+      },
+      {
+        "finding": "Unknown Registry Key",
+        "decision": "ESCALATE",
+        "confidence": 90,
+        "reasoning": [
+          "High severity finding: high",
+          "Requires immediate review regardless of history"
+        ],
+        "action": "ESCALATE: Unknown Registry Key - Requires immediate attention",
+        "estimatedTime": 30
+      },
+      {
+        "finding": "Suspicious Service",
+        "decision": "ESCALATE",
+        "confidence": 90,
+        "reasoning": [
+          "High severity finding: high",
+          "Requires immediate review regardless of history"
+        ],
+        "action": "ESCALATE: Suspicious Service - Requires immediate attention",
+        "estimatedTime": 30
+      },
+      {
+        "finding": "New Run Key Entry",
+        "decision": "INVESTIGATE",
+        "confidence": 70,
+        "reasoning": [
+          "New artifact with moderate severity",
+          "No historical data available",
+          "Requires deeper analysis"
+        ],
+        "action": "Investigate: New Run Key Entry - Requires deeper analysis",
+        "estimatedTime": 15
+      }
+    ],
+    "summary": {
+      "ignored": 2,
+      "investigated": 2,
+      "escalated": 2,
+      "total": 6
+    },
+    "timeline": [
+      {
+        "finding": "Unknown Registry Key",
+        "decision": "ESCALATE",
+        "timestamp": "2026-08-29T21:55:52.903Z"
+      },
+      {
+        "finding": "Suspicious Service",
+        "decision": "ESCALATE",
+        "timestamp": "2026-08-29T21:55:52.903Z"
+      },
+      {
+        "finding": "McAfee",
+        "decision": "INVESTIGATE",
+        "timestamp": "2026-08-29T21:55:52.903Z"
+      },
+      {
+        "finding": "New Run Key Entry",
+        "decision": "INVESTIGATE",
+        "timestamp": "2026-08-29T21:55:52.903Z"
+      }
+    ],
+    "analystTimeEstimate": 90
+  },
+  "copilotAnalysis": {
+    "performedAt": "2026-08-29T21:55:52.905Z",
+    "caseRecommendation": "ESCALATE",
+    "caseHealth": "CRITICAL",
+    "confidence": 95,
+    "decisionSummary": {
+      "ignored": 2,
+      "investigate": 2,
+      "escalate": 2,
+      "total": 6
+    },
+    "analystTime": {
+      "saved": 20,
+      "estimated": 90,
+      "total": 110
+    },
+    "reasoning": [
+      "2 finding(s) are known-good artifacts (automatically cleared)",
+      "2 finding(s) require investigation",
+      "2 finding(s) require immediate escalation"
+    ],
+    "firstAction": "Export evidence package",
+    "nextSteps": [
+      "Export evidence package",
+      "Isolate affected system",
+      "Notify security team"
+    ],
+    "quality": {
+      "coverage": 100,
+      "decision_confidence": 95,
+      "recommendation_strength": "ESCALATE (95% confident)"
+    }
+  },
+  "riskScore": 75
+}

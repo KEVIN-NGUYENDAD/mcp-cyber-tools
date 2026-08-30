@@ -1,11 +1,11 @@
 {
-  "validationId": "VALID-1787430575215-vsphe596d",
+  "validationId": "VALID-1788040540574-bf0j3bfvs",
   "caseId": "CASE-002",
   "prediction": "Lateral Movement",
   "confidence": 78,
-  "predictedAt": "2026-08-22T20:29:35.215Z",
+  "predictedAt": "2026-08-29T21:55:40.573Z",
   "actual": "Network Share Access",
-  "actualAt": "2026-08-22T20:29:35.323Z",
+  "actualAt": "2026-08-29T21:55:40.683Z",
   "correct": true,
   "scoreData": {
     "predictionCorrect": 1,
