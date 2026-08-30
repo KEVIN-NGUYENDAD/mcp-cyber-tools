@@ -118,6 +118,89 @@ function isPortOpen(ip, port) {
 }
 
 /**
+ * Grab a service banner so the reported service is evidence, not a guess.
+ * A port number only says what a service is *conventionally* on — several
+ * IoT devices listen on 80 without speaking HTTP at all.
+ */
+function grabBanner(ip, port) {
+  // Build the probe line in PowerShell itself. Escaping CRLF through
+  // Node -> cmd -> PowerShell quoting is unreliable, so the script is
+  // written to a temp .ps1 and run as a file instead.
+  const rtspPorts = [554, 8554];
+  const httpPorts = [80, 8080, 8000, 9000];
+
+  let payloadExpr = null;
+  if (rtspPorts.includes(port)) {
+    payloadExpr = `'OPTIONS rtsp://${ip}:${port} RTSP/1.0' + $CRLF + 'CSeq: 1' + $CRLF + $CRLF`;
+  } else if (httpPorts.includes(port)) {
+    payloadExpr = `'HEAD / HTTP/1.0' + $CRLF + 'Host: ${ip}' + $CRLF + $CRLF`;
+  }
+
+  const script = [
+    `$CRLF = [char]13 + [char]10`,
+    `$c = New-Object Net.Sockets.TcpClient`,
+    `$c.ReceiveTimeout = 3000`,
+    `$c.SendTimeout = 3000`,
+    `try {`,
+    `  $c.Connect('${ip}', ${port})`,
+    `  $s = $c.GetStream()`,
+    payloadExpr
+      ? `  $req = ${payloadExpr}
+  $b = [Text.Encoding]::ASCII.GetBytes($req)
+  $s.Write($b, 0, $b.Length)
+  $s.Flush()`
+      : '',
+    `  Start-Sleep -Milliseconds 1200`,
+    `  $buf = New-Object byte[] 512`,
+    `  if ($s.DataAvailable) {`,
+    `    $n = $s.Read($buf, 0, 512)`,
+    `    [Text.Encoding]::ASCII.GetString($buf, 0, $n) -replace '[^\\x20-\\x7E]', '.'`,
+    `  } else { '<silent>' }`,
+    `  $c.Close()`,
+    `} catch { '<error>' }`
+  ].filter(Boolean).join('\n');
+
+  const tmpFile = path.join(CONFIG.dataDir, `.probe-${port}.ps1`);
+
+  try {
+    fs.writeFileSync(tmpFile, script);
+    const out = execSync(
+      `powershell -NoProfile -ExecutionPolicy Bypass -File "${tmpFile}"`,
+      { encoding: 'utf-8', timeout: 15000, stdio: ['pipe', 'pipe', 'pipe'] }
+    ).trim();
+    return out || '<silent>';
+  } catch (e) {
+    return '<error>';
+  } finally {
+    try { fs.unlinkSync(tmpFile); } catch (e) { /* already gone */ }
+  }
+}
+
+/**
+ * Classify a service from its actual banner. Falls back to "unverified"
+ * rather than asserting the conventional service for the port number.
+ */
+function identifyService(port, banner, assumedService) {
+  if (banner === '<silent>') return `Open, no banner (service unverified, NOT ${assumedService.split(' ')[0]})`;
+  if (banner === '<error>') return 'Open, probe failed';
+
+  if (/^RTSP\/1\.0/.test(banner)) {
+    const server = banner.match(/Server:\s*([^\r\n.]+)/i);
+    return `RTSP video stream${server ? ` — ${server[1].trim()}` : ''} [CONFIRMED]`;
+  }
+  if (/login:|username:|password:/i.test(banner)) {
+    return 'Telnet login prompt [CONFIRMED]';
+  }
+  if (/^HTTP\/1\.[01]/.test(banner)) {
+    const server = banner.match(/Server:\s*([^\r\n]+)/i);
+    return `HTTP server${server ? ` — ${server[1].trim()}` : ''} [CONFIRMED]`;
+  }
+  if (/^SSH-/.test(banner)) return `SSH — ${banner.split('\n')[0].trim()} [CONFIRMED]`;
+
+  return `Open, unrecognized banner: "${banner.slice(0, 40)}"`;
+}
+
+/**
  * Scan a device's probe ports and flag risky ones.
  */
 function scanDevice(device) {
@@ -125,16 +208,20 @@ function scanDevice(device) {
   const risks = [];
 
   PROBE_PORTS.forEach(({ port, service }) => {
-    if (isPortOpen(device.ip, port)) {
-      openPorts.push({ port, service });
-      if (RISKY_PORTS[port]) {
-        risks.push({ port, service, warning: RISKY_PORTS[port] });
-      }
+    if (!isPortOpen(device.ip, port)) return;
+
+    const banner = grabBanner(device.ip, port);
+    const verified = identifyService(port, banner, service);
+    openPorts.push({ port, assumedService: service, verifiedService: verified });
+
+    // Only raise a risk when the banner actually confirms the dangerous service.
+    if (RISKY_PORTS[port] && !verified.includes('service unverified')) {
+      risks.push({ port, service: verified, warning: RISKY_PORTS[port] });
     }
   });
 
-  // A device exposing RTSP is a camera regardless of what its OUI said.
-  const hasRtsp = openPorts.some(p => p.port === 554 || p.port === 8554);
+  // A device serving a confirmed RTSP stream is a camera, whatever its OUI said.
+  const hasRtsp = openPorts.some(p => p.verifiedService.startsWith('RTSP'));
   const refinedType = hasRtsp && !device.deviceType.includes('Camera')
     ? 'IP Camera (RTSP detected)'
     : device.deviceType;
@@ -184,8 +271,9 @@ function main() {
     console.log(`${d.ip.padEnd(16)} ${d.deviceType}`);
     console.log(`${''.padEnd(16)} Vendor: ${d.vendor} | MAC: ${d.mac}`);
     if (d.openPorts.length) {
-      const ports = d.openPorts.map(p => `${p.port} (${p.service})`).join(', ');
-      console.log(`${''.padEnd(16)} Open: ${ports}`);
+      d.openPorts.forEach(p => {
+        console.log(`${''.padEnd(16)} Port ${String(p.port).padEnd(5)} ${p.verifiedService}`);
+      });
     } else {
       console.log(`${''.padEnd(16)} Open: none detected`);
     }
