@@ -246,6 +246,47 @@ function generateReport() {
 }
 
 /**
+ * Auto-push data to GitHub
+ */
+function autoPushToGitHub() {
+  console.log('\n' + '='.repeat(70));
+  console.log('📤 AUTO-PUSHING TO GITHUB...');
+  console.log('='.repeat(70));
+
+  try {
+    const projectDir = process.cwd();
+
+    console.log('  • Staging files...');
+    execSync('git add auto-collection-data/', { cwd: projectDir, stdio: 'pipe' });
+    execSync('git add collection-log.json', { cwd: projectDir, stdio: 'pipe' });
+    execSync('git add DESKTOP-AUTO-COLLECTION-REPORT.md', { cwd: projectDir, stdio: 'pipe' });
+    execSync('git add COMPREHENSIVE-REPORT-8PM.md', { cwd: projectDir, stdio: 'pipe' });
+
+    console.log('  • Committing...');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    execSync(`git commit -m "data: Desktop collection complete - ${timestamp}"`, {
+      cwd: projectDir,
+      stdio: 'pipe'
+    });
+
+    console.log('  • Pushing to origin/learning-factory-v2...');
+    execSync('git push origin learning-factory-v2', {
+      cwd: projectDir,
+      stdio: 'pipe'
+    });
+
+    console.log('\n✅ AUTO-PUSH SUCCESSFUL!');
+    console.log('📊 Data now available on GitHub for Laptop sync');
+    return true;
+  } catch (error) {
+    console.log('\n⚠️  AUTO-PUSH FAILED');
+    console.log(`   Error: ${error.message}`);
+    console.log('   You can push manually later');
+    return false;
+  }
+}
+
+/**
  * Main collection loop
  */
 async function main() {
@@ -280,6 +321,9 @@ async function main() {
         console.log(`📝 Log: collection-log.json`);
         console.log('\n✅ Tất cả báo cáo đã sẵn sàng!');
         console.log('📧 Gửi báo cáo qua email...\n');
+
+        // Auto-push to GitHub
+        autoPushToGitHub();
 
         // Send email report
         try {
