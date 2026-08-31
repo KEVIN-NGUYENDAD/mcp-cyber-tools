@@ -1,8 +1,10 @@
 # OPEN-001 — Investigation Log
 
 **Defect:** The Home Security Bulletin read a superseded copy of the public feed.
-**Status:** **FIX IMPLEMENTED — awaiting scheduled-run confirmation**
-**Opened:** 2026-08-31 · **Fix:** 2026-08-31 (`publish_id` + SHA-pinned API reads)
+**Status:** **ACCEPTED — detectable, not prevented**
+**Opened:** 2026-08-31 · **Mitigation:** `publish_id` + freshness validation
+**API fix implemented then rolled back** — rate limits made it less reliable than
+the defect it fixed. See § ROLLBACK.
 
 **Does OPEN-001 still exist? — YES. Cause identified.**
 
@@ -331,46 +333,102 @@ Step 2  publish_id       : d55dac3fb1e7f8f8
         controls_unknown : 0
 ```
 
+### ROLLBACK — 2026-08-31, after implementation
+
+**The API read was rolled back before it ever ran on schedule.**
+
+```
+GitHub API unauthenticated : 60 requests/hour, counted per IP
+Bulletin cost              : 4 requests/run (1 commits + 3 contents)
+Scheduled task IP          : shared across tenants in Anthropic's cloud
+```
+
+A shared IP means the bulletin's four requests compete with everyone else's on
+that address. The failure mode is HTTP 403 and **no bulletin at all** — trading a
+bulletin that is sometimes stale for a bulletin that is sometimes absent. For a
+daily unattended monitor, absence is the worse failure: a stale bulletin is
+wrong and detectable, a missing one is silent.
+
+**Decision: revert the bulletin to `raw.githubusercontent.com`.** Unmetered,
+CDN-backed, no rate limit.
+
+**This accepts OPEN-001 rather than fixing it.** The pinned snapshot can recur.
+What changed is that it is now *detectable without the API*.
+
+### `publish_id` is the detector
+
+`publish_id` is served over the raw URL, verified:
+
+```
+raw.githubusercontent.com/.../BASELINE-LATEST.json
+  publish_id       : d55dac3fb1e7f8f8
+  generated_at     : 2026-08-31T18:40:17.693Z
+  source_scan_at   : 2026-08-31T07:19:09.473Z
+  controls_unknown : 0
+```
+
+This is what makes the rollback acceptable. Before `publish_id`, two bulletins
+reading the same stale snapshot were distinguishable only by reasoning about
+timestamps — which is exactly what failed, since a stale file's timestamps are
+internally consistent and look fine.
+
+Now each publish carries a stable identity. **The same `publish_id` appearing on
+two consecutive days, when the chain ran in between, is a stale read** — no API
+call required to notice it. The operator's daily check compares one string.
+
+The API is not abandoned; it moves to where its rate limit does not matter. The
+operator's manual runbook check runs once or twice a day from a personal IP,
+nowhere near 60/hour, and remains the authoritative cross-reference when the
+day-over-day comparison signals a problem.
+
 ### Bulletin prompt — replace BƯỚC 1
 
 ```
-BƯỚC 1 — ĐỌC DỮ LIỆU QUA GITHUB CONTENTS API
+BƯỚC 1 — ĐỌC DỮ LIỆU
 
-Không dùng raw.githubusercontent.com. Đọc theo hai bước:
+Tải 3 URL sau. Thêm vào MỖI url tham số chống cache ?nocache= kèm ngày giờ
+hiện tại dạng ISO. Mỗi lần chạy phải dùng giá trị khác nhau.
 
-1a. Lấy commit mới nhất:
-    https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/commits?per_page=1
-    Ghi lại giá trị "sha" -> gọi là COMMIT_SHA
+https://raw.githubusercontent.com/KEVIN-NGUYENDAD/home-soc-reports/main/ROUTER-SECURITY-AUDIT-LATEST.md
+https://raw.githubusercontent.com/KEVIN-NGUYENDAD/home-soc-reports/main/BASELINE-LATEST.json
+https://raw.githubusercontent.com/KEVIN-NGUYENDAD/home-soc-reports/main/DEVICE-SUMMARY.json
 
-1b. Đọc 3 file, ghim theo COMMIT_SHA đó:
-    https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/BASELINE-LATEST.json?ref=COMMIT_SHA
-    https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/DEVICE-SUMMARY.json?ref=COMMIT_SHA
-    https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/ROUTER-SECURITY-AUDIT-LATEST.md?ref=COMMIT_SHA
+KHÔNG dùng api.github.com. API giới hạn 60 request/giờ theo IP dùng chung,
+sẽ trả 403 và không có bulletin nào được gửi.
 
-    Mỗi phản hồi có trường "content" mã hoá base64. Giải mã trước khi dùng.
+Nếu URL nào lỗi: dừng, gửi email
+"⚠️ HOME SECURITY BULLETIN - KHÔNG ĐỌC ĐƯỢC DỮ LIỆU", nêu rõ URL và mã lỗi.
 
-Nếu bước 1a hoặc 1b lỗi: dừng, gửi email
-"⚠️ HOME SECURITY BULLETIN - KHÔNG ĐỌC ĐƯỢC DỮ LIỆU", nêu rõ lỗi.
-Không tạo bulletin từ dữ liệu cũ.
-
-BƯỚC 1C — HIỂN THỊ DANH TÍNH BẢN PHÁT HÀNH
+BƯỚC 1B — HIỂN THỊ DANH TÍNH BẢN PHÁT HÀNH
 
 Ghi ở đầu bulletin, trước mọi nội dung khác:
 
-    commit_sha     : {COMMIT_SHA}
     publish_id     : {publish_id trong BASELINE-LATEST.json}
     generated_at   : {generated_at}
     source_scan_at : {source_scan_at}
     Tuổi dữ liệu   : {giờ hiện tại trừ source_scan_at}
 
 Nếu publish_id KHÔNG TỒN TẠI trong file: ghi
-"⚠️ Bản phát hành trước bản vá OPEN-001 — có thể là dữ liệu cũ."
+"⚠️ Bản phát hành trước bản vá OPEN-001 — gần như chắc chắn là dữ liệu cũ."
 
-Nếu tuổi dữ liệu > 3 giờ: ghi cảnh báo độ tin cậy như cũ.
+BƯỚC 1C — KIỂM TRA ĐỘ TƯƠI
 
-Tính tuổi bằng giờ hiện tại trừ source_scan_at.
-Không dùng trường "stale" hay "data_age_hours" trong file để kết luận độ tươi.
+Tính tuổi = giờ hiện tại − source_scan_at.
+KHÔNG dùng trường "stale" hay "data_age_hours" trong file để kết luận độ tươi.
+Hai trường đó mô tả thời điểm tạo file, không phải thời điểm đọc.
+
+Nếu tuổi > 3 giờ, ghi ở đầu bulletin:
+
+  "⚠️ CẢNH BÁO ĐỘ TIN CẬY: dữ liệu có mốc {source_scan_at}, cũ hơn hiện tại
+   {X} giờ. Có thể đang đọc bản đã bị thay thế (OPEN-001).
+   KHÔNG hành động theo các trạng thái control bên dưới trước khi kiểm chứng
+   bằng lệnh trong RUNBOOK."
 ```
+
+**Day-over-day check — the operator's job, one string comparison.**
+If today's `publish_id` equals yesterday's *and* the 19:45 chain ran in between,
+the bulletin read a stale snapshot. Record it as a FAIL in the runbook tracker
+and treat the API reading as authoritative for that day.
 
 ### What this fix does and does not do
 

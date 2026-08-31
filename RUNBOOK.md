@@ -42,6 +42,7 @@ The bulletin arrives at 20:10. Read four fields:
 | Data age | under 24 h | → Playbook B |
 | Device count | steady | → Playbook D |
 | `source_scan_at` vs bulletin time | under 3 h | → Playbook G |
+| `publish_id` vs yesterday's | changed | → Playbook G |
 
 **No bulletin at all** → Playbook A.
 
@@ -68,20 +69,31 @@ $j = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($a.content)) | 
 "feed risk_level       : $($j.risk_level)"
 ```
 
+This is the operator's manual check from your own IP — one or two requests a
+day, nowhere near the 60/hour limit. The *bulletin* must not use the API: it
+runs from a shared cloud IP where 403 would mean no bulletin at all.
+
 **Step 2 — record both sides:**
 
-| Date | Bulletin `source_scan_at` | Feed `source_scan_at` | Age | Bulletin coverage | Feed coverage | Result |
-|---|---|---|---|---|---|---|
-| 2026-08-31 | | | | | | |
-| 2026-09-01 | | | | | | |
-| 2026-09-02 | | | | | | |
-| 2026-09-03 | | | | | | |
-| 2026-09-04 | | | | | | |
-| 2026-09-05 | | | | | | |
-| 2026-09-06 | | | | | | |
+| Date | Bulletin `publish_id` | Feed `publish_id` | Bulletin `source_scan_at` | Age | Bulletin coverage | Feed coverage | Result |
+|---|---|---|---|---|---|---|---|
+| 2026-08-31 | | | | | | | |
+| 2026-09-01 | | | | | | | |
+| 2026-09-02 | | | | | | | |
+| 2026-09-03 | | | | | | | |
+| 2026-09-04 | | | | | | | |
+| 2026-09-05 | | | | | | | |
+| 2026-09-06 | | | | | | | |
 
-**PASS** — bulletin coverage matches feed coverage.
-**FAIL** — bulletin coverage differs from feed coverage.
+**PASS** — bulletin `publish_id` matches feed `publish_id`.
+**FAIL** — they differ, or coverage differs.
+
+**The fastest signal needs no API call at all.** If today's bulletin shows the
+same `publish_id` as yesterday's *and* the 19:45 chain ran in between, the
+bulletin read a stale snapshot. One string comparison against yesterday's email.
+
+A missing `publish_id` means the bulletin read a pre-fix publish — older than
+2026-08-31 18:40Z, and certainly stale.
 
 On FAIL, also record which published version the bulletin returned. If it
 returns a version *older* than one it has already reported, that confirms
