@@ -162,21 +162,43 @@ Past 48 hours the feed sets `stale: true` and the bulletin says so. It does not
 raise the risk level. A collector that stopped a week ago still reports GREEN
 with a staleness note.
 
-**10. A CDN-cached read can be silently out of date.**
-`raw.githubusercontent.com` caches for roughly five minutes. The freshness check
-reads the timestamp *inside* the file, not whether that file is the newest
-version — so a superseded copy carries its own recent timestamp and reports
-`stale: false`.
+**10. The bulletin can read a superseded copy of the feed, for hours.**
 
-Observed on 2026-08-30: a bulletin reported `data age 0 h, stale: false` while
-reading `source_scan_at 21:55:53Z` and `controls_unknown: 4`, when the published
-feed was already at `22:10:01Z` with `controls_unknown: 0`.
+*Severity: this is the most serious open defect in v1.0.*
 
-The 24-minute gap between the 19:45 chain and the 20:10 bulletin is wider than
-the cache window, so the scheduled path is not affected. Manually triggering an
-export and a bulletin within a few minutes of each other is. After fixing an
-incident and re-running the chain, verify against the API rather than the raw
-URL — the runbook command does this.
+The freshness check reads the timestamp *inside* the fetched file, not whether
+that file is the newest published version. A superseded copy carries its own
+timestamp, so the bulletin cannot tell it is reading old data.
+
+Observed twice on 2026-08-30/31:
+
+| | Bulletin read | Feed actually served |
+|---|---|---|
+| Run 1 | `21:55:53Z`, `controls_unknown: 4` | `22:10:01Z`, `controls_unknown: 0` |
+| Run 2, ~3 h later | `21:56Z`, `controls_unknown: 4` | `22:10:01Z`, `controls_unknown: 0` |
+
+At the time of run 2 both `raw.githubusercontent.com` and the GitHub API served
+the current file, and the newest commit was nearly three hours old. So this is
+**not** the ~5-minute CDN window — the caching is in the fetch layer used by the
+scheduled task, and it persisted for at least 2 h 51 m.
+
+An earlier version of this note claimed the 24-minute gap between the 19:45
+chain and the 20:10 bulletin made the scheduled path safe. **That was wrong.**
+A cache lasting hours defeats any gap of minutes.
+
+Consequence: after an incident is fixed and the chain re-run, the next bulletin
+may still describe the pre-fix state — while reporting `stale: false`.
+
+Mitigation until fixed: treat the bulletin's control states as advisory and
+confirm from the source before acting on them:
+
+```powershell
+$a = Invoke-RestMethod "https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/BASELINE-LATEST.json?ref=main" -Headers @{"User-Agent"="v"}
+[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($a.content)) | ConvertFrom-Json | Select-Object source_scan_at, risk_level -ExpandProperty coverage
+```
+
+A proper fix belongs in the scheduled task prompt (cache-busting URL plus an
+explicit age check against the current time), not in the pipeline.
 
 ---
 
