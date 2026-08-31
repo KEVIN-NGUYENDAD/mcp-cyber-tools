@@ -303,6 +303,13 @@ once can hold again. Until the mitigation is observed working across the
 seven-day period, the correct posture is that the bulletin's control states are
 advisory and must be confirmed at source before anyone acts on them.
 
+**Full investigation:** [OPEN-001-INVESTIGATION.md](OPEN-001-INVESTIGATION.md) —
+timeline, four candidate causes with evidence against each, confidence table,
+and the missing data that would resolve it. Current position: the defect is
+confirmed real, the cause is unknown, and the best-fitting hypothesis is a
+snapshot pinned at the task's first successful fetch rather than a time-based
+cache.
+
 ---
 
 ## What this report does not prove

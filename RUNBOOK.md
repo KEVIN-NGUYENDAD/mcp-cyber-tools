@@ -54,6 +54,48 @@ abandon in a week.
 
 ---
 
+### Daily check: OPEN-001 verification
+
+While OPEN-001 is in MONITOR, one extra step. Takes under a minute.
+
+**Step 1 — read what the feed actually serves:**
+
+```powershell
+$a = Invoke-RestMethod "https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/BASELINE-LATEST.json?ref=main" -Headers @{"User-Agent"="v"}
+$j = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($a.content)) | ConvertFrom-Json
+"feed source_scan_at   : $($j.source_scan_at)"
+"feed controls_unknown : $($j.coverage.controls_unknown)"
+"feed risk_level       : $($j.risk_level)"
+```
+
+**Step 2 — record both sides:**
+
+| Date | Bulletin `source_scan_at` | Feed `source_scan_at` | Age | Bulletin coverage | Feed coverage | Result |
+|---|---|---|---|---|---|---|
+| 2026-08-31 | | | | | | |
+| 2026-09-01 | | | | | | |
+| 2026-09-02 | | | | | | |
+| 2026-09-03 | | | | | | |
+| 2026-09-04 | | | | | | |
+| 2026-09-05 | | | | | | |
+| 2026-09-06 | | | | | | |
+
+**PASS** — bulletin coverage matches feed coverage.
+**FAIL** — bulletin coverage differs from feed coverage.
+
+On FAIL, also record which published version the bulletin returned. If it
+returns a version *older* than one it has already reported, that confirms
+hypothesis C in [OPEN-001-INVESTIGATION.md](OPEN-001-INVESTIGATION.md) and the
+prompt-level mitigation is insufficient.
+
+**On FAIL, the feed is authoritative.** Act on the API reading, not the email.
+
+**Do not run the chain immediately before checking.** After a fresh publish every
+hypothesis predicts current data, so a PASS obtained that way proves nothing.
+Check the ordinary 19:45 → 20:10 path as it ran on its own.
+
+---
+
 ## Weekly checks
 
 **Sunday, ~5 minutes.**
