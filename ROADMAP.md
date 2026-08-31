@@ -21,6 +21,15 @@ The scanner reads the ARP table, so a sleeping device and a removed device look
 identical. v1.0 reports the smaller number without comment. v1.1 would track
 devices across scans and distinguish *absent* from *gone*.
 
+**Close OPEN-001 properly.**
+The current response is a prompt-level mitigation under observation: a
+cache-buster and an age check. It reduces the chance of a stale read; it does
+not make one detectable with certainty. A structural fix would publish the
+commit SHA inside the feed and have the bulletin compare it against the
+repository's current HEAD — turning "how old does this file claim to be" into
+"is this the file that is published right now". That is the difference between
+trusting a timestamp and verifying an identity.
+
 **Staleness escalates.**
 Past 48 hours the feed sets `stale: true` but the risk level stays GREEN. A
 collector that died a week ago still reports green with a footnote. Staleness

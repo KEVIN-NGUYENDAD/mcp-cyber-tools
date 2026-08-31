@@ -8,18 +8,24 @@
 
 v1.0 is frozen until **seven consecutive days** of unattended operation.
 
-| Day | Date | 19:45 chain | 20:10 bulletin | Notes |
-|---|---|---|---|---|
-| 1 | 2026-08-30 | ☐ | ☐ | first unattended run |
-| 2 | 2026-08-31 | ☐ | ☐ | |
-| 3 | 2026-09-01 | ☐ | ☐ | |
-| 4 | 2026-09-02 | ☐ | ☐ | |
-| 5 | 2026-09-03 | ☐ | ☐ | |
-| 6 | 2026-09-04 | ☐ | ☐ | |
-| 7 | 2026-09-05 | ☐ | ☐ | |
+| Day | Date | 19:45 chain | 20:10 bulletin | OPEN-001 fresh? | Notes |
+|---|---|---|---|---|---|
+| 1 | 2026-08-30 | ☐ | ☐ | ☐ | first unattended run |
+| 2 | 2026-08-31 | ☐ | ☐ | ☐ | |
+| 3 | 2026-09-01 | ☐ | ☐ | ☐ | |
+| 4 | 2026-09-02 | ☐ | ☐ | ☐ | |
+| 5 | 2026-09-03 | ☐ | ☐ | ☐ | |
+| 6 | 2026-09-04 | ☐ | ☐ | ☐ | |
+| 7 | 2026-09-05 | ☐ | ☐ | ☐ | |
 
 A day counts only if both ran without you touching anything. A missed day resets
 the count — the point is proving the system survives ordinary neglect.
+
+**OPEN-001 column.** Tick only when the bulletin's `source_scan_at` is within
+three hours of its own generation time *and* matches the GitHub API. Seven
+consecutive ticks move OPEN-001 from MONITOR to RESOLVED. A single miss resets
+that count independently of the other two columns — the defect can recur on a
+day when everything else runs perfectly.
 
 ---
 
@@ -35,8 +41,13 @@ The bulletin arrives at 20:10. Read four fields:
 | Control coverage | 6/6 | → Playbook C |
 | Data age | under 24 h | → Playbook B |
 | Device count | steady | → Playbook D |
+| `source_scan_at` vs bulletin time | under 3 h | → Playbook G |
 
 **No bulletin at all** → Playbook A.
+
+While OPEN-001 is in MONITOR, check the last row before acting on anything else
+in the bulletin. A bulletin that read a superseded feed can report a coverage
+gap that no longer exists, or miss a control change that already happened.
 
 Do nothing else. A daily routine you actually keep beats a thorough one you
 abandon in a week.
@@ -235,6 +246,41 @@ Nothing was written and nothing was pushed.
 
 Never disable the guard to get an export through. An abort costs one bulletin.
 A leak cannot be recalled — the public repo has a permanent history.
+
+---
+
+### Playbook G — Bulletin may have read stale data (OPEN-001)
+
+Trigger: the bulletin's `source_scan_at` is more than three hours older than the
+bulletin's own generation time, or it prints the confidence warning.
+
+1. **Read the source directly.** This bypasses every cache between you and the
+   published file:
+   ```powershell
+   $a = Invoke-RestMethod "https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/BASELINE-LATEST.json?ref=main" -Headers @{"User-Agent"="v"}
+   $j = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($a.content)) | ConvertFrom-Json
+   "source_scan_at   : $($j.source_scan_at)"
+   "risk_level       : $($j.risk_level)"
+   "controls_unknown : $($j.coverage.controls_unknown)"
+   "alerts           : $($j.alerts.Count)"
+   ```
+
+2. **Compare.** If the API disagrees with the bulletin, the bulletin read a
+   superseded copy. **The API is authoritative.** Act on it, not on the email.
+
+3. **Record the miss.** Leave the OPEN-001 column unticked for that day and note
+   both timestamps. The gap size is the useful measurement — 14 minutes and
+   2 h 51 m have both been observed.
+
+4. **Do not re-run the chain to "fix" the bulletin.** Publishing again does not
+   change what the next fetch is served, and it discards a data point about how
+   long the cache actually holds.
+
+**Direction of error.** A stale read can hide a real alert as easily as it can
+invent a phantom coverage gap. Both observed occurrences happened to be
+harmless — reporting a gap that had already been closed. The reverse, reporting
+GREEN over a control that has since been disabled, is the same defect pointed
+the dangerous way.
 
 ---
 

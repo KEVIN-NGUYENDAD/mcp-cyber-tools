@@ -101,8 +101,17 @@ Everything below follows from that single decision.
 ```
 
 The 24-minute gap absorbs a slow scan, a retried push, and CDN propagation.
-`raw.githubusercontent.com` caches for roughly five minutes, so a push at 19:46
-is reliably visible by 20:10.
+
+**This gap is not sufficient on its own.** `raw.githubusercontent.com` caches for
+roughly five minutes, but the fetch layer used by the scheduled task was
+observed serving a superseded copy for nearly three hours — see OPEN-001 in
+[VALIDATION-REPORT.md](VALIDATION-REPORT.md). No schedule gap measured in
+minutes defeats a cache measured in hours.
+
+The bulletin therefore carries its own freshness validation: a cache-busting
+parameter on each fetch, and an age check computed from the current time rather
+than from the `stale` field inside the file. A file's own timestamp cannot tell
+you whether that file is the newest one.
 
 Chained with `cmd /c A && B && C`: a failing stage stops the chain rather than
 publishing on partial data.
@@ -217,6 +226,11 @@ runs unattended) but not the property.
 | Partial data is never published | `&&` chaining stops on failure |
 | Alert spam is bounded | 4-hour cooldown per alert type |
 | Stale data is visible | `data_age_hours` + `stale` flag at 48 h |
+| A superseded read is visible | Cache-buster + age check against current time (OPEN-001, MONITOR) |
+
+The last row is a mitigation under observation, not a proven guarantee. Until
+OPEN-001 exits MONITOR, the bulletin's control states are advisory and the
+GitHub API is authoritative.
 
 ---
 

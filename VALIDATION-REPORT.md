@@ -248,6 +248,63 @@ descriptions. See §3.
 
 ---
 
+## Open issues
+
+### OPEN-001 · Bulletin read a superseded copy of the feed
+
+**Status: MONITOR** · Opened 2026-08-31 · Documentation-only response
+
+**Observed — two occurrences, both verified against the live feed:**
+
+| | Bulletin read | Feed served at that moment | Lag |
+|---|---|---|---|
+| Run 1 · ~2026-08-30 22:12Z | `21:55:53Z`, `controls_unknown: 4` | `22:10:01Z`, `controls_unknown: 0` | ~14 min |
+| Run 2 · ~2026-08-31 01:01Z | `21:56Z`, `controls_unknown: 4` | `22:10:01Z`, `controls_unknown: 0` | ~2 h 51 m |
+
+**Run 2 reproduced the fault.** At that time both `raw.githubusercontent.com`
+and the GitHub API returned the current file, and the newest commit
+(`22391bc`, `22:10:26Z`) was nearly three hours old. The caching is therefore
+not the ~5-minute CDN window; it sits in the fetch layer used by the scheduled
+task and persisted for at least 2 h 51 m.
+
+**Impact.** Four controls were reported `NO DATA` when they were in fact
+`enabled / enabled / closed / closed`. The bulletin's recommended action — "run
+`security-watch.js` to fill the coverage gap" — described work already completed
+almost three hours earlier.
+
+**Why the freshness check did not catch it.** Staleness is computed from the
+timestamp *inside* the fetched file. A superseded copy carries its own
+timestamp, so it reads as fresh. The check answers "how old is this data" but
+not "is this the newest data".
+
+**Partial self-detection.** Run 2's bulletin did recompute age against the real
+current time and reported "0 giờ tại thời điểm tạo báo cáo → khoảng 3 giờ tính
+đến hiện tại". It declined to trust the `stale` field. It did not take the final
+step of concluding that a 3-hour gap implies a possibly superseded read.
+
+**Mitigation applied — documentation and task prompt only, no code change.**
+
+1. Cache-busting query parameter on each fetch, unique per run.
+2. Mandatory age check against current time, independent of the `stale` field.
+3. A confidence warning printed above all other content when the gap exceeds 3 h.
+4. Runbook freshness checks repointed from the raw URL to the GitHub API.
+
+**Subsequent run.** The operator reports a later run did not reproduce the
+fault. *Not independently verified in this session* — no third observation was
+captured here. Two confirmed occurrences stand against one unverified clean run,
+which is why the status is MONITOR rather than RESOLVED.
+
+**Exit criteria.** Seven consecutive scheduled bulletins whose reported
+`source_scan_at` is within 3 hours of their own generation time, each confirmed
+against the GitHub API. Track in [RUNBOOK.md](RUNBOOK.md).
+
+**Why this is not closed.** A caching layer that held for nearly three hours
+once can hold again. Until the mitigation is observed working across the
+seven-day period, the correct posture is that the bulletin's control states are
+advisory and must be confirmed at source before anyone acts on them.
+
+---
+
 ## What this report does not prove
 
 **Unattended operation.** Every run was manually triggered. The 19:45 trigger

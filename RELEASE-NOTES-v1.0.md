@@ -163,8 +163,12 @@ raise the risk level. A collector that stopped a week ago still reports GREEN
 with a staleness note.
 
 **10. The bulletin can read a superseded copy of the feed, for hours.**
+**→ Tracked as OPEN-001 · Status: MONITOR**
 
 *Severity: this is the most serious open defect in v1.0.*
+
+Full record, including the mitigation and its exit criteria, in
+[VALIDATION-REPORT.md](VALIDATION-REPORT.md) § Open issues.
 
 The freshness check reads the timestamp *inside* the fetched file, not whether
 that file is the newest published version. A superseded copy carries its own
@@ -189,8 +193,13 @@ A cache lasting hours defeats any gap of minutes.
 Consequence: after an incident is fixed and the chain re-run, the next bulletin
 may still describe the pre-fix state — while reporting `stale: false`.
 
-Mitigation until fixed: treat the bulletin's control states as advisory and
-confirm from the source before acting on them:
+Mitigation applied (task prompt and documentation only, no code change): a
+cache-busting query parameter per run, a mandatory age check computed against
+the current time rather than the `stale` field, and a confidence warning printed
+above all other content when the gap exceeds three hours.
+
+Until OPEN-001 exits MONITOR, treat the bulletin's control states as advisory
+and confirm from the source before acting on them:
 
 ```powershell
 $a = Invoke-RestMethod "https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/BASELINE-LATEST.json?ref=main" -Headers @{"User-Agent"="v"}
