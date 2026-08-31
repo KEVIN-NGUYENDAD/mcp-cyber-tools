@@ -1,11 +1,22 @@
 # OPEN-001 — Investigation Log
 
 **Defect:** The Home Security Bulletin read a superseded copy of the public feed.
-**Status:** MONITOR · **Opened:** 2026-08-31 · **Code changes:** none
+**Status:** **CONFIRMED — structural fix required** · **Opened:** 2026-08-31
+**Code changes:** none
 
-**Does OPEN-001 still exist? — UNKNOWN.**
-Two confirmed occurrences. Zero observations since the mitigation was applied.
-Absence of evidence, not evidence of absence.
+**Does OPEN-001 still exist? — YES. Cause identified.**
+
+Run 4 was decisive. The bulletin returned the **older of two available versions**
+five hours after the newer one was published — the third consecutive return of
+byte-identical content from commit `9d1e6e3`. No time-based expiry can produce
+that. Hypothesis C (snapshot pinned at the task's first successful fetch) is
+confirmed; A and B are ruled out.
+
+**The mitigation works as a detector, not as a fix.** Run 4's bulletin correctly
+flagged the stale read, computed the true 5.25-hour age, and explicitly
+disregarded the file's self-declared `stale: false`. It made the defect visible.
+It did not prevent it. A cache-busting parameter does not defeat a pinned
+snapshot.
 
 ---
 
@@ -57,6 +68,49 @@ that moved coverage from 2/6 to 6/6.
 - **This does not test OPEN-001.** It exercised a different client on a different
   code path. It is recorded here only to prevent it being miscounted as a clean
   run.
+
+**Run 4 — decisive · 2026-08-31 03:11:15Z (20:11 local, the scheduled 20:10 bulletin)**
+
+This is the first observation with the mitigation demonstrably active, and the
+first with a captured wall-clock time.
+
+- Bulletin reported `generated_at` **21:56:18.812Z**, `source_scan_at`
+  **21:55:53.899Z**, `data_age_hours: 0`, coverage **2/6**, `unknown: 4`
+- Byte-exact match to commit **`9d1e6e3`**, verified by fetching that ref directly:
+
+  ```
+  generated_at     : 2026-08-30T21:56:18.812Z
+  source_scan_at   : 2026-08-30T21:55:53.899Z
+  controls_unknown : 4
+  data_age_hours   : 0
+  ```
+
+- Versions available at 03:11:15Z: `22391bc` (22:10:26Z) and `9d1e6e3` (21:56:18Z)
+- **The bulletin returned the older of the two**, 5 h 00 m 51 s after `22391bc`
+  was published
+- Mitigation active and working: printed the confidence warning, computed the
+  real 5.25-hour age, and explicitly disregarded the self-declared
+  `stale: false` / `data_age_hours: 0`
+
+**Why this is decisive.** The prediction table in §6 stated that a return of a
+previously-published version would confirm hypothesis C. Run 4 returned the
+oldest available version, five hours stale, for the third time. Three runs
+spanning 21:5xZ → 03:11Z all yielded identical content from a single commit,
+while every direct fetch from this machine over the same period returned current
+data.
+
+**Correction to the bulletin's own diagnosis.** Run 4 recommended, as a
+high-priority action, "fix the `data_age_hours` / `stale` logic in the source
+file — reporting 0 hours when the real age is 5.25". **That recommendation is
+wrong and must not be acted on.** `data_age_hours` measures the lag between scan
+and export, not age at read time. In `9d1e6e3` the scan ran at 21:55:53 and the
+export at 21:56:18 — a 25-second gap, correctly rounded to 0. The field is
+accurate. Acting on this recommendation would modify correct, frozen code to
+"fix" a symptom whose real cause is upstream of the exporter entirely.
+
+Its other two high-priority items were also artefacts of reading stale data:
+`security-watch.js` has produced `state.json` since 22:10Z, and the pipeline did
+refresh — `a0a6722` at 07:19:38Z.
 
 **Operator-reported run — unverified**
 
@@ -157,16 +211,21 @@ not an error.
 
 ## 4. Current confidence
 
+Revised after Run 4.
+
 | Claim | Confidence | Basis |
 |---|---|---|
-| The defect occurred | **HIGH** | Two occurrences, both verified against the live feed |
-| CDN is not the cause | **HIGH** | 2 h 51 m ≫ 5 min TTL; CDN verified serving current data |
-| Cause is client-side of the CDN | **HIGH** | Local fetches to the same URL were correct |
-| Cause is a pinned snapshot (C) | **LOW** | Fits the evidence; one version, two samples, no controlled test |
-| The mitigation works | **NONE** | Zero post-mitigation observations |
-| The defect is resolved | **NONE** | Nothing has been observed to indicate this |
+| The defect occurred | **CERTAIN** | Three occurrences, each verified against the live feed |
+| CDN is not the cause | **HIGH** | 5 h ≫ 5 min TTL; CDN verified serving current data throughout |
+| Cause is client-side of the CDN | **HIGH** | Local fetches to the same URL were correct at every point |
+| Cause is a pinned snapshot (C) | **HIGH** | Run 4 returned the *older* of two available versions, 5 h stale — no expiry mechanism produces this |
+| Cause is a time-based cache (B) | **RULED OUT** | Would have rolled forward to `22391bc` at some point across 5 h |
+| The mitigation detects the fault | **HIGH** | Run 4 flagged it correctly and computed the true age |
+| The mitigation prevents the fault | **RULED OUT** | Run 4 read stale data with the mitigation active |
+| The defect is resolved | **NONE** | It recurred on the most recent scheduled run |
 
-**Overall: the defect is confirmed real and its cause is unknown.**
+**Overall: the defect is confirmed, reproducible, and its cause is identified.
+The prompt-level mitigation makes it visible but cannot prevent it.**
 
 ---
 
@@ -207,7 +266,39 @@ immediately. Not currently obtainable.
 
 ---
 
-## 6. Next observation
+## 6. Structural fix required
+
+The prompt-level mitigation is the correct response to an *unknown* cause. The
+cause is now known, and it is not addressable from the prompt: no instruction to
+the bulletin can make a pinned snapshot return different bytes.
+
+Two options, neither implemented — v1.0 is frozen and this is an investigation.
+
+**Option 1 — publish identity, verify identity.**
+Have the exporter embed the commit SHA it is publishing, and have the bulletin
+compare that against the repository's current HEAD via the API. This converts
+"how old does this file claim to be" into "is this the file published right
+now" — the difference between trusting a timestamp and verifying an identity.
+Detects the fault with certainty; still does not prevent the stale read.
+
+**Option 2 — read through a path that is not snapshotted.**
+Have the bulletin fetch via the GitHub API contents endpoint rather than
+`raw.githubusercontent.com`. Direct API reads returned current data at every
+point during this investigation, including while the bulletin was reading stale
+content. This may avoid the fault entirely — but that inference rests on fetches
+made from this machine, not from inside the scheduled task, so it is untested
+where it matters.
+
+**Recommended: both.** Option 2 to avoid the fault, Option 1 to detect it if
+Option 2 fails. A monitoring system whose freshness cannot be verified is
+reporting on a moment it cannot identify.
+
+Until one is implemented, the standing position holds: **the bulletin's control
+states are advisory; the GitHub API is authoritative.**
+
+---
+
+## 7. Next observation
 
 **Do not run the chain and the bulletin back to back to "test" this.** Doing so
 destroys the natural experiment: after a fresh publish, every hypothesis
