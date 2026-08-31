@@ -1,8 +1,8 @@
 # OPEN-001 — Investigation Log
 
 **Defect:** The Home Security Bulletin read a superseded copy of the public feed.
-**Status:** **CONFIRMED — structural fix required** · **Opened:** 2026-08-31
-**Code changes:** none
+**Status:** **FIX IMPLEMENTED — awaiting scheduled-run confirmation**
+**Opened:** 2026-08-31 · **Fix:** 2026-08-31 (`publish_id` + SHA-pinned API reads)
 
 **Does OPEN-001 still exist? — YES. Cause identified.**
 
@@ -266,7 +266,131 @@ immediately. Not currently obtainable.
 
 ---
 
-## 6. Structural fix required
+## 6. Fix implemented — 2026-08-31
+
+### Why a commit cannot carry its own SHA
+
+The original request was for the exporter to write `commit_sha` into the feed.
+That is not possible: a commit's SHA is derived from its content, so embedding
+the SHA inside the content changes the content and therefore the SHA. The
+requirement is satisfied a different way — the exporter writes a deterministic
+content fingerprint, and the bulletin obtains the real commit SHA from the API.
+
+### Part 1 — exporter writes `publish_id`
+
+`export-home-soc-reports.js` now emits a 16-character SHA-256 fingerprint over
+the source data (`source_scan_at`, controls, devices, alerts) into both JSON
+outputs and the audit header, alongside `generated_at` and `source_scan_at`.
+
+Computed over the *source data*, never over the output that carries it, so the
+value is stable and self-consistent. Two publishes of identical data produce an
+identical `publish_id`; any change to the reported state changes it.
+
+### Part 2 — bulletin resolves the SHA, then reads pinned to it
+
+This is the part that defeats the pinned snapshot. The read becomes two steps:
+
+```
+1.  GET /repos/{owner}/{repo}/commits?per_page=1
+    → the newest commit SHA
+
+2.  GET /repos/{owner}/{repo}/contents/{file}?ref={that SHA}
+    → content guaranteed to be from that commit
+```
+
+A snapshot keyed by URL cannot serve stale content here, because the URL now
+contains a SHA that changes with every publish. The second request is for a URL
+that has never been fetched before, so there is nothing to replay.
+
+### Proof
+
+All four published versions, read via SHA-pinned API requests:
+
+```
+ref        source_scan_at                 unknown  publish_id
+---------  -----------------------------  -------  ----------------
+9d1e6e3    2026-08-30T21:55:53.899Z       4        (none, pre-fix)
+22391bc    2026-08-30T22:10:01.739Z       0        (none, pre-fix)
+a0a6722    2026-08-31T07:19:09.473Z       0        (none, pre-fix)
+b0548a5    2026-08-31T07:19:09.473Z       0        d55dac3fb1e7f8f8
+```
+
+Every version is retrieved exactly and distinguishably. `9d1e6e3` — the commit
+all four stale bulletins returned — is now separable from `22391bc` by three
+independent fields, and from `b0548a5` by a fourth.
+
+Resolving without naming a ref returns the newest:
+
+```
+Step 1  commit_sha : b0548a59f881e447aef897a3babcabf674179cd3
+        date       : 2026-08-31T18:40:17Z
+
+Step 2  publish_id       : d55dac3fb1e7f8f8
+        generated_at     : 2026-08-31T18:40:17.693Z
+        source_scan_at   : 2026-08-31T07:19:09.473Z
+        controls_unknown : 0
+```
+
+### Bulletin prompt — replace BƯỚC 1
+
+```
+BƯỚC 1 — ĐỌC DỮ LIỆU QUA GITHUB CONTENTS API
+
+Không dùng raw.githubusercontent.com. Đọc theo hai bước:
+
+1a. Lấy commit mới nhất:
+    https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/commits?per_page=1
+    Ghi lại giá trị "sha" -> gọi là COMMIT_SHA
+
+1b. Đọc 3 file, ghim theo COMMIT_SHA đó:
+    https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/BASELINE-LATEST.json?ref=COMMIT_SHA
+    https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/DEVICE-SUMMARY.json?ref=COMMIT_SHA
+    https://api.github.com/repos/KEVIN-NGUYENDAD/home-soc-reports/contents/ROUTER-SECURITY-AUDIT-LATEST.md?ref=COMMIT_SHA
+
+    Mỗi phản hồi có trường "content" mã hoá base64. Giải mã trước khi dùng.
+
+Nếu bước 1a hoặc 1b lỗi: dừng, gửi email
+"⚠️ HOME SECURITY BULLETIN - KHÔNG ĐỌC ĐƯỢC DỮ LIỆU", nêu rõ lỗi.
+Không tạo bulletin từ dữ liệu cũ.
+
+BƯỚC 1C — HIỂN THỊ DANH TÍNH BẢN PHÁT HÀNH
+
+Ghi ở đầu bulletin, trước mọi nội dung khác:
+
+    commit_sha     : {COMMIT_SHA}
+    publish_id     : {publish_id trong BASELINE-LATEST.json}
+    generated_at   : {generated_at}
+    source_scan_at : {source_scan_at}
+    Tuổi dữ liệu   : {giờ hiện tại trừ source_scan_at}
+
+Nếu publish_id KHÔNG TỒN TẠI trong file: ghi
+"⚠️ Bản phát hành trước bản vá OPEN-001 — có thể là dữ liệu cũ."
+
+Nếu tuổi dữ liệu > 3 giờ: ghi cảnh báo độ tin cậy như cũ.
+
+Tính tuổi bằng giờ hiện tại trừ source_scan_at.
+Không dùng trường "stale" hay "data_age_hours" trong file để kết luận độ tươi.
+```
+
+### What this fix does and does not do
+
+**Does:** make the version being read explicit and verifiable. A reader can now
+name the exact publish a bulletin describes, and a stale read becomes visible
+rather than inferred.
+
+**Should:** prevent the stale read, since a SHA-pinned URL is unique per publish
+and cannot have been snapshotted.
+
+**Not yet proven:** that inference rests on requests made from this machine. It
+has not been observed from inside the scheduled task, which is the only place
+the fault has ever appeared. The next scheduled bulletin is the test.
+
+Until a scheduled run reports a `commit_sha` matching the repository HEAD,
+OPEN-001 stays open and the GitHub API remains authoritative.
+
+---
+
+## 6b. Options considered
 
 The prompt-level mitigation is the correct response to an *unknown* cause. The
 cause is now known, and it is not addressable from the prompt: no instruction to
