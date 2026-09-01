@@ -1,0 +1,8 @@
+{
+  "dns": "68.105.28.11, 68.105.29.11",
+  "fw": true,
+  "def": true,
+  "rdp": false,
+  "ssh": false,
+  "collected_at": "2026-09-01T04:08:53.883Z"
+}
