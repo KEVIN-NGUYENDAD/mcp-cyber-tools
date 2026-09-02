@@ -114,6 +114,40 @@ Its other two high-priority items were also artefacts of reading stale data:
 `security-watch.js` has produced `state.json` since 22:10Z, and the pipeline did
 refresh — `a0a6722` at 07:19:38Z.
 
+**2026-09-01 — no observation possible**
+
+The 20:10 bulletin read `5716a64` (`publish_id dc3b932c3b6ead0a`,
+`source_scan_at 2026-09-01T04:08:54Z`) and reported it as 23.02 hours old. That
+was the newest publish in existence: the collection chain had not run that day,
+so nothing superseded it.
+
+**This neither confirms nor clears OPEN-001.** The defect is reading a
+superseded version; with no superseding version, the fault had nothing to
+express. Recorded so it is not miscounted as a clean run.
+
+Filed separately as [INCIDENT-2026-09-01-STALE-FEED.md](INCIDENT-2026-09-01-STALE-FEED.md)
+— a missed collection cycle, not a stale read.
+
+**2026-09-02 — manual run, no stale snapshot observed**
+
+| | Value |
+|---|---|
+| Chain | Ran manually, exit 0 |
+| New publish | `b5a900b` @ 2026-09-02T21:06:58Z |
+| `publish_id` | `acfc7eecba6d0412` (was `dc3b932c3b6ead0a`) |
+| `source_scan_at` | 2026-09-02T21:06:18.225Z |
+| Coverage | 6/6, `unknown: 0` |
+| Stale snapshot | Not observed |
+
+`publish_id` changed between publishes, which is the detector working as
+designed: two different publishes produce two different identities.
+
+**What this does not establish.** The verification was a direct read from this
+machine, not a bulletin run from inside the scheduled task — the only place the
+fault has ever appeared. The first real test of the rolled-back mitigation is
+the next scheduled bulletin that reads a publish newer than the one before it.
+OPEN-001 stays ACCEPTED.
+
 **Operator-reported run — unverified**
 
 The operator reported a later run that did not reproduce the fault. No
