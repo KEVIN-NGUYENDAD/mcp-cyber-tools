@@ -6,6 +6,42 @@ it as current state. Everything here was verified against live systems on
 
 ---
 
+## Memory Compression Rules
+
+This file is the record of what has already been proven. Re-deriving it costs
+tokens and, worse, risks reaching a different conclusion from the same evidence.
+
+**Treat as settled — do not re-investigate:**
+
+- OPEN-001 history, cause, and four observations
+- The 2026-09-01 stale feed incident
+- The GitHub Contents API experiment and its rollback
+- `publish_id` deployment
+- Freshness validation findings
+- Scanner, exporter, GitHub publish, Security Watch validation
+
+Each is recorded in this file or the documents it links. Cite the section;
+do not re-run the investigation.
+
+**Investigate only evidence dated after 2026-09-02T21:06:58Z** — the timestamp
+of the last verified publish (`acfc7eecba6d0412`).
+
+**Workflow when starting new work:**
+
+1. Read this file first.
+2. State current status in under 10 lines.
+3. Add net-new findings only.
+4. Reference existing sections rather than repeating them.
+5. Verify live systems only for facts that could have changed since the
+   timestamp above.
+
+**The one exception.** If a live check contradicts something recorded here, the
+live system wins and this file is corrected. Settled means "not re-litigated
+without cause", not "true regardless of evidence". Two entries in this file
+already exist because a recorded claim turned out to be wrong.
+
+---
+
 ## Executive summary
 
 | Component | Status | Evidence |
@@ -226,7 +262,113 @@ deliberately unresolved during the freeze.
 
 ---
 
-## Report redesign request
+## Bulletin Redesign v1
+
+**Implemented 2026-09-02.** Presentation only — no collector, exporter, scanner,
+or scheduler change. Full pasteable prompt:
+[BULLETIN-PROMPT-v1.md](BULLETIN-PROMPT-v1.md)
+
+### The problem being solved
+
+Bulletins were technically correct and operationally misleading. Twice a
+confident `GREEN · 6/6 · 0 alerts` sat above data that did not describe the
+present — once from a stale read, once from a missed collection cycle. Both
+times the age was recoverable from the report, and both times it was buried
+below the reassurance.
+
+**A reader who stops after the first line should stop on the right thing.**
+
+### Layout
+
+```
+🏠 HOME SECURITY STATUS      ← header, before everything
+   Last Scan · Last Publish · Data Age · Publish ID · Status
+
+1. 🕒 DATA FRESHNESS
+2. 💻 DESKTOP
+3. 💻 LAPTOP
+4. 📱 IPHONE
+5. 📶 WIFI / NETWORK
+6. 🚨 ALERTS
+7. 📊 SYSTEM HEALTH
+8. 🔍 OPEN-001 MONITOR
+
+   Technical Details            ← only place UTC may appear
+```
+
+### Rules and why each exists
+
+**Freshness outranks risk.** The header carries scan time, publish time, age and
+`publish_id` before any assessment. Age is computed as *now minus
+`source_scan_at`*, never from the file's own `stale` or `data_age_hours` — those
+describe when the file was made, not when it was read, and trusting them is
+precisely what failed.
+
+**The 12-hour rule blocks the green light.** Past 12 hours the report opens with
+`❌ STALE DATA` and the risk level may not appear above it. Graduated below that:
+3–12 h renders `⚠️ DỮ LIỆU KHÔNG MỚI`, under 3 h renders `✅ DỮ LIỆU MỚI`. The
+23-hour incident would have opened with a red banner instead of a green rating.
+
+**Arizona time in front, UTC in back.** The system clock is already
+`US Mountain Standard Time (UTC-07:00)` with DST off, so this is not a
+conversion — it is removing UTC from where a homeowner reads. Format
+`09/02/2026 02:06 PM`. UTC survives only in Technical Details, where an
+investigator wants it.
+
+**Absent means absent.** Sections 3 and 4 render `KHÔNG CÓ DỮ LIỆU` rather than
+being omitted or inferred. There is one endpoint agent and it reads only its own
+host; the scanner reads the ARP table, so a sleeping phone is missing and its
+absence is indistinguishable from removal. An empty section states the gap. A
+missing section would let the gap pass as coverage.
+
+**OPEN-001 has three states and none of them is resolved.**
+
+| State | Meaning |
+|---|---|
+| `NOT OBSERVED` | `publish_id` differs from yesterday — normal |
+| `POSSIBLE STALE SNAPSHOT` | `publish_id` identical to yesterday |
+| `MONITOR ALERT` | `publish_id` absent, or no prior value to compare |
+
+`POSSIBLE STALE SNAPSHOT` is worded as two possibilities, not one: either the
+bulletin re-read an old publish (OPEN-001) **or** the chain did not run so no
+new publish exists. The feed alone cannot separate them — that ambiguity is
+exactly what caused the 09-01 incident to be filed initially as a stale read
+when it was a missed collection. The report now says so instead of guessing, and
+points at Playbook G.
+
+The prompt forbids the words RESOLVED, FIXED, and ĐÃ SỬA. Official status stays
+**ACCEPTED — DETECTABLE, NOT PREVENTED**.
+
+### Token-saving workflow
+
+The redesign also fixes a cost problem. Every bulletin that buried its age forced
+a manual investigation to establish whether the figures could be trusted — the
+09-01 incident took several rounds of commit archaeology to answer "was this
+data current?".
+
+The header answers it in three fields. `Data Age`, `Publish ID`, and
+`Last Scan Time` decide, without any tool call, whether the rest of the report
+is worth reading:
+
+| Header shows | Action |
+|---|---|
+| Age under 3 h, `publish_id` changed | Read normally. No verification needed |
+| Age 3–12 h | Read, note the age |
+| `❌ STALE DATA` | Stop. The body describes the past — Playbook B |
+| `POSSIBLE STALE SNAPSHOT` | One API call to settle it — Playbook G |
+
+Only the last row costs a request. The other three are decided by reading.
+
+### What this does not change
+
+No detection improves. No coverage increases. The same data produces the same
+findings — a reader is simply told what the data is before being told what it
+means. Sections 2–4 will render mostly empty until a second endpoint agent
+exists, which is a v1.1 decision.
+
+---
+
+## Report redesign request (original)
 
 Future bulletins to be organised as:
 
