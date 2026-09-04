@@ -1,5 +1,27 @@
 # SentinelOps Status
 
+## 🔒 Milestone Frozen — 2026-09-04
+
+Current milestone (MVP #1–#4 build, plus the VNETWORK discovery/plan
+work below) is frozen as of this checkpoint. Canonical naming for the
+discovery work, to remove ambiguity between the build-MVP numbering
+(#1–#4, all shipped code) and the VNETWORK research track:
+
+- **MVP #4 Discovery** — the research behind **WAAP Log Search
+  Integration** (next-steps priority #1). Covers the full VNETWORK
+  OpenAPI catalog, the Healthcheck/WAAP/Object Storage product
+  discovery, and the 17-category capability assessment. Docs:
+  `docs/VNETWORK_API_DISCOVERY.md`, `docs/VNETWORK_PRODUCT_DISCOVERY.md`,
+  `docs/VNETWORK_CAPABILITY_ASSESSMENT.md`. Detailed findings in the
+  "VNETWORK OpenAPI Discovery" / "VNETWORK Product Discovery" /
+  "VNETWORK Capability Assessment" sections below.
+- **MVP #5 Discovery** — the research + implementation plan behind the
+  **Healthcheck Webhook Receiver** (next-steps priority #2). Doc:
+  `docs/MVP5_WEBHOOK_RECEIVER_PLAN.md`. Detailed findings in the "MVP
+  #5: VNETWORK Healthcheck Webhook Receiver" section below.
+
+Next-step priorities and scope: see `NEXT_STEPS.md`.
+
 ## Completed
 
 ✅ MVP #1 - Fake Alert Pipeline
@@ -7,6 +29,8 @@
 ✅ MVP #3 (investigation) - Wazuh Verification
 ✅ MVP #3 - Live security-watch.js Telemetry Pipeline
 ✅ MVP #4 - Incident Enrichment (labels + MCP analysis comment)
+✅ MVP #4 Discovery — VNETWORK OpenAPI + Product Discovery + Capability Assessment (documentation-only, feeds WAAP Log Search Integration)
+✅ MVP #5 Discovery — Healthcheck Webhook Receiver plan (documentation + plan-only, not built)
 
 ## Architecture
 
@@ -219,7 +243,202 @@ pass to avoid an unnecessary second real firewall toggle; the create
 path itself (issue creation + assignment) was already verified in
 MVP #3.
 
+## VNETWORK OpenAPI Discovery
+
+Completed 2026-09-04. Documentation-only — no VNETWORK API endpoint was
+called, no resources provisioned, no credits spent. Read the public
+Postman collection behind `https://postman.vnetwork.dev/view/4429080/2sBY4Qqyts`
+(via its own data API, `documenter.gw.postman.com` — never
+`openapi.vnetwork.vn`). Full catalog, every one of the 106 endpoints
+ranked by ROI, and integration sketches:
+`docs/VNETWORK_API_DISCOVERY.md`.
+
+**Auth:** Bearer token (`Authorization: Bearer {{OPENAPI_TOKEN}}`) on
+every request. Base: `https://openapi.vnetwork.vn`.
+
+**Totals:** 106 endpoints — 39 read-only (37 GET + 1 read-only POST
+query), 67 mutating (excluded from ranking). No "Projects" category
+exists in this API. No native alert/webhook endpoints exist anywhere —
+alerting has to be built client-side by polling + diffing, which is
+exactly SentinelOps' existing security-watch.js shape.
+
+**Top 10 highest-value capabilities for SentinelOps** (full rationale
+and full 106-endpoint ranked table in the doc):
+
+1. `POST /v1/bsearch` — WAAP/CDN log search & aggregation (client IPs,
+   URIs, status codes, UA) — the only real security-log source in the
+   API
+2. `GET /v3/instances/:id/monitoring` — instance CPU/memory/network
+   time series
+3. `GET /v3/secgroups` (+ `:id`) — cloud firewall rule inventory,
+   control-drift detection (mirrors security-watch.js)
+4. `GET /v3/lbs/:id/monitoring` — load-balancer traffic monitoring
+5. `GET /v3/lbs/:id/stats` — LB request/error statistics
+6. `GET /v3/cdn/domains` — CDN surface inventory, join key for #1
+7. `GET /v3/instances` (v3) / `GET /v1/instances` — instance inventory
+   / CMDB baseline
+8. `GET /v3/instances/:id/summary` — realtime state + latest
+   monitoring snapshot in one call
+9. `GET /v3/elastic_ips` / `GET /v3/networks/reserves` — public IP /
+   attack-surface inventory
+10. `GET /v3/certificates` — TLS cert inventory, expiry alerting
+
+Nothing implemented yet — discovery and ranking only, per instruction.
+
+## VNETWORK Product Discovery (Healthcheck & Alerting, WAAP, OpenAPI, Object Storage)
+
+Completed 2026-09-04. Documentation-only, no VNETWORK API endpoint
+called, no resources/credits used. Follow-up to the discovery above —
+checked whether Healthcheck & Alerting and Object Storage exist as
+separate VNETWORK products (they weren't in the Postman collection).
+Full detail: `docs/VNETWORK_PRODUCT_DISCOVERY.md`.
+
+**Findings:**
+- **Healthcheck & Alerting** (beta) — real product: HTTP/TCP/DNS/TLS
+  monitors → alarms → incidents → playbooks, with notification
+  channels Email/Slack/Teams/Telegram/**custom webhooks**. The only
+  place native webhook support exists anywhere in VNETWORK's stack —
+  but **no REST API is documented**, console/Partner-Portal only.
+- **WAAP** — console has AI-WAF, Bot Management, API Protection,
+  Emergency Mitigation, and a "Logs" module; no rule-management or
+  alert-config API documented beyond the `bsearch` log-search endpoint
+  already catalogued.
+- **Object Storage (OSS)** — real, S3-compatible product (buckets,
+  objects, versioning, IAM). Uses a **separate credential model**
+  (Access Key/Secret, not the Bearer token). No VNETWORK-specific REST
+  API — integrate via the standard S3 protocol instead. No
+  logging/metrics/notifications documented.
+- Re-confirmed against the raw Postman collection: zero matches for
+  "health", "webhook", "alert" anywhere in `openapi.vnetwork.vn`; the
+  only "storage"/"bucket" mentions are incidental prose, not an object-
+  storage feature.
+
+**Top 10 SentinelOps integrations, ranked by ROI** (full rationale in
+the doc):
+
+1. `POST /v1/bsearch` (WAAP log search) — available now
+2. `GET /v3/instances/:id/monitoring` / `/summary` — available now
+3. `GET /v3/secgroups` (+`:id`) — available now
+4. `GET /v3/lbs/:id/monitoring` / `/stats` — available now
+5. `GET /v3/cdn/domains` — available now
+6. `GET /v3/instances` / `GET /v1/instances` — available now
+7. `GET /v3/certificates` — available now
+8. Healthcheck & Alerting webhook channel — **not buildable yet** (no
+   API), but the best strategic fit on the list — VNETWORK could push
+   alerts instead of SentinelOps polling. Revisit when an API ships.
+9. Object Storage via the standard S3 API — available now, but a
+   separate credential/integration shape (S3 SDK, not Bearer token)
+10. `GET /v3/elastic_ips` / `GET /v3/networks/reserves` — available now
+
+Nothing implemented — discovery and ranking only, per instruction.
+
+## VNETWORK Capability Assessment (Partner Portal exploration attempt)
+
+Completed 2026-09-04. Task asked for authenticated Partner Portal
+exploration (`partner.vnetwork.vn/services`) with login/screenshot
+evidence. **That access does not exist in this environment** — no
+browser automation tool, no VNETWORK MCP connector, no stored
+credentials. An unauthenticated fetch of that URL returns only a bare
+page title behind a login wall — confirmed, not assumed. Per the
+user's choice, the full capability assessment was built instead from
+VNETWORK's public documentation (`docs.vnetwork.vn`) plus the two
+discovery passes above. Full per-service breakdown (18 services across
+all 17 requested categories, each fact marked CONFIRMED (docs) or NOT
+DOCUMENTED): `docs/VNETWORK_CAPABILITY_ASSESSMENT.md`.
+
+**New findings this pass (beyond the two discoveries above):**
+- **Multi-CDN Orchestration** has a confirmed, rich metrics API (5xx
+  error rates, domain health, traffic/cache/geo analytics) via the
+  same `openapi.vnetwork.vn` surface — ranks as high-ROI as WAAP.
+- **"Projects"** exists as an Organizations-console concept (isolated
+  workspaces), not a compute-API resource — explains why the OpenAPI
+  catalog has zero Projects endpoints.
+- **Security finding:** API keys are account-wide, unscoped, with no
+  documented rotation or usage-audit API — a single leaked key
+  compromises every product in this assessment. Mitigation today is a
+  manual console review, not code.
+- Kubernetes, Databases, Container Registry, Serverless Functions, and
+  Usage & Cost Management are all either not self-serve yet
+  ("coming soon"/early access) or use a different integration shape
+  (kubectl, not the Bearer-token API) — none buildable today.
+- SSL/TLS Certificates has a real Activity-feed audit trail (actor,
+  IP, UA, change payload) separate from the `/v3/certificates` API
+  endpoint already catalogued.
+
+**Top 10 Opportunities and Crazy But Realistic Ideas:** full detail in
+the doc. Headline picks — WAAP log alerting (#1, same as before),
+Multi-CDN health/5xx alerting (new, #2), an "attack-surface diff bot"
+daily-digest idea that reuses the already-built (but unused)
+`nightly-security-brief-trigger.js`/`home-soc-brief.js` pattern from
+the Roaming project tree, pointed at VNETWORK data instead of the LAN.
+
+**If CTO, next 3 projects:** (1) MVP #5 — WAAP `bsearch` → GitHub
+Issue, (2) the attack-surface diff bot, (3) a standing monthly check
+on Healthcheck & Alerting's API/webhook spec and Container Registry
+GA — the two highest-strategic-fit capabilities that simply aren't
+buildable yet.
+
+Nothing implemented — discovery and assessment only, per instruction.
+
+## MVP #5: VNETWORK Healthcheck Webhook Receiver (plan only)
+
+Completed 2026-09-04. Plan only — nothing implemented, no domain
+touched, no VNETWORK Monitor/Channel configured. Full plan:
+`docs/MVP5_WEBHOOK_RECEIVER_PLAN.md`.
+
+```
+VNETWORK Healthcheck & Alerting -> Webhook -> MCP -> Risk Score +
+Duplicate Detection -> GitHub Issue -> Auto Labels + MCP Analysis
+Comment -> Assign KEVIN-NGUYENDAD -> GitHub Mobile
+```
+
+**Verified the claim, didn't just take it:** re-checked directly
+against `docs.vnetwork.vn/docs/observability/healthcheck/notifications`
+(a page not fetched in the earlier discovery passes). Confirmed:
+custom webhook channel, configurable endpoint URL, optional HMAC
+secret, "signed JSON POST," `X-Webhook-Signature` header. **Not
+documented anywhere:** the HMAC algorithm, the signing base, and the
+payload schema — these need to be captured from one real test
+delivery before implementation, not assumed.
+
+**Deployment location — checked both domains directly (DNS + HTTP),
+not assumed from names:**
+- `sentinelops.fyi` — confirmed static (this homepage repo:
+  `vite`/`react` only, no server). **Ruled out** — cannot run
+  signature-verifying server code at all.
+- `audit.sentinelops.fyi` — confirmed **real and live**, CNAME'd to
+  VNETWORK's own CDN with a Render origin behind it. This corrects an
+  earlier assumption in this project: the `wafCaseStudy` content in
+  `sentinelops-homepage/src/data/content.js` describing "Hardening
+  audit.sentinelops.fyi with VNetwork WAAP" is not narrative/marketing
+  copy — it describes an actually-deployed setup.
+- **Recommended: `audit.sentinelops.fyi`.** Open question that needs
+  an answer from Kevin before implementation: the source repo/Render
+  service actually running there wasn't found anywhere on this
+  machine — need to know whether a route can be added to an existing
+  backend there, or whether a new minimal service needs to be stood
+  up and pointed at that subdomain.
+
+**Endpoint path:** `POST /api/webhooks/vnetwork-healthcheck`
+(namespaced for future providers, e.g. a WAAP webhook later).
+
+**HMAC validation strategy:** verify against the *raw* request body
+before JSON parsing; HMAC-SHA256 as the default assumption (unconfirmed
+— first thing to verify against a real delivery); constant-time
+comparison (`hmac.compare_digest` / `timingSafeEqual`) against
+`X-Webhook-Signature`; fail closed (401) on missing/invalid signature;
+secret in a platform env var, never committed; log rejections without
+logging the secret.
+
+**Pipeline reuse:** no new pipeline logic — only a new HTTP receiver +
+`to_alert()` mapper feed into the exact MVP #3/#4 chain unchanged
+(`score_alert`, `build_issue`, `create_issue`, `assign_issue`, the 24h
+duplicate-detection functions, `compute_labels`,
+`build_analysis_comment`), extended with one new label
+(`vnetwork-healthcheck`) and one new `ENRICHMENT_RULES` entry.
+
 ## Next Task
 
-Not yet decided. Remaining candidate from the "Not Yet Implemented"
-list: WAAP integration.
+Milestone frozen — see `NEXT_STEPS.md` for the prioritized build order
+(WAAP Log Search Integration → Healthcheck Webhook Receiver → Digital
+Risk Twin) and scope for each.
