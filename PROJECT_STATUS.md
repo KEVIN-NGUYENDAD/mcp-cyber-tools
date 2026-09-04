@@ -6,6 +6,7 @@
 ✅ MVP #2 - Windows Defender Real Alert Pipeline
 ✅ MVP #3 (investigation) - Wazuh Verification
 ✅ MVP #3 - Live security-watch.js Telemetry Pipeline
+✅ MVP #4 - Incident Enrichment (labels + MCP analysis comment)
 
 ## Architecture
 
@@ -23,11 +24,15 @@ security-watch.js ┴→ alerts.json
               ↓                ↓
        GitHub Issue    Update occurrence
               ↓          count + last_seen
-       Assign KEVIN-NGUYENDAD
-              ↓
-        GitHub Mobile
-              ↓
-            iPhone
+              └────────┬───────┘
+                        ↓
+              Auto Labels + MCP Analysis Comment
+                        ↓
+              Assign KEVIN-NGUYENDAD
+                        ↓
+                  GitHub Mobile
+                        ↓
+                      iPhone
 ```
 
 ## Commits
@@ -41,6 +46,9 @@ MVP #2:
 MVP #3:
 d5b7819
 
+MVP #4:
+(pending — recorded after commit below)
+
 ## Current State
 
 Working:
@@ -51,11 +59,11 @@ Working:
 - Risk scoring
 - Live security-watch.js telemetry (real alert source)
 - Duplicate detection (24h window, occurrence count + last_seen on the issue itself)
+- Auto labels (critical/high/defender/control-drift/firewall, computed per alert)
+- MCP analysis comments (risk score, reason, recommendation — posted on create and on duplicate updates)
 
 Not Yet Implemented:
 - WAAP integration
-- Labels automation
-- MCP analysis comments
 
 Ruled out (see investigation docs):
 - Wazuh alerts.json — not installed, will not be built
@@ -148,7 +156,70 @@ Success criteria met: a real alert from security-watch.js created a
 GitHub incident, and a repeat of the same real alert updated it instead
 of duplicating it.
 
+## MVP #4: Incident Enrichment
+
+Enhances the MVP #3 pipeline in place — same script
+(`scripts/create_securitywatch_incident.py`), same source
+(`security-watch.js` → `alerts.json`), same GitHub destination. No
+dashboards, no databases, no new infrastructure.
+
+**Auto labels** (`compute_labels()`): a subset of `critical` / `high` /
+`defender` / `control-drift` / `firewall`, chosen per alert from its
+severity, source, and event type. Applied via GitHub's
+"add labels" endpoint, which creates labels that don't exist yet — no
+separate label-provisioning step needed. Applied on both the new-issue
+path and the duplicate-update path (idempotent — re-adding an existing
+label is a no-op).
+
+**MCP Analysis Comment** (`build_analysis_comment()`): posted as an
+issue comment — Risk Score, Reason (bullets), Recommendation (numbered
+list) — sourced from a small per-event-type table
+(`ENRICHMENT_RULES`) covering security-watch.js's 5 known alert types,
+with a generic fallback for anything else. Posted on every processed
+alert, including duplicates (a duplicate's comment adds a
+"Recurrence detected — occurrence #N" note), so the issue timeline
+carries a running record of each detection.
+
+**Duplicate handling:** unchanged from MVP #3 (GitHub issue is the
+source of truth, 24h window) — re-verified still correct with
+enrichment layered on top.
+
+**Verification (2026-09-04):** ran the pipeline again against the same
+real `FIREWALL_DISABLED` alert from MVP #3 (still within the 24h
+window). Result, confirmed directly via `gh issue view 6`:
+
+- Duplicate detected correctly — Issue #6 updated (`Occurrences: 3`),
+  no new issue created
+- Labels applied: `critical`, `control-drift`, `firewall`
+- Comment posted, exact format:
+  ```
+  ## MCP Analysis
+
+  _Recurrence detected -- occurrence #3._
+
+  **Risk Score:** 95
+
+  **Reason:**
+  - Firewall disabled
+  - Security control drift detected
+
+  **Recommendation:**
+  1. Re-enable firewall
+  2. Check recent changes
+  3. Review related events
+  ```
+- Assignee unchanged: KEVIN-NGUYENDAD
+
+https://github.com/KEVIN-NGUYENDAD/mcp-cyber-tools/issues/6
+
+The new-issue path calls the identical `compute_labels()` /
+`build_analysis_comment()` / `add_labels()` / `add_comment()` functions
+(without the recurrence note) — not re-triggered separately in this
+pass to avoid an unnecessary second real firewall toggle; the create
+path itself (issue creation + assignment) was already verified in
+MVP #3.
+
 ## Next Task
 
-Not yet decided. Candidates from the "Not Yet Implemented" list:
-labels automation, MCP analysis comments, WAAP integration.
+Not yet decided. Remaining candidate from the "Not Yet Implemented"
+list: WAAP integration.

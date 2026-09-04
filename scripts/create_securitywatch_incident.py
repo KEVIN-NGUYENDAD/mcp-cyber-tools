@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""MVP #3: turn a real security-watch.js control-drift alert into an assigned
-GitHub Issue, with 24-hour duplicate detection.
+"""MVP #3/#4: turn a real security-watch.js control-drift alert into an
+assigned, enriched GitHub Issue, with 24-hour duplicate detection.
 
 Flow this script proves:
     Real Alert (security-watch.js -> alerts.json)
@@ -8,6 +8,7 @@ Flow this script proves:
     -> Risk Score
     -> Duplicate Detection (24h window)
     -> GitHub Issue (new) OR occurrence update (duplicate)
+    -> Auto Labels + MCP Analysis Comment
     -> Assign KEVIN-NGUYENDAD
     -> GitHub Mobile push -> iPhone
 
@@ -29,6 +30,11 @@ local state file. An open issue whose title matches this alert's title
 whose "Last Seen" timestamp is within the last 24 hours counts as a
 duplicate. Its occurrence count and Last Seen field are updated in place;
 no new issue is created.
+
+Enrichment (MVP #4): every processed alert -- new or duplicate -- gets auto
+labels (subset of critical/high/defender/control-drift/firewall, chosen
+from the alert's severity/source/event type) and an "MCP Analysis" comment
+(risk score, reasons, recommendations) posted to the issue.
 
 Usage:
     $env:GITHUB_TOKEN = "ghp_xxx"      # PowerShell, or: (gh auth token)
@@ -69,6 +75,71 @@ SEVERITY_MAP = {
 }
 
 DEDUP_WINDOW = timedelta(hours=24)
+
+# Reason / recommendation text per security-watch.js alert type. Scoped to
+# the 5 control-drift rules it actually emits today; unknown types fall back
+# to DEFAULT_ENRICHMENT.
+ENRICHMENT_RULES = {
+    "dns_change": {
+        "reasons": [
+            "DNS resolvers changed since baseline",
+            "Possible DNS hijack or rogue resolver",
+        ],
+        "recommendations": [
+            "Confirm the new DNS servers were an intentional change",
+            "Revert to the approved DNS servers if unintended",
+            "Check router/DHCP settings for tampering",
+        ],
+    },
+    "firewall_disabled": {
+        "reasons": [
+            "Firewall disabled",
+            "Security control drift detected",
+        ],
+        "recommendations": [
+            "Re-enable firewall",
+            "Check recent changes",
+            "Review related events",
+        ],
+    },
+    "defender_disabled": {
+        "reasons": [
+            "Real-time protection disabled",
+            "Security control drift detected",
+        ],
+        "recommendations": [
+            "Re-enable Windows Defender real-time protection",
+            "Check recent changes",
+            "Scan the host for threats once protection is restored",
+        ],
+    },
+    "rdp_enabled": {
+        "reasons": [
+            "Remote Desktop started listening",
+            "Increased remote-access attack surface",
+        ],
+        "recommendations": [
+            "Confirm RDP was enabled intentionally",
+            "Disable RDP if not required",
+            "Review recent logon attempts",
+        ],
+    },
+    "ssh_enabled": {
+        "reasons": [
+            "SSH started listening",
+            "Increased remote-access attack surface",
+        ],
+        "recommendations": [
+            "Confirm SSH was enabled intentionally",
+            "Disable SSH if not required",
+            "Review recent connection attempts",
+        ],
+    },
+}
+DEFAULT_ENRICHMENT = {
+    "reasons": ["Security control drift detected"],
+    "recommendations": ["Review recent changes", "Review related events"],
+}
 
 
 def load_alerts(path: str) -> list:
@@ -159,6 +230,46 @@ def update_issue_body(token: str, issue_number: int, body: str) -> dict:
     return github_request("PATCH", url, token, {"body": body})
 
 
+def compute_labels(alert: dict) -> list:
+    """Subset of critical/high/defender/control-drift/firewall that applies
+    to this specific alert."""
+    labels = []
+    if alert["severity"] == "critical":
+        labels.append("critical")
+    elif alert["severity"] == "high":
+        labels.append("high")
+    if alert["source"] == "windows_defender":
+        labels.append("defender")
+    if alert["source"] == "security_watch":
+        labels.append("control-drift")
+    if "firewall" in alert["event_type"]:
+        labels.append("firewall")
+    return labels
+
+
+def build_analysis_comment(alert: dict, risk_score: int, occurrence_note: str = None) -> str:
+    rules = ENRICHMENT_RULES.get(alert["event_type"], DEFAULT_ENRICHMENT)
+    lines = ["## MCP Analysis", ""]
+    if occurrence_note:
+        lines += [occurrence_note, ""]
+    lines += [f"**Risk Score:** {risk_score}", ""]
+    lines += ["**Reason:**"]
+    lines += [f"- {r}" for r in rules["reasons"]]
+    lines += ["", "**Recommendation:**"]
+    lines += [f"{i}. {r}" for i, r in enumerate(rules["recommendations"], 1)]
+    return "\n".join(lines) + "\n"
+
+
+def add_labels(token: str, issue_number: int, labels: list) -> dict:
+    url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue_number}/labels"
+    return github_request("POST", url, token, {"labels": labels})
+
+
+def add_comment(token: str, issue_number: int, body: str) -> dict:
+    url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue_number}/comments"
+    return github_request("POST", url, token, {"body": body})
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -197,6 +308,8 @@ def main() -> None:
     print(f"Real alert source: security-watch.js ({alert['event_type']})")
     print(f"Signature: {alert['threat_signature']}")
 
+    labels = compute_labels(alert)
+
     issues = find_open_issues(token)
     duplicate, tracking = find_duplicate(issues, issue_fields["title"], now)
 
@@ -205,8 +318,18 @@ def main() -> None:
         first_seen = tracking["first_seen"] or timestamp
         new_body = with_tracking_block(duplicate["body"], occurrences, first_seen, timestamp)
         update_issue_body(token, duplicate["number"], new_body)
+        issue_number = duplicate["number"]
         print(f"Duplicate within 24h -- not creating a new issue.")
-        print(f"Updated Issue #{duplicate['number']}: occurrences={occurrences}, last_seen={timestamp}")
+        print(f"Updated Issue #{issue_number}: occurrences={occurrences}, last_seen={timestamp}")
+
+        add_labels(token, issue_number, labels)
+        print(f"Labels ensured: {', '.join(labels) if labels else '(none)'}")
+
+        occurrence_note = f"_Recurrence detected -- occurrence #{occurrences}._"
+        comment = build_analysis_comment(alert, risk_score, occurrence_note)
+        add_comment(token, issue_number, comment)
+        print("MCP analysis comment posted.")
+
         print(f"Issue URL: {duplicate['html_url']}")
         return
 
@@ -219,6 +342,13 @@ def main() -> None:
 
     assign_issue(token, issue_number, ASSIGNEE)
     print(f"Assigned to {ASSIGNEE}.")
+
+    add_labels(token, issue_number, labels)
+    print(f"Labels applied: {', '.join(labels) if labels else '(none)'}")
+
+    comment = build_analysis_comment(alert, risk_score)
+    add_comment(token, issue_number, comment)
+    print("MCP analysis comment posted.")
 
     print(f"Issue URL: {issue['html_url']}")
 
