@@ -39,7 +39,7 @@ MVP #2:
 8ec96f2
 
 MVP #3:
-(this commit) mvp3 live securitywatch telemetry
+d5b7819
 
 ## Current State
 
