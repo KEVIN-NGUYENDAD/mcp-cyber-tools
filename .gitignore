@@ -41,3 +41,6 @@ build/
 
 # Cache
 .cache/
+
+__pycache__/
+*.pyc

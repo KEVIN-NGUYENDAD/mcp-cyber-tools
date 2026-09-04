@@ -69,14 +69,27 @@ def build_issue(alert: dict, risk_score: int, timestamp: str) -> dict:
     severity = str(alert.get("severity", "unknown")).upper()
     event_label = humanize_event_type(str(alert.get("event_type", "unknown")))
     title = f"[{severity}] {event_label} | Risk {risk_score}"
-    body = (
-        "## Alert Details\n\n"
-        f"- **Source:** {alert.get('source', 'unknown')}\n"
-        f"- **Event Type:** {alert.get('event_type', 'unknown')}\n"
-        f"- **IP:** {alert.get('ip', 'unknown')}\n"
-        f"- **Risk Score:** {risk_score}\n"
-        f"- **Timestamp:** {timestamp}\n"
-    )
+    body_lines = [
+        "## Alert Details",
+        "",
+        f"- **Source:** {alert.get('source', 'unknown')}",
+        f"- **Event Type:** {alert.get('event_type', 'unknown')}",
+        f"- **IP:** {alert.get('ip', 'unknown')}",
+        f"- **Risk Score:** {risk_score}",
+        f"- **Timestamp:** {timestamp}",
+    ]
+    # Optional extra evidence fields (present for host-based sources like
+    # Windows Defender; absent -- and therefore omitted -- for the plain
+    # network-alert schema this function was originally written for).
+    if alert.get("threat_signature"):
+        body_lines.append(f"- **Threat Signature:** {alert['threat_signature']}")
+    if alert.get("process"):
+        body_lines.append(f"- **Process:** {alert['process']}")
+    if alert.get("file"):
+        body_lines.append(f"- **File:** {alert['file']}")
+    if alert.get("detection_time"):
+        body_lines.append(f"- **Detection Time:** {alert['detection_time']}")
+    body = "\n".join(body_lines) + "\n"
     return {"title": title, "body": body}
 
 
