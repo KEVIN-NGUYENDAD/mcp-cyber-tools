@@ -1,0 +1,6 @@
+{
+  "source": "test",
+  "event_type": "sql_injection",
+  "severity": "critical",
+  "ip": "1.2.3.4"
+}
