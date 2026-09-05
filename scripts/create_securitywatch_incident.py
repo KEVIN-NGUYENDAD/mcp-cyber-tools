@@ -58,6 +58,7 @@ from create_test_incident import (
     github_request,
     score_alert,
 )
+from event_schema import alert_to_event
 
 # The live pipeline security-watch.js already runs on a schedule
 # (HOME-SOC-Scan-And-Export) and writes here.
@@ -300,6 +301,13 @@ def main() -> None:
 
     sw_alert = alerts[0]  # newest entry; security-watch.js prepends on each run
     alert = to_alert(sw_alert)
+
+    # Event Hub Day 1: normalize into the shared Event Schema alongside the
+    # existing pipeline. Purely additive -- scoring, issue text, and GitHub
+    # calls below still consume `alert` unchanged.
+    event = alert_to_event(alert)
+    print(f"Event: {json.dumps(event)}")
+
     risk_score = score_alert(alert)
     now = datetime.now(timezone.utc)
     timestamp = now.isoformat()

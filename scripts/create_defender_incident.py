@@ -40,6 +40,7 @@ from create_test_incident import (
     create_issue,
     score_alert,
 )
+from event_schema import alert_to_event
 import os
 from datetime import datetime, timezone
 
@@ -127,6 +128,13 @@ def main() -> None:
 
     detection = get_latest_defender_detection()
     alert = to_alert(detection)
+
+    # Event Hub Day 1: normalize into the shared Event Schema alongside the
+    # existing pipeline. Purely additive -- scoring, issue text, and GitHub
+    # calls below still consume `alert` unchanged.
+    event = alert_to_event(alert)
+    print(f"Event: {json.dumps(event)}")
+
     risk_score = score_alert(alert)
     timestamp = datetime.now(timezone.utc).isoformat()
 
