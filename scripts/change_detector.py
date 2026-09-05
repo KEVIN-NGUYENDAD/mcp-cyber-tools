@@ -22,8 +22,24 @@ Change types:
 First run (no previous snapshot yet) produces no events: there is
 nothing to diff against, so the current snapshot is just the new
 baseline, not a change.
+
+Wiring (Phase: pipeline completion): process_snapshot() ties this
+together end to end -- Snapshot -> Baseline Store -> Change Detector ->
+Risk Scoring -> Critical?-branch -> GitHub Incident / Daily Brief
+Store -- reusing score_alert()/build_issue()/create_issue()/
+assign_issue() unchanged from create_test_incident.py, the same
+primitives create_securitywatch_incident.py and
+create_defender_incident.py already reuse for their own alert sources.
 """
+import os
+import re
+from datetime import datetime, timezone
+
+from baseline_store import load_snapshot, save_snapshot
+from create_test_incident import ASSIGNEE, assign_issue, build_issue, create_issue, score_alert
+from daily_brief_store import add_change, add_incident
 from event_schema import make_event
+from recommendation_engine import recommend_and_store
 
 # Provisional severities for Risk Scoring (a later stage, reusing
 # score_alert()) to refine -- these are just enough to satisfy the Event
@@ -132,3 +148,75 @@ def detect_changes(previous_snapshot, current_snapshot: dict) -> list:
     if _is_entity_map(current_state) or _is_entity_map(previous_state):
         return _diff_entities(source, previous_state, current_state)
     return _diff_fields(source, None, previous_state, current_state)
+
+
+def _slugify(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_") or "change"
+
+
+def _event_to_alert(event: dict) -> dict:
+    """Adapt a Change Detector event (Event Hub schema: source/severity/
+    title/summary/evidence) into the alert shape score_alert()/
+    build_issue() expect (source/event_type/severity/ip/threat_signature/
+    process/file/detection_time) -- the same shape every other alert
+    source in this pipeline already normalizes into."""
+    return {
+        "source": event["source"],
+        "event_type": _slugify(event["title"]),
+        "severity": event["severity"],
+        "ip": "unknown",
+        "threat_signature": event["summary"],
+        "process": None,
+        "file": None,
+        "detection_time": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+def route_change_event(event: dict) -> dict:
+    """Score a change event and route it.
+
+    critical/high -> open a GitHub Incident, reusing build_issue()/
+    create_issue()/assign_issue()/score_alert() unchanged. If
+    GITHUB_TOKEN isn't set, logs a warning and falls back to the Daily
+    Brief Store instead of raising -- a missing token shouldn't crash
+    the caller's pipeline.
+
+    everything else -> Daily Brief Store (daily_brief_store.add_change()).
+    """
+    risk_score = score_alert(event)
+    recommend_and_store(event)
+
+    if event["severity"] in ("critical", "high"):
+        token = os.environ.get("GITHUB_TOKEN")
+        if token:
+            alert = _event_to_alert(event)
+            timestamp = alert["detection_time"]
+            issue_fields = build_issue(alert, risk_score, timestamp)
+            issue = create_issue(token, issue_fields["title"], issue_fields["body"])
+            assign_issue(token, issue["number"], ASSIGNEE)
+            add_incident({
+                "title": event["title"],
+                "severity": event["severity"],
+                "risk_score": risk_score,
+                "issue_url": issue["html_url"],
+                "detected_at": timestamp,
+            })
+            return {"routed_to": "github_incident", "risk_score": risk_score, "issue_url": issue["html_url"]}
+        print(
+            f"Warning: GITHUB_TOKEN not set; skipping GitHub incident for "
+            f"'{event['title']}' ({event['severity']}); routing to Daily Brief Store instead."
+        )
+
+    add_change(event)
+    return {"routed_to": "daily_brief_store", "risk_score": risk_score}
+
+
+def process_snapshot(source: str, asset_id: str, state: dict) -> list:
+    """Full pipeline wiring: Snapshot -> Baseline Store -> Change Detector
+    -> Risk Scoring -> Critical?-branch -> GitHub Incident / Daily Brief
+    Store. Returns one route_change_event() result per detected change
+    (empty on a source's first run -- nothing to diff against yet)."""
+    previous = load_snapshot(source)
+    current = save_snapshot(source, asset_id, state)
+    events = detect_changes(previous, current)
+    return [route_change_event(event) for event in events]

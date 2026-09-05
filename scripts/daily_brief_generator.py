@@ -13,7 +13,7 @@ Brief sections (both JSON and text):
     Current Risk         -- highest severity across changes/incidents today
     Recommended Actions  -- the store's "recommendations" list
 """
-from daily_brief_store import load_daily_brief
+from daily_brief_store import load_daily_brief, recent_incidents
 
 SEVERITY_RANK = {"critical": 4, "high": 3, "medium": 2, "low": 1}
 
@@ -73,7 +73,12 @@ def render_text_brief(brief: dict) -> str:
     recommendations = brief["recommended_actions"]
     if recommendations:
         for rec in recommendations:
-            text = rec.get("text") if isinstance(rec, dict) else str(rec)
+            if isinstance(rec, dict):
+                text = rec.get("recommendation") or rec.get("text") or "(no recommendation text)"
+                priority = rec.get("action_priority")
+                text = f"[{str(priority).upper()}] {text}" if priority else text
+            else:
+                text = str(rec)
             lines.append(f"  - {text}")
     else:
         lines.append("  No recommendations at this time.")
@@ -87,6 +92,22 @@ def generate_daily_brief(date: str = None) -> dict:
     return {"json": brief, "text": render_text_brief(brief)}
 
 
+def render_incidents_text(incidents: list) -> str:
+    """Render a recent_incidents() list as a short, iPhone/iPad-readable
+    answer to "what incidents are active?"."""
+    if not incidents:
+        return "No active incidents.\n"
+    lines = ["Active Incidents", ""]
+    for inc in incidents:
+        severity = str(inc.get("severity", "unknown")).upper()
+        title = inc.get("title", "(untitled)")
+        line = f"  - [{severity}] {title}"
+        if inc.get("issue_url"):
+            line += f" -- {inc['issue_url']}"
+        lines.append(line)
+    return "\n".join(lines) + "\n"
+
+
 if __name__ == "__main__":
     import argparse
     import json
@@ -94,9 +115,25 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Daily Brief Generator CLI (for the MCP Interface, Phase E).")
     parser.add_argument("--date", default=None)
     parser.add_argument("--score-only", action="store_true", help="Print only the security score.")
+    parser.add_argument("--incidents", action="store_true", help="Print recent incidents instead of the daily brief.")
+    parser.add_argument("--days", type=int, default=7, help="Window size (days) for --incidents.")
+    parser.add_argument(
+        "--format", choices=["text", "json"], default="text",
+        help="Output format for the daily brief or --incidents (default: text, optimized for Claude iPhone/iPad).",
+    )
     args = parser.parse_args()
 
     if args.score_only:
         print(json.dumps(build_daily_brief(args.date)["security_score"]))
+    elif args.incidents:
+        incidents = recent_incidents(args.days)
+        if args.format == "json":
+            print(json.dumps(incidents))
+        else:
+            print(render_incidents_text(incidents))
     else:
-        print(json.dumps(generate_daily_brief(args.date)))
+        brief = generate_daily_brief(args.date)
+        if args.format == "json":
+            print(json.dumps(brief))
+        else:
+            print(brief["text"])
