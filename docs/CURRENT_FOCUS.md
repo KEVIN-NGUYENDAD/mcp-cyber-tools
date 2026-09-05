@@ -5,51 +5,64 @@ Snapshot ngắn — cập nhật khi trạng thái thay đổi. Chi tiết đầ
 
 ## Vision
 
-SentinelOps = AI Security Operations Platform:
-External Telemetry + Internal Telemetry + MCP Intelligence + GitHub
-Incident Management + Mobile Response.
+**Build an AI Personal Security Manager powered by the SentinelOps
+Event Hub.** Event Hub không bị thay thế — vẫn là lõi kỹ thuật; AI
+Personal Security Manager là sản phẩm cuối cùng.
 
-`sentinelops-homepage` = Mission Control (Mission/Projects/Architecture/
-Research/Reports/Public Docs). `mcp-cyber-tools` = Operational Core
-(Event Hub/MCP/Incident Pipeline/Alert Processing/Automation) — repo
-chính của SentinelOps.
+```
+Sensors → Event Hub → Change Detection → Risk Scoring → Correlation
+        → Recommendations → AI Personal Security Manager
+```
+
+Không phải Home-SOC truyền thống, không phải SIEM truyền thống. Mục
+tiêu: trả lời 3 câu — What changed? Why does it matter? What should
+Kevin do next?
+
+`sentinelops-homepage` = Mission Control + Security Intelligence
+Portal (Public Docs/Reports/History/Trends). `mcp-cyber-tools` =
+Operational Core (Event Hub/MCP/Incident Pipeline/Automation).
 
 ## Current Goal
 
-Xây **SentinelOps Event Hub** — dự án trung tâm: chuẩn hóa mọi sự kiện
-an ninh (WAAP, Home-SOC, Healthcheck, Defender, sensor tương lai) vào
-1 pipeline duy nhất: Event → Score → Correlate → Incident → GitHub
-Issue → GitHub Mobile → iPhone.
+Hoàn thiện Event Hub (Score/Correlation đã có, Change Detection tách
+riêng và Recommendations do AI sinh chưa có) làm nền cho 3 Output:
+Real-time Alerts, Daily Brief 8PM, Security Intelligence Portal.
 
 ## Top Assets
 
-`sentinelops.fyi`, `audit.sentinelops.fyi`, WAAP Free, VNETWORK
+`sentinelops.fyi`, `audit.sentinelops.fyi`, WAAP (Paused), VNETWORK
 Partner, MCP, Home-SOC, GitHub, GitHub Mobile, iPhone.
 
 ## Top Capabilities
 
-1. Score/Correlate/Incident/GitHub đã có code thật (trong
-   `create_securitywatch_incident.py`), source-agnostic, chỉ cần tách
-   thành module dùng chung.
-2. Adapter chuẩn hóa Event chỉ mới có cho `security_watch`
-   (`to_alert()`) — WAAP và Healthcheck chưa có.
-3. GitHub Mobile → iPhone: 0 code cần, đã hoạt động qua assign issue.
+1. Risk Scoring + Correlation trong-nguồn đã có code thật, đã validate
+   bằng dữ liệu thật (Event Hub Day 1).
+2. Real-time Alerts (nhánh Critical→GitHub Issue→iPhone) đã chạy thật.
+3. Chưa có code: Daily Brief, Security Intelligence Portal, Email
+   Security sensor, WAAP adapter (paused), WiFi/IoT sensor.
 
-## Next 30 Days (3-Day Plan lồng bên trong)
+## Next 30 Days
 
-**Ngày 1:** Chuẩn hóa Event Schema chung: `source`, `severity`,
-`title`, `summary`, `evidence`.
+1. Adapter Healthcheck (WAAP hoãn tới sau ticket #3253).
+2. Quyết định kỹ thuật Security Intelligence Portal (render dữ liệu
+   `home-soc-reports` lên `sentinelops-homepage`).
+3. Đối chiếu `content.js` với bằng chứng thật.
+4. Ghi nhận scope mới: Email Security (MFA/SPF/DKIM/DMARC/breach) cho
+   `kevin@sentinelops.fyi`, `contact@sentinelops.fyi`, Maricopa.edu,
+   Gmail chính — chưa có sensor.
 
-**Ngày 2:** Viết adapter `securitywatch`/`waap`/`healthcheck` về cùng
-schema (test bằng sample JSON có sẵn, không chờ entitlement VNETWORK).
+## Storage (chốt)
 
-**Ngày 3:** Chạy end-to-end Event → Score → Correlate → Issue qua 1
-pipeline chung cho cả 3 nguồn, đối chiếu với issue thật đã có.
-
-Sau đó: đối chiếu `content.js` với bằng chứng thật; xác nhận Service
-ID/entitlement VNETWORK khi có thời gian — không chặn tiến độ Event Hub.
+Raw Data = Local only. GitHub = Incidents/Recommendations/
+Architecture. Website = Intelligence Portal.
 
 ## Nguyên tắc
 
 Không thêm Kubernetes/Redis/DB mới/SaaS mới/repo mới/domain mới. Ưu
-tiên tận dụng tài sản hiện có: domain đã mua, WAAP Free, MCP, GitHub.
+tiên tận dụng tài sản hiện có: domain đã mua, WAAP Free, MCP, GitHub,
+`home-soc-reports`.
+
+## WAAP
+
+Status: **Paused**. Role: External Sensor. Tích hợp lại chỉ sau ticket
+#3253.
