@@ -123,14 +123,16 @@ class NessusCollector:
 
             for vuln in vulnerabilities:
                 severity = vuln.get('severity', -1)
-                if severity == 3:
+                if severity == 4:
                     severity_counts['critical'] += 1
-                elif severity == 2:
+                elif severity == 3:
                     severity_counts['high'] += 1
-                elif severity == 1:
+                elif severity == 2:
                     severity_counts['medium'] += 1
-                elif severity == 0:
+                elif severity == 1:
                     severity_counts['low'] += 1
+                elif severity == 0:
+                    severity_counts['info'] += 1
                 else:
                     severity_counts['info'] += 1
 
