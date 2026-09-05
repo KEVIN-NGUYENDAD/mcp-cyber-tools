@@ -1,15 +1,15 @@
 {
-  "timestamp": "2026-09-05T12:02:06.739091",
+  "timestamp": "2026-09-05T12:44:49.907386",
   "nessus_url": "https://localhost:8834",
   "nessus_endpoint": "https://localhost:8834",
   "scanner_status": "running",
-  "last_scan": "2026-09-05T11:41:27",
-  "scan_name": "Credentialed Patch Audit - Desktop",
-  "scan_age_hours": 0.3,
+  "last_scan": "2026-09-05T12:44:45",
+  "scan_name": "Home Network Discovery",
+  "scan_age_hours": 0.0,
   "critical": 0,
   "high": 0,
-  "medium": 0,
-  "low": 0,
-  "info": 11,
-  "total": 11
+  "medium": 3,
+  "low": 2,
+  "info": 56,
+  "total": 61
 }
