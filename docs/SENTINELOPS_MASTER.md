@@ -114,16 +114,26 @@ Defender ──────→ Security Events   ─┘         │
                                              iPhone
 ```
 
-Trạng thái thật hôm nay (2026-09-04): 4/6 khối của Event Hub đã có code
-thật, nhưng khóa cứng bên trong `create_securitywatch_incident.py`
-thay vì tách thành module dùng chung — `score_alert()` (Score),
-`find_duplicate()`/`find_open_issues()` (Correlate), `build_issue()`/
-`compute_labels()`/`build_analysis_comment()` (Incident),
-`create_issue`/`add_labels`/`add_comment`/`assign_issue` (GitHub Issue)
-đều source-agnostic sẵn. GitHub Mobile → iPhone không cần code (GitHub
-tự push khi assign). Duy nhất **Event** (adapter chuẩn hóa nguồn →
-schema chung) mới chỉ có cho `security_watch` (`to_alert()`); WAAP và
-Healthcheck chưa có adapter.
+Trạng thái thật hôm nay (2026-09-05): 6/6 khối của Event Hub đã có code
+thật. Ngoài các hàm source-agnostic đã có sẵn trong
+`create_securitywatch_incident.py`/`create_test_incident.py`
+(`score_alert()`, `find_duplicate()`/`find_open_issues()`,
+`build_issue()`/`compute_labels()`/`build_analysis_comment()`,
+`create_issue`/`add_labels`/`add_comment`/`assign_issue`), Event Hub giờ
+có thêm module dùng chung riêng: `scripts/baseline_store.py` (Baseline
+Store), `scripts/change_detector.py` (Change Detection — tách riêng,
+không còn ngầm bên trong `security-watch.js`), `scripts/recommendation_engine.py`
+(Recommendations — rule-based theo source + change type, chưa
+AI-generated), `scripts/daily_brief_store.py` + `daily_brief_generator.py`
+(Daily Brief). GitHub Mobile → iPhone không cần code (GitHub tự push
+khi assign). **Event** (adapter chuẩn hóa nguồn → schema chung) giờ có
+cho `security_watch` (`to_alert()`) **và** 5 collector thật mới:
+Defender Status (`collect_defender_snapshot.py`), Defender Threats
+(`collect_defender_threats_snapshot.py`), Firewall
+(`collect_firewall_snapshot.py`), Device Inventory
+(`collect_device_inventory_snapshot.py`), Website
+(`collect_website_snapshot.py`). WAAP và Healthcheck vẫn chưa có
+adapter.
 
 Song song, không thuộc Event Hub: scan/baseline data →
 `export-home-soc-reports.js` → leak-guard → `home-soc-reports`
@@ -147,16 +157,19 @@ Recommendations
 Outputs
 ```
 
-Đối chiếu với code thật: **Risk Scoring** = `score_alert()` (có).
-**Correlation** = `find_duplicate()`/`find_open_issues()`, nhưng hiện
-chỉ dedup trong cùng 1 nguồn theo tiêu đề, chưa correlate chéo nguồn
-(có một phần). **Change Detection** hiện chỉ tồn tại ngầm bên trong
-`security-watch.js` (so baseline vs current) — chưa phải bước tách
-riêng trong Event Hub. **Recommendations** hiện chỉ là text tĩnh theo
-rule (`ENRICHMENT_RULES` trong `create_securitywatch_incident.py`),
-không phải AI-generated. **Outputs** hôm nay = GitHub Issue + GitHub
-Mobile; Daily Brief và Website Dashboard (xem 2 mục dưới) **chưa có
-code nào**.
+Đối chiếu với code thật (2026-09-05): **Change Detection** =
+**COMPLETE** — `scripts/baseline_store.py` + `scripts/change_detector.py`,
+bước tách riêng trong Event Hub (không còn chỉ ngầm bên trong
+`security-watch.js`), validate bằng dữ liệu thật (Defender/Firewall/
+Device Inventory/Website). **Risk Scoring** = `score_alert()` (có, tái
+sử dụng nguyên trạng). **Correlation** = `find_duplicate()`/
+`find_open_issues()`, vẫn chỉ dedup trong cùng 1 nguồn theo tiêu đề,
+chưa correlate chéo nguồn (có một phần, không đổi). **Recommendations**
+= **COMPLETE** — `scripts/recommendation_engine.py`, rule-based theo
+source + change type, chưa AI-generated. **Outputs** hôm nay = GitHub
+Issue + GitHub Mobile (nhánh Critical) **và** Daily Brief (nhánh
+non-critical, xem mục Mô Hình Alert) — cả hai đều **COMPLETE**; Website
+Dashboard (Security Intelligence Portal) vẫn **chưa có code nào**.
 
 ## Mô Hình Alert (chính thức — danh sách cuối cùng)
 
@@ -171,11 +184,16 @@ Event → Score → Critical?
   NO  → Daily Brief
 ```
 
-Trạng thái thật: nhánh YES (Critical → GitHub Issue → iPhone) đã có
-code chạy thật (`create_securitywatch_incident.py`,
-`create_defender_incident.py`). Nhánh NO (gộp vào Daily Brief thay vì
-im lặng bỏ qua) **chưa có code nào** — mọi alert hôm nay hoặc thành
-Issue hoặc không được xử lý gì thêm.
+Trạng thái thật (2026-09-05): nhánh YES (Critical → GitHub Issue →
+iPhone) đã có code chạy thật qua 2 đường — trực tiếp
+(`create_securitywatch_incident.py`, `create_defender_incident.py`) và
+qua Change Detector (`change_detector.route_change_event()`, tái sử
+dụng `score_alert()`/`build_issue()`/`create_issue()`/`assign_issue()`
+nguyên trạng). Nhánh NO (gộp vào Daily Brief) giờ **COMPLETE** —
+`daily_brief_store.py` — không còn "không xử lý gì thêm". 5/6 mục
+trigger (Malware, Firewall Disabled, Unknown Device, Website Down, SSL
+Error) đã validate qua Change Detector với dữ liệu thật; chỉ **WAAP
+Disabled** còn thiếu (WAAP vẫn Paused).
 
 ## Outputs (chính thức — chốt cuối cùng)
 
@@ -192,10 +210,13 @@ nên làm gì?
 Brief Archive. (Danh sách cuối cùng — thay cho "Dashboard/History/
 Changes/..." ở bản trước.)
 
-Trạng thái thật: Daily Brief = **0 code, 0 lịch chạy**. Security
-Intelligence Portal = `sentinelops-homepage` hiện là static React/Vite,
-không server, không `fetch` — 0/6 mục trên đã tồn tại. Chỉ nhánh
-Real-time Alerts (Critical → GitHub Issue → iPhone) đã chạy thật.
+Trạng thái thật (2026-09-05): Daily Brief = **COMPLETE** —
+`daily_brief_generator.py` (Security Score/Today's Changes/Current
+Risk/Recommended Actions), lịch chạy thật qua Windows Task Scheduler
+(`SentinelOps-DailyBrief`, 8PM daily). Security Intelligence Portal =
+`sentinelops-homepage` hiện là static React/Vite, không server, không
+`fetch` — 0/6 mục trên đã tồn tại, không đổi. Real-time Alerts và Daily
+Brief (2 trong 3 Output) đã chạy thật.
 
 ## Storage (chính thức — chốt cuối cùng)
 
@@ -270,14 +291,23 @@ Security. Đây là phạm vi giám sát mới, không phải trạng thái hi�
 
 ## MCP
 
-- `server.js` — server đang dùng thật, 95 tool, 11 module (đếm trực
-  tiếp từ `modules/*.js`).
+- `server.js` — server đang dùng thật, 99 tool, 12 module (đếm trực
+  tiếp từ `modules/*.js`, gồm `modules/eventHub.js` mới — **COMPLETE**,
+  2026-09-05).
+- `modules/eventHub.js` (mới, **COMPLETE**) — 4 tool cho Event Hub:
+  `get_security_score`, `get_daily_brief`, `get_recent_incidents`,
+  `get_asset_status`. Gọi qua CLI vào `scripts/daily_brief_generator.py`/
+  `baseline_store.py` (JS shell ra Python, không phải infra mới).
 - `server_v2.js`/`server_backup_v1.js` — trùng byte-for-byte, không
   được tham chiếu ở đâu — mồ côi, không dùng.
 - `modules/shared.js` chỉ có `console.log` debug — **không có audit
   logging thật**, dù `content.js` tuyên bố "100% tool calls audited."
-- Script tạo incident (`scripts/*.py`) **không gọi qua MCP** — hai
-  code path tách biệt.
+- Script tạo incident gốc (`create_test_incident.py`,
+  `create_defender_incident.py`, `create_securitywatch_incident.py`)
+  **không gọi qua MCP** — hai code path tách biệt (không đổi). Event
+  Hub mới (`change_detector.py` và các collector) cũng chạy độc lập,
+  không qua MCP — MCP chỉ đọc kết quả (Daily Brief/Baseline) qua
+  `modules/eventHub.js`.
 
 ## GitHub Workflow
 
@@ -292,7 +322,7 @@ Security. Đây là phạm vi giám sát mới, không phải trạng thái hi�
 
 ## Verified Components
 
-✅ MCP server + 95 tool (`server.js`, `modules/*.js`)
+✅ MCP server + 99 tool (`server.js`, `modules/*.js`, 12 module)
 ✅ Pipeline incident (`create_test_incident.py`,
 `create_defender_incident.py`, `create_securitywatch_incident.py`) —
 xác nhận bằng Issue thật
@@ -300,6 +330,20 @@ xác nhận bằng Issue thật
 kiện thật (Issue #6)
 ✅ `home-soc-reports` publication pipeline — output công khai đang
 cập nhật thật
+✅ SentinelOps Event Hub (2026-09-05): Baseline Store
+(`baseline_store.py`), Change Detector (`change_detector.py`),
+Recommendation Engine (`recommendation_engine.py`), Daily Brief Store +
+Generator (`daily_brief_store.py`, `daily_brief_generator.py`) —
+validate end-to-end bằng dữ liệu thật trên host này
+✅ 5 real collector: Defender Status, Defender Threats, Firewall,
+Device Inventory, Website (HTTP/HTTPS/SSL/response time) —
+`scripts/collect_*.py`
+✅ MCP Interface cho Event Hub (`modules/eventHub.js`):
+`get_security_score`, `get_daily_brief`, `get_recent_incidents`,
+`get_asset_status`
+✅ Scheduler Automation: Windows Task Scheduler
+`SentinelOps-Collectors` (mỗi 15 phút) + `SentinelOps-DailyBrief` (8PM
+daily) — xác nhận chạy thật qua `schtasks /run`
 
 ## Current Blockers
 
@@ -323,11 +367,13 @@ cập nhật thật
 
 ## Current Priorities
 
-1. Xây SentinelOps Event Hub: chuẩn hóa Event Schema dùng chung
-   (`source`, `severity`, `title`, `summary`, `evidence`).
-2. Tách `score_alert`/`find_duplicate`/`build_issue`/`compute_labels`/
-   `build_analysis_comment`/GitHub-call family khỏi
-   `create_securitywatch_incident.py` thành 1 module dùng chung.
+1. ~~Xây SentinelOps Event Hub: chuẩn hóa Event Schema dùng chung~~ —
+   **COMPLETE** (`scripts/event_schema.py`, 2026-09-05).
+2. ~~Tách score_alert/find_duplicate/build_issue/... thành 1 module
+   dùng chung~~ — **COMPLETE**: `change_detector.py` tái sử dụng
+   `score_alert()`/`build_issue()`/`create_issue()`/`assign_issue()`
+   nguyên trạng qua import trực tiếp, cộng thêm `baseline_store.py`/
+   `recommendation_engine.py`/`daily_brief_store.py` mới.
 3. Viết adapter cho Healthcheck (test bằng sample payload). **WAAP
    adapter tạm dừng** — theo quyết định Paused, chỉ làm sau ticket
    #3253.
@@ -337,6 +383,12 @@ cập nhật thật
    liệu `home-soc-reports` lên `sentinelops-homepage`).
 
 ## 3-Day Plan (Event Hub)
+
+**Status: COMPLETE và vượt phạm vi ban đầu (2026-09-05)** — thay vì 3
+ngày/3 nguồn, đã triển khai đủ Change Detection + Recommendation Engine
++ Daily Brief + MCP + Scheduler Automation qua nhiều sprint, validate
+bằng dữ liệu thật (Defender/Firewall/Device Inventory/Website). Giữ
+nguyên plan gốc bên dưới để tham khảo lịch sử.
 
 **Ngày 1 — Event Schema.** Chuẩn hóa schema chung cho mọi nguồn:
 `source`, `severity`, `title`, `summary`, `evidence`.

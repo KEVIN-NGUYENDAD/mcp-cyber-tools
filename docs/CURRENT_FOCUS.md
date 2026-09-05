@@ -24,9 +24,11 @@ Operational Core (Event Hub/MCP/Incident Pipeline/Automation).
 
 ## Current Goal
 
-Hoàn thiện Event Hub (Score/Correlation đã có, Change Detection tách
-riêng và Recommendations do AI sinh chưa có) làm nền cho 3 Output:
-Real-time Alerts, Daily Brief 8PM, Security Intelligence Portal.
+Event Hub hoàn chỉnh: Score, Change Detection, Recommendations, Daily
+Brief, MCP, 5 real collector, Scheduler Automation — tất cả **COMPLETE**
+(xem Implementation Status). Còn lại: Security Intelligence Portal
+(chưa có code), Email Security sensor (chưa có code), WAAP adapter
+(Paused).
 
 ## Top Assets
 
@@ -35,11 +37,37 @@ Partner, MCP, Home-SOC, GitHub, GitHub Mobile, iPhone.
 
 ## Top Capabilities
 
-1. Risk Scoring + Correlation trong-nguồn đã có code thật, đã validate
-   bằng dữ liệu thật (Event Hub Day 1).
-2. Real-time Alerts (nhánh Critical→GitHub Issue→iPhone) đã chạy thật.
-3. Chưa có code: Daily Brief, Security Intelligence Portal, Email
-   Security sensor, WAAP adapter (paused), WiFi/IoT sensor.
+1. Event Hub đầy đủ — Baseline Store, Change Detector, Recommendation
+   Engine, Daily Brief, MCP Interface — COMPLETE, validate bằng dữ liệu
+   thật (Defender, Firewall, Device Inventory, Website).
+2. Real-time Alerts (nhánh Critical→GitHub Issue→iPhone) đã chạy thật,
+   qua cả `create_securitywatch_incident.py`/`create_defender_incident.py`
+   và Change Detector (`change_detector.route_change_event()`).
+3. Scheduler Automation (collector mỗi 15 phút, Daily Brief 8PM) chạy
+   qua Windows Task Scheduler — COMPLETE.
+4. Chưa có code: Security Intelligence Portal, Email Security sensor,
+   WAAP adapter (paused), WiFi/IoT sensor.
+
+## Implementation Status (2026-09-05)
+
+**COMPLETE:**
+- Event Hub (`scripts/event_schema.py`)
+- Baseline Store (`scripts/baseline_store.py`)
+- Change Detector (`scripts/change_detector.py`)
+- Recommendation Engine (`scripts/recommendation_engine.py`)
+- Daily Brief (`scripts/daily_brief_store.py`, `daily_brief_generator.py`)
+- MCP (`modules/eventHub.js` — `get_security_score`, `get_daily_brief`,
+  `get_recent_incidents`, `get_asset_status`)
+- Defender Collector (`scripts/collect_defender_snapshot.py`)
+- Defender Threat Collector (`scripts/collect_defender_threats_snapshot.py`)
+- Firewall Collector (`scripts/collect_firewall_snapshot.py`)
+- Device Inventory Collector (`scripts/collect_device_inventory_snapshot.py`)
+- Website Collector (`scripts/collect_website_snapshot.py`)
+- Scheduler Automation (Windows Task Scheduler: `SentinelOps-Collectors`
+  mỗi 15 phút, `SentinelOps-DailyBrief` 8PM daily)
+
+Validate bằng dữ liệu thật trên host này (Defender, Firewall, Device
+Inventory qua `arp -a`, Website `sentinelops.fyi`).
 
 ## Next 30 Days
 

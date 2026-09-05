@@ -7,7 +7,9 @@ for what gets built next, in order.
 
 **Status:** researched, not built. Backed by MVP #4 Discovery
 (`docs/VNETWORK_API_DISCOVERY.md`, `docs/VNETWORK_PRODUCT_DISCOVERY.md`,
-`docs/VNETWORK_CAPABILITY_ASSESSMENT.md`).
+`docs/VNETWORK_CAPABILITY_ASSESSMENT.md`) plus a 2026-09-04 schema-level
+follow-up, `docs/WAAP_LOG_SEARCH_SCHEMA.md` — full request/response
+schema, verbatim sample payloads, and an MCP integration design.
 
 **What it is:** `POST /v1/bsearch` against `openapi.vnetwork.vn` — a
 real, callable, Bearer-token-authenticated log search/aggregation
@@ -26,7 +28,16 @@ label (`waap`) and one new `ENRICHMENT_RULES` entry.
 
 **Open before starting:** what specific threshold/query defines "alert
 -worthy" — needs a decision, not a discovery (the API itself is fully
-understood).
+understood, schema included). Three candidate shapes are now on the
+table: (a) a `status`/`upstream_status` terms-agg threshold on 4xx/5xx
+rate, (b) a `query_string` match against a known-bad URI pattern, or
+(c) `mitigation_result` being non-empty / not `"ACL-WHITE"` — though
+(c) needs one live test call first to see what other values that field
+actually takes (not documented anywhere). Also open: the `domains`
+list to query (needs `GET /v3/cdn/domains`, not yet called) and the
+`mitigation_result`/`mitigate_result` naming ambiguity found in the
+endpoint's own request template — see `docs/WAAP_LOG_SEARCH_SCHEMA.md`
+§4/§6 for full detail.
 
 ## 2. Healthcheck Webhook Receiver
 

@@ -22,6 +22,13 @@ discovery work, to remove ambiguity between the build-MVP numbering
 
 Next-step priorities and scope: see `NEXT_STEPS.md`.
 
+**Post-freeze discovery (2026-09-04, same day, after the checkpoint
+above):** `docs/WAAP_LOG_SEARCH_SCHEMA.md` — full `POST /v1/bsearch`
+request/response schema, verbatim sample payloads, and an MCP
+integration design for NEXT_STEPS #1 (WAAP Log Search Integration).
+Documentation-only, nothing implemented. Detail in the "WAAP Log
+Search — Schema & MCP Plan" section below.
+
 ## Completed
 
 ✅ MVP #1 - Fake Alert Pipeline
@@ -437,8 +444,190 @@ duplicate-detection functions, `compute_labels`,
 `build_analysis_comment`), extended with one new label
 (`vnetwork-healthcheck`) and one new `ENRICHMENT_RULES` entry.
 
+## WAAP Log Search — Schema & MCP Plan
+
+Completed 2026-09-04, post-freeze. Documentation-only follow-up to the
+VNETWORK OpenAPI/Product/Capability discovery passes above, closing out
+`NEXT_STEPS.md` #1's "the API itself is fully understood" claim at the
+field-schema level instead of just the endpoint-catalog level. No
+VNETWORK API endpoint was called. Full detail:
+`docs/WAAP_LOG_SEARCH_SCHEMA.md`.
+
+**Confirmed the 5 requested fields against `POST /v1/bsearch`'s own
+docs table:** source IP (`http_x_forwarded_for`), URI (`uri.keyword`),
+status code (`status` for the WAF/edge response, `upstream_status` for
+the origin), user agent (`http_user_agent`). The fifth — attack
+indicators — is **not** in the endpoint's documented field table, but
+a real field for it (`mitigation_result`, one confirmed value
+`"ACL-WHITE"` = allow-listed) was found inside the request template's
+own commented-out examples — undocumented in prose, but genuinely
+present and usable. A second, textually distinct field name
+(`mitigate_result`) also appears once; whether that's a real second
+field or a typo in VNETWORK's own template is unresolved without a
+live test call.
+
+**Full request/response schema captured verbatim** (top-level fields,
+the `Query`/`Term`/`Order`/`Filter` sub-objects, the documented `Key`
+field list) plus the collection's own saved example request and both
+saved example responses (200 success, 401 invalid-domain) — all
+reproduced exactly in the doc, nothing paraphrased into an assumed
+shape.
+
+**One real contradiction found and flagged, not resolved:** the docs
+table marks `domains` as Mandatory; the request template's own comment
+says it's optional and defaults to all authorized domains if omitted.
+
+**MCP integration plan (design only):** a new read-only tool
+`vnetworkWaapSearch` (name already sketched in
+`docs/VNETWORK_API_DISCOVERY.md`) plus `scripts/create_waap_incident.py`
+following the exact `create_securitywatch_incident.py` structure —
+same `to_alert()` → `score_alert` → `build_issue` → `create_issue` →
+`assign_issue` → `compute_labels` → `build_analysis_comment` →
+duplicate-detection chain, unchanged. New env var
+`VNETWORK_OPENAPI_TOKEN` (same pattern as the existing `GITHUB_TOKEN`
+guard in every `scripts/*.py`), new `waap` label, one new
+`ENRICHMENT_RULES` entry.
+
+**Still open before building (decisions for Kevin, not discovery
+gaps):** the alert-worthy threshold (now three candidate shapes:
+4xx/5xx rate, a bad-URI `query_string` match, or a non-`"ACL-WHITE"`
+`mitigation_result`), the actual `domains` list to query (needs
+`GET /v3/cdn/domains`, itself not yet called), and one live test call
+to resolve the `mitigation_result`/`mitigate_result` naming ambiguity
+and see the undocumented `date_histogram`/`raw:true` response shapes.
+
+## WAAP Log Search — Live Verification Pass
+
+Completed 2026-09-04, same day, after the schema doc above. **Not
+documentation-only — this pass made real, read-only calls against
+`https://openapi.vnetwork.vn`** with a live Bearer token, at the
+user's explicit request, specifically to verify the 5 fields against
+actual response data before implementation. Full detail, every
+request/response body: `docs/WAAP_LOG_SEARCH_SCHEMA.md` §7.
+
+**Result: verification did not reach a `200` response.** Three calls,
+all denied, all with structured/service-specific errors rather than a
+uniform failure:
+- `GET /v3/instances` (Compute) → `403 Service.AccessDenied`
+- `GET /v3/cdn/domains` (CDN) → `404 Service.NotFound` — traced to a
+  real gap in the published Postman collection: this endpoint (and 2
+  siblings) use an unresolved `{{URL}}` template variable instead of
+  the hardcoded `openapi.vnetwork.vn` host all 103 other endpoints use
+- `POST /v1/bsearch` against `audit.sentinelops.fyi` → `401
+  Request.Unauthorized` — reproduced identically 3 times: with the
+  domain specified, with `domains` omitted entirely (testing the
+  schema doc's "optional, defaults to all domains" claim), and again
+  after a full token rotation
+
+**The 403/404/401 spread, reproduced after rotating to a brand-new
+token, is itself the finding:** the token is live and authenticates,
+but this account currently has no provisioned/authorized access to
+WAAP, CDN, or Compute reachable from here — not a bad-credential
+problem. **None of the 5 requested fields (source IP, URI, status
+code, user agent, mitigation result) were observed in real response
+data.** Every claim about them stays doc-sourced (§1–§4 of the schema
+doc), not live-verified. What *did* get verified live: the request
+bodies sent were well-formed enough to reach real authorization logic
+(no `400`/malformed-request errors), and the error-response envelope
+matches the collection's own documented shape.
+
+**Security incident, handled correctly:** the first token used was
+briefly exposed in this session's chat transcript while being passed
+into a shell. Treated as compromised immediately; the user rotated the
+key in the VNETWORK console and revoked the old one before any further
+calls were trusted. All calls (including the retest) used a token read
+from a local, non-committed file, never printed by any script.
+
+**Next step for this integration:** either the correct onboarded
+domain name, a token scoped to a provisioned account, or a decision to
+proceed with the doc-sourced schema as sufficient — the threshold and
+`domains`-list open items from the section above are unaffected either
+way. **Integration code was not written** — still plan-only per
+`docs/WAAP_LOG_SEARCH_SCHEMA.md` §6.
+
+## WAAP Log Search — Root Cause Identified (Onboarding, Not Token/Code)
+
+Confirmed 2026-09-04, later same day, via direct Partner Portal
+evidence (Kevin checked the console — this project has no browser/
+portal access, so this is Kevin's observation, reported here, not
+independently re-verified by this session). WAAP's own onboarding flow
+— **Step 2: Domain & Origin** — shows:
+
+- No Website Domain configured
+- No Origin Server configured
+
+**Root cause: no WAAP site has ever been onboarded on this account —
+not a token problem, not a code/request-schema problem.** This
+directly explains every result in the Live Verification Pass above
+without needing any further API debugging:
+
+- `POST /v1/bsearch` → `401 Request.Unauthorized` for
+  `audit.sentinelops.fyi`, and identically with `domains` omitted —
+  consistent with zero domains ever having been onboarded into
+  `Elastic.LogComposer`, exactly as the collection's own detailed 401
+  example describes ("domain(s) not belong to your
+  Elastic.LogComposer").
+- The token itself was already independently confirmed live/valid
+  (structured, service-specific 403/404/401 errors, reproduced
+  identically across two different tokens) — this finding narrows
+  "why" without contradicting that.
+- `audit.sentinelops.fyi` being CNAME'd to VNETWORK's CDN at the DNS
+  level (confirmed in the MVP #5 plan doc) does not imply it was ever
+  registered as a protected site inside WAAP's own onboarding flow —
+  those are two different steps, and this account only completed
+  (or is mid-) the DNS-pointing one.
+
+**Per instruction: no further API debugging** (at the time this section
+was written — see the update directly below; onboarding has since been
+completed and re-checked). The blocker identified here was a
+console/onboarding action item for Kevin (complete Step 2: Domain &
+Origin, and whatever steps follow it, for the intended domain), not
+something resolvable from this session by retrying calls, rotating
+tokens again, or changing the request shape. WAAP Log Search
+Integration remains plan-only; nothing implemented.
+
+## WAAP Log Search — Post-Onboarding Re-Verification
+
+Completed 2026-09-04, later same day. Kevin completed WAAP onboarding
+— **Website: `www.sentinelops.fyi`, Service ID: `95743`**. Per
+instruction, re-ran the exact same 3 read-only checks from the Live
+Verification Pass above (same token file, same endpoints) to check
+whether API accessibility, WAAP log search access, or analytics
+availability changed. Documentation only. Full detail, byte-for-byte
+responses, and a before/after table: `docs/WAAP_LOG_SEARCH_SCHEMA.md`
+§8.
+
+**Result: no change on any of the 3 checks.**
+- `GET /v3/instances` (Compute) — still `403 Service.AccessDenied`
+- `GET /v3/cdn/domains` (CDN) — still `404 Service.NotFound`
+- `POST /v1/bsearch` against `www.sentinelops.fyi` (the actual
+  onboarded domain, not the `audit.sentinelops.fyi` guess used
+  earlier) — still `401 Request.Unauthorized`, byte-for-byte the same
+  error shape as before onboarding
+
+**Analytics availability was not separately testable:** per
+`docs/VNETWORK_PRODUCT_DISCOVERY.md`, `bsearch` is the only API surface
+behind WAAP's console Analytics/Logs tabs — no separate analytics
+endpoint exists — so the same `401` covers both "log search access"
+and "analytics availability" together; they did not diverge.
+
+**This corrects, not just reconfirms, the prior root-cause section
+above:** "no WAAP site onboarded" may have been accurate as of that
+check, but the fix applied since then has **not yet unlocked API-level
+access**. Four plausible explanations are recorded, unconfirmed, in
+`docs/WAAP_LOG_SEARCH_SCHEMA.md` §8 — propagation delay, onboarding
+incomplete beyond Step 2, a domain-string mismatch between what was
+queried and what the portal actually registered, or an account/token
+scope mismatch (consistent with Compute/CDN also staying unchanged,
+though a WAAP-only onboarding wouldn't be expected to fix those
+anyway). None were tested further this pass — documentation only, per
+instruction.
+
 ## Next Task
 
 Milestone frozen — see `NEXT_STEPS.md` for the prioritized build order
 (WAAP Log Search Integration → Healthcheck Webhook Receiver → Digital
-Risk Twin) and scope for each.
+Risk Twin) and scope for each. WAAP Log Search Integration's schema is
+now fully captured (`docs/WAAP_LOG_SEARCH_SCHEMA.md`) — the remaining
+blocker to starting the build is the threshold/domains decisions
+above, not further discovery.

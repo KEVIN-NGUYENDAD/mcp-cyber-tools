@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-09-05T11:22:43.482164",
+  "nessus_url": "https://localhost:8834",
+  "nessus_endpoint": "https://localhost:8834",
+  "scanner_status": "running",
+  "last_scan": "2026-08-14T12:15:40",
+  "scan_name": "Credentialed Patch Audit - Desktop",
+  "scan_age_hours": 527.1,
+  "critical": 0,
+  "high": 0,
+  "medium": 0,
+  "low": 0,
+  "info": 0,
+  "total": 0
+}

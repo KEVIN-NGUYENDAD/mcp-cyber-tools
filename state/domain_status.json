@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-09-05T11:14:31.144545",
+  "domain": "sentinelops.fyi",
+  "nameservers": [
+    "salvador.ns.porkbun.com.",
+    "curitiba.ns.porkbun.com.",
+    "fortaleza.ns.porkbun.com.",
+    "maceio.ns.porkbun.com."
+  ],
+  "a_records": [
+    "216.24.57.7",
+    "216.24.57.15"
+  ],
+  "mx_records": [
+    "10 fwd1.porkbun.com.",
+    "20 fwd2.porkbun.com."
+  ],
+  "spf": null,
+  "dmarc": null,
+  "expiration_date": null,
+  "registration_date": null,
+  "dns_complete": {
+    "has_nameservers": true,
+    "has_a_records": true,
+    "has_mx_records": true,
+    "has_spf": false,
+    "has_dmarc": false
+  }
+}
