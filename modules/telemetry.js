@@ -3,9 +3,15 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 class TelemetryEngine {
-  constructor(telemetryPath = './telemetry') {
+  constructor(telemetryPath = null) {
+    if (!telemetryPath) {
+      const __dirname = path.dirname(fileURLToPath(import.meta.url));
+      const projectRoot = path.resolve(__dirname, '..');
+      telemetryPath = path.join(projectRoot, 'telemetry');
+    }
     this.telemetryPath = telemetryPath;
     this.ensureDirectory();
   }
