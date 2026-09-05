@@ -80,3 +80,17 @@ def save_snapshot(source: str, asset_id: str, state: dict) -> dict:
         print(f"Error: could not write baseline for '{source}' ({exc}); continuing.")
         return None
     return envelope
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Baseline Store CLI (for the MCP Interface, Phase E).")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    load_parser = subparsers.add_parser("load", help="Print the last-known snapshot for a source.")
+    load_parser.add_argument("source")
+
+    args = parser.parse_args()
+    if args.command == "load":
+        print(json.dumps(load_snapshot(args.source)))

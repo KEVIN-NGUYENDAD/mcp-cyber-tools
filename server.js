@@ -20,6 +20,9 @@ import { registerForensicsTools } from "./modules/forensics.js";
 import { registerHuntingTools } from "./modules/hunting.js";
 import { registerIncidentTools } from "./modules/incident.js";
 
+// Import Event Hub module (Phase E: MCP Interface)
+import { registerEventHubTools } from "./modules/eventHub.js";
+
 const server = new McpServer({
   name: "cyber-tools",
   version: "1.0.0"
@@ -43,6 +46,9 @@ registerForensicsTools(server);
 console.error("Loading Phase 4 modules...");
 registerHuntingTools(server);
 registerIncidentTools(server);
+
+console.error("Loading Event Hub module...");
+registerEventHubTools(server);
 
 const transport = new StdioServerTransport();
 
