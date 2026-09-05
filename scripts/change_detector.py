@@ -51,6 +51,21 @@ SEVERITY_BY_CHANGE_TYPE = {
     "value_changed": "low",
 }
 
+# Source-specific severity escalation (GitHub Incident Auto Routing sprint):
+# overrides SEVERITY_BY_CHANGE_TYPE's generic default for named high-impact
+# scenarios. (source substring, change_type) -> severity; first match wins.
+SEVERITY_OVERRIDES = {
+    ("defender_threats", "new_entity"): "critical",  # Malware Detected
+    ("device_inventory", "new_entity"): "high",      # Unknown Device
+}
+
+
+def _severity_for(source: str, change_type: str) -> str:
+    for (substr, ct), severity in SEVERITY_OVERRIDES.items():
+        if ct == change_type and substr in source.lower():
+            return severity
+    return SEVERITY_BY_CHANGE_TYPE[change_type]
+
 
 def _is_entity_map(state: dict) -> bool:
     return bool(state) and all(isinstance(v, dict) for v in state.values())
@@ -63,7 +78,7 @@ def _evidence_from_fields(fields: dict) -> list:
 def _new_entity_event(source: str, entity_id: str, fields: dict) -> dict:
     return make_event(
         source=source,
-        severity=SEVERITY_BY_CHANGE_TYPE["new_entity"],
+        severity=_severity_for(source, "new_entity"),
         title=f"New entity detected: {entity_id}",
         summary=f"{source}: a new entity '{entity_id}' was not present in the previous baseline.",
         evidence=[{"key": "entity_id", "value": str(entity_id)}] + _evidence_from_fields(fields),
@@ -73,7 +88,7 @@ def _new_entity_event(source: str, entity_id: str, fields: dict) -> dict:
 def _removed_entity_event(source: str, entity_id: str, fields: dict) -> dict:
     return make_event(
         source=source,
-        severity=SEVERITY_BY_CHANGE_TYPE["removed_entity"],
+        severity=_severity_for(source, "removed_entity"),
         title=f"Entity disappeared: {entity_id}",
         summary=f"{source}: entity '{entity_id}' was present in the previous baseline but is now missing.",
         evidence=[{"key": "entity_id", "value": str(entity_id)}] + _evidence_from_fields(fields),
@@ -96,7 +111,7 @@ def _field_change_event(source: str, entity_id, field: str, old_value, new_value
         evidence.insert(0, {"key": "entity_id", "value": str(entity_id)})
     return make_event(
         source=source,
-        severity=SEVERITY_BY_CHANGE_TYPE[change_type],
+        severity=_severity_for(source, change_type),
         title=f"{label} changed",
         summary=f"{source}: '{label}' changed from {old_value!r} to {new_value!r}.",
         evidence=evidence,

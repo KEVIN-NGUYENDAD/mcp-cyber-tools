@@ -42,6 +42,11 @@ def _change_type(event: dict) -> str:
 # event's evidence list and are None when not applicable (e.g. new_entity).
 _RULES = [
     (
+        lambda e, ct, field, new_value: "defender_threats" in e["source"].lower() and ct == "new_entity",
+        "Isolate the affected device, confirm the threat was quarantined, and run a full Defender scan.",
+        "critical",
+    ),
+    (
         lambda e, ct, field, new_value: "firewall" in e["source"].lower() and ct == "field_changed" and new_value == "False",
         "Re-enable Windows Firewall.",
         "high",
@@ -56,14 +61,24 @@ _RULES = [
         "high",
     ),
     (
+        lambda e, ct, field, new_value: (
+            "website" in e["source"].lower()
+            and ct == "field_changed"
+            and field and "ssl" in field.lower()
+            and new_value == "False"
+        ),
+        "SSL certificate is invalid or failed validation -- check expiry/chain and renew.",
+        "high",
+    ),
+    (
         lambda e, ct, field, new_value: "website" in e["source"].lower() and ct == "field_changed" and new_value == "False",
         "Check the website hosting provider / server status.",
         "high",
     ),
     (
         lambda e, ct, field, new_value: "device_inventory" in e["source"].lower() and ct == "new_entity",
-        "Verify ownership of the new device before trusting it on the network.",
-        "medium",
+        "Unknown device on the network -- verify ownership before trusting it.",
+        "high",
     ),
     (
         lambda e, ct, field, new_value: "device_inventory" in e["source"].lower() and ct == "removed_entity",
