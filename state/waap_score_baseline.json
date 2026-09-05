@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T11:46:34.586345",
+  "timestamp": "2026-09-05T14:35:36.227123",
   "domain": "sentinelops.fyi",
   "checks": {
     "ssl_valid": true,
@@ -21,7 +21,7 @@
     "security_headers": 25
   },
   "issues": [
-    "SSL certificate expiring in 88 days",
+    "SSL certificate expiring in 87 days",
     "Missing security headers: HSTS, X-Frame-Options, CSP"
   ],
   "issue_count": 2,

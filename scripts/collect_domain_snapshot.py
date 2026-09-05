@@ -79,9 +79,11 @@ class DomainCollector:
     def get_spf_record(self):
         """Get SPF record"""
         try:
-            records = self.get_dns_records('TXT')
-            if records:
-                for record in records:
+            resolver = dns.resolver.Resolver()
+            answers = resolver.resolve(self.domain, 'TXT', lifetime=5)
+            for rdata in answers:
+                for txt_string in rdata.strings:
+                    record = txt_string.decode('utf-8') if isinstance(txt_string, bytes) else str(txt_string)
                     if record.startswith('v=spf1'):
                         return record
             return None
@@ -89,14 +91,28 @@ class DomainCollector:
             return None
 
     def get_dmarc_record(self):
-        """Get DMARC record"""
+        """Get DMARC record (TXT or CNAME)"""
         try:
             resolver = dns.resolver.Resolver()
-            answers = resolver.resolve(f'_dmarc.{self.domain}', 'TXT', lifetime=5)
-            records = [str(rdata) for rdata in answers]
-            for record in records:
-                if record.startswith('v=DMARC1'):
-                    return record
+            # Try TXT record first
+            try:
+                answers = resolver.resolve(f'_dmarc.{self.domain}', 'TXT', lifetime=5)
+                for rdata in answers:
+                    for txt_string in rdata.strings:
+                        record = txt_string.decode('utf-8') if isinstance(txt_string, bytes) else str(txt_string)
+                        if record.startswith('v=DMARC1'):
+                            return record
+            except (dns.resolver.NoAnswer, dns.exception.DNSException):
+                pass
+
+            # Try CNAME (common for hosted DMARC services)
+            try:
+                answers = resolver.resolve(f'_dmarc.{self.domain}', 'CNAME', lifetime=5)
+                for rdata in answers:
+                    return f"CNAME {str(rdata)}"
+            except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer, dns.exception.DNSException):
+                pass
+
             return None
         except:
             return None
