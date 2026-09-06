@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timeline Display Test</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1a2e; color: #e0e0e0; }
+    .event { margin: 10px 0; padding: 10px; border-left: 4px solid #00d4ff; }
+    .event.critical { border-left-color: #ff3333; background: rgba(255,51,51,0.05); }
+    .event.high { border-left-color: #ff6b6b; background: rgba(255,107,107,0.05); }
+    .event.medium { border-left-color: #ffa500; background: rgba(255,165,0,0.05); }
+  </style>
+</head>
+<body>
+  <h1>Timeline Display Test</h1>
+  <div id="timeline"></div>
+
+  <script>
+    async function testTimeline() {
+      try {
+        const response = await fetch('../state/timeline.json');
+        const data = await response.json();
+
+        console.log('Timeline data loaded:', data);
+
+        const container = document.getElementById('timeline');
+
+        if (!data.events || data.events.length === 0) {
+          container.innerHTML = '<p>No events</p>';
+          return;
+        }
+
+        const html = data.events.slice(0, 10)
+          .map(event => `
+            <div class="event ${event.severity.toLowerCase()}">
+              <strong>${event.type}</strong> (${event.category})<br>
+              <small>${event.timestamp}</small><br>
+              ${event.description}<br>
+              <span style="color: #ffa500;">Severity: ${event.severity}</span>
+            </div>
+          `)
+          .join('');
+
+        container.innerHTML = html;
+        console.log('✓ Timeline display works!');
+      } catch (e) {
+        document.getElementById('timeline').innerHTML = `<p style="color: red;">Error: ${e.message}</p>`;
+        console.error('✗ Timeline display error:', e);
+      }
+    }
+
+    testTimeline();
+  </script>
+</body>
+</html>
