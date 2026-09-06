@@ -72,6 +72,31 @@ Phase N successfully implements a comprehensive SOC intelligence layer for Senti
   - Handles errors gracefully (partial success if one extractor fails)
 - **Status**: ✅ Operational - Successfully orchestrating intelligence pipeline
 
+### N.12: Telegram Alerting & Mobile Notifications
+
+#### Real-Time Alert Delivery
+- **File**: `scripts/send_telegram_alert.py`
+- **Purpose**: Deliver CRITICAL/HIGH severity incidents to iPhone via Telegram
+- **Architecture**:
+  - Telegram Bot API integration (@sentinelops_kevin_bot)
+  - Real-time push notifications
+  - Anti-spam deduplication (30-minute window)
+  - Audit trail tracking (notification_history.json)
+- **Capabilities**:
+  - Filters incidents by severity (CRITICAL/HIGH)
+  - Formats alerts with incident details
+  - Sends via official Telegram Bot API
+  - Tracks delivery status and timestamps
+  - Prevents alert fatigue with deduplication
+- **Configuration**:
+  - TELEGRAM_BOT_TOKEN (validated via getMe API)
+  - TELEGRAM_CHAT_ID (8814186709 - Kevin Nguyen)
+- **Validation Results**:
+  - Bot Authentication: ✅ PASS
+  - Message Delivery: ✅ PASS (3/3 test alerts sent)
+  - iPhone Notifications: ✅ PASS (real-time push confirmed)
+- **Status**: ✅ Operational - PRODUCTION READY
+
 ### 2. Dashboard Enhancements
 
 **File**: `dashboard.html` (updated)
@@ -378,4 +403,22 @@ Phase N successfully implements the SOC Intelligence Infrastructure foundation f
 2. Improve Nessus data extraction quality (Priority 2)
 3. Implement risk scoring and alerting (Priority 3)
 
-**Status**: ✅ Phase N COMPLETE - Ready for next session
+**Status**: ✅ Phase N COMPLETE (Extended through N.12) - Ready for next session
+
+---
+
+## PHASE N.12 EXTENSION
+
+**Date Added**: 2026-09-06  
+**Component**: Telegram Alerting & Mobile Notifications  
+**Status**: ✅ COMPLETE
+
+### Achievement
+SentinelOps now delivers critical security incidents directly to iPhone in real-time via Telegram. The end-to-end alert delivery chain (Detection → Incident → Telegram → iPhone) has been validated and is production-ready.
+
+### Test Results (2026-09-06)
+- Direct API Test: ✅ PASS (Message ID: 4)
+- CRITICAL Incident Delivery: ✅ PASS (INC-0004, Message ID: 7)
+- SentinelOps Test Alert: ✅ PASS (TEST-0001, Message ID: 8)
+
+**See**: `docs/PHASE_N12_TELEGRAM_ALERTING.md` for full details
