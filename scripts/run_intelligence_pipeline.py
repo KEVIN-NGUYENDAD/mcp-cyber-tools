@@ -219,11 +219,49 @@ class IntelligencePipeline:
 
         self.log('')
 
+        # Stage 1b: MCP Telemetry Collection (Phase N.6)
+        self.log('🖥️ PHASE 1B: MCP TELEMETRY COLLECTION')
+        self.log('-' * 50)
+
+        # 4. System health
+        ok, _ = self.run_stage(
+            'System Health',
+            self.scripts_dir / 'collect_system_health.py',
+            'Collecting system health metrics'
+        )
+        success = success and ok
+
+        # 5. Defender status
+        ok, _ = self.run_stage(
+            'Defender Status',
+            self.scripts_dir / 'collect_defender_status.py',
+            'Checking Defender protection'
+        )
+        success = success and ok
+
+        # 6. Firewall status
+        ok, _ = self.run_stage(
+            'Firewall Status',
+            self.scripts_dir / 'collect_firewall_status.py',
+            'Checking Firewall status'
+        )
+        success = success and ok
+
+        # 7. Security events
+        ok, _ = self.run_stage(
+            'Security Events',
+            self.scripts_dir / 'collect_security_events.py',
+            'Collecting security events from last 24 hours'
+        )
+        success = success and ok
+
+        self.log('')
+
         # Stage 2: Intelligence Extraction
         self.log('🧠 PHASE 2: INTELLIGENCE EXTRACTION')
         self.log('-' * 50)
 
-        # 4. Asset extraction
+        # 8. Asset extraction
         ok, _ = self.run_stage(
             'Asset Intelligence',
             self.scripts_dir / 'extract_asset_intelligence.py',
@@ -231,7 +269,7 @@ class IntelligencePipeline:
         )
         success = success and ok
 
-        # 5. Service extraction
+        # 9. Service extraction
         ok, _ = self.run_stage(
             'Service Intelligence',
             self.scripts_dir / 'collect_service_intelligence.py',
@@ -239,7 +277,7 @@ class IntelligencePipeline:
         )
         success = success and ok
 
-        # 6. Crypto inventory
+        # 10. Crypto inventory
         ok, _ = self.run_stage(
             'Crypto Inventory',
             self.scripts_dir / 'collect_crypto_inventory.py',
@@ -253,7 +291,7 @@ class IntelligencePipeline:
         self.log('🎯 PHASE 3: RISK SCORING')
         self.log('-' * 50)
 
-        # 7. WAAP score calculation
+        # 11. WAAP score calculation
         ok, _ = self.run_stage(
             'WAAP Score',
             self.scripts_dir / 'calculate_waap_score.py',
@@ -267,7 +305,7 @@ class IntelligencePipeline:
         self.log('📝 PHASE 4: REPORT GENERATION')
         self.log('-' * 50)
 
-        # 8. Daily brief generation
+        # 12. Daily brief generation
         ok, _ = self.run_stage(
             'Daily Brief',
             self.scripts_dir / 'generate_daily_brief.py',
@@ -281,11 +319,11 @@ class IntelligencePipeline:
         self.log('🎯 PHASE 5: RISK ASSESSMENT')
         self.log('-' * 50)
 
-        # 9. Calculate overall risk score
+        # 13. Calculate overall risk score (with MCP data)
         ok, _ = self.run_stage(
             'Risk Score',
             self.scripts_dir / 'calculate_risk_score.py',
-            'Calculating overall risk score'
+            'Calculating overall risk score (with MCP telemetry)'
         )
         success = success and ok
 
@@ -295,7 +333,7 @@ class IntelligencePipeline:
         self.log('💡 PHASE 6: DECISION ENGINE')
         self.log('-' * 50)
 
-        # 10. Generate recommended actions
+        # 14. Generate recommended actions (with MCP decisions)
         ok, _ = self.run_stage(
             'Recommended Actions',
             self.scripts_dir / 'generate_recommended_actions.py',
