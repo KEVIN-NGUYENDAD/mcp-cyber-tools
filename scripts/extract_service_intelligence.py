@@ -73,6 +73,15 @@ class ServiceIntelligence:
         except Exception:
             return None
 
+    def get_scan_data(self, scan_id):
+        """Get full scan data including hosts and vulnerabilities"""
+        try:
+            resp = self.session.get(f'{self.nessus_url}/scans/{scan_id}', timeout=10)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception:
+            return {}
+
     def get_scan_vulnerabilities(self, scan_id):
         try:
             resp = self.session.get(f'{self.nessus_url}/scans/{scan_id}', timeout=10)
@@ -128,8 +137,8 @@ class ServiceIntelligence:
 
         return f'Service({port})'
 
-    def extract_services(self, vulnerabilities):
-        """Extract unique services from vulnerability findings"""
+    def extract_services(self, scan_data):
+        """Extract services from plugin vulnerabilities"""
         services_by_key = {}
         service_global_stats = defaultdict(lambda: {
             'name': '',
@@ -144,64 +153,86 @@ class ServiceIntelligence:
             'hosts': []
         })
 
+        vulnerabilities = scan_data.get('vulnerabilities', [])
+        hosts = scan_data.get('hosts', [])
+
+        # Build IP to hostname mapping
+        ip_to_host = {}
+        for host in hosts:
+            ip = host.get('hostname', '')
+            if ip:
+                ip_to_host[ip] = host
+
+        # Extract services from vulnerability plugin families and names
         for vuln in vulnerabilities:
-            asset = vuln.get('asset', {})
-            ip = asset.get('ip', 'unknown')
-            port = vuln.get('port', 0)
-            protocol = vuln.get('protocol', 'tcp')
             plugin_name = vuln.get('plugin_name', '')
+            plugin_family = vuln.get('plugin_family', '')
             severity = vuln.get('severity', 0)
 
-            service_name = self.identify_service_name(port, protocol, plugin_name)
-            service_key = f"{ip}:{port}:{protocol}"
+            # Identify service from plugin family/name
+            service_name = self.identify_service_name(0, 'tcp', plugin_name)
+            if service_name == 'Service(0)' and plugin_family:
+                # Use plugin family as fallback
+                service_name = plugin_family
 
-            if service_key not in services_by_key:
-                services_by_key[service_key] = {
-                    'ip': ip,
-                    'hostname': asset.get('hostname', ''),
-                    'port': port,
-                    'protocol': protocol,
-                    'service_name': service_name,
-                    'finding_count': 0,
-                    'critical': 0,
-                    'high': 0,
-                    'medium': 0,
-                    'low': 0,
-                    'info': 0,
-                    'last_seen': datetime.now().isoformat()
-                }
+            # Use all hosts for this service (plugin affects all scanned hosts)
+            for ip, host in ip_to_host.items():
+                service_key = f"{ip}:*:{service_name.lower()}"
 
-            services_by_key[service_key]['finding_count'] += 1
-            services_by_key[service_key]['last_seen'] = datetime.now().isoformat()
+                if service_key not in services_by_key:
+                    services_by_key[service_key] = {
+                        'ip': ip,
+                        'hostname': ip,
+                        'port': 0,
+                        'protocol': 'tcp',
+                        'service_name': service_name,
+                        'finding_count': 0,
+                        'critical': 0,
+                        'high': 0,
+                        'medium': 0,
+                        'low': 0,
+                        'info': 0,
+                        'last_seen': datetime.now().isoformat()
+                    }
 
-            # Count severity
-            if severity == 4:
-                services_by_key[service_key]['critical'] += 1
-            elif severity == 3:
-                services_by_key[service_key]['high'] += 1
-            elif severity == 2:
-                services_by_key[service_key]['medium'] += 1
-            elif severity == 1:
-                services_by_key[service_key]['low'] += 1
-            else:
-                services_by_key[service_key]['info'] += 1
+                services_by_key[service_key]['finding_count'] += 1
+                services_by_key[service_key]['last_seen'] = datetime.now().isoformat()
+
+                # Count severity
+                if severity == 4:
+                    services_by_key[service_key]['critical'] += 1
+                elif severity == 3:
+                    services_by_key[service_key]['high'] += 1
+                elif severity == 2:
+                    services_by_key[service_key]['medium'] += 1
+                elif severity == 1:
+                    services_by_key[service_key]['low'] += 1
+                else:
+                    services_by_key[service_key]['info'] += 1
 
             # Global service stats
             global_key = service_name
-            service_global_stats[global_key]['name'] = service_name
-            service_global_stats[global_key]['port_count'] = 1  # Normalized
-            service_global_stats[global_key]['host_count'] = len(set(
-                (s['ip'], s['service_name']) for s in services_by_key.values() if s['service_name'] == service_name
-            ))
-            service_global_stats[global_key]['finding_count'] += 1
-            service_global_stats[global_key]['severity_critical'] += max(0, min(1, severity - 3))
-            service_global_stats[global_key]['severity_high'] += max(0, min(1, max(0, severity - 2)) - max(0, severity - 3))
-            service_global_stats[global_key]['severity_medium'] += max(0, min(1, max(0, severity - 1)) - max(0, severity - 2))
-            service_global_stats[global_key]['severity_low'] += max(0, min(1, max(0, severity)) - max(0, severity - 1))
-            service_global_stats[global_key]['severity_info'] += max(0, 1 - severity)
+            if service_global_stats[global_key]['name'] == '':
+                service_global_stats[global_key]['name'] = service_name
 
-            if ip not in service_global_stats[global_key]['hosts']:
-                service_global_stats[global_key]['hosts'].append(ip)
+            service_global_stats[global_key]['finding_count'] += 1
+            if severity == 4:
+                service_global_stats[global_key]['severity_critical'] += 1
+            elif severity == 3:
+                service_global_stats[global_key]['severity_high'] += 1
+            elif severity == 2:
+                service_global_stats[global_key]['severity_medium'] += 1
+            elif severity == 1:
+                service_global_stats[global_key]['severity_low'] += 1
+            else:
+                service_global_stats[global_key]['severity_info'] += 1
+
+            # Add all hosts to this service
+            for ip in ip_to_host.keys():
+                if ip not in service_global_stats[global_key]['hosts']:
+                    service_global_stats[global_key]['hosts'].append(ip)
+
+            service_global_stats[global_key]['host_count'] = len(service_global_stats[global_key]['hosts'])
 
         return {
             'services_by_host': dict(services_by_key),
@@ -289,15 +320,17 @@ class ServiceIntelligence:
                 'solution': 'Run a vulnerability scan first'
             }
 
-        vulnerabilities = self.get_scan_vulnerabilities(scan_id)
-        if not vulnerabilities:
+        # Get scan data
+        scan_data = self.get_scan_data(scan_id)
+
+        if not scan_data:
             return {
-                'error': 'No vulnerabilities found',
-                'warning': 'Scan may be empty or filtered'
+                'error': 'No scan data found',
+                'warning': 'Failed to retrieve scan data'
             }
 
         # Extract services
-        services_data = self.extract_services(vulnerabilities)
+        services_data = self.extract_services(scan_data)
         previous_services = self.load_previous_services()
 
         # Detect changes

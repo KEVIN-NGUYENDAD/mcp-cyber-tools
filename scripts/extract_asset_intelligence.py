@@ -73,6 +73,15 @@ class AssetIntelligence:
         except Exception as e:
             return None
 
+    def get_scan_data(self, scan_id):
+        """Get scan data including hosts and vulnerabilities"""
+        try:
+            resp = self.session.get(f'{self.nessus_url}/scans/{scan_id}', timeout=10)
+            resp.raise_for_status()
+            return resp.json()
+        except Exception as e:
+            return {}
+
     def get_scan_vulnerabilities(self, scan_id):
         """Get detailed vulnerability data including asset/service info"""
         try:
@@ -111,58 +120,57 @@ class AssetIntelligence:
 
         return "Unknown"
 
-    def extract_assets(self, vulnerabilities):
-        """Extract unique assets from vulnerability findings"""
-        assets_by_ip = defaultdict(lambda: {
-            'ip': '',
-            'hostname': '',
-            'os': '',
-            'device_type': '',
-            'first_seen': datetime.now().isoformat(),
-            'last_seen': datetime.now().isoformat(),
-            'vulnerability_count': 0,
-            'critical': 0,
-            'high': 0,
-            'medium': 0,
-            'low': 0,
-            'info': 0
-        })
+    def extract_assets(self, scan_data):
+        """Extract unique assets from scan host data"""
+        assets_by_ip = {}
 
-        for vuln in vulnerabilities:
-            asset = vuln.get('asset', {})
-            ip = asset.get('ip')
+        # Extract from host-level data in scan response
+        hosts = scan_data.get('hosts', [])
+
+        for host in hosts:
+            ip = host.get('hostname', '')  # In Nessus API, hostname field contains IP
 
             if not ip:
                 continue
 
-            hostname = asset.get('hostname', '')
-            os_info = asset.get('operating_system', '')
-            severity = vuln.get('severity', 0)
+            # Get vulnerability counts from host data
+            assets_by_ip[ip] = {
+                'ip': ip,
+                'hostname': ip,  # Default to IP; could be enriched with reverse DNS
+                'os': '',  # Not available in simple host data
+                'device_type': 'Unknown',
+                'first_seen': datetime.now().isoformat(),
+                'last_seen': datetime.now().isoformat(),
+                'vulnerability_count': 0,
+                'critical': host.get('critical', 0),
+                'high': host.get('high', 0),
+                'medium': host.get('medium', 0),
+                'low': host.get('low', 0),
+                'info': host.get('info', 0)
+            }
 
-            # Update asset info
-            assets_by_ip[ip]['ip'] = ip
-            assets_by_ip[ip]['hostname'] = hostname or assets_by_ip[ip]['hostname']
-            assets_by_ip[ip]['os'] = os_info or assets_by_ip[ip]['os']
-            assets_by_ip[ip]['last_seen'] = datetime.now().isoformat()
-            assets_by_ip[ip]['vulnerability_count'] += 1
+            # Calculate total vulnerability count
+            assets_by_ip[ip]['vulnerability_count'] = (
+                host.get('critical', 0) +
+                host.get('high', 0) +
+                host.get('medium', 0) +
+                host.get('low', 0) +
+                host.get('info', 0)
+            )
 
-            # Count by severity
-            if severity == 4:
-                assets_by_ip[ip]['critical'] += 1
-            elif severity == 3:
-                assets_by_ip[ip]['high'] += 1
-            elif severity == 2:
-                assets_by_ip[ip]['medium'] += 1
-            elif severity == 1:
-                assets_by_ip[ip]['low'] += 1
-            else:
-                assets_by_ip[ip]['info'] += 1
+        # If we don't have hosts from host-level data, try to extract from vulnerabilities
+        if not assets_by_ip:
+            vulnerabilities = scan_data.get('vulnerabilities', [])
+            for vuln in vulnerabilities:
+                # Basic extraction without asset field
+                # This is fallback data
+                pass
 
-        # Assign device types
+        # Assign device types (without OS data, default to Unknown)
         for ip, asset in assets_by_ip.items():
             asset['device_type'] = self.classify_device_type(asset['os'])
 
-        return dict(assets_by_ip)
+        return assets_by_ip
 
     def load_previous_assets(self):
         """Load previous asset baseline for change detection"""
@@ -258,15 +266,17 @@ class AssetIntelligence:
                 'solution': 'Run a vulnerability scan first'
             }
 
-        vulnerabilities = self.get_scan_vulnerabilities(scan_id)
-        if not vulnerabilities:
+        # Get scan data which includes hosts and vulnerabilities
+        scan_data = self.get_scan_data(scan_id)
+
+        if not scan_data:
             return {
-                'error': 'No vulnerabilities found',
-                'warning': 'Scan may be empty or filtered'
+                'error': 'No scan data found',
+                'warning': 'Failed to retrieve scan data'
             }
 
-        # Extract assets
-        current_assets = self.extract_assets(vulnerabilities)
+        # Extract assets from scan data
+        current_assets = self.extract_assets(scan_data)
         previous_assets = self.load_previous_assets()
 
         # Detect changes
