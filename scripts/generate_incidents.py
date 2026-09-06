@@ -28,7 +28,7 @@ class IncidentEngine:
 
     def load_state(self, filename):
         fp = self.state_dir / filename
-        return json.load(open(fp)) if fp.exists() else {}
+        return json.load(open(fp, encoding='utf-8')) if fp.exists() else {}
 
     def load_existing_incidents(self):
         """Tải incidents hiện có để tiếp tục đánh số"""
@@ -239,6 +239,41 @@ class IncidentEngine:
                 reason=event.get('type')
             )
 
+    def detect_persistence_threats(self):
+        """Phát hiện: Persistence threat indicators (Phase N.9A)"""
+        persistence = self.load_state('hunting_persistence.json')
+
+        for indicator in persistence.get('indicators', []):
+            severity = indicator.get('severity', 'MEDIUM')
+            if severity in ['CRITICAL', 'HIGH']:
+                self.create_incident(
+                    severity=severity,
+                    title=f"PERSISTENCE THREAT: {indicator.get('type')}",
+                    assets=[],
+                    evidence=indicator.get('evidence', []),
+                    recommended_action=indicator.get('recommendation', 'Điều tra persistence'),
+                    reason=f"Persistence type: {indicator.get('type')}"
+                )
+
+    def detect_suspicious_processes(self):
+        """Phát hiện: Suspicious process execution (Phase N.9A)"""
+        processes = self.load_state('hunting_suspicious_processes.json')
+
+        for indicator in processes.get('indicators', []):
+            severity = indicator.get('severity', 'MEDIUM')
+            if severity in ['CRITICAL', 'HIGH']:
+                self.create_incident(
+                    severity=severity,
+                    title=f"SUSPICIOUS PROCESS: {indicator.get('process')}",
+                    assets=[],
+                    evidence=[
+                        f"Process: {indicator.get('process')}",
+                        f"Command: {indicator.get('command_line')}"
+                    ],
+                    recommended_action=indicator.get('recommendation', 'Điều tra process'),
+                    reason=f"Suspicious pattern: {indicator.get('category')}"
+                )
+
     def generate(self):
         """Phát hiện tất cả incidents"""
         self.detect_defender_disabled()
@@ -249,6 +284,9 @@ class IncidentEngine:
         self.detect_system_resource_critical()
         self.detect_multiple_vulnerabilities()
         self.detect_suspicious_events()
+        # Phase N.9A: Threat Hunting Integration
+        self.detect_persistence_threats()
+        self.detect_suspicious_processes()
 
         # Loại bỏ duplicates (kiểm tra title + severity)
         seen = set()

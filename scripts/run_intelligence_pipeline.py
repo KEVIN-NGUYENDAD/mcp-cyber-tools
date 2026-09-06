@@ -357,6 +357,28 @@ class IntelligencePipeline:
 
         self.log('')
 
+        # Stage 7B: Threat Hunting Integration (Phase N.9A)
+        self.log('🎯 PHASE 7B: THREAT HUNTING DETECTION')
+        self.log('-' * 50)
+
+        # 15B. Hunt persistence indicators
+        ok, _ = self.run_stage(
+            'Persistence Hunting',
+            self.scripts_dir / 'hunt_persistence_indicators.py',
+            'Hunting for persistence indicators'
+        )
+        success = success and ok
+
+        # 15C. Hunt suspicious processes
+        ok, _ = self.run_stage(
+            'Suspicious Process Hunting',
+            self.scripts_dir / 'hunt_suspicious_processes.py',
+            'Detecting suspicious process execution'
+        )
+        success = success and ok
+
+        self.log('')
+
         # Stage 8: Triage Engine
         self.log('🎯 PHASE 8: TRIAGE ENGINE')
         self.log('-' * 50)

