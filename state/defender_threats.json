@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "source": "defender_threats",
+  "asset_id": "kevin",
+  "captured_at": "2026-09-05T16:47:31.815407+00:00",
+  "state": {
+    "{41999390-A354-41AF-A3A3-5D25D627DD3B}": {
+      "threat_id": 2147519003,
+      "threat_name": "Virus:DOS/EICAR_Test_File",
+      "process_name": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "resources": "file:_C:\\Users\\tamng\\AppData\\Local\\Temp\\eicar_test.txt",
+      "detection_time": "2026-09-04T09:41:57.1450000-07:00",
+      "action_success": true
+    }
+  }
+}

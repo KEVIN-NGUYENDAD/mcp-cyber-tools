@@ -41,3 +41,19 @@ build/
 
 # Cache
 .cache/
+
+# Runtime State & Data
+state/*.json
+daily_brief/*.json
+network-scan-data/*.json
+logs/*.log
+telemetry/*.json
+
+# API Credentials
+.env
+.env.local
+credentials.json
+secrets.json
+
+# IDE Local Settings
+.claude/settings.local.json

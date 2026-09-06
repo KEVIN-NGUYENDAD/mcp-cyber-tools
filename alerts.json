@@ -1,6 +1,14 @@
 {
   "schema_version": "1.0",
-  "alerts": [],
-  "updated_at": "2026-09-01T04:08:53.883Z",
+  "alerts": [
+    {
+      "type": "FIREWALL_DISABLED",
+      "severity": "CRITICAL",
+      "control": "firewall",
+      "description": "Windows Firewall was turned off",
+      "detected_at": "2026-09-04T17:09:47.217Z"
+    }
+  ],
+  "updated_at": "2026-09-05T02:45:10.154Z",
   "open_alert_count": 0
 }

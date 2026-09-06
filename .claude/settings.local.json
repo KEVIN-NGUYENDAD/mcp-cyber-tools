@@ -195,7 +195,17 @@
       "Bash(powershell -NoProfile -Command 'Get-Process | Where-Object { $_.Name -match '\\\\''expressvpn|mcafee|vpn|openvpn|wireguard'\\\\'' } | Format-Table Name, Id -AutoSize')",
       "Bash(powershell -NoProfile -Command \"'ping: ' + \\(Test-Connection -ComputerName 192.168.0.25 -Count 2 -Quiet\\); 'port 23: ' + \\(Test-NetConnection -ComputerName 192.168.0.25 -Port 23 -InformationLevel Quiet\\); 'port 80: ' + \\(Test-NetConnection -ComputerName 192.168.0.25 -Port 80 -InformationLevel Quiet\\)\")",
       "Bash(node startup-router-scan.js)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(timeout 5 node server.js)",
+      "Bash(ls -la \"C:\\\\Windows\\\\System32\\\\telemetry\" 2>&1 || echo \"System32/telemetry does not exist \\(correct\\)\")",
+      "mcp__cyber-tools__securityAudit",
+      "mcp__home-soc__homeSocStatus",
+      "Bash(xargs grep -l \"daily\\\\|score\\\\|asset\\\\|incident\\\\|brief\")",
+      "mcp__home-soc__getAlerts",
+      "mcp__home-soc__discoverDevices",
+      "mcp__home-soc__deviceHistory",
+      "mcp__home-soc__predictThreatLevel",
+      "Bash(python3 scripts/collect_nessus_snapshot.py)"
     ]
   }
 }

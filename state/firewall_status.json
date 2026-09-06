@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "source": "firewall_status",
+  "asset_id": "kevin",
+  "captured_at": "2026-09-05T16:47:36.437761+00:00",
+  "state": {
+    "Domain": {
+      "enabled": true
+    },
+    "Private": {
+      "enabled": true
+    },
+    "Public": {
+      "enabled": true
+    }
+  }
+}
