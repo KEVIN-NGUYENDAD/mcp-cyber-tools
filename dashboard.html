@@ -381,6 +381,83 @@
         <div class="subheader">Issues</div>
         <div id="waap-issues" class="submetric"></div>
       </div>
+
+      <!-- ASSET INTELLIGENCE CARD -->
+      <div class="card">
+        <div class="card-title">💻 Asset Inventory</div>
+        <div class="metric">
+          <span class="metric-label">Total Assets</span>
+          <span class="metric-value" id="assets-total">—</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Known Devices</span>
+          <span class="metric-value present" id="assets-known">—</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Unknown Devices</span>
+          <span class="metric-value" id="assets-unknown">—</span>
+        </div>
+        <div class="subheader">Recent Changes</div>
+        <div class="metric">
+          <span class="metric-label">New Assets</span>
+          <span class="metric-value medium" id="assets-new">—</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Removed Assets</span>
+          <span class="metric-value high" id="assets-removed">—</span>
+        </div>
+      </div>
+
+      <!-- SERVICE INTELLIGENCE CARD -->
+      <div class="card">
+        <div class="card-title">🔌 Service Inventory</div>
+        <div class="metric">
+          <span class="metric-label">Total Services</span>
+          <span class="metric-value" id="services-total">—</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Service Types</span>
+          <span class="metric-value info" id="services-types">—</span>
+        </div>
+        <div class="subheader">Changes</div>
+        <div class="metric">
+          <span class="metric-label">New Services</span>
+          <span class="metric-value medium" id="services-new">—</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Closed Services</span>
+          <span class="metric-value" id="services-closed">—</span>
+        </div>
+        <div class="subheader">Common Ports</div>
+        <div id="services-list" class="submetric"></div>
+      </div>
+
+      <!-- CRYPTOGRAPHIC HEALTH CARD -->
+      <div class="card">
+        <div class="card-title">🔐 Cryptographic Health</div>
+        <div class="metric">
+          <span class="metric-label">Health Score</span>
+          <span class="metric-value" id="crypto-score">—</span>
+        </div>
+        <div id="crypto-score-bar"></div>
+        <div class="metric">
+          <span class="metric-label">Certificates</span>
+          <span class="metric-value" id="crypto-certs">—</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Weak Ciphers</span>
+          <span class="metric-value high" id="crypto-weak-ciphers">—</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Cipher Suites</span>
+          <span class="metric-value info" id="crypto-suite-count">—</span>
+        </div>
+        <div class="subheader">Issues</div>
+        <div class="metric">
+          <span class="metric-label">Expired Certs</span>
+          <span class="metric-value high" id="crypto-expired">—</span>
+        </div>
+      </div>
     </div>
 
     <!-- RECOMMENDATIONS SECTION -->
@@ -570,6 +647,101 @@
         .join('');
     }
 
+    function updateAssetCard(assetsData, changesData) {
+      if (!assetsData) {
+        document.getElementById('assets-total').textContent = '—';
+        document.getElementById('assets-known').textContent = '—';
+        document.getElementById('assets-unknown').textContent = '—';
+        document.getElementById('assets-new').textContent = '—';
+        document.getElementById('assets-removed').textContent = '—';
+        return;
+      }
+
+      const total = assetsData.total_assets || 0;
+      const known = (assetsData.assets || []).filter(a => a.hostname).length;
+      const unknown = total - known;
+
+      document.getElementById('assets-total').textContent = total;
+      document.getElementById('assets-known').textContent = known;
+      document.getElementById('assets-unknown').textContent = unknown;
+
+      if (changesData) {
+        document.getElementById('assets-new').textContent = changesData.new_assets ? changesData.new_assets.length : 0;
+        document.getElementById('assets-removed').textContent = changesData.removed_assets ? changesData.removed_assets.length : 0;
+      } else {
+        document.getElementById('assets-new').textContent = '—';
+        document.getElementById('assets-removed').textContent = '—';
+      }
+    }
+
+    function updateServiceCard(servicesData, changesData) {
+      if (!servicesData) {
+        document.getElementById('services-total').textContent = '—';
+        document.getElementById('services-types').textContent = '—';
+        document.getElementById('services-new').textContent = '—';
+        document.getElementById('services-closed').textContent = '—';
+        document.getElementById('services-list').innerHTML = '<div class="list-item">No service data</div>';
+        return;
+      }
+
+      const total = servicesData.service_count || 0;
+      const types = Object.keys(servicesData.service_inventory || {}).length;
+
+      document.getElementById('services-total').textContent = total;
+      document.getElementById('services-types').textContent = types;
+
+      if (changesData) {
+        document.getElementById('services-new').textContent = changesData.new_services ? changesData.new_services.length : 0;
+        document.getElementById('services-closed').textContent = changesData.closed_services ? changesData.closed_services.length : 0;
+      } else {
+        document.getElementById('services-new').textContent = '—';
+        document.getElementById('services-closed').textContent = '—';
+      }
+
+      // Display top service types
+      const serviceList = document.getElementById('services-list');
+      const inventory = servicesData.service_inventory || {};
+      const topServices = Object.entries(inventory)
+        .sort((a, b) => (b[1].host_count || 0) - (a[1].host_count || 0))
+        .slice(0, 3);
+
+      if (topServices.length > 0) {
+        serviceList.innerHTML = topServices
+          .map(([name, data]) => `<div class="list-item">→ ${name} (${data.host_count || 0} hosts)</div>`)
+          .join('');
+      } else {
+        serviceList.innerHTML = '<div class="list-item">No services detected</div>';
+      }
+    }
+
+    function updateCryptoCard(cryptoData) {
+      if (!cryptoData) {
+        document.getElementById('crypto-score').textContent = '—';
+        document.getElementById('crypto-certs').textContent = '—';
+        document.getElementById('crypto-weak-ciphers').textContent = '—';
+        document.getElementById('crypto-suite-count').textContent = '—';
+        document.getElementById('crypto-expired').textContent = '—';
+        document.getElementById('crypto-score-bar').innerHTML = '';
+        return;
+      }
+
+      const score = cryptoData.health_score || 0;
+      document.getElementById('crypto-score').textContent = `${score}/100`;
+
+      // Score bar
+      const scoreBarDiv = document.getElementById('crypto-score-bar');
+      scoreBarDiv.innerHTML = `<div class="score-bar"><div class="score-fill" style="width: ${score}%">${score}%</div></div>`;
+
+      document.getElementById('crypto-certs').textContent = cryptoData.certificate_count || 0;
+      document.getElementById('crypto-weak-ciphers').textContent = cryptoData.weak_cipher_count || 0;
+      document.getElementById('crypto-suite-count').textContent = cryptoData.cipher_suite_count || 0;
+
+      // Count expired certs
+      const certificates = cryptoData.certificates || {};
+      const expiredCount = Object.values(certificates).filter(c => c.expiry_status === 'expired').length;
+      document.getElementById('crypto-expired').textContent = expiredCount;
+    }
+
     async function loadDashboard() {
       document.getElementById('refresh-indicator').textContent = '⏳ Loading data...';
       document.getElementById('refresh-indicator').style.color = '#ffa500';
@@ -579,10 +751,22 @@
       const waapStatusData = await fetchJSON('waap_status.json');
       const waapScoreData = await fetchJSON('waap_score.json');
 
+      // Intelligence data
+      const assetsData = await fetchJSON('assets.json');
+      const assetChangesData = await fetchJSON('asset_changes.json');
+      const servicesData = await fetchJSON('services.json');
+      const serviceChangesData = await fetchJSON('service_changes.json');
+      const cryptoData = await fetchJSON('crypto_inventory.json');
+
       updateNessusCard(nessusData);
       updateDomainCard(domainData);
       updateWAAPCard(waapStatusData, waapScoreData);
       updateRecommendations(waapScoreData);
+
+      // Update intelligence cards
+      updateAssetCard(assetsData, assetChangesData);
+      updateServiceCard(servicesData, serviceChangesData);
+      updateCryptoCard(cryptoData);
 
       updateRefreshTime();
     }
