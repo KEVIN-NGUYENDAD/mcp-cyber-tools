@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-09-05T19:00:27.162702",
+  "timestamp": "2026-09-05T19:12:32.104573",
   "domain": "sentinelops.fyi",
   "nameservers": [
-    "curitiba.ns.porkbun.com.",
-    "fortaleza.ns.porkbun.com.",
     "maceio.ns.porkbun.com.",
-    "salvador.ns.porkbun.com."
+    "salvador.ns.porkbun.com.",
+    "curitiba.ns.porkbun.com.",
+    "fortaleza.ns.porkbun.com."
   ],
   "a_records": [
-    "216.24.57.15",
-    "216.24.57.7"
+    "216.24.57.7",
+    "216.24.57.15"
   ],
   "mx_records": [
-    "20 fwd2.porkbun.com.",
-    "10 fwd1.porkbun.com."
+    "10 fwd1.porkbun.com.",
+    "20 fwd2.porkbun.com."
   ],
   "spf": "v=spf1 include:_spf.porkbun.com ~all",
   "dmarc": "CNAME pixie.porkbun.com.",

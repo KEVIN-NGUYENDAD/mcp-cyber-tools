@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-09-05T19:00:25.999977",
+  "timestamp": "2026-09-05T19:12:31.242323",
   "stages": [
     {
       "name": "Nessus Collector",
       "status": "success",
-      "duration": 0.5886287689208984,
+      "duration": 0.456817626953125,
       "output": {
-        "timestamp": "2026-09-05T19:00:26.255113",
+        "timestamp": "2026-09-05T19:12:31.503325",
         "nessus_url": "https://localhost:8834",
         "nessus_endpoint": "https://localhost:8834",
         "scanner_status": "running",
         "last_scan": "2026-09-05T14:47:23",
         "scan_name": "Home Network Discovery",
-        "scan_age_hours": 4.2,
+        "scan_age_hours": 4.4,
         "critical": 0,
         "high": 0,
         "medium": 3,
@@ -24,23 +24,23 @@
     {
       "name": "Domain Collector",
       "status": "success",
-      "duration": 1.0604002475738525,
+      "duration": 0.8299906253814697,
       "output": {
-        "timestamp": "2026-09-05T19:00:27.162702",
+        "timestamp": "2026-09-05T19:12:32.104573",
         "domain": "sentinelops.fyi",
         "nameservers": [
-          "curitiba.ns.porkbun.com.",
-          "fortaleza.ns.porkbun.com.",
           "maceio.ns.porkbun.com.",
-          "salvador.ns.porkbun.com."
+          "salvador.ns.porkbun.com.",
+          "curitiba.ns.porkbun.com.",
+          "fortaleza.ns.porkbun.com."
         ],
         "a_records": [
-          "216.24.57.15",
-          "216.24.57.7"
+          "216.24.57.7",
+          "216.24.57.15"
         ],
         "mx_records": [
-          "20 fwd2.porkbun.com.",
-          "10 fwd1.porkbun.com."
+          "10 fwd1.porkbun.com.",
+          "20 fwd2.porkbun.com."
         ],
         "spf": "v=spf1 include:_spf.porkbun.com ~all",
         "dmarc": "CNAME pixie.porkbun.com.",
@@ -58,9 +58,9 @@
     {
       "name": "WAAP Collector",
       "status": "success",
-      "duration": 0.8212788105010986,
+      "duration": 0.6814110279083252,
       "output": {
-        "timestamp": "2026-09-05T19:00:28.026725",
+        "timestamp": "2026-09-05T19:12:32.845263",
         "domain": "sentinelops.fyi",
         "ssl_status": "valid",
         "expiration_date": "2026-12-02T19:50:51+00:00",
@@ -81,7 +81,7 @@
     {
       "name": "System Health",
       "status": "success",
-      "duration": 0.14981842041015625,
+      "duration": 0.15664386749267578,
       "output": {
         "status": "success",
         "cpu": 45,
@@ -92,7 +92,7 @@
     {
       "name": "Defender Status",
       "status": "success",
-      "duration": 0.18948721885681152,
+      "duration": 0.16368842124938965,
       "output": {
         "status": "success",
         "defender_enabled": true,
@@ -102,7 +102,7 @@
     {
       "name": "Firewall Status",
       "status": "success",
-      "duration": 0.15267419815063477,
+      "duration": 0.16202974319458008,
       "output": {
         "status": "success",
         "firewall_enabled": true,
@@ -112,7 +112,7 @@
     {
       "name": "Security Events",
       "status": "success",
-      "duration": 0.20063138008117676,
+      "duration": 0.1616981029510498,
       "output": {
         "status": "success",
         "failed_logons": 3,
@@ -122,10 +122,10 @@
     {
       "name": "Asset Intelligence",
       "status": "success",
-      "duration": 0.4986565113067627,
+      "duration": 0.5096323490142822,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-05T19:00:29.657489",
+        "timestamp": "2026-09-05T19:12:34.357350",
         "total_assets": 11,
         "new_assets": 0,
         "removed_assets": 0,
@@ -135,10 +135,10 @@
     {
       "name": "Service Intelligence",
       "status": "success",
-      "duration": 0.47106194496154785,
+      "duration": 0.4623134136199951,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-05T19:00:30.128370",
+        "timestamp": "2026-09-05T19:12:34.820304",
         "total_services": 10,
         "top_services": [
           {
@@ -187,10 +187,10 @@
     {
       "name": "Crypto Inventory",
       "status": "success",
-      "duration": 0.4580678939819336,
+      "duration": 0.5180258750915527,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-05T19:00:30.592170",
+        "timestamp": "2026-09-05T19:12:35.337094",
         "crypto_score": 100,
         "critical_findings": 0,
         "total_findings": 19
@@ -199,9 +199,9 @@
     {
       "name": "WAAP Score",
       "status": "success",
-      "duration": 1.0619735717773438,
+      "duration": 0.9930083751678467,
       "output": {
-        "timestamp": "2026-09-05T19:00:31.063307",
+        "timestamp": "2026-09-05T19:12:35.848040",
         "domain": "sentinelops.fyi",
         "checks": {
           "ssl_valid": true,
@@ -246,24 +246,31 @@
     {
       "name": "Daily Brief",
       "status": "success",
-      "duration": 0.2793464660644531,
+      "duration": 0.2529332637786865,
       "output": {
-        "timestamp": "2026-09-05T19:00:31.816308",
+        "timestamp": "2026-09-05T19:12:36.514923",
         "date": "2026-09-05",
+        "priority_summary": {
+          "top_5": [],
+          "critical_count": 0,
+          "summary_text": "Kh\u00f4ng c\u00f3 \u01b0u ti\u00ean"
+        },
         "change_summary": {
           "total_changes": 11,
           "changes_by_category": {
-            "Asset": 11
+            "Risk": 1,
+            "Service": 10
           },
           "changes_by_severity": {
-            "MEDIUM": 11
+            "LOW": 1,
+            "MEDIUM": 10
           },
           "critical_incidents": [],
           "summary_text": "11 thay \u0111\u1ed5i b\u00ecnh th\u01b0\u1eddng"
         },
         "vulnerability_summary": {
           "scan_name": "Home Network Discovery",
-          "scan_age_hours": 4.2,
+          "scan_age_hours": 4.4,
           "total_findings": 63,
           "critical": 0,
           "high": 0,
@@ -363,7 +370,7 @@
     {
       "name": "Risk Score",
       "status": "success",
-      "duration": 0.19085025787353516,
+      "duration": 0.17502284049987793,
       "output": {
         "status": "success",
         "overall_score": 88,
@@ -373,7 +380,7 @@
     {
       "name": "Recommended Actions",
       "status": "success",
-      "duration": 0.1513512134552002,
+      "duration": 0.1538090705871582,
       "output": {
         "status": "success",
         "total_actions": 0
@@ -382,18 +389,23 @@
     {
       "name": "Timeline Events",
       "status": "success",
-      "duration": 0.22912001609802246,
+      "duration": 0.21485567092895508,
       "output": {
         "status": "success",
-        "total_events": 11,
-        "by_category": {
-          "Risk": 1,
-          "Service": 10
-        },
-        "by_severity": {
-          "LOW": 1,
-          "MEDIUM": 10
-        }
+        "total_events": 0,
+        "by_category": {},
+        "by_severity": {}
+      }
+    },
+    {
+      "name": "Priority Queue",
+      "status": "success",
+      "duration": 0.18750810623168945,
+      "output": {
+        "status": "success",
+        "total_analyzed": 6,
+        "top_5_generated": 5,
+        "critical_items": 0
       }
     }
   ],
@@ -405,6 +417,6 @@
     "waap_score": 0,
     "risk_level": "HIGH"
   },
-  "duration": 6.531187057495117,
-  "end_time": "2026-09-05T19:00:32.534856"
+  "duration": 6.101614236831665,
+  "end_time": "2026-09-05T19:12:37.345944"
 }

@@ -206,6 +206,60 @@
       font-size: 0.8em;
     }
 
+    .priority-section {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid #ffaa00;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 15px rgba(255,170,0,0.2);
+      margin-bottom: 30px;
+    }
+
+    .priority-title {
+      font-size: 1.5em;
+      color: #ffaa00;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ffaa00;
+      padding-bottom: 10px;
+    }
+
+    .priority-item {
+      background: rgba(255,170,0,0.1);
+      border-left: 4px solid #ffaa00;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 4px;
+    }
+
+    .priority-rank {
+      display: inline-block;
+      background: #ffaa00;
+      color: #1a1a2e;
+      padding: 4px 12px;
+      border-radius: 3px;
+      font-weight: bold;
+      font-size: 0.85em;
+      margin-right: 10px;
+    }
+
+    .priority-item-title {
+      color: #e0e0e0;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .priority-item-meta {
+      color: #a0a0a0;
+      font-size: 0.85em;
+      margin-bottom: 5px;
+    }
+
+    .priority-item-reason {
+      color: #ffaa00;
+      font-size: 0.8em;
+      font-style: italic;
+    }
+
     .recommendations-section {
       background: rgba(255,255,255,0.05);
       border: 2px solid #ff6b6b;
@@ -594,6 +648,14 @@
       </div>
     </div>
 
+    <!-- PRIORITY QUEUE SECTION (Phase N.8) -->
+    <div class="priority-section">
+      <div class="priority-title">🎯 TOP 5 ƯU TIÊN HÔM NAY</div>
+      <div id="priority-list">
+        <div class="no-data">Loading priorities...</div>
+      </div>
+    </div>
+
     <!-- RECOMMENDATIONS SECTION -->
     <div class="recommendations-section">
       <div class="recommendations-title">💡 Recommended Actions</div>
@@ -876,6 +938,39 @@
       document.getElementById('crypto-expired').textContent = expiredCount;
     }
 
+    function updatePriorityQueue(priorityData) {
+      const listDiv = document.getElementById('priority-list');
+
+      if (!priorityData || !priorityData.top_5_critical || priorityData.top_5_critical.length === 0) {
+        listDiv.innerHTML = '<div class="no-data">No priority items</div>';
+        return;
+      }
+
+      const items = priorityData.top_5_critical;
+
+      listDiv.innerHTML = items
+        .map(item => {
+          const priorityColor = item.priority === 'CRITICAL' ? '#ff3333' :
+                               item.priority === 'HIGH' ? '#ff6b6b' : '#ffa500';
+
+          return `
+            <div class="priority-item">
+              <span class="priority-rank">#${item.priority_rank}</span>
+              <div class="priority-item-title">${item.title}</div>
+              <div class="priority-item-meta">
+                Priority: <span style="color: ${priorityColor}; font-weight: bold;">${item.priority}</span>
+                | Time: ${item.time_estimate}
+              </div>
+              <div class="priority-item-meta">${item.description}</div>
+              <div class="priority-item-reason">
+                Lý do: ${item.reason} | Tác động: ${item.impact}
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
     function updateTimeline(timelineData) {
       const summaryDiv = document.getElementById('timeline-summary');
       const listDiv = document.getElementById('timeline-list');
@@ -957,6 +1052,9 @@
       // Timeline data (Phase N.7)
       const timelineData = await fetchJSON('timeline.json');
 
+      // Priority queue data (Phase N.8)
+      const priorityData = await fetchJSON('priority_queue.json');
+
       updateNessusCard(nessusData);
       updateDomainCard(domainData);
       updateWAAPCard(waapStatusData, waapScoreData);
@@ -969,6 +1067,9 @@
 
       // Update timeline
       updateTimeline(timelineData);
+
+      // Update priority queue
+      updatePriorityQueue(priorityData);
 
       updateRefreshTime();
     }

@@ -229,6 +229,37 @@ class DailyBriefGenerator:
             'summary_text': summary_text
         }
 
+    def generate_priority_summary(self):
+        """Tóm tắt TOP 5 ưu tiên"""
+        priority = self.load_json('priority_queue.json')
+        if not priority:
+            return {
+                'top_5': [],
+                'critical_count': 0,
+                'summary_text': 'Không có ưu tiên'
+            }
+
+        top_5 = priority.get('top_5_critical', [])
+        summary = priority.get('summary', {})
+
+        top_5_simplified = [
+            {
+                'rank': item.get('priority_rank'),
+                'title': item.get('title'),
+                'priority': item.get('priority'),
+                'time_estimate': item.get('time_estimate', 'N/A'),
+                'reason': item.get('reason')
+            }
+            for item in top_5
+        ]
+
+        return {
+            'top_5': top_5_simplified,
+            'critical_count': summary.get('critical_count', 0),
+            'high_count': summary.get('high_count', 0),
+            'summary_text': f"Ưu tiên: {summary.get('critical_count', 0)} CRITICAL, {summary.get('high_count', 0)} HIGH"
+        }
+
     def generate_risk_assessment(self):
         """Generate overall risk assessment"""
         nessus = self.generate_vulnerability_summary() or {}
@@ -288,6 +319,7 @@ class DailyBriefGenerator:
         brief = {
             'timestamp': datetime.now().isoformat(),
             'date': self.today,
+            'priority_summary': self.generate_priority_summary(),
             'change_summary': self.generate_change_summary(),
             'vulnerability_summary': self.generate_vulnerability_summary(),
             'domain_summary': self.generate_domain_summary(),

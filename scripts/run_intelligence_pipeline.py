@@ -357,6 +357,20 @@ class IntelligencePipeline:
 
         self.log('')
 
+        # Stage 8: Triage Engine
+        self.log('🎯 PHASE 8: TRIAGE ENGINE')
+        self.log('-' * 50)
+
+        # 16. Generate priority queue
+        ok, _ = self.run_stage(
+            'Priority Queue',
+            self.scripts_dir / 'generate_priority_queue.py',
+            'Generating TOP 5 priority items'
+        )
+        success = success and ok
+
+        self.log('')
+
         # Final summary
         if success:
             self.pipeline_results['status'] = 'success'

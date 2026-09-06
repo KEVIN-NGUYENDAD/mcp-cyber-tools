@@ -1,0 +1,103 @@
+{
+  "timestamp": "2026-09-05T19:12:37.334415",
+  "question": "Cái gì quan trọng nhất hôm nay?",
+  "total_items_analyzed": 6,
+  "top_5_critical": [
+    {
+      "source": "risk",
+      "priority_score": 50,
+      "title": "Cải thiện Waap",
+      "category": "Risk Management",
+      "priority": "MEDIUM",
+      "description": "waap score chỉ 50/100",
+      "impact": "Ảnh hưởng đến Risk Score: 88",
+      "reason": "waap component weak",
+      "affected_assets": [],
+      "steps": [
+        "Phân tích chi tiết",
+        "Lập kế hoạch cải thiện"
+      ],
+      "priority_rank": 1
+    },
+    {
+      "source": "risk",
+      "priority_score": 13,
+      "title": "Cải thiện Security Events",
+      "category": "Risk Management",
+      "priority": "MEDIUM",
+      "description": "security_events score chỉ 87/100",
+      "impact": "Ảnh hưởng đến Risk Score: 88",
+      "reason": "security_events component weak",
+      "affected_assets": [],
+      "steps": [
+        "Phân tích chi tiết",
+        "Lập kế hoạch cải thiện"
+      ],
+      "priority_rank": 2
+    },
+    {
+      "source": "risk",
+      "priority_score": 10,
+      "title": "Cải thiện Firewall",
+      "category": "Risk Management",
+      "priority": "MEDIUM",
+      "description": "firewall score chỉ 90/100",
+      "impact": "Ảnh hưởng đến Risk Score: 88",
+      "reason": "firewall component weak",
+      "affected_assets": [],
+      "steps": [
+        "Phân tích chi tiết",
+        "Lập kế hoạch cải thiện"
+      ],
+      "priority_rank": 3
+    },
+    {
+      "source": "asset",
+      "priority_score": 0,
+      "title": "Patch 192.168.0.1 (Router)",
+      "category": "Patch Management",
+      "priority": "HIGH",
+      "description": "0 critical, 0 high vulnerabilities",
+      "impact": "Device có 39 vulnerability",
+      "reason": "High vulnerability count",
+      "affected_assets": [
+        "192.168.0.1"
+      ],
+      "time_estimate": "4-8 hours",
+      "steps": [
+        "Identify patches",
+        "Test in staging",
+        "Apply patches"
+      ],
+      "priority_rank": 4
+    },
+    {
+      "source": "asset",
+      "priority_score": 0,
+      "title": "Patch 192.168.0.10 (Server)",
+      "category": "Patch Management",
+      "priority": "HIGH",
+      "description": "0 critical, 0 high vulnerabilities",
+      "impact": "Device có 14 vulnerability",
+      "reason": "High vulnerability count",
+      "affected_assets": [
+        "192.168.0.10"
+      ],
+      "time_estimate": "4-8 hours",
+      "steps": [
+        "Identify patches",
+        "Test in staging",
+        "Apply patches"
+      ],
+      "priority_rank": 5
+    }
+  ],
+  "summary": {
+    "critical_count": 0,
+    "high_count": 2,
+    "sources": {
+      "risk": 3,
+      "asset": 2
+    }
+  }
+}
