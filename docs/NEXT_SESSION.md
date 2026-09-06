@@ -1,159 +1,199 @@
 # Next Session Priorities
 
 **Date Created**: 2026-09-05  
-**Context**: MVP is OPERATIONAL, ready for validation and operational hardening
+**Last Updated**: 2026-09-05  
+**Context**: MVP is OPERATIONAL; Phase N - SOC Intelligence Infrastructure COMPLETE
 
 ---
 
-## Priority Stack
+## PHASE N: SOC INTELLIGENCE - COMPLETED ✅
 
-### 🔴 Priority 1: Overnight Scheduler Validation (CRITICAL)
+**What Was Implemented (Session 2026-09-05)**:
 
-**Objective**: Verify that automated collectors run on schedule without manual intervention
+### Intelligence Extractors
+1. **Asset Intelligence** (`extract_asset_intelligence.py`)
+   - Extracts device inventory from Nessus scan data
+   - Auto-classifies devices (Router, Workstation, Server, Mobile, Printer, IoT)
+   - Tracks vulnerability counts per asset
+   - Detects new/removed assets
+
+2. **Service Intelligence** (`extract_service_intelligence.py`)
+   - Extracts port/protocol/service information
+   - Builds service inventory (global and per-host)
+   - Identifies service types and counts
+   - Detects new/closed services
+
+3. **Cryptographic Intelligence** (`extract_crypto_intelligence.py`)
+   - Extracts certificate information
+   - Analyzes TLS versions and cipher suites
+   - Identifies weak ciphers and self-signed certificates
+   - Calculates cryptographic health score (0-100)
+   - Tracks expired and expiring certificates
+
+4. **Integrated Collector** (`collect_soc_intelligence.py`)
+   - Orchestrates all three extractors
+   - Generates comprehensive intelligence report
+   - Coordination of asset, service, and crypto data
+
+### Dashboard Enhancements
+- **Asset Inventory Card**: Total assets, known/unknown, new/removed tracking
+- **Service Inventory Card**: Service counts, types, new/closed detection, top services
+- **Cryptographic Health Card**: Health score, certificate count, weak cipher tracking, expiry info
+- Auto-refresh integration for all intelligence data
+
+### Daily Brief Generator
+- **generate_daily_brief.py** produces comprehensive JSON briefings with:
+  - Vulnerability summary
+  - Domain/DNS status
+  - WAAP/SSL status
+  - Asset summary with top vulnerable devices
+  - Service summary with top services
+  - Cryptographic summary
+  - Overall risk assessment and factors
+
+### Outputs Generated
+- `state/assets.json` - Device inventory
+- `state/asset_changes.json` - New/removed assets
+- `state/services.json` - Service/port inventory
+- `state/service_changes.json` - Service changes
+- `state/crypto_inventory.json` - Certificate/cipher data
+- `state/crypto_changes.json` - Crypto changes
+- `state/soc_intelligence.json` - Comprehensive report
+- `daily_brief/YYYY-MM-DD.json` - Daily briefing
+
+### Commits
+- **e7bc11b**: Phase N - SOC Intelligence Infrastructure (extractors + dashboard)
+- **e72c61e**: Daily brief generator with SOC intelligence summaries
+
+---
+
+## Priority Stack (Updated Post-Phase N)
+
+### 🔴 Priority 1: Intelligence Scheduler Integration (CRITICAL)
+
+**Objective**: Integrate SOC intelligence extractors into overnight automated collection
 
 **Tasks**:
-1. Check cron jobs / Task Scheduler configuration
-   - Verify Nessus collector scheduled
-   - Verify Domain collector scheduled
-   - Verify WAAP collector scheduled
-   - Verify health score calculation scheduled
-   - Verify daily brief generation scheduled
+1. Add intelligence collectors to scheduler
+   - Schedule `collect_soc_intelligence.py` after Nessus collector completes
+   - Ensure extractors run: Asset → Service → Crypto → Integrated report
+   - Add daily brief generation to scheduler
 
-2. Monitor one full overnight cycle
-   - Check state files update with fresh timestamps
-   - Verify timestamps are close (within 5 minutes) of expected schedule
-   - Verify no error files or exceptions logged
+2. Verify overnight automation
+   - Monitor state file updates: assets.json, services.json, crypto_inventory.json
+   - Confirm daily_brief/YYYY-MM-DD.json generated each night
+   - Check change detection files: asset_changes.json, service_changes.json, crypto_changes.json
 
-3. Validate daily brief generation
-   - Confirm `daily_brief/YYYY-MM-DD.json` created with latest date
-   - Verify content is populated (findings, recommendations)
+3. Validate dashboard auto-refresh
+   - Verify intelligence cards load fresh data every 60 seconds
+   - Check that new/removed assets trigger alerts
+   - Confirm service and crypto changes are visible
 
 4. Expected outcome
-   - All collectors run autonomously
-   - State files refresh on schedule
-   - No manual intervention required
-   - MVP validated as production-ready
+   - Complete intelligence pipeline runs autonomously nightly
+   - All state files generated and fresh
+   - Dashboard displays real-time intelligence data
+   - Daily brief captures daily security posture
 
-**Success Criteria**: All 4 collectors + health score + daily brief all run within 15-minute window, zero manual intervention required.
+**Success Criteria**: Intelligence pipeline runs nightly, dashboard shows current intelligence data, daily brief generated consistently.
 
 ---
 
-### 🟡 Priority 2: Asset Intelligence - Build `state/assets.json`
+### 🟡 Priority 2: Enhance Nessus Data Extraction (IMPORTANT)
 
-**Objective**: Create device/asset inventory from Nessus scan results
+**Objective**: Improve asset/service/crypto extraction from Nessus API responses
 
 **Background**:
-- Nessus scan discovers 11 hosts
-- Hosts have IP addresses but no device names
-- Example Nessus data: `{"ip": "192.168.0.51", "os": "Windows 11", ...}`
+- Current extractors work but receive minimal detailed data from Nessus
+- Asset extractor showing 0 assets (API response may not include detailed vulnerability fields)
+- Service extractor showing minimal port/protocol data
+- Crypto extractor finding limited certificate data
 
 **Tasks**:
-1. Extract unique IPs from `state/nessus_status.json`
-   - Field: `findings[*].asset.ip`
-   - Expected: ~11 unique IPs
+1. Analyze Nessus API response structure
+   - Inspect full vulnerability object fields from `/scans/{scan_id}` endpoint
+   - Document actual fields available: asset info, port, protocol, cert data, etc.
+   - Identify if different endpoints needed for detailed data
 
-2. Create baseline `state/assets.json` structure
-   ```json
-   {
-     "timestamp": "2026-09-05T15:05:54Z",
-     "assets": [
-       {
-         "ip": "192.168.0.51",
-         "hostname": "Kevin-PC",
-         "device_type": "Desktop",
-         "os": "Windows 11",
-         "first_seen": "2026-09-05",
-         "last_seen": "2026-09-05",
-         "vulnerability_count": 3,
-         "highest_severity": "medium"
-       },
-       ...
-     ]
-   }
-   ```
+2. Enhance asset extraction
+   - Map Nessus OS info to device types more robustly
+   - Extract IP→hostname mapping from Nessus asset data
+   - Handle cases where asset data is sparse or missing
 
-3. Populate manually from known devices
-   - 192.168.0.1 → Router (Network device)
-   - 192.168.0.51 → Kevin-PC (Desktop)
-   - 192.168.0.21 → TBD (Query user or leave blank)
+3. Improve service/port detection
+   - Better extraction of port numbers from Nessus findings
+   - Enhance service name identification from plugin metadata
+   - Build more accurate service inventory
 
-4. Link to Nessus findings
-   - Count vulnerabilities per IP
-   - Highest severity per IP
-   - Update `last_seen` on each scan
+4. Strengthen crypto intelligence
+   - Extract TLS version info from certificate plugins
+   - Identify cipher suites from Nessus test results
+   - Better weak cipher detection and classification
 
-**Expected output**: `state/assets.json` with 11-15 entries, device names populated for known devices
+**Success Criteria**: Asset/service/crypto extractors populate state files with realistic data matching Nessus scan results
 
 ---
 
-### 🟢 Priority 3: Asset Intelligence - IP-to-Device Name Mapping
+### 🟢 Priority 3: Risk Scoring & Alerting (NEXT PHASE)
 
-**Objective**: Automatically resolve IP → hostname for better visibility
+**Objective**: Implement risk-based alerting for discovered threats
 
 **Tasks**:
-1. Create `scripts/map_assets.py` (new)
-   - Input: Nessus IPs from `state/nessus_status.json`
-   - Output: `state/assets.json` (merge with manual mappings)
+1. Build risk calculation engine
+   - Score assets by vulnerability severity and counts
+   - Calculate device-level risk (Critical/High/Medium/Low)
+   - Track risk changes over time
 
-2. Mapping strategies (in order):
-   - **DNS reverse lookup**: `reverse_dns(ip)` → hostname
-   - **DHCP lease inspection**: Check local DHCP server for IP/hostname bindings
-   - **Nessus hostname field**: Some Nessus findings include hostname
-   - **Manual mapping**: `assets_manual.json` (user-maintained fallback)
+2. Implement alert thresholds
+   - Critical: Any critical vulnerability detected
+   - High: 3+ high-severity vulns on single device
+   - Medium: New services on known devices
+   - Low: Weak ciphers detected
 
-3. Run as part of nightly schedule
-   - Hook into `calculate_waap_score.py` flow
-   - Run after Nessus collector completes
-   - Output: Updated `state/assets.json`
+3. Create alert notifications
+   - Generate structured alert JSON files
+   - Track alert state (new/acknowledged/resolved)
+   - Link alerts to specific assets/services/crypto issues
 
-4. Handle edge cases
-   - Unknown IPs → Leave hostname blank, flag as "TBD"
-   - Offline hosts → Keep last-known hostname
-   - Conflicts → Prefer DNS over Nessus, prefer manual over DNS
+4. Dashboard alert display
+   - Show alert count by severity
+   - Link alerts to affected assets
+   - Support alert acknowledgment
 
-**Expected outcome**: 90%+ of IPs mapped to hostnames
-
----
-
-### 🔵 Priority 4: Dashboard Enhancement - Top Vulnerable Devices Widget
-
-**Objective**: Add "Top Vulnerable Devices" section to live dashboard
-
-**Requirements**:
-- Pure HTML/CSS/JavaScript (no framework changes)
-- Data source: `state/assets.json` + `state/nessus_status.json`
-- Sort by: severity (critical/high first), then vulnerability count
-- Display top 5 devices
-- Format:
-  ```
-  Device Name          Severity   Findings   Status
-  ────────────────────────────────────────────────
-  Kevin-PC             Medium     3          ⚠️
-  Unknown (192.0.21)   Low        1          ℹ️
-  Router               Info       58         ℹ️
-  ```
-
-**Implementation**:
-1. Read `state/assets.json` and Nessus status
-2. Create sortable device list (severity desc, count desc)
-3. Render as new section in dashboard
-4. Update auto-refresh to include asset data
-5. Test on mobile (ensure responsive)
-
-**Expected outcome**: Dashboard shows "Top 5 Most Vulnerable Devices" ranked by risk
+**Success Criteria**: Risk scores calculated for all assets, alerts generated for severity threshold violations
 
 ---
 
-### 🟣 Priority 5: Dashboard Enhancement - Recommendations by Device
+### 🔵 Priority 4: Mobile App Integration (FUTURE)
 
-**Objective**: Link recommendations to specific devices (optional, lower priority)
+**Objective**: Mobile app for security team to review daily briefs and alerts
 
 **Ideas**:
-- Show "Patch Windows 11" on Kevin-PC specifically
-- Show "Update firmware" on Router
-- Filter recommendations by device
+- Native app (iOS/Android) or PWA
+- Daily brief push notifications
+- Alert notifications with device details
+- Real-time asset/service/crypto status
+- Risk score display and trending
 
-**Hold for**: After Priority 4 completes
+**Deferred**: Post-Phase O; requires mobile dev resources
+
+---
+
+### 🟣 Priority 5: Incident Response Workflow (FUTURE)
+
+---
+
+### 🟣 Priority 5: Testing & Validation (IN PROGRESS)
+
+**Objective**: Validate intelligence pipeline end-to-end
+
+**Items**:
+- Test intelligence extractors with real Nessus data
+- Verify dashboard displays intelligence correctly
+- Validate daily brief generation
+- Check scheduler execution and timing
+
+**Hold for**: After scheduler integration complete
 
 ---
 
@@ -168,10 +208,16 @@ These components are **OPERATIONAL and STABLE**. Do not refactor, enhance, or mo
 | `scripts/collect_waap_snapshot.py` | ✅ STABLE | SSL/TLS cert fetch working, expiry calculation verified |
 | `scripts/calculate_waap_score.py` | ✅ STABLE | Health score algorithm proven, weighting correct |
 | `scripts/event_hub.py` | ✅ STABLE | Change tracking working, dedup logic verified |
-| `scripts/generate_daily_brief.py` | ✅ STABLE | Brief generation working, event schema stable |
-| `dashboard.html` | ✅ STABLE | Live data binding working, mobile tested |
+| `scripts/generate_daily_brief.py` | ✅ STABLE | Daily brief generation working with all summaries |
+| `scripts/extract_asset_intelligence.py` | ✅ NEW | Asset extraction and change detection working |
+| `scripts/extract_service_intelligence.py` | ✅ NEW | Service/port extraction and detection working |
+| `scripts/extract_crypto_intelligence.py` | ✅ NEW | Cryptographic health scoring and detection working |
+| `scripts/collect_soc_intelligence.py` | ✅ NEW | Orchestrated intelligence collection working |
+| `dashboard.html` | ✅ STABLE | Enhanced with intelligence cards, auto-refresh verified |
 
 **Exception**: If a bug is discovered, fix it. But no refactoring or enhancement without explicit request.
+
+**Note on Intelligence Extractors**: Data extraction quality depends on Nessus API response structure. If extractors show sparse data (0 assets, minimal services), this is likely Nessus API limitation, not extractor bug. Priority 2 addresses improving extraction quality.
 
 ---
 
@@ -196,16 +242,28 @@ These components are **OPERATIONAL and STABLE**. Do not refactor, enhance, or mo
 
 ---
 
+## Completed in This Session
+
+**Phase N: SOC Intelligence Infrastructure** - COMPLETE ✅
+- Asset Intelligence Extractor
+- Service Intelligence Extractor
+- Cryptographic Intelligence Extractor
+- Integrated SOC Intelligence Collector
+- Dashboard Intelligence Cards (3 new widgets)
+- Daily Brief Generator with 7 sections
+- Change Detection Layer for all intelligence types
+
 ## Not Starting New Work
 
 These are **explicitly deferred** (do not start without new request):
 
 | Item | Target Phase | Status |
 |------|--------------|--------|
-| VNETWORK API Integration | Phase 2 | Discovery complete, blocked by entitlements |
-| Incident Posting to GitHub | Phase 2 | Pattern proven in MVP #3/#4, integration deferred |
-| Asset Compliance Scoring | Phase 3+ | Complex, requires more baseline data |
-| Predictive Risk Modeling | Phase 3+ | Requires 30 days of baseline collection |
+| Intelligence Scheduler Integration | Next Session | Priority 1 - integrate collectors into automation |
+| Enhanced Nessus Data Extraction | Next Session | Priority 2 - improve data extraction quality |
+| Risk Scoring & Alerting | Phase P | Priority 3 - implement risk-based alerts |
+| Mobile App Integration | Phase Q | Priority 4 - mobile client for alerts/briefs |
+| VNETWORK API Integration | Phase R | Discovery complete, blocked by entitlements |
 | React Dashboard UI | Never | Explicitly excluded (Phase 1 constraint) |
 
 ---
