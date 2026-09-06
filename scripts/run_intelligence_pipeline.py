@@ -277,6 +277,34 @@ class IntelligencePipeline:
 
         self.log('')
 
+        # Stage 5: Risk Assessment
+        self.log('🎯 PHASE 5: RISK ASSESSMENT')
+        self.log('-' * 50)
+
+        # 9. Calculate overall risk score
+        ok, _ = self.run_stage(
+            'Risk Score',
+            self.scripts_dir / 'calculate_risk_score.py',
+            'Calculating overall risk score'
+        )
+        success = success and ok
+
+        self.log('')
+
+        # Stage 6: Decision Engine
+        self.log('💡 PHASE 6: DECISION ENGINE')
+        self.log('-' * 50)
+
+        # 10. Generate recommended actions
+        ok, _ = self.run_stage(
+            'Recommended Actions',
+            self.scripts_dir / 'generate_recommended_actions.py',
+            'Generating actionable decisions'
+        )
+        success = success and ok
+
+        self.log('')
+
         # Final summary
         if success:
             self.pipeline_results['status'] = 'success'
