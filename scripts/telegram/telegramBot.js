@@ -130,8 +130,8 @@ Score: *${score}/100*
 
 *Threat Summary*
 🚨 ${incidents.total_incidents || 0} Open Incidents
-   🔴 ${incidents.critical || 0} Critical
-   🟠 ${incidents.high || 0} High
+   🔴 ${incidents.by_severity?.CRITICAL || 0} Critical
+   🟠 ${incidents.by_severity?.HIGH || 0} High
 
 *Detection Engine*
 🎯 21 Threat Patterns
@@ -167,9 +167,9 @@ Score: *${score}/100*
         report += `\n🔴 *CRITICAL THREATS* (${critical.length})\n`;
         report += `${'─'.repeat(32)}\n`;
         critical.slice(0, 4).forEach(inc => {
-          const threat = inc.threat_name?.substring(0, 20) || 'Unknown';
-          const conf = inc.confidence ? `${inc.confidence}%` : 'N/A';
-          report += `${inc.id} | ${threat}\n  Confidence: ${conf}\n`;
+          const threat = inc.title?.substring(0, 30) || 'Unknown';
+          const asset = inc.assets?.length > 0 ? inc.assets[0].substring(0, 15) : 'Multiple';
+          report += `${inc.incident_id} | ${threat}\n  Asset: ${asset}\n`;
         });
       }
 
@@ -177,9 +177,9 @@ Score: *${score}/100*
         report += `\n🟠 *HIGH PRIORITY* (${high.length})\n`;
         report += `${'─'.repeat(32)}\n`;
         high.slice(0, 3).forEach(inc => {
-          const threat = inc.threat_name?.substring(0, 20) || 'Unknown';
-          const host = inc.host ? inc.host.substring(0, 15) : 'N/A';
-          report += `${inc.id} | ${threat}\n  Host: ${host}\n`;
+          const threat = inc.title?.substring(0, 30) || 'Unknown';
+          const asset = inc.assets?.length > 0 ? inc.assets[0].substring(0, 15) : 'Multiple';
+          report += `${inc.incident_id} | ${threat}\n  Asset: ${asset}\n`;
         });
       }
 
@@ -366,8 +366,8 @@ ${dnsEmoji} DNS Health: ${domain.dns_health || 'N/A'}
       const keyboard = [];
       allIncidents.slice(0, 5).forEach(incident => {
         keyboard.push([{
-          text: `${incident.id}: ${incident.threat_name}`,
-          callback_data: `details_${incident.id}`
+          text: `${incident.incident_id}: ${incident.title}`,
+          callback_data: `details_${incident.incident_id}`
         }]);
       });
 
@@ -418,8 +418,8 @@ Scan Coverage: ${nessus.assets || 0} Assets
 
 *Threat Detection*
 ${incidents.total_incidents || 0} Incidents Detected
-🔴 ${incidents.critical || 0} Critical
-🟠 ${incidents.high || 0} High Severity
+🔴 ${incidents.by_severity?.CRITICAL || 0} Critical
+🟠 ${incidents.by_severity?.HIGH || 0} High Severity
 
 *Application Security*
 Score: ${waap.health_score || 0}/100
@@ -478,21 +478,21 @@ Top Risks:
         return;
       }
 
+      const assetInfo = incident.assets?.length > 0 ? incident.assets.join(', ').substring(0, 25) : 'Multiple Assets';
       const details = `
 *Incident Details*
 
-📋 *ID*: ${incident.id}
-🎯 *Threat*: ${incident.threat_name}
+📋 *ID*: ${incident.incident_id}
+🎯 *Threat*: ${incident.title}
 🔴 *Severity*: ${incident.severity}
-📊 *Confidence*: ${incident.confidence || 'N/A'}%
-💯 *Risk Score*: ${incident.risk_score || 'N/A'}/100
 
-🖥️ *Host*: ${incident.host || 'Unknown'}
-⏰ *Timestamp*: ${incident.timestamp || 'Unknown'}
+🖥️ *Assets*: ${assetInfo}
+⏰ *Created*: ${incident.created_at?.substring(0, 10) || 'Unknown'}
 📁 *Status*: ${incident.status || 'Open'}
 
 📝 *Evidence*: ${(incident.evidence || []).length} indicators
-✅ *Recommendation*: ${incident.recommendation || 'No recommendation'}
+📋 *Description*: ${incident.description?.substring(0, 50) || 'No description'}
+✅ *Action*: ${incident.recommended_action?.substring(0, 50) || 'No recommendation'}
       `.trim();
 
       const keyboard = [
@@ -743,7 +743,7 @@ All remediation requires explicit human authorization.
       const data = JSON.parse(fs.readFileSync(paths.incidents, 'utf8'));
       const incidents = data.incidents || [];
 
-      return incidents.find(i => i.id === incidentId) || null;
+      return incidents.find(i => i.incident_id === incidentId) || null;
     } catch (error) {
       console.error('Error in getIncident:', error);
       return null;
@@ -779,7 +779,7 @@ All remediation requires explicit human authorization.
       const data = JSON.parse(fs.readFileSync(paths.incidents, 'utf8'));
       const incidents = data.incidents || [];
 
-      const incident = incidents.find(i => i.id === incidentId);
+      const incident = incidents.find(i => i.incident_id === incidentId);
       if (incident) {
         incident.status = newStatus;
         incident.updated_at = new Date().toISOString();

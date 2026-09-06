@@ -37,7 +37,7 @@ class IncidentAlerter {
 
       // Check for new incidents
       for (const incident of incidents) {
-        if (!this.processedIncidents.has(incident.id)) {
+        if (!this.processedIncidents.has(incident.incident_id)) {
           newIncidents.push(incident);
         }
       }
@@ -57,36 +57,36 @@ class IncidentAlerter {
       const results = [];
       for (const incident of newIncidents) {
         try {
-          console.log(`[ALERT] Processing new incident: ${incident.id}`);
+          console.log(`[ALERT] Processing new incident: ${incident.incident_id}`);
 
           const result = await this.alertDelivery.sendIncidentAlert(incident);
 
           if (result && result.success) {
-            this.processedIncidents.add(incident.id);
+            this.processedIncidents.add(incident.incident_id);
             results.push({
               incident_id: incident.id,
-              threat_name: incident.threat_name,
+              threat_name: incident.title,
               severity: incident.severity,
               alerted: true,
               message_id: result.message_id,
               timestamp: result.timestamp
             });
-            console.log(`[SUCCESS] Alert sent for ${incident.id}: msg_id=${result.message_id}`);
+            console.log(`[SUCCESS] Alert sent for ${incident.incident_id}: msg_id=${result.message_id}`);
           } else if (result) {
             results.push({
               incident_id: incident.id,
-              threat_name: incident.threat_name,
+              threat_name: incident.title,
               severity: incident.severity,
               alerted: false,
               error: result.error || 'Unknown error'
             });
-            console.log(`[DEDUP] Alert already sent for ${incident.id}`);
+            console.log(`[DEDUP] Alert already sent for ${incident.incident_id}`);
           }
         } catch (error) {
-          console.error(`Error alerting incident ${incident.id}:`, error);
+          console.error(`Error alerting incident ${incident.incident_id}:`, error);
           results.push({
             incident_id: incident.id,
-            threat_name: incident.threat_name,
+            threat_name: incident.title,
             severity: incident.severity,
             alerted: false,
             error: error.message

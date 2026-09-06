@@ -48,8 +48,8 @@ class AlertDelivery {
   async sendIncidentAlert(incident) {
     try {
       // Check for duplicate
-      if (this.isDeduplicatedAlert(incident.id)) {
-        console.log(`[DEDUP] Alert for ${incident.id} already sent within 30 minutes`);
+      if (this.isDeduplicatedAlert(incident.incident_id)) {
+        console.log(`[DEDUP] Alert for ${incident.incident_id} already sent within 30 minutes`);
         return null;
       }
 
@@ -61,7 +61,7 @@ class AlertDelivery {
         this.recordAlertDelivery(incident, result.message_id);
 
         // Update sent alerts cache
-        const hash = this.generateHash(incident.id);
+        const hash = this.generateHash(incident.incident_id);
         this.sentAlerts.set(hash, {
           timestamp: new Date(),
           message_id: result.message_id
@@ -71,7 +71,7 @@ class AlertDelivery {
           success: true,
           message_id: result.message_id,
           timestamp: new Date().toISOString(),
-          incident_id: incident.id
+          incident_id: incident.incident_id
         };
       }
     } catch (error) {
@@ -79,7 +79,7 @@ class AlertDelivery {
       return {
         success: false,
         error: error.message,
-        incident_id: incident.id
+        incident_id: incident.incident_id
       };
     }
   }
@@ -105,7 +105,7 @@ class AlertDelivery {
       }
 
       const alertEntry = {
-        incident_id: incident.id,
+        incident_id: incident.incident_id,
         threat_name: incident.threat_name,
         severity: incident.severity,
         timestamp: new Date().toISOString(),
