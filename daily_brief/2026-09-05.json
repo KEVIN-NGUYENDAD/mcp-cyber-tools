@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-09-05T17:04:45.843452",
+  "timestamp": "2026-09-05T17:29:28.492488",
   "date": "2026-09-05",
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 0.0,
+    "scan_age_hours": 2.6,
     "total_findings": 63,
     "critical": 0,
     "high": 0,
@@ -35,42 +35,95 @@
     "recommendation_count": 2
   },
   "asset_summary": {
-    "total_assets": 0,
-    "known_devices": 0,
+    "total_assets": 11,
+    "known_devices": 11,
     "unknown_devices": 0,
     "new_assets": 0,
     "removed_assets": 0,
-    "top_vulnerable_devices": []
+    "top_vulnerable_devices": [
+      {
+        "ip": "192.168.0.51",
+        "hostname": "192.168.0.51",
+        "vulnerability_count": 205,
+        "severity_critical": 0,
+        "severity_high": 0
+      },
+      {
+        "ip": "192.168.0.21",
+        "hostname": "192.168.0.21",
+        "vulnerability_count": 43,
+        "severity_critical": 0,
+        "severity_high": 0
+      },
+      {
+        "ip": "192.168.0.1",
+        "hostname": "192.168.0.1",
+        "vulnerability_count": 39,
+        "severity_critical": 0,
+        "severity_high": 0
+      },
+      {
+        "ip": "192.168.0.10",
+        "hostname": "192.168.0.10",
+        "vulnerability_count": 14,
+        "severity_critical": 0,
+        "severity_high": 0
+      },
+      {
+        "ip": "192.168.0.11",
+        "hostname": "192.168.0.11",
+        "vulnerability_count": 14,
+        "severity_critical": 0,
+        "severity_high": 0
+      }
+    ]
   },
   "service_summary": {
-    "total_services": 1,
-    "service_types": 2,
-    "new_services": 1,
+    "total_services": 132,
+    "service_types": 12,
+    "new_services": 0,
     "closed_services": 0,
     "top_services": [
       {
-        "name": "Service(0)",
-        "host_count": 1,
-        "finding_count": 2
+        "name": "SMB",
+        "host_count": 11,
+        "finding_count": 5
       },
       {
-        "name": "SMB",
-        "host_count": 0,
-        "finding_count": 1
+        "name": "HTTP/HTTPS",
+        "host_count": 11,
+        "finding_count": 5
+      },
+      {
+        "name": "Settings",
+        "host_count": 11,
+        "finding_count": 4
+      },
+      {
+        "name": "General",
+        "host_count": 11,
+        "finding_count": 24
+      },
+      {
+        "name": "Service detection",
+        "host_count": 11,
+        "finding_count": 10
       }
     ]
   },
   "crypto_summary": {
-    "health_score": 100,
-    "certificate_count": 0,
+    "health_score": 94,
+    "certificate_count": 1,
     "cipher_suite_count": 0,
-    "weak_cipher_count": 0,
+    "weak_cipher_count": 2,
     "newly_expired_certs": 0,
     "new_weak_ciphers": 0
   },
   "risk_assessment": {
     "risk_level": "LOW",
-    "risk_score": 0,
-    "risk_factors": []
+    "risk_score": 15,
+    "risk_factors": [
+      "2 weak ciphers in use"
+    ]
   }
 }

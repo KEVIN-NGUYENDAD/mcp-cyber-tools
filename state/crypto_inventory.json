@@ -1,0 +1,208 @@
+{
+  "timestamp": "2026-09-05T17:29:23.552212",
+  "health_score": 94,
+  "certificate_count": 1,
+  "weak_cipher_count": 2,
+  "certificates": {
+    "unknown:0": {
+      "ip": "unknown",
+      "hostname": "",
+      "port": 0,
+      "protocol": "tcp",
+      "certificate_issues": [
+        "SSL Root Certification Authority Certificate Information",
+        "SSL Certificate Information",
+        "SSL Self-Signed Certificate",
+        "SSL Certificate Cannot Be Trusted"
+      ],
+      "tls_versions": [],
+      "cipher_suites": [],
+      "is_self_signed": false,
+      "expiry_status": "unknown",
+      "days_until_expiry": null,
+      "severity": 0
+    }
+  },
+  "cipher_suites": {
+    "Target Credential Status by Authentication Protocol - No Credentials Provided": {
+      "name": "Target Credential Status by Authentication Protocol - No Credentials Provided",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL Root Certification Authority Certificate Information": {
+      "name": "SSL Root Certification Authority Certificate Information",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "Remote Services Using Post-Quantum Ciphers": {
+      "name": "Remote Services Using Post-Quantum Ciphers",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "Open Network Video Interface Forum (ONVIF) Protocol Detection": {
+      "name": "Open Network Video Interface Forum (ONVIF) Protocol Detection",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "TLS Version 1.3 Protocol Detection": {
+      "name": "TLS Version 1.3 Protocol Detection",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "TLS ALPN Supported Protocol Enumeration": {
+      "name": "TLS ALPN Supported Protocol Enumeration",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL/TLS Recommended Cipher Suites": {
+      "name": "SSL/TLS Recommended Cipher Suites",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL Cipher Block Chaining Cipher Suites Supported": {
+      "name": "SSL Cipher Block Chaining Cipher Suites Supported",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "Remote Services Not Using Post-Quantum Ciphers": {
+      "name": "Remote Services Not Using Post-Quantum Ciphers",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "HyperText Transfer Protocol (HTTP) Information": {
+      "name": "HyperText Transfer Protocol (HTTP) Information",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "TLS Version 1.2 Protocol Detection": {
+      "name": "TLS Version 1.2 Protocol Detection",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "TLS Supported Groups": {
+      "name": "TLS Supported Groups",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL Perfect Forward Secrecy Cipher Suites Supported": {
+      "name": "SSL Perfect Forward Secrecy Cipher Suites Supported",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL Cipher Suites Supported": {
+      "name": "SSL Cipher Suites Supported",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL Certificate Information": {
+      "name": "SSL Certificate Information",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL / TLS Versions Supported": {
+      "name": "SSL / TLS Versions Supported",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": false,
+      "severity": 0,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL Self-Signed Certificate": {
+      "name": "SSL Self-Signed Certificate",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": true,
+      "severity": 2,
+      "hosts": [
+        "unknown"
+      ]
+    },
+    "SSL Certificate Cannot Be Trusted": {
+      "name": "SSL Certificate Cannot Be Trusted",
+      "tls_version": "Unknown",
+      "host_count": 1,
+      "is_weak": true,
+      "severity": 2,
+      "hosts": [
+        "unknown"
+      ]
+    }
+  }
+}

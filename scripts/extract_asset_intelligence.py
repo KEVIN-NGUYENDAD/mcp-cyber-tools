@@ -99,16 +99,6 @@ class AssetIntelligence:
         except Exception as e:
             return {}
 
-    def get_scan_vulnerabilities(self, scan_id):
-        """Get detailed vulnerability data including asset/service info"""
-        try:
-            resp = self.session.get(f'{self.nessus_url}/scans/{scan_id}', timeout=10)
-            resp.raise_for_status()
-            data = resp.json()
-            return data.get('vulnerabilities', [])
-        except Exception as e:
-            return []
-
     def classify_device_type(self, os_info, ip=None, plugin_families=None, open_services=None):
         """Auto-classify device based on OS, IP patterns, and services"""
         if not os_info:
@@ -195,8 +185,8 @@ class AssetIntelligence:
             # Get vulnerability counts from host data
             assets_by_ip[ip] = {
                 'ip': ip,
-                'hostname': ip,  # Default to IP; could be enriched with reverse DNS
-                'os': '',  # Will be enriched from plugin families
+                'hostname': ip,
+                'os': '',
                 'device_type': 'Unknown',
                 'first_seen': datetime.now().isoformat(),
                 'last_seen': datetime.now().isoformat(),
@@ -221,7 +211,6 @@ class AssetIntelligence:
         vulnerabilities = scan_data.get('vulnerabilities', [])
 
         for vuln in vulnerabilities:
-            # Vulnerabilities are global (not per-host), but we use them for classification hints
             plugin_family = vuln.get('plugin_family', '')
             plugin_name = vuln.get('plugin_name', '')
             cpe = vuln.get('cpe', '')
@@ -241,7 +230,6 @@ class AssetIntelligence:
 
             # Extract OS from CPE if available
             if cpe and '://' in cpe:
-                # CPE format example: cpe:/o:microsoft:windows_10
                 cpe_parts = cpe.split(':')
                 if len(cpe_parts) > 3:
                     os_part = cpe_parts[3]  # 'o' for OS

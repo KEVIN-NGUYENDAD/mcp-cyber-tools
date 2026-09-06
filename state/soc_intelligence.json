@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-09-05T17:29:22.209827",
+  "phase": "N - SOC Intelligence",
+  "extractors": {
+    "assets": {
+      "status": "success",
+      "timestamp": "2026-09-05T17:29:22.647729",
+      "total_assets": 11,
+      "new_assets": 0,
+      "removed_assets": 0,
+      "changed_assets": 0
+    },
+    "services": {
+      "status": "success",
+      "timestamp": "2026-09-05T17:29:23.133496",
+      "total_services": 132,
+      "new_services": 0,
+      "closed_services": 0,
+      "service_types": 12
+    },
+    "cryptography": {
+      "status": "success",
+      "timestamp": "2026-09-05T17:29:23.553212",
+      "health_score": 94,
+      "certificate_count": 1,
+      "cipher_suite_count": 18,
+      "weak_cipher_count": 2,
+      "new_weak_ciphers_detected": 0,
+      "newly_expired_certs": 0
+    }
+  },
+  "summary": {
+    "total_assets": 11,
+    "total_services": 132,
+    "total_certificates": 1,
+    "total_cipher_suites": 18,
+    "crypto_health_score": 94,
+    "new_assets": 0,
+    "new_services": 0,
+    "closed_services": 0,
+    "newly_expired_certs": 0
+  },
+  "status": "success",
+  "errors_count": 0
+}
