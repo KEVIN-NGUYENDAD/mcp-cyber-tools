@@ -1,9 +1,20 @@
 {
-  "timestamp": "2026-09-05T17:29:28.492488",
+  "timestamp": "2026-09-05T19:00:31.816308",
   "date": "2026-09-05",
+  "change_summary": {
+    "total_changes": 11,
+    "changes_by_category": {
+      "Asset": 11
+    },
+    "changes_by_severity": {
+      "MEDIUM": 11
+    },
+    "critical_incidents": [],
+    "summary_text": "11 thay \u0111\u1ed5i b\u00ecnh th\u01b0\u1eddng"
+  },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 2.6,
+    "scan_age_hours": 4.2,
     "total_findings": 63,
     "critical": 0,
     "high": 0,
@@ -79,51 +90,23 @@
     ]
   },
   "service_summary": {
-    "total_services": 132,
-    "service_types": 12,
+    "total_services": 0,
+    "service_types": 0,
     "new_services": 0,
     "closed_services": 0,
-    "top_services": [
-      {
-        "name": "SMB",
-        "host_count": 11,
-        "finding_count": 5
-      },
-      {
-        "name": "HTTP/HTTPS",
-        "host_count": 11,
-        "finding_count": 5
-      },
-      {
-        "name": "Settings",
-        "host_count": 11,
-        "finding_count": 4
-      },
-      {
-        "name": "General",
-        "host_count": 11,
-        "finding_count": 24
-      },
-      {
-        "name": "Service detection",
-        "host_count": 11,
-        "finding_count": 10
-      }
-    ]
+    "top_services": []
   },
   "crypto_summary": {
-    "health_score": 94,
-    "certificate_count": 1,
+    "health_score": 0,
+    "certificate_count": 0,
     "cipher_suite_count": 0,
-    "weak_cipher_count": 2,
+    "weak_cipher_count": 0,
     "newly_expired_certs": 0,
     "new_weak_ciphers": 0
   },
   "risk_assessment": {
     "risk_level": "LOW",
-    "risk_score": 15,
-    "risk_factors": [
-      "2 weak ciphers in use"
-    ]
+    "risk_score": 0,
+    "risk_factors": []
   }
 }

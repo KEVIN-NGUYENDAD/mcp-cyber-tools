@@ -50,7 +50,7 @@ class IntelligencePipeline:
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         log_entry = f'[{timestamp}] {message}'
         print(log_entry)
-        with open(self.log_file, 'a') as f:
+        with open(self.log_file, 'a', encoding='utf-8') as f:
             f.write(log_entry + '\n')
 
     def run_stage(self, stage_name, script_path, description):

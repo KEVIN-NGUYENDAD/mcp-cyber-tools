@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T15:05:54.421932",
+  "timestamp": "2026-09-05T19:00:27.162702",
   "domain": "sentinelops.fyi",
   "nameservers": [
     "curitiba.ns.porkbun.com.",
@@ -12,8 +12,8 @@
     "216.24.57.7"
   ],
   "mx_records": [
-    "10 fwd1.porkbun.com.",
-    "20 fwd2.porkbun.com."
+    "20 fwd2.porkbun.com.",
+    "10 fwd1.porkbun.com."
   ],
   "spf": "v=spf1 include:_spf.porkbun.com ~all",
   "dmarc": "CNAME pixie.porkbun.com.",

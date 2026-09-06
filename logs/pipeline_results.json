@@ -1,0 +1,410 @@
+{
+  "timestamp": "2026-09-05T19:00:25.999977",
+  "stages": [
+    {
+      "name": "Nessus Collector",
+      "status": "success",
+      "duration": 0.5886287689208984,
+      "output": {
+        "timestamp": "2026-09-05T19:00:26.255113",
+        "nessus_url": "https://localhost:8834",
+        "nessus_endpoint": "https://localhost:8834",
+        "scanner_status": "running",
+        "last_scan": "2026-09-05T14:47:23",
+        "scan_name": "Home Network Discovery",
+        "scan_age_hours": 4.2,
+        "critical": 0,
+        "high": 0,
+        "medium": 3,
+        "low": 2,
+        "info": 58,
+        "total": 63
+      }
+    },
+    {
+      "name": "Domain Collector",
+      "status": "success",
+      "duration": 1.0604002475738525,
+      "output": {
+        "timestamp": "2026-09-05T19:00:27.162702",
+        "domain": "sentinelops.fyi",
+        "nameservers": [
+          "curitiba.ns.porkbun.com.",
+          "fortaleza.ns.porkbun.com.",
+          "maceio.ns.porkbun.com.",
+          "salvador.ns.porkbun.com."
+        ],
+        "a_records": [
+          "216.24.57.15",
+          "216.24.57.7"
+        ],
+        "mx_records": [
+          "20 fwd2.porkbun.com.",
+          "10 fwd1.porkbun.com."
+        ],
+        "spf": "v=spf1 include:_spf.porkbun.com ~all",
+        "dmarc": "CNAME pixie.porkbun.com.",
+        "expiration_date": null,
+        "registration_date": null,
+        "dns_complete": {
+          "has_nameservers": true,
+          "has_a_records": true,
+          "has_mx_records": true,
+          "has_spf": true,
+          "has_dmarc": true
+        }
+      }
+    },
+    {
+      "name": "WAAP Collector",
+      "status": "success",
+      "duration": 0.8212788105010986,
+      "output": {
+        "timestamp": "2026-09-05T19:00:28.026725",
+        "domain": "sentinelops.fyi",
+        "ssl_status": "valid",
+        "expiration_date": "2026-12-02T19:50:51+00:00",
+        "days_until_expiry": 87,
+        "issuer": "CN=WE1,O=Google Trust Services,C=US",
+        "waf_enabled": false,
+        "waf_mode": "unknown",
+        "cdn_enabled": false,
+        "protection_status": "unknown",
+        "security_summary": {
+          "ssl_valid": true,
+          "waf_active": false,
+          "cdn_active": false,
+          "protection_active": false
+        }
+      }
+    },
+    {
+      "name": "System Health",
+      "status": "success",
+      "duration": 0.14981842041015625,
+      "output": {
+        "status": "success",
+        "cpu": 45,
+        "ram": 62,
+        "disk": 78
+      }
+    },
+    {
+      "name": "Defender Status",
+      "status": "success",
+      "duration": 0.18948721885681152,
+      "output": {
+        "status": "success",
+        "defender_enabled": true,
+        "threats": 0
+      }
+    },
+    {
+      "name": "Firewall Status",
+      "status": "success",
+      "duration": 0.15267419815063477,
+      "output": {
+        "status": "success",
+        "firewall_enabled": true,
+        "blocked": 42
+      }
+    },
+    {
+      "name": "Security Events",
+      "status": "success",
+      "duration": 0.20063138008117676,
+      "output": {
+        "status": "success",
+        "failed_logons": 3,
+        "critical": 0
+      }
+    },
+    {
+      "name": "Asset Intelligence",
+      "status": "success",
+      "duration": 0.4986565113067627,
+      "output": {
+        "status": "success",
+        "timestamp": "2026-09-05T19:00:29.657489",
+        "total_assets": 11,
+        "new_assets": 0,
+        "removed_assets": 0,
+        "changed_assets": 0
+      }
+    },
+    {
+      "name": "Service Intelligence",
+      "status": "success",
+      "duration": 0.47106194496154785,
+      "output": {
+        "status": "success",
+        "timestamp": "2026-09-05T19:00:30.128370",
+        "total_services": 10,
+        "top_services": [
+          {
+            "service_type": "Network Service",
+            "vulnerabilities": 24
+          },
+          {
+            "service_type": "Network Service",
+            "vulnerabilities": 11
+          },
+          {
+            "service_type": "Network Service",
+            "vulnerabilities": 7
+          },
+          {
+            "service_type": "Network Service",
+            "vulnerabilities": 5
+          },
+          {
+            "service_type": "Network Service",
+            "vulnerabilities": 4
+          },
+          {
+            "service_type": "Web Server",
+            "vulnerabilities": 4
+          },
+          {
+            "service_type": "Network Service",
+            "vulnerabilities": 2
+          },
+          {
+            "service_type": "Network Service",
+            "vulnerabilities": 2
+          },
+          {
+            "service_type": "DNS",
+            "vulnerabilities": 2
+          },
+          {
+            "service_type": "Network Service",
+            "vulnerabilities": 2
+          }
+        ]
+      }
+    },
+    {
+      "name": "Crypto Inventory",
+      "status": "success",
+      "duration": 0.4580678939819336,
+      "output": {
+        "status": "success",
+        "timestamp": "2026-09-05T19:00:30.592170",
+        "crypto_score": 100,
+        "critical_findings": 0,
+        "total_findings": 19
+      }
+    },
+    {
+      "name": "WAAP Score",
+      "status": "success",
+      "duration": 1.0619735717773438,
+      "output": {
+        "timestamp": "2026-09-05T19:00:31.063307",
+        "domain": "sentinelops.fyi",
+        "checks": {
+          "ssl_valid": true,
+          "ssl_expiry_score": 80,
+          "https_accessible": true,
+          "http_accessible": true,
+          "dns_resolves": true,
+          "security_headers_present": false
+        },
+        "health_score": 80,
+        "grade": "B",
+        "status": "healthy",
+        "component_scores": {
+          "ssl_status": 100,
+          "ssl_expiry": 80,
+          "http_status": 80,
+          "https_status": 100,
+          "dns_status": 100,
+          "security_headers": 25
+        },
+        "issues": [
+          "SSL certificate expiring in 87 days",
+          "Missing security headers: HSTS, X-Frame-Options, CSP"
+        ],
+        "issue_count": 2,
+        "recommendations": [
+          {
+            "priority": "MEDIUM",
+            "category": "SSL",
+            "action": "Renew SSL certificate (expires in 90 days)",
+            "impact": "Certificate expiration will break HTTPS access"
+          },
+          {
+            "priority": "MEDIUM",
+            "category": "Security",
+            "action": "Add missing security headers (HSTS, CSP, X-Frame-Options)",
+            "impact": "Improves protection against XSS, clickjacking, and other attacks"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Daily Brief",
+      "status": "success",
+      "duration": 0.2793464660644531,
+      "output": {
+        "timestamp": "2026-09-05T19:00:31.816308",
+        "date": "2026-09-05",
+        "change_summary": {
+          "total_changes": 11,
+          "changes_by_category": {
+            "Asset": 11
+          },
+          "changes_by_severity": {
+            "MEDIUM": 11
+          },
+          "critical_incidents": [],
+          "summary_text": "11 thay \u0111\u1ed5i b\u00ecnh th\u01b0\u1eddng"
+        },
+        "vulnerability_summary": {
+          "scan_name": "Home Network Discovery",
+          "scan_age_hours": 4.2,
+          "total_findings": 63,
+          "critical": 0,
+          "high": 0,
+          "medium": 3,
+          "low": 2,
+          "info": 58,
+          "scanner_status": "running"
+        },
+        "domain_summary": {
+          "domain": "sentinelops.fyi",
+          "dns_health": {
+            "spf": true,
+            "dmarc": true,
+            "nameservers": true,
+            "a_records": true,
+            "mx_records": true
+          },
+          "nameserver_count": 4,
+          "a_record_count": 2,
+          "mx_record_count": 2
+        },
+        "waap_summary": {
+          "domain": "sentinelops.fyi",
+          "ssl_status": "valid",
+          "days_until_expiry": 87,
+          "health_score": 80,
+          "grade": "B",
+          "status": "healthy",
+          "recommendation_count": 2
+        },
+        "asset_summary": {
+          "total_assets": 11,
+          "known_devices": 11,
+          "unknown_devices": 0,
+          "new_assets": 0,
+          "removed_assets": 0,
+          "top_vulnerable_devices": [
+            {
+              "ip": "192.168.0.51",
+              "hostname": "192.168.0.51",
+              "vulnerability_count": 205,
+              "severity_critical": 0,
+              "severity_high": 0
+            },
+            {
+              "ip": "192.168.0.21",
+              "hostname": "192.168.0.21",
+              "vulnerability_count": 43,
+              "severity_critical": 0,
+              "severity_high": 0
+            },
+            {
+              "ip": "192.168.0.1",
+              "hostname": "192.168.0.1",
+              "vulnerability_count": 39,
+              "severity_critical": 0,
+              "severity_high": 0
+            },
+            {
+              "ip": "192.168.0.10",
+              "hostname": "192.168.0.10",
+              "vulnerability_count": 14,
+              "severity_critical": 0,
+              "severity_high": 0
+            },
+            {
+              "ip": "192.168.0.11",
+              "hostname": "192.168.0.11",
+              "vulnerability_count": 14,
+              "severity_critical": 0,
+              "severity_high": 0
+            }
+          ]
+        },
+        "service_summary": {
+          "total_services": 0,
+          "service_types": 0,
+          "new_services": 0,
+          "closed_services": 0,
+          "top_services": []
+        },
+        "crypto_summary": {
+          "health_score": 0,
+          "certificate_count": 0,
+          "cipher_suite_count": 0,
+          "weak_cipher_count": 0,
+          "newly_expired_certs": 0,
+          "new_weak_ciphers": 0
+        },
+        "risk_assessment": {
+          "risk_level": "LOW",
+          "risk_score": 0,
+          "risk_factors": []
+        }
+      }
+    },
+    {
+      "name": "Risk Score",
+      "status": "success",
+      "duration": 0.19085025787353516,
+      "output": {
+        "status": "success",
+        "overall_score": 88,
+        "risk_level": "LOW"
+      }
+    },
+    {
+      "name": "Recommended Actions",
+      "status": "success",
+      "duration": 0.1513512134552002,
+      "output": {
+        "status": "success",
+        "total_actions": 0
+      }
+    },
+    {
+      "name": "Timeline Events",
+      "status": "success",
+      "duration": 0.22912001609802246,
+      "output": {
+        "status": "success",
+        "total_events": 11,
+        "by_category": {
+          "Risk": 1,
+          "Service": 10
+        },
+        "by_severity": {
+          "LOW": 1,
+          "MEDIUM": 10
+        }
+      }
+    }
+  ],
+  "status": "success",
+  "summary": {
+    "assets": 11,
+    "services": 10,
+    "crypto_score": 100,
+    "waap_score": 0,
+    "risk_level": "HIGH"
+  },
+  "duration": 6.531187057495117,
+  "end_time": "2026-09-05T19:00:32.534856"
+}

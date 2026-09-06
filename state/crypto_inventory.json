@@ -1,208 +1,147 @@
 {
-  "timestamp": "2026-09-05T17:29:23.552212",
-  "health_score": 94,
-  "certificate_count": 1,
-  "weak_cipher_count": 2,
-  "certificates": {
-    "unknown:0": {
-      "ip": "unknown",
-      "hostname": "",
-      "port": 0,
-      "protocol": "tcp",
-      "certificate_issues": [
-        "SSL Root Certification Authority Certificate Information",
-        "SSL Certificate Information",
-        "SSL Self-Signed Certificate",
-        "SSL Certificate Cannot Be Trusted"
-      ],
-      "tls_versions": [],
-      "cipher_suites": [],
-      "is_self_signed": false,
-      "expiry_status": "unknown",
-      "days_until_expiry": null,
-      "severity": 0
-    }
+  "timestamp": "2026-09-05T19:00:30.591169",
+  "score": 100,
+  "severity_breakdown": {
+    "CRITICAL": 0,
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0,
+    "INFO": 0
   },
-  "cipher_suites": {
-    "Target Credential Status by Authentication Protocol - No Credentials Provided": {
-      "name": "Target Credential Status by Authentication Protocol - No Credentials Provided",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+  "total_findings": 19,
+  "findings": [
+    {
+      "category": "Authentication",
+      "plugin_name": "Target Credential Status by Authentication Protocol - No Credentials Provided",
+      "plugin_family": "Settings",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL Root Certification Authority Certificate Information": {
-      "name": "SSL Root Certification Authority Certificate Information",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "SSL Root Certification Authority Certificate Information",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "Remote Services Using Post-Quantum Ciphers": {
-      "name": "Remote Services Using Post-Quantum Ciphers",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "Remote Services Using Post-Quantum Ciphers",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "Open Network Video Interface Forum (ONVIF) Protocol Detection": {
-      "name": "Open Network Video Interface Forum (ONVIF) Protocol Detection",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "Authentication",
+      "plugin_name": "Microsoft Windows NTLMSSP Authentication Request Remote Network Name Disclosure",
+      "plugin_family": "Windows",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "TLS Version 1.3 Protocol Detection": {
-      "name": "TLS Version 1.3 Protocol Detection",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "HSTS Missing From HTTPS Server",
+      "plugin_family": "Web Servers",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "TLS ALPN Supported Protocol Enumeration": {
-      "name": "TLS ALPN Supported Protocol Enumeration",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "TLS Version 1.3 Protocol Detection",
+      "plugin_family": "Service detection",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL/TLS Recommended Cipher Suites": {
-      "name": "SSL/TLS Recommended Cipher Suites",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "TLS ALPN Supported Protocol Enumeration",
+      "plugin_family": "Misc.",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL Cipher Block Chaining Cipher Suites Supported": {
-      "name": "SSL Cipher Block Chaining Cipher Suites Supported",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "SSL/TLS Recommended Cipher Suites",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "Remote Services Not Using Post-Quantum Ciphers": {
-      "name": "Remote Services Not Using Post-Quantum Ciphers",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "SSL Cipher Block Chaining Cipher Suites Supported",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "HyperText Transfer Protocol (HTTP) Information": {
-      "name": "HyperText Transfer Protocol (HTTP) Information",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "Remote Services Not Using Post-Quantum Ciphers",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "TLS Version 1.2 Protocol Detection": {
-      "name": "TLS Version 1.2 Protocol Detection",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "TLS Version 1.2 Protocol Detection",
+      "plugin_family": "Service detection",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "TLS Supported Groups": {
-      "name": "TLS Supported Groups",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "TLS Supported Groups",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL Perfect Forward Secrecy Cipher Suites Supported": {
-      "name": "SSL Perfect Forward Secrecy Cipher Suites Supported",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "SSL Perfect Forward Secrecy Cipher Suites Supported",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL Cipher Suites Supported": {
-      "name": "SSL Cipher Suites Supported",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "SSL Cipher Suites Supported",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL Certificate Information": {
-      "name": "SSL Certificate Information",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "SSL Certificate Information",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL / TLS Versions Supported": {
-      "name": "SSL / TLS Versions Supported",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": false,
+    {
+      "category": "SSL",
+      "plugin_name": "SSL / TLS Versions Supported",
+      "plugin_family": "General",
       "severity": 0,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL Self-Signed Certificate": {
-      "name": "SSL Self-Signed Certificate",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": true,
+    {
+      "category": "Encryption",
+      "plugin_name": "Shor's Harvest Now Decrypt Later",
+      "plugin_family": "General",
+      "severity": 0,
+      "timestamp": "2026-09-05T19:00:30.591169"
+    },
+    {
+      "category": "SSL",
+      "plugin_name": "SSL Self-Signed Certificate",
+      "plugin_family": "General",
       "severity": 2,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     },
-    "SSL Certificate Cannot Be Trusted": {
-      "name": "SSL Certificate Cannot Be Trusted",
-      "tls_version": "Unknown",
-      "host_count": 1,
-      "is_weak": true,
+    {
+      "category": "SSL",
+      "plugin_name": "SSL Certificate Cannot Be Trusted",
+      "plugin_family": "General",
       "severity": 2,
-      "hosts": [
-        "unknown"
-      ]
+      "timestamp": "2026-09-05T19:00:30.591169"
     }
-  }
+  ]
 }
