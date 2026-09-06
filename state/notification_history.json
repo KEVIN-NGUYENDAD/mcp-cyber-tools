@@ -1,0 +1,15 @@
+{
+  "sent_alerts": [
+    {
+      "incident_id": "INC-0004",
+      "title": "PERSISTENCE THREAT: WMI Event Consumer Subscription",
+      "severity": "CRITICAL",
+      "message_id": 7,
+      "sent_at": "2026-09-06T10:12:23.305438"
+    }
+  ],
+  "last_alert": {
+    "incident_id": "INC-0004",
+    "sent_at": "2026-09-06T10:12:23.305438"
+  }
+}
