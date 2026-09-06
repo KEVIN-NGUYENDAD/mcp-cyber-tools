@@ -60,7 +60,24 @@ class ServiceIntelligence:
             'Content-Type': 'application/json'
         })
 
+    def find_scan_by_name(self, target_name='Home Network Discovery'):
+        """Find scan by name"""
+        try:
+            resp = self.session.get(f'{self.nessus_url}/scans', timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+            scans = data.get('scans', [])
+            if not scans:
+                return None
+            for scan in scans:
+                if scan.get('name') == target_name:
+                    return scan.get('id')
+            return None
+        except Exception:
+            return None
+
     def get_latest_scan_id(self):
+        """Get latest scan ID (fallback if named scan not found)"""
         try:
             resp = self.session.get(f'{self.nessus_url}/scans', timeout=10)
             resp.raise_for_status()
@@ -313,7 +330,13 @@ class ServiceIntelligence:
 
         self.set_auth_headers()
 
-        scan_id = self.get_latest_scan_id()
+        # Try to find "Home Network Discovery" scan first
+        scan_id = self.find_scan_by_name('Home Network Discovery')
+
+        # Fallback to latest if specific scan not found
+        if not scan_id:
+            scan_id = self.get_latest_scan_id()
+
         if not scan_id:
             return {
                 'error': 'No scans found in Nessus',

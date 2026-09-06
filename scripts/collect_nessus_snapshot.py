@@ -78,8 +78,33 @@ class NessusCollector:
         except Exception as e:
             return 'error'
 
+    def find_scan_by_name(self, target_name):
+        """Find scan by name (primary: Home Network Discovery)"""
+        try:
+            resp = self.session.get(f'{self.nessus_url}/scans', timeout=10)
+            resp.raise_for_status()
+            data = resp.json()
+
+            scans = data.get('scans', [])
+            if not scans:
+                return None
+
+            # Look for exact name match first
+            for scan in scans:
+                if scan.get('name') == target_name:
+                    scan_id = scan.get('id')
+                    scan_name = scan.get('name', 'Unknown')
+                    last_scan_time = scan.get('last_modification_date')
+                    if scan_id:
+                        return self.get_scan_details(scan_id, last_scan_time, scan_name)
+
+            return None
+
+        except Exception as e:
+            return None
+
     def get_latest_scan(self):
-        """Get latest scan results"""
+        """Get latest scan results (deprecated - use find_scan_by_name)"""
         try:
             resp = self.session.get(f'{self.nessus_url}/scans', timeout=10)
             resp.raise_for_status()
@@ -180,7 +205,13 @@ class NessusCollector:
         status = self.get_scanner_status()
         output['scanner_status'] = status
 
-        scan_data = self.get_latest_scan()
+        # Try to find "Home Network Discovery" scan first
+        scan_data = self.find_scan_by_name('Home Network Discovery')
+
+        # Fallback to latest if specific scan not found
+        if not scan_data:
+            scan_data = self.get_latest_scan()
+
         if scan_data:
             output.update(scan_data)
         else:
