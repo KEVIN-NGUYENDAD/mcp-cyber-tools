@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: sentinelops-command-center
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: PORT=3000 STATE_DIR=./state node web/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: STATE_DIR
+        value: ./state
+      - key: PORT
+        value: 3000
+    autoDeploy: git
+    branch: main
+    routes:
+      - path: /
+        matchType: all
