@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "source": "website_status",
+  "asset_id": "sentinelops.fyi",
+  "captured_at": "2026-09-05T16:47:37.511986+00:00",
+  "state": {
+    "http_status": 200,
+    "https_status": 200,
+    "site_up": true,
+    "ssl_valid": true,
+    "ssl_expiry": "2026-12-02T19:50:51+00:00",
+    "ssl_days_until_expiry": 88,
+    "response_time_ms": 125.0
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "validationId": "VALID-1788040540805-2cx737mhz",
+  "caseId": "CASE-004",
+  "prediction": "Persistence",
+  "confidence": 92,
+  "predictedAt": "2026-08-29T21:55:40.804Z",
+  "actual": "Registry Run Key",
+  "actualAt": "2026-08-29T21:55:40.915Z",
+  "correct": true,
+  "scoreData": {
+    "predictionCorrect": 1,
+    "confidenceScore": 92,
+    "timeToOutcome": "0s",
+    "metrics": {
+      "isHit": true,
+      "confidence": 92,
+      "accuracy": 100
+    }
+  },
+  "status": "scored"
+}

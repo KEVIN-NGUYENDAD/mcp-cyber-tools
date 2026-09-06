@@ -1,0 +1,81 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-4167",
+  "title": "PowerShell Threat Hunt",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T17:22:47.388Z"
+    }
+  ],
+  "createdAt": "2026-08-22T17:22:47.388Z",
+  "updatedAt": "2026-08-22T17:22:47.718Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787419367717",
+      "timestamp": "2026-08-22T17:22:47.717Z",
+      "severity": "info",
+      "title": "PowerShell Activity Scan Clean",
+      "description": "No suspicious PowerShell patterns detected in logs",
+      "source": "powerShellHunt"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "Export PowerShell Timeline",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-002",
+      "title": "Create Hunt Baseline",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-003",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T17:22:47.388Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419367717",
+        "title": "PowerShell Activity Scan Clean",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:22:47.717Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 3,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "Export PowerShell Timeline"
+          },
+          {
+            "id": "REC-002",
+            "title": "Create Hunt Baseline"
+          },
+          {
+            "id": "REC-003",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T17:22:47.718Z"
+    }
+  ]
+}

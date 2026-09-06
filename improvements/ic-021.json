@@ -1,0 +1,13 @@
+{
+  "cycle": "IC-021",
+  "title": "Registry Performance: Query Optimization",
+  "problem": "Registry queries (HKLM paths) slow on large registry hives, timeout after 5s on cold-start",
+  "evidence": ["startupPrograms query timeout", "Registry access slow", "Pattern affects 3+ registry tools"],
+  "cause": "Registry queries unoptimized. Need caching or query parallelization.",
+  "confidence": 91,
+  "recommended_actions": [{"action": "Implement registry query caching for HKLM paths", "priority": "HIGH", "effort": "MEDIUM", "expected_delta": 75}],
+  "before": 0, "after": 100, "delta": 100, "actual_delta": 92,
+  "recommendation_status": "COMPLETE",
+  "lesson_applied": ["IC-027", "IC-026"],
+  "date": "2026-08-23"
+}

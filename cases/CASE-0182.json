@@ -1,0 +1,81 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-0182",
+  "title": "Persistence Investigation",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T17:24:13.777Z"
+    }
+  ],
+  "createdAt": "2026-08-22T17:24:13.777Z",
+  "updatedAt": "2026-08-22T17:24:14.511Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787419454509",
+      "timestamp": "2026-08-22T17:24:14.509Z",
+      "severity": "info",
+      "title": "No Obvious Persistence Mechanisms Detected",
+      "description": "Baseline registry, tasks, and services appear normal",
+      "source": "analysisEngine"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "Export Persistence Report",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-002",
+      "title": "Create Persistence Baseline",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-003",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T17:24:13.777Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419454509",
+        "title": "No Obvious Persistence Mechanisms Detected",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:24:14.509Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 3,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "Export Persistence Report"
+          },
+          {
+            "id": "REC-002",
+            "title": "Create Persistence Baseline"
+          },
+          {
+            "id": "REC-003",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T17:24:14.511Z"
+    }
+  ]
+}

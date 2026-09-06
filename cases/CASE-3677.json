@@ -1,0 +1,80 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-3677",
+  "title": "Machine Validation",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T17:12:30.311Z"
+    }
+  ],
+  "createdAt": "2026-08-22T17:12:30.311Z",
+  "updatedAt": "2026-08-22T17:12:39.907Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787418759906",
+      "timestamp": "2026-08-22T17:12:39.906Z",
+      "severity": "info",
+      "title": "Operational Readiness Verified",
+      "description": "System passed all validation gates"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "Create System Baseline",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-002",
+      "title": "Export Evidence Package",
+      "risk": "safe",
+      "requiresApproval": true
+    },
+    {
+      "id": "REC-003",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T17:12:30.311Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787418759906",
+        "title": "Operational Readiness Verified",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:12:39.906Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 3,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "Create System Baseline"
+          },
+          {
+            "id": "REC-002",
+            "title": "Export Evidence Package"
+          },
+          {
+            "id": "REC-003",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T17:12:39.907Z"
+    }
+  ]
+}

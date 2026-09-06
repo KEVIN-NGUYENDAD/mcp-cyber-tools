@@ -1,0 +1,27 @@
+{
+  "id": "ic-013",
+  "cycle": "IC-013",
+  "title": "Firewall Rule Filter Syntax Error",
+  "problem": "disabledFirewallRules tool fails to query disabled firewall rules due to filter syntax error",
+  "evidence": [
+    "Get-NetFirewallRule -Enabled $false fails",
+    "Filter parameter syntax issue with boolean comparison",
+    "Affects firewall rule enumeration"
+  ],
+  "cause": "PowerShell -Enabled parameter expects $true/$false but filter syntax may be incompatible with command context",
+  "confidence": 88,
+  "recommended_actions": [
+    {
+      "action": "Use Get-NetFirewallRule with corrected -Enabled parameter syntax",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "roi": 44
+}

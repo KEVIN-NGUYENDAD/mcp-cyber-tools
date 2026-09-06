@@ -1,0 +1,57 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-3021",
+  "title": "Lateral Movement Detection",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-29T21:55:46.544Z"
+    }
+  ],
+  "createdAt": "2026-08-29T21:55:46.544Z",
+  "updatedAt": "2026-08-29T21:55:46.546Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1788040546545",
+      "timestamp": "2026-08-29T21:55:46.545Z",
+      "title": "Privilege Escalation",
+      "severity": "high",
+      "description": "Admin rights"
+    },
+    {
+      "id": "F-1788040546546",
+      "timestamp": "2026-08-29T21:55:46.546Z",
+      "title": "Network Share Access",
+      "severity": "high",
+      "description": "Lateral movement"
+    }
+  ],
+  "recommendations": [],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-29T21:55:46.544Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1788040546545",
+        "title": "Privilege Escalation",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-29T21:55:46.545Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1788040546546",
+        "title": "Network Share Access",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-29T21:55:46.546Z"
+    }
+  ],
+  "riskScore": 85
+}

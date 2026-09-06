@@ -1,14 +1,15 @@
 {
-  "name": "mcp-cyber-tools",
+  "name": "security-watch",
   "version": "1.0.0",
-  "type": "module",
-  "main": "server.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "Minimal security monitoring - 72 hour POC",
+  "main": "security-watch.js",
+  "scripts": {
+    "start": "node security-watch.js"
+  },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "zod": "^4.4.3"
+    "nodemailer": "^6.9.7"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

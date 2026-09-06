@@ -1,0 +1,26 @@
+{
+  "cycle": "IC-010",
+  "title": "Alternate Data Streams Query Parsing Error",
+  "problem": "alternateDataStreams tool fails when querying NTFS alternate data streams using Get-Item -Stream syntax",
+  "evidence": [
+    "Get-Item -Path C:\\Windows\\System32 -Stream * fails",
+    "Command syntax error in filter parsing",
+    "Tool returns no results instead of ADS list"
+  ],
+  "cause": "PowerShell -Stream parameter requires proper syntax context. Current command structure invalid for NTFS ADS enumeration",
+  "confidence": 85,
+  "recommended_actions": [
+    {
+      "action": "Use Get-Item (Provider) syntax with corrected stream enumeration",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23"
+}

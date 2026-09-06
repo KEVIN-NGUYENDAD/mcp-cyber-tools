@@ -1,0 +1,26 @@
+{
+  "cycle": "IC-011",
+  "title": "DLL Enumeration Filter Syntax Error",
+  "problem": "dllHijackLocations tool fails to enumerate System32 DLL files due to filter syntax error",
+  "evidence": [
+    "Get-ChildItem C:\\Windows\\System32 -Filter '*.dll' fails",
+    "Filter parameter syntax invalid in command context",
+    "Affects all DLL hijack detection"
+  ],
+  "cause": "Filter parameter ordering or syntax not compatible with Get-ChildItem -Recurse context",
+  "confidence": 87,
+  "recommended_actions": [
+    {
+      "action": "Fix Get-ChildItem filter syntax using Where-Object instead of -Filter",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23"
+}

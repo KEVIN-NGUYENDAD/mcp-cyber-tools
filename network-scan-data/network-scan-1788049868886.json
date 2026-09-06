@@ -1,0 +1,113 @@
+{
+  "timestamp": "2026-08-30T00:29:50.338Z",
+  "scanType": "IOT_NETWORK_SCAN",
+  "deviceCount": 4,
+  "identifiedCount": 4,
+  "totalRisks": 1,
+  "devices": [
+    {
+      "ip": "192.168.0.1",
+      "mac": "48-bd-ce-0e-1e-3c",
+      "arpType": "dynamic",
+      "vendor": "ARRIS / CommScope",
+      "deviceType": "Router / Gateway",
+      "identified": true,
+      "openPorts": [
+        {
+          "port": 80,
+          "assumedService": "HTTP (Web UI)",
+          "verifiedService": "Open, probe failed"
+        },
+        {
+          "port": 443,
+          "assumedService": "HTTPS (Web UI)",
+          "verifiedService": "Open, no banner (service unverified, NOT HTTPS)"
+        },
+        {
+          "port": 1883,
+          "assumedService": "MQTT (IoT Broker)",
+          "verifiedService": "Open, no banner (service unverified, NOT MQTT)"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "ip": "192.168.0.21",
+      "mac": "ec-71-db-0b-49-37",
+      "arpType": "dynamic",
+      "vendor": "Reolink",
+      "deviceType": "IP Camera",
+      "identified": true,
+      "openPorts": [
+        {
+          "port": 80,
+          "assumedService": "HTTP (Web UI)",
+          "verifiedService": "Open, probe failed"
+        },
+        {
+          "port": 443,
+          "assumedService": "HTTPS (Web UI)",
+          "verifiedService": "Open, no banner (service unverified, NOT HTTPS)"
+        },
+        {
+          "port": 554,
+          "assumedService": "RTSP (Camera Stream)",
+          "verifiedService": "Open, probe failed"
+        },
+        {
+          "port": 8000,
+          "assumedService": "HTTP Alt (Camera/NVR)",
+          "verifiedService": "Open, probe failed"
+        },
+        {
+          "port": 9000,
+          "assumedService": "Reolink / NVR",
+          "verifiedService": "Open, no banner (service unverified, NOT Reolink)"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "ip": "192.168.0.25",
+      "mac": "1c-bf-ce-74-b4-51",
+      "arpType": "dynamic",
+      "vendor": "Shenzhen Ecom",
+      "deviceType": "IoT Device",
+      "identified": true,
+      "openPorts": [
+        {
+          "port": 80,
+          "assumedService": "HTTP (Web UI)",
+          "verifiedService": "Open, probe failed"
+        },
+        {
+          "port": 554,
+          "assumedService": "RTSP (Camera Stream)",
+          "verifiedService": "Open, probe failed"
+        },
+        {
+          "port": 23,
+          "assumedService": "Telnet",
+          "verifiedService": "Telnet login prompt [CONFIRMED]"
+        }
+      ],
+      "risks": [
+        {
+          "port": 23,
+          "service": "Telnet login prompt [CONFIRMED]",
+          "warning": "CRITICAL - Telnet sends credentials in plaintext"
+        }
+      ]
+    },
+    {
+      "ip": "192.168.0.233",
+      "mac": "9c-b1-50-fe-04-20",
+      "arpType": "dynamic",
+      "vendor": "Intel",
+      "deviceType": "Computer (Laptop/Desktop)",
+      "identified": true,
+      "openPorts": [],
+      "risks": []
+    }
+  ]
+}

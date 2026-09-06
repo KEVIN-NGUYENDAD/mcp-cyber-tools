@@ -1,0 +1,128 @@
+{
+  "caseId": "CASE-5095",
+  "exportedAt": "2026-08-22T17:18:15.705Z",
+  "findings": [
+    {
+      "id": "F-1787419095690",
+      "timestamp": "2026-08-22T17:18:15.690Z",
+      "severity": "info",
+      "title": "No Obvious Persistence Mechanisms Detected",
+      "description": "Baseline registry, tasks, and services appear normal",
+      "source": "analysisEngine"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "REC-001",
+      "title": "Export Persistence Report",
+      "risk": "safe",
+      "requiresApproval": true,
+      "approved": true,
+      "approvedAt": "2026-08-22T17:18:15.696Z",
+      "approvedBy": "tamngankevin@gmail.com",
+      "executed": true,
+      "executedAt": "2026-08-22T17:18:15.702Z",
+      "executionResult": {
+        "success": true,
+        "action": "REC-001",
+        "result": "System baseline created",
+        "file": "baseline\\BASELINE-2026-08-22.json",
+        "timestamp": "2026-08-22T17:18:15.702Z"
+      }
+    },
+    {
+      "id": "REC-002",
+      "title": "Create Persistence Baseline",
+      "risk": "safe",
+      "requiresApproval": true,
+      "approved": true,
+      "approvedAt": "2026-08-22T17:18:15.698Z",
+      "approvedBy": "tamngankevin@gmail.com"
+    },
+    {
+      "id": "REC-003",
+      "title": "Close Case",
+      "risk": "safe",
+      "requiresApproval": true,
+      "approved": true,
+      "approvedAt": "2026-08-22T17:18:15.700Z",
+      "approvedBy": "tamngankevin@gmail.com"
+    }
+  ],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T17:18:14.971Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787419095690",
+        "title": "No Obvious Persistence Mechanisms Detected",
+        "severity": "info"
+      },
+      "timestamp": "2026-08-22T17:18:15.690Z"
+    },
+    {
+      "type": "RECOMMENDATION_GENERATED",
+      "payload": {
+        "count": 3,
+        "recommendations": [
+          {
+            "id": "REC-001",
+            "title": "Export Persistence Report"
+          },
+          {
+            "id": "REC-002",
+            "title": "Create Persistence Baseline"
+          },
+          {
+            "id": "REC-003",
+            "title": "Close Case"
+          }
+        ]
+      },
+      "timestamp": "2026-08-22T17:18:15.692Z"
+    },
+    {
+      "type": "RECOMMENDATION_APPROVED",
+      "payload": {
+        "recommendationId": "REC-001",
+        "title": "Export Persistence Report",
+        "approver": "tamngankevin@gmail.com",
+        "risk": "safe"
+      },
+      "timestamp": "2026-08-22T17:18:15.696Z"
+    },
+    {
+      "type": "RECOMMENDATION_APPROVED",
+      "payload": {
+        "recommendationId": "REC-002",
+        "title": "Create Persistence Baseline",
+        "approver": "tamngankevin@gmail.com",
+        "risk": "safe"
+      },
+      "timestamp": "2026-08-22T17:18:15.698Z"
+    },
+    {
+      "type": "RECOMMENDATION_APPROVED",
+      "payload": {
+        "recommendationId": "REC-003",
+        "title": "Close Case",
+        "approver": "tamngankevin@gmail.com",
+        "risk": "safe"
+      },
+      "timestamp": "2026-08-22T17:18:15.700Z"
+    },
+    {
+      "type": "ACTION_EXECUTED",
+      "payload": {
+        "recommendationId": "REC-001",
+        "title": "Export Persistence Report",
+        "success": true,
+        "result": "System baseline created"
+      },
+      "timestamp": "2026-08-22T17:18:15.702Z"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "cycle": "IC-XXX",
+  "title": "CHANGE THIS - Problem Being Fixed",
+  "problem": "Specific problem description (1-2 sentences)",
+  "evidence": [
+    "Evidence point 1 - what we observed",
+    "Evidence point 2 - what we measured",
+    "Evidence point 3 - what we verified"
+  ],
+  "cause": "Root cause (confidence: 95%+)",
+  "confidence": 95,
+  "recommended_actions": [
+    {
+      "action": "Specific action to take",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 50
+    },
+    {
+      "action": "Second action if multi-step",
+      "priority": "MEDIUM",
+      "effort": "LOW",
+      "expected_delta": 25
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": null,
+  "recommendation_status": "PENDING",
+  "date": "2026-08-23",
+  "notes": "Additional context if needed"
+}

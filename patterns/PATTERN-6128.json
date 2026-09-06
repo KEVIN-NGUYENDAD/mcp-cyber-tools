@@ -1,0 +1,18 @@
+{
+  "patternId": "PATTERN-6128",
+  "sequence": [
+    "Lateral Movement",
+    "Data Exfiltration"
+  ],
+  "firstSeen": "2026-08-22T20:24:25.095Z",
+  "lastSeen": "2026-08-29T21:55:46.524Z",
+  "occurrences": 2,
+  "confidence": 89.5,
+  "casesObserved": [
+    "CASE-105",
+    "CASE-108"
+  ],
+  "type": "data-exfiltration-chain",
+  "severity": "critical",
+  "description": "Attack progression: Lateral Movement → Data Exfiltration"
+}

@@ -1,0 +1,40 @@
+{
+  "cycle": "IC-006",
+  "title": "Registry Permission Boundary - startupPrograms Tool",
+  "problem": "startupPrograms command fails with access denied when reading HKLM registry. Requires administrator privileges or SeLoadDriverPrivilege",
+  "evidence": [
+    "Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run fails",
+    "Error: Access to the registry path is not allowed",
+    "Tool succeeds when run as Administrator",
+    "Environmental issue: permission boundary affects visibility"
+  ],
+  "cause": "Registry HKLM (HKEY_LOCAL_MACHINE) hive requires elevated privileges for full read access. User context lacks sufficient permissions",
+  "confidence": 95,
+  "recommended_actions": [
+    {
+      "action": "Document registry access requirements in tool documentation",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 0
+    },
+    {
+      "action": "Add permission check before registry query with clear error message",
+      "priority": "MEDIUM",
+      "effort": "LOW",
+      "expected_delta": 30
+    },
+    {
+      "action": "Provide fallback: read HKCU (current user) registry as alternative",
+      "priority": "MEDIUM",
+      "effort": "MEDIUM",
+      "expected_delta": 50
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "notes": "Environmental constraint, not framework bug. Similar to IC-002 privilege boundary issue"
+}

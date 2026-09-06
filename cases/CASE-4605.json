@@ -1,0 +1,274 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-4605",
+  "title": "Persistence Investigation",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T19:14:19.577Z"
+    }
+  ],
+  "createdAt": "2026-08-22T19:14:19.577Z",
+  "updatedAt": "2026-08-22T19:14:19.592Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787426059580",
+      "timestamp": "2026-08-22T19:14:19.580Z",
+      "title": "SoftLanding",
+      "severity": "medium",
+      "description": "OEM artifact",
+      "source": "registry",
+      "classification": "legitimate",
+      "confidence": 95,
+      "confidenceReason": "Known OEM artifact",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 2,
+        "incidentCount": 0,
+        "confidence": 92.38560627359831,
+        "classification": "legitimate",
+        "casesObserved": 2
+      },
+      "enhancedConfidence": 95,
+      "enhancedClassification": "legitimate"
+    },
+    {
+      "id": "F-1787426059582",
+      "timestamp": "2026-08-22T19:14:19.582Z",
+      "title": "Windows Defender",
+      "severity": "low",
+      "description": "AV service",
+      "source": "services",
+      "classification": "legitimate",
+      "confidence": 98,
+      "confidenceReason": "Microsoft security component",
+      "knowledgeContext": {
+        "seenBefore": true,
+        "seenCount": 2,
+        "incidentCount": 0,
+        "confidence": 92.38560627359831,
+        "classification": "legitimate",
+        "casesObserved": 2
+      },
+      "enhancedConfidence": 98,
+      "enhancedClassification": "legitimate"
+    },
+    {
+      "id": "F-1787426059583",
+      "timestamp": "2026-08-22T19:14:19.583Z",
+      "title": "McAfee",
+      "severity": "low",
+      "description": "AV software",
+      "source": "registry",
+      "classification": "legitimate",
+      "confidence": 92,
+      "confidenceReason": "Known antivirus software"
+    },
+    {
+      "id": "F-1787426059585",
+      "timestamp": "2026-08-22T19:14:19.585Z",
+      "title": "LG gram Link",
+      "severity": "low",
+      "description": "OEM utility",
+      "source": "startup",
+      "classification": "legitimate",
+      "confidence": 88,
+      "confidenceReason": "OEM utility"
+    },
+    {
+      "id": "F-1787426059586",
+      "timestamp": "2026-08-22T19:14:19.586Z",
+      "title": "OneDrive",
+      "severity": "low",
+      "description": "Microsoft service",
+      "source": "registry",
+      "classification": "legitimate",
+      "confidence": 95,
+      "confidenceReason": "Microsoft service"
+    },
+    {
+      "id": "F-1787426059587",
+      "timestamp": "2026-08-22T19:14:19.587Z",
+      "title": "Unknown Registry Entry",
+      "severity": "medium",
+      "description": "Unidentified persistence",
+      "source": "registry",
+      "classification": "unknown",
+      "confidence": 0,
+      "confidenceReason": "No pattern match"
+    },
+    {
+      "id": "F-1787426059588",
+      "timestamp": "2026-08-22T19:14:19.588Z",
+      "title": "Suspicious PowerShell",
+      "severity": "high",
+      "description": "Encoded script",
+      "source": "event-log",
+      "classification": "suspicious",
+      "confidence": 85,
+      "confidenceReason": "Obfuscation detected"
+    },
+    {
+      "id": "F-1787426059590",
+      "timestamp": "2026-08-22T19:14:19.590Z",
+      "title": "Unknown Service",
+      "severity": "medium",
+      "description": "Unidentified service",
+      "source": "services",
+      "classification": "unknown",
+      "confidence": 0,
+      "confidenceReason": "No pattern match"
+    },
+    {
+      "id": "F-1787426059591",
+      "timestamp": "2026-08-22T19:14:19.591Z",
+      "title": "Norton",
+      "severity": "low",
+      "description": "AV software",
+      "source": "services",
+      "classification": "legitimate",
+      "confidence": 92,
+      "confidenceReason": "Known antivirus software"
+    },
+    {
+      "id": "F-1787426059592",
+      "timestamp": "2026-08-22T19:14:19.592Z",
+      "title": "Unknown Startup Item",
+      "severity": "medium",
+      "description": "Unidentified startup",
+      "source": "startup",
+      "classification": "unknown",
+      "confidence": 0,
+      "confidenceReason": "No pattern match"
+    }
+  ],
+  "recommendations": [],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T19:14:19.577Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059580",
+        "title": "SoftLanding",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-22T19:14:19.580Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059582",
+        "title": "Windows Defender",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T19:14:19.582Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059583",
+        "title": "McAfee",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T19:14:19.583Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059585",
+        "title": "LG gram Link",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T19:14:19.585Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059586",
+        "title": "OneDrive",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T19:14:19.586Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059587",
+        "title": "Unknown Registry Entry",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-22T19:14:19.587Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059588",
+        "title": "Suspicious PowerShell",
+        "severity": "high"
+      },
+      "timestamp": "2026-08-22T19:14:19.588Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059590",
+        "title": "Unknown Service",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-22T19:14:19.590Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059591",
+        "title": "Norton",
+        "severity": "low"
+      },
+      "timestamp": "2026-08-22T19:14:19.591Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787426059592",
+        "title": "Unknown Startup Item",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-22T19:14:19.592Z"
+    }
+  ],
+  "confidenceAnalysis": {
+    "performedAt": "2026-08-22T19:14:19.594Z",
+    "averageConfidence": 65,
+    "classifications": {
+      "legitimate": 6,
+      "malicious": 0,
+      "suspicious": 1,
+      "unknown": 3
+    }
+  },
+  "knowledgeEnrichment": {
+    "appliedAt": "2026-08-22T19:14:19.600Z",
+    "enhancedFindings": 2,
+    "insights": [
+      {
+        "artifact": "SoftLanding",
+        "knownGood": true,
+        "seenBefore": 2,
+        "incidents": 0,
+        "confidence": 92.38560627359831
+      },
+      {
+        "artifact": "Windows Defender",
+        "knownGood": true,
+        "seenBefore": 2,
+        "incidents": 0,
+        "confidence": 92.38560627359831
+      }
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "cycle": "IC-008",
+  "title": "Registry Access Pattern - Multiple Tool Failures",
+  "problem": "Multiple forensics tools fail when accessing HKLM registry: registryRunKeys, registryRunOnce, timeline. All blocked by permission boundary (HKLM read requires admin)",
+  "evidence": [
+    "registryRunKeys: Access denied on HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+    "registryRunOnce: Access denied on HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+    "timeline: Access denied on C:\\Windows\\System32\\config\\Sam (raw registry)",
+    "All 3 require elevated privileges (SeSecurityPrivilege + admin)"
+  ],
+  "cause": "HKLM registry hive requires admin/system privileges for deep inspection. Current execution context lacks SeSecurityPrivilege. Same root cause as IC-002/IC-006 (permission boundary)",
+  "confidence": 94,
+  "recommended_actions": [
+    {
+      "action": "Create permission boundary wrapper: detect admin context before querying HKLM",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 30
+    },
+    {
+      "action": "Document admin requirement in tool descriptions and error messages",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 0
+    },
+    {
+      "action": "Provide HKCU fallback: read current-user registry as alternative visibility",
+      "priority": "MEDIUM",
+      "effort": "MEDIUM",
+      "expected_delta": 50
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "notes": "Pattern issue: affects 3+ tools. One fix will solve multiple tools. Similar to IC-002 privilege boundary"
+}

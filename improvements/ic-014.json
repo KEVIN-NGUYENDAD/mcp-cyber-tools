@@ -1,0 +1,26 @@
+{
+  "cycle": "IC-014",
+  "title": "Event Log Query Filter Error",
+  "problem": "rdpLogs tool fails to query RDP-related security events from Event Log",
+  "evidence": [
+    "Get-WinEvent with RDP-specific filtering fails",
+    "Event log query syntax error",
+    "Affects RDP forensics and monitoring"
+  ],
+  "cause": "Event log filter hashtable syntax may be incompatible with current PowerShell context or permissions",
+  "confidence": 80,
+  "recommended_actions": [
+    {
+      "action": "Use Get-EventLog with proper hashtable filter for Security log",
+      "priority": "MEDIUM",
+      "effort": "LOW",
+      "expected_delta": 50
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23"
+}

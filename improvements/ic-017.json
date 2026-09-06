@@ -1,0 +1,28 @@
+{
+  "id": "ic-017",
+  "cycle": "IC-017",
+  "title": "Prefetch Evidence Collection - collectEvidence Tool",
+  "problem": "collectEvidence tool fails to enumerate Windows Prefetch directory for forensic analysis",
+  "evidence": [
+    "Get-ChildItem C:\\Windows\\Prefetch fails to return results",
+    "Evidence collection incomplete",
+    "Affects forensic timeline generation"
+  ],
+  "cause": "Directory access permission or path escaping issue (similar to IC-005/IC-009)",
+  "confidence": 81,
+  "recommended_actions": [
+    {
+      "action": "Apply path normalization fix from IC-005",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "roi": 40.5
+}

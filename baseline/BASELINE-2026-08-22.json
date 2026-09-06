@@ -1,0 +1,10 @@
+{
+  "caseId": "CASE-5095",
+  "createdAt": "2026-08-22T17:18:15.702Z",
+  "type": "SYSTEM_BASELINE",
+  "description": "System state snapshot for comparison",
+  "processes": "system",
+  "services": "system",
+  "tasks": "system",
+  "users": "system"
+}

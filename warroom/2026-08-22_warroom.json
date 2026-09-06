@@ -1,0 +1,299 @@
+[
+  {
+    "timestamp": "2026-08-22T21:08:50.714Z",
+    "date": "2026-08-22",
+    "time": "2:08:50 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T21:08:50.873Z",
+    "date": "2026-08-22",
+    "time": "2:08:50 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T21:08:51.109Z",
+    "date": "2026-08-22",
+    "time": "2:08:51 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T21:18:08.495Z",
+    "date": "2026-08-22",
+    "time": "2:18:08 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T21:18:08.654Z",
+    "date": "2026-08-22",
+    "time": "2:18:08 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T22:15:45.113Z",
+    "date": "2026-08-22",
+    "time": "3:15:45 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T22:15:45.277Z",
+    "date": "2026-08-22",
+    "time": "3:15:45 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T22:15:45.512Z",
+    "date": "2026-08-22",
+    "time": "3:15:45 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T23:09:25.369Z",
+    "date": "2026-08-22",
+    "time": "4:09:25 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T23:09:25.592Z",
+    "date": "2026-08-22",
+    "time": "4:09:25 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  },
+  {
+    "timestamp": "2026-08-22T23:09:25.824Z",
+    "date": "2026-08-22",
+    "time": "4:09:25 PM",
+    "metrics": {
+      "decisionAccuracy": 36,
+      "predictionAccuracy": 35,
+      "copilotAccuracy": 68,
+      "overallAccuracy": 46,
+      "humanAgreement": 68
+    },
+    "engineTrust": {
+      "knowledge": 85,
+      "decision": 40,
+      "prediction": 42.5,
+      "copilot": 50,
+      "comparator": 88,
+      "pattern": 82
+    },
+    "bottleneck": {
+      "engine": "Decision Engine",
+      "score": 40,
+      "target": 55,
+      "gap": 15
+    },
+    "feedbackCount": 50
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "source": "defender_status",
+  "asset_id": "kevin",
+  "captured_at": "2026-09-05T17:47:03.500829+00:00",
+  "state": {
+    "AntivirusEnabled": true,
+    "RealTimeProtectionEnabled": true,
+    "BehaviorMonitoringEnabled": null,
+    "IOAVProtectionEnabled": true,
+    "NISEnabled": true,
+    "TamperProtected": null,
+    "InitializationProgress": "ServiceStartedSuccessfully",
+    "RebootRequired": false
+  }
+}

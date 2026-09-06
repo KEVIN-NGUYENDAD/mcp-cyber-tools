@@ -1,0 +1,30 @@
+{
+  "cycle": "IC-031",
+  "title": "Visibility: Hunting Pattern - Suspicious DLL Loading Detection",
+  "problem": "Hunting tools don't detect suspicious DLL loading patterns. Need detection for unsigned/unauthorized DLL loads.",
+  "evidence": [
+    "No DLL loading pattern detection",
+    "Missing unsigned DLL monitoring",
+    "Affects malware/persistence detection"
+  ],
+  "cause": "Framework lacks module load tracking. No hook into Windows DLL loading events or Sysmon integration.",
+  "confidence": 85,
+  "recommended_actions": [
+    {
+      "action": "Implement Sysmon event 7 (Image Loaded) monitoring for unsigned DLLs",
+      "priority": "MEDIUM",
+      "effort": "HIGH",
+      "expected_delta": 75
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "expected_delta": 75,
+  "actual_delta": 58,
+  "variance": -17,
+  "validation_result": "PARTIAL",
+  "recommendation_status": "COMPLETE",
+  "lesson_learned": "Sysmon integration requires system-level changes and administrator privileges. DLL detection accuracy depends on Sysmon version and process isolation model. High effort implementation yielded 77% of expected benefit.",
+  "date": "2026-08-23"
+}

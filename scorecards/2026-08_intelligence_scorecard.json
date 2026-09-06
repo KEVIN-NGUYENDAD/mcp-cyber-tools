@@ -1,0 +1,146 @@
+{
+  "month": "2026-08",
+  "monthName": "August",
+  "generatedAt": "2026-08-22T20:33:06.565Z",
+  "metrics": {
+    "tier1_prediction_accuracy": {
+      "name": "Prediction Accuracy",
+      "priority": 1,
+      "target": 80,
+      "actual": 60,
+      "unit": "%",
+      "status": "FAIL",
+      "details": {
+        "totalPredictions": 5,
+        "correct": 3,
+        "wrong": 2,
+        "avgConfidence": 79
+      }
+    },
+    "tier2_decision_accuracy": {
+      "name": "Decision Accuracy",
+      "priority": 2,
+      "target": 90,
+      "actual": 68,
+      "unit": "%",
+      "status": "WAIT",
+      "details": {
+        "note": "Derived from prediction accuracy (predictions drive decisions)"
+      }
+    },
+    "tier3_false_positive_rate": {
+      "name": "False Positive Rate",
+      "priority": 3,
+      "target": 25,
+      "actual": 40,
+      "unit": "%",
+      "status": "FAIL",
+      "details": {
+        "baselineRate": 40,
+        "reduction": 60,
+        "totalPredictions": 5,
+        "falsePositives": 2
+      }
+    },
+    "tier4_knowledge_reuse": {
+      "name": "Knowledge Reuse Rate",
+      "priority": 4,
+      "target": 70,
+      "actual": 60,
+      "unit": "%",
+      "status": "PENDING",
+      "details": {
+        "patternsObserved": 3,
+        "criticalPatterns": 1,
+        "averageConfidence": 85
+      }
+    },
+    "tier5_analyst_time_saved": {
+      "name": "Analyst Time Saved",
+      "priority": 5,
+      "target": 40,
+      "actual": 1,
+      "unit": "hours/month",
+      "status": "WAIT",
+      "details": {
+        "correctPredictions": 3,
+        "wrongPredictions": 2,
+        "costSavings": "$18",
+        "perAnalyst": "0 hrs"
+      }
+    }
+  },
+  "summary": {
+    "passedTiers": 0,
+    "totalTiers": 5,
+    "overallStatus": "ALPHA",
+    "readiness": "POC: Concept only"
+  },
+  "patterns": {
+    "totalObserved": 3,
+    "highConfidencePatterns": 3,
+    "criticalSeverityPatterns": 1,
+    "averageConfidence": 85,
+    "topPatterns": [
+      {
+        "patternId": "PATTERN-6128",
+        "sequence": [
+          "Lateral Movement",
+          "Data Exfiltration"
+        ],
+        "firstSeen": "2026-08-22T20:24:25.095Z",
+        "lastSeen": "2026-08-22T20:24:25.095Z",
+        "occurrences": 1,
+        "confidence": 88,
+        "casesObserved": [
+          "CASE-105",
+          "CASE-108"
+        ],
+        "type": "data-exfiltration-chain",
+        "severity": "critical",
+        "description": "Attack progression: Lateral Movement → Data Exfiltration"
+      },
+      {
+        "patternId": "PATTERN-928",
+        "sequence": [
+          "Persistence",
+          "Privilege Escalation"
+        ],
+        "firstSeen": "2026-08-22T20:24:25.092Z",
+        "lastSeen": "2026-08-22T20:24:25.092Z",
+        "occurrences": 1,
+        "confidence": 85,
+        "casesObserved": [
+          "CASE-101",
+          "CASE-102",
+          "CASE-103"
+        ],
+        "type": "privilege-escalation-chain",
+        "severity": "medium",
+        "description": "Attack progression: Persistence → Privilege Escalation"
+      },
+      {
+        "patternId": "PATTERN-4880",
+        "sequence": [
+          "Privilege Escalation",
+          "Lateral Movement"
+        ],
+        "firstSeen": "2026-08-22T20:24:25.094Z",
+        "lastSeen": "2026-08-22T20:24:25.094Z",
+        "occurrences": 1,
+        "confidence": 82,
+        "casesObserved": [
+          "CASE-102",
+          "CASE-105"
+        ],
+        "type": "lateral-movement-chain",
+        "severity": "medium",
+        "description": "Attack progression: Privilege Escalation → Lateral Movement"
+      }
+    ]
+  },
+  "trend": {
+    "direction": "↘️ Needs attention",
+    "note": "Track changes month-over-month"
+  }
+}

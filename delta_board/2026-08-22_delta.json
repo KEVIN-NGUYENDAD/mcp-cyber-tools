@@ -1,0 +1,22 @@
+[
+  {
+    "timestamp": "2026-08-22T21:11:06.577Z",
+    "date": "2026-08-22",
+    "time": "2:11:06 PM",
+    "currentAccuracy": 40,
+    "previousAccuracy": null,
+    "delta": 0,
+    "status": "→ FLAT",
+    "action": "HOLD"
+  },
+  {
+    "timestamp": "2026-08-22T21:11:06.592Z",
+    "date": "2026-08-22",
+    "time": "2:11:06 PM",
+    "currentAccuracy": 42,
+    "previousAccuracy": null,
+    "delta": 0,
+    "status": "→ FLAT",
+    "action": "HOLD"
+  }
+]

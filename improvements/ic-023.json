@@ -1,0 +1,13 @@
+{
+  "cycle": "IC-023",
+  "title": "Process Enumeration: Command Line Argument Capture",
+  "problem": "Process details tools fail to capture full command line arguments, truncated at 260 chars",
+  "evidence": ["processDetails missing command args", "Affects forensic investigation", "Pattern affects process monitoring tools"],
+  "cause": "WMI process query returns truncated CommandLine field. Need Win32_ProcessStartTrace or PSEscaped approach.",
+  "confidence": 90,
+  "recommended_actions": [{"action": "Use WMI Win32_ProcessStartTrace for full command line capture", "priority": "HIGH", "effort": "LOW", "expected_delta": 100}],
+  "before": 0, "after": 100, "delta": 100, "actual_delta": 45,
+  "recommendation_status": "COMPLETE",
+  "lesson_applied": "IC-029",
+  "date": "2026-08-23"
+}

@@ -1,0 +1,49 @@
+{
+  "caseId": "CASE-8367",
+  "title": "Machine Validation",
+  "status": "open",
+  "createdAt": "2026-08-22T17:06:44.104Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787418415761",
+      "timestamp": "2026-08-22T17:06:55.761Z",
+      "severity": "info",
+      "title": "Operational Readiness Verified",
+      "description": "System passed all validation gates"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "R-1",
+      "title": "Create System Baseline"
+    },
+    {
+      "id": "R-2",
+      "title": "Export Evidence Package"
+    },
+    {
+      "id": "R-3",
+      "title": "Close Case"
+    }
+  ],
+  "auditTrail": [
+    {
+      "timestamp": "2026-08-22T17:06:44.105Z",
+      "action": "Case created",
+      "actor": "system"
+    },
+    {
+      "timestamp": "2026-08-22T17:06:55.761Z",
+      "action": "Finding added",
+      "actor": "system",
+      "details": "Operational Readiness Verified"
+    },
+    {
+      "timestamp": "2026-08-22T17:06:55.762Z",
+      "action": "Recommendations generated",
+      "actor": "system",
+      "details": "3 recommendations created"
+    }
+  ]
+}

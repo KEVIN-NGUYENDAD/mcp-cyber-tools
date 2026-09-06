@@ -1,0 +1,222 @@
+{
+  "timestamp": "2026-08-29T22:02:26.661Z",
+  "device": {
+    "name": "KEVIN",
+    "os": "Windows 11 Build 26200",
+    "bootTime": "2026-08-29T11:25:56Z"
+  },
+  "capture": {
+    "processes": [
+      {
+        "Name": "AcrobatNotificationClient",
+        "Id": 30716,
+        "WorkingSet": 3047424
+      },
+      {
+        "Name": "AdobeCollabSync",
+        "Id": 13024,
+        "WorkingSet": 24002560
+      },
+      {
+        "Name": "AdobeCollabSync",
+        "Id": 23300,
+        "WorkingSet": 43454464
+      },
+      {
+        "Name": "AggregatorHost",
+        "Id": 1748,
+        "WorkingSet": 14032896
+      },
+      {
+        "Name": "AppActions",
+        "Id": 24880,
+        "WorkingSet": 41951232
+      },
+      {
+        "Name": "AppHelperCap",
+        "Id": 4036,
+        "WorkingSet": 35762176
+      },
+      {
+        "Name": "AppleMobileDeviceService",
+        "Id": 6160,
+        "WorkingSet": 15421440
+      },
+      {
+        "Name": "ApplePhotoStreams",
+        "Id": 33176,
+        "WorkingSet": 28069888
+      },
+      {
+        "Name": "ApplicationFrameHost",
+        "Id": 16428,
+        "WorkingSet": 46407680
+      },
+      {
+        "Name": "armsvc",
+        "Id": 6180,
+        "WorkingSet": 8060928
+      }
+    ],
+    "networkConnections": [
+      {
+        "LocalAddress": "2600:8800:529e:3b00:2996:d12d:659e:d088",
+        "LocalPort": 61293,
+        "RemoteAddress": "2001:df0:13:1::13c",
+        "RemotePort": 443,
+        "State": 5
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:2996:d12d:659e:d088",
+        "LocalPort": 60408,
+        "RemoteAddress": "2607:6bc0::10",
+        "RemotePort": 443,
+        "State": 5
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:2996:d12d:659e:d088",
+        "LocalPort": 60407,
+        "RemoteAddress": "2600:14e1:0:6d::",
+        "RemotePort": 80,
+        "State": 5
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:2996:d12d:659e:d088",
+        "LocalPort": 60401,
+        "RemoteAddress": "2001:4860:4845:400::",
+        "RemotePort": 443,
+        "State": 5
+      },
+      {
+        "LocalAddress": "2600:8800:529e:3b00:2996:d12d:659e:d088",
+        "LocalPort": 60397,
+        "RemoteAddress": "2406:da00:ff00::625a:5a63",
+        "RemotePort": 443,
+        "State": 5
+      }
+    ],
+    "services": [
+      {
+        "Name": "AdobeARMservice",
+        "Status": 4,
+        "DisplayName": "Adobe Acrobat Update Service"
+      },
+      {
+        "Name": "Appinfo",
+        "Status": 4,
+        "DisplayName": "Application Information"
+      },
+      {
+        "Name": "Apple Mobile Device Service",
+        "Status": 4,
+        "DisplayName": "Apple Mobile Device Service"
+      },
+      {
+        "Name": "AppXSvc",
+        "Status": 4,
+        "DisplayName": "AppX Deployment Service (AppXSVC)"
+      },
+      {
+        "Name": "AudioEndpointBuilder",
+        "Status": 4,
+        "DisplayName": "Windows Audio Endpoint Builder"
+      },
+      {
+        "Name": "Audiosrv",
+        "Status": 4,
+        "DisplayName": "Windows Audio"
+      },
+      {
+        "Name": "BDESVC",
+        "Status": 4,
+        "DisplayName": "BitLocker Drive Encryption Service"
+      },
+      {
+        "Name": "BFE",
+        "Status": 4,
+        "DisplayName": "Base Filtering Engine"
+      },
+      {
+        "Name": "BITS",
+        "Status": 4,
+        "DisplayName": "Background Intelligent Transfer Service"
+      },
+      {
+        "Name": "Bonjour Service",
+        "Status": 4,
+        "DisplayName": "Bonjour Service"
+      },
+      {
+        "Name": "BrokerInfrastructure",
+        "Status": 4,
+        "DisplayName": "Background Tasks Infrastructure Service"
+      },
+      {
+        "Name": "bthserv",
+        "Status": 4,
+        "DisplayName": "Bluetooth Support Service"
+      },
+      {
+        "Name": "camsvc",
+        "Status": 4,
+        "DisplayName": "Capability Access Manager Service"
+      },
+      {
+        "Name": "cbdhsvc_2017d9",
+        "Status": 4,
+        "DisplayName": "Clipboard User Service_2017d9"
+      },
+      {
+        "Name": "CDPSvc",
+        "Status": 4,
+        "DisplayName": "Connected Devices Platform Service"
+      }
+    ],
+    "firewallStatus": [
+      {
+        "Name": "Domain",
+        "Enabled": 1
+      },
+      {
+        "Name": "Private",
+        "Enabled": 1
+      },
+      {
+        "Name": "Public",
+        "Enabled": 1
+      }
+    ],
+    "localUsers": [
+      {
+        "Name": "Administrator",
+        "Enabled": false,
+        "LastLogon": "/Date(1686464700236)/"
+      },
+      {
+        "Name": "DefaultAccount",
+        "Enabled": false,
+        "LastLogon": null
+      },
+      {
+        "Name": "Guest",
+        "Enabled": false,
+        "LastLogon": null
+      },
+      {
+        "Name": "tamng",
+        "Enabled": true,
+        "LastLogon": null
+      },
+      {
+        "Name": "TECH HOST",
+        "Enabled": true,
+        "LastLogon": "/Date(1762232809078)/"
+      },
+      {
+        "Name": "WDAGUtilityAccount",
+        "Enabled": false,
+        "LastLogon": null
+      }
+    ]
+  }
+}

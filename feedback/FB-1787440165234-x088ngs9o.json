@@ -1,0 +1,16 @@
+{
+  "feedbackId": "FB-1787440165234-x088ngs9o",
+  "caseId": "HIST-002",
+  "timestamp": "2026-08-22T23:09:25.234Z",
+  "recommended": "IGNORE",
+  "actual": "INVESTIGATE",
+  "agreement": false,
+  "score": -1,
+  "confidence": 80,
+  "learned": false,
+  "engineScoreImpact": {
+    "decision": -3,
+    "prediction": -2,
+    "copilot": -1
+  }
+}

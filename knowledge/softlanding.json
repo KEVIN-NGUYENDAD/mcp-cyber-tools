@@ -1,0 +1,13 @@
+{
+  "artifact": "SoftLanding",
+  "firstSeen": "2026-08-22T19:01:32.167Z",
+  "seenCount": 2,
+  "incidentCount": 0,
+  "classification": "legitimate",
+  "confidence": 92.38560627359831,
+  "cases": [
+    "CASE-4155",
+    "CASE-7649"
+  ],
+  "lastSeen": "2026-08-22T19:01:44.342Z"
+}

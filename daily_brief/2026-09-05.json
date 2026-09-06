@@ -1,0 +1,387 @@
+{
+  "date": "2026-09-05",
+  "changes": [
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 125.0 to 141.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "125.0"
+        },
+        {
+          "key": "new_value",
+          "value": "141.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 141.0 to 125.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "141.0"
+        },
+        {
+          "key": "new_value",
+          "value": "125.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 125.0 to 187.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "125.0"
+        },
+        {
+          "key": "new_value",
+          "value": "187.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 187.0 to 156.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "187.0"
+        },
+        {
+          "key": "new_value",
+          "value": "156.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 156.0 to 125.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "156.0"
+        },
+        {
+          "key": "new_value",
+          "value": "125.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 125.0 to 141.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "125.0"
+        },
+        {
+          "key": "new_value",
+          "value": "141.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 141.0 to 203.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "141.0"
+        },
+        {
+          "key": "new_value",
+          "value": "203.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 203.0 to 125.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "203.0"
+        },
+        {
+          "key": "new_value",
+          "value": "125.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 125.0 to 156.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "125.0"
+        },
+        {
+          "key": "new_value",
+          "value": "156.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 156.0 to 172.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "156.0"
+        },
+        {
+          "key": "new_value",
+          "value": "172.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 172.0 to 125.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "172.0"
+        },
+        {
+          "key": "new_value",
+          "value": "125.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 125.0 to 156.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "125.0"
+        },
+        {
+          "key": "new_value",
+          "value": "156.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 156.0 to 235.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "156.0"
+        },
+        {
+          "key": "new_value",
+          "value": "235.0"
+        }
+      ]
+    },
+    {
+      "source": "website_status",
+      "severity": "low",
+      "title": "response_time_ms changed",
+      "summary": "website_status: 'response_time_ms' changed from 235.0 to 125.0.",
+      "evidence": [
+        {
+          "key": "field",
+          "value": "response_time_ms"
+        },
+        {
+          "key": "old_value",
+          "value": "235.0"
+        },
+        {
+          "key": "new_value",
+          "value": "125.0"
+        }
+      ]
+    }
+  ],
+  "incidents": [],
+  "recommendations": [
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    },
+    {
+      "source": "website_status",
+      "title": "response_time_ms changed",
+      "severity": "low",
+      "recommendation": "No action needed; monitor.",
+      "action_priority": "low"
+    }
+  ],
+  "score_deltas": []
+}

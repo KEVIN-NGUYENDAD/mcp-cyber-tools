@@ -1,0 +1,26 @@
+{
+  "cycle": "IC-012",
+  "title": "Network Port Scan Timeout",
+  "problem": "scanPort tool hangs on Test-Connection port check, exceeds 6-second timeout",
+  "evidence": [
+    "Test-NetConnection localhost -Port 80 hangs >6s",
+    "Network I/O blocking on port test",
+    "Affects all port scanning capabilities"
+  ],
+  "cause": "Test-NetConnection default timeout insufficient for network operations. Cold connection attempt takes >8s",
+  "confidence": 92,
+  "recommended_actions": [
+    {
+      "action": "Increase network operation timeout to 10-15 seconds",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23"
+}

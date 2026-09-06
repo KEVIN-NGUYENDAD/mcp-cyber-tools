@@ -1,0 +1,26 @@
+{
+  "id": "ic-024",
+  "cycle": "IC-024",
+  "title": "Defender Integration: Threat Detection Accuracy",
+  "problem": "Defender threat detection queries return incomplete threat history, missing some threat categories",
+  "evidence": [
+    "defenderThreats returns partial results",
+    "Some threat types filtered out",
+    "Accuracy 60% of actual threats"
+  ],
+  "cause": "Defender threat filter includes quarantined=true, excludes remediated threats. Need full threat history.",
+  "confidence": 92,
+  "recommended_actions": [
+    {
+      "action": "Include all threat statuses in defenderThreats query (not just active)",
+      "priority": "MEDIUM",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23"
+}

@@ -1,0 +1,16 @@
+{
+  "feedbackId": "FB-1787440165260-rmcuhrn87",
+  "caseId": "HIST-036",
+  "timestamp": "2026-08-22T23:09:25.260Z",
+  "recommended": "ESCALATE",
+  "actual": "ESCALATE",
+  "agreement": true,
+  "score": 1,
+  "confidence": 80,
+  "learned": false,
+  "engineScoreImpact": {
+    "decision": 1,
+    "prediction": 0.5,
+    "copilot": 1
+  }
+}

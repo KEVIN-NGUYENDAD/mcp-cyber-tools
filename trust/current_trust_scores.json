@@ -1,0 +1,59 @@
+{
+  "timestamp": "2026-08-22T21:01:24.199Z",
+  "engines": {
+    "knowledgeLayer": {
+      "name": "Knowledge Layer",
+      "trustScore": 85,
+      "metric": "Knowledge Reuse Rate",
+      "status": "STABLE"
+    },
+    "decisionEngine": {
+      "name": "Decision Engine",
+      "trustScore": 40,
+      "metric": "Decision Accuracy",
+      "status": "DEVELOPING",
+      "feedback": 2
+    },
+    "predictionEngine": {
+      "name": "Prediction Engine",
+      "trustScore": 42.5,
+      "metric": "Prediction Accuracy",
+      "status": "DEVELOPING",
+      "feedback": 2
+    },
+    "copilotEngine": {
+      "name": "Copilot Engine",
+      "trustScore": 50,
+      "metric": "Recommendation Quality",
+      "status": "DEVELOPING"
+    },
+    "comparatorEngine": {
+      "name": "Comparator Engine",
+      "trustScore": 88,
+      "metric": "Pattern Detection",
+      "status": "STABLE"
+    },
+    "patternEngine": {
+      "name": "Pattern Engine",
+      "trustScore": 82,
+      "metric": "Pattern Accuracy",
+      "status": "STABLE"
+    }
+  },
+  "overall": {
+    "averageTrust": 65,
+    "systemReadiness": "BETA"
+  },
+  "weaknesses": [
+    {
+      "pattern": "IGNORE → INVESTIGATE",
+      "occurrences": 3,
+      "priority": 2
+    },
+    {
+      "pattern": "IGNORE → ESCALATE",
+      "occurrences": 2,
+      "priority": 3
+    }
+  ]
+}

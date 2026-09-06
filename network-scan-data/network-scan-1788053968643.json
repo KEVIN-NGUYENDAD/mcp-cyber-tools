@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-08-30T01:38:29.734Z",
+  "scanType": "IOT_NETWORK_SCAN",
+  "deviceCount": 3,
+  "identifiedCount": 3,
+  "totalRisks": 0,
+  "devices": [
+    {
+      "ip": "192.168.0.1",
+      "mac": "48-bd-ce-0e-1e-3c",
+      "arpType": "dynamic",
+      "vendor": "ARRIS / CommScope",
+      "deviceType": "Router / Gateway",
+      "identified": true,
+      "openPorts": [
+        {
+          "port": 80,
+          "assumedService": "HTTP (Web UI)",
+          "verifiedService": "HTTP server [CONFIRMED]"
+        },
+        {
+          "port": 443,
+          "assumedService": "HTTPS (Web UI)",
+          "verifiedService": "Open, no banner (service unverified, NOT HTTPS)"
+        },
+        {
+          "port": 1883,
+          "assumedService": "MQTT (IoT Broker)",
+          "verifiedService": "Open, no banner (service unverified, NOT MQTT)"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "ip": "192.168.0.21",
+      "mac": "ec-71-db-0b-49-37",
+      "arpType": "dynamic",
+      "vendor": "Reolink",
+      "deviceType": "IP Camera",
+      "identified": true,
+      "openPorts": [
+        {
+          "port": 80,
+          "assumedService": "HTTP (Web UI)",
+          "verifiedService": "HTTP server [CONFIRMED]"
+        },
+        {
+          "port": 443,
+          "assumedService": "HTTPS (Web UI)",
+          "verifiedService": "Open, no banner (service unverified, NOT HTTPS)"
+        },
+        {
+          "port": 554,
+          "assumedService": "RTSP (Camera Stream)",
+          "verifiedService": "RTSP video stream [CONFIRMED]"
+        },
+        {
+          "port": 8000,
+          "assumedService": "HTTP Alt (Camera/NVR)",
+          "verifiedService": "HTTP server — gSOAP/2.8..Content-Type: text/xml; charset=utf-8..Content-Length: 0..Connection: close.... [CONFIRMED]"
+        },
+        {
+          "port": 9000,
+          "assumedService": "Reolink / NVR",
+          "verifiedService": "Open, no banner (service unverified, NOT Reolink)"
+        }
+      ],
+      "risks": []
+    },
+    {
+      "ip": "192.168.0.233",
+      "mac": "9c-b1-50-fe-04-20",
+      "arpType": "dynamic",
+      "vendor": "Intel",
+      "deviceType": "Computer (Laptop/Desktop)",
+      "identified": true,
+      "openPorts": [],
+      "risks": []
+    }
+  ]
+}

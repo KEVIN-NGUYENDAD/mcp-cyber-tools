@@ -1,0 +1,54 @@
+{
+  "version": "1.1.1-alpha",
+  "caseId": "CASE-3327",
+  "title": "SoftLanding Redetection Case",
+  "status": "open",
+  "statusHistory": [
+    {
+      "status": "open",
+      "timestamp": "2026-08-22T19:01:32.172Z"
+    }
+  ],
+  "createdAt": "2026-08-22T19:01:32.172Z",
+  "updatedAt": "2026-08-22T19:01:32.173Z",
+  "risk": "low",
+  "findings": [
+    {
+      "id": "F-1787425292173",
+      "timestamp": "2026-08-22T19:01:32.173Z",
+      "title": "SoftLanding",
+      "severity": "medium",
+      "description": "Detected SoftLanding again",
+      "source": "registry",
+      "classification": "legitimate",
+      "confidence": 95,
+      "confidenceReason": "Known OEM artifact"
+    }
+  ],
+  "recommendations": [],
+  "events": [
+    {
+      "type": "CASE_CREATED",
+      "timestamp": "2026-08-22T19:01:32.172Z"
+    },
+    {
+      "type": "FINDING_ADDED",
+      "payload": {
+        "findingId": "F-1787425292173",
+        "title": "SoftLanding",
+        "severity": "medium"
+      },
+      "timestamp": "2026-08-22T19:01:32.173Z"
+    }
+  ],
+  "confidenceAnalysis": {
+    "performedAt": "2026-08-22T19:01:32.174Z",
+    "averageConfidence": 95,
+    "classifications": {
+      "legitimate": 1,
+      "malicious": 0,
+      "suspicious": 0,
+      "unknown": 0
+    }
+  }
+}

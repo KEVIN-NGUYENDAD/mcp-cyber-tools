@@ -1,0 +1,29 @@
+{
+  "id": "ic-019",
+  "cycle": "IC-019",
+  "title": "Performance: Command Execution Timeout Threshold Optimization",
+  "problem": "PowerShell command execution timeout threshold too low (5s) causes tool failures on slow WMI/Registry queries",
+  "evidence": [
+    "systemInfo, wmiPersistence, network tools timeout at 5s threshold",
+    "Actual execution time: 6-8s for complex queries",
+    "Increasing timeout to 15s resolves all timeout failures",
+    "Pattern affects 5+ tools"
+  ],
+  "cause": "Global timeout configuration in shared.js set too aggressively. WMI cold-start queries require 6-8s minimum.",
+  "confidence": 93,
+  "recommended_actions": [
+    {
+      "action": "Increase PowerShell execution timeout from 5s to 15s in shared.js",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23",
+  "notes": "High-confidence discovery: 93% confidence. Fixes 5+ tool timeouts with single global timeout increase.",
+  "roi": 46.5
+}

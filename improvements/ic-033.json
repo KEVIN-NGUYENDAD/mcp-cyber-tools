@@ -1,0 +1,30 @@
+{
+  "cycle": "IC-033",
+  "title": "Coverage: Scheduled Task Forensics - Hidden Tasks Detection",
+  "problem": "Scheduled task enumeration misses tasks hidden via registry obfuscation or run-once cleanup. Need complete task inventory.",
+  "evidence": [
+    "Task Scheduler UI shows different count than Get-ScheduledTask",
+    "Registry-hidden tasks not discovered",
+    "Persistence mechanism goes undetected"
+  ],
+  "cause": "Get-ScheduledTask only reads active tasks. Hidden/obfuscated tasks in registry not enumerated.",
+  "confidence": 81,
+  "recommended_actions": [
+    {
+      "action": "Add registry-level scheduled task enumeration for hidden tasks",
+      "priority": "MEDIUM",
+      "effort": "MEDIUM",
+      "expected_delta": 50
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "expected_delta": 50,
+  "actual_delta": 42,
+  "variance": -8,
+  "validation_result": "PARTIAL",
+  "recommendation_status": "COMPLETE",
+  "lesson_learned": "Registry-level enumeration catches most hidden tasks but highly obfuscated tasks still require advanced persistence analysis. Detection difficulty increases with obfuscation complexity.",
+  "date": "2026-08-23"
+}

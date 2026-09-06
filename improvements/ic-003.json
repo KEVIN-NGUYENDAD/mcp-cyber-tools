@@ -1,0 +1,38 @@
+{
+  "cycle": "IC-003",
+  "problem": "Framework Execution Defect",
+  "evidence": [
+    "Multi-line PowerShell commands fail with 'empty pipe element' error",
+    "firewallStatus command fails",
+    "firewallRules command fails",
+    "All complex pipelines fail"
+  ],
+  "cause": "Multi-layer framework defect (Layer 1: Transport, Layer 2: Normalization, Layer 3: Variables)",
+  "confidence": 95,
+  "recommended_actions": [
+    {
+      "action": "Fix Layer 1: Replace console.log with console.error (transport)",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 30
+    },
+    {
+      "action": "Fix Layer 2: Normalize multi-line commands (newline → space)",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 50
+    },
+    {
+      "action": "Fix Layer 3: Verify PowerShell variable handling",
+      "priority": "MEDIUM",
+      "effort": "LOW",
+      "expected_delta": 15
+    }
+  ],
+  "before": 60,
+  "after": 95,
+  "delta": 35,
+  "actual_delta": 35,
+  "recommendation_status": "VALIDATED",
+  "date": "2026-08-23"
+}

@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "source": "device_inventory",
+  "asset_id": "kevin",
+  "captured_at": "2026-09-05T16:47:36.571228+00:00",
+  "state": {
+    "192.168.0.1": {
+      "mac": "48-bd-ce-0e-1e-3c",
+      "type": "dynamic"
+    },
+    "192.168.0.21": {
+      "mac": "ec-71-db-0b-49-37",
+      "type": "dynamic"
+    },
+    "192.168.0.233": {
+      "mac": "9c-b1-50-fe-04-20",
+      "type": "dynamic"
+    }
+  }
+}

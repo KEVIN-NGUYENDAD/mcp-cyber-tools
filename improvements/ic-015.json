@@ -1,0 +1,34 @@
+{
+  "cycle": "IC-015",
+  "title": "Event Log Filtering Fails - Account Activity Tools",
+  "problem": "failedLogons, successfulLogons tools fail to query security events. Get-WinEvent with ID filters fails silently or returns empty",
+  "evidence": [
+    "Get-WinEvent -FilterHashtable @{LogName='Security'; ID=4625} fails",
+    "Tools affected: failedLogons (ID 4625), successfulLogons (ID 4624), loggedOnUsers",
+    "Pattern: All event log queries with specific event IDs fail"
+  ],
+  "cause": "Security event log access requires elevated privileges OR filter hashtable syntax incompatible with current PowerShell context",
+  "confidence": 86,
+  "recommended_actions": [
+    {
+      "action": "Check for SeSecurityPrivilege requirement and add fallback if missing",
+      "priority": "HIGH",
+      "effort": "MEDIUM",
+      "expected_delta": 50
+    },
+    {
+      "action": "Use Get-EventLog as alternative to Get-WinEvent for Security log",
+      "priority": "HIGH",
+      "effort": "LOW",
+      "expected_delta": 100
+    }
+  ],
+  "before": 0,
+  "after": 100,
+  "delta": 100,
+  "actual_delta": 90,
+  "recommendation_status": "COMPLETE",
+  "lesson_applied": "IC-028",
+  "date": "2026-08-23",
+  "notes": "Pattern: Affects 3+ tools (failedLogons, successfulLogons, loggedOnUsers). Similar root cause as IC-002/IC-006/IC-008."
+}
