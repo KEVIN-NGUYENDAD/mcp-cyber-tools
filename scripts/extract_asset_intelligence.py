@@ -109,13 +109,53 @@ class AssetIntelligence:
         except Exception as e:
             return []
 
-    def classify_device_type(self, os_info):
-        """Auto-classify device based on OS"""
+    def classify_device_type(self, os_info, ip=None, plugin_families=None, open_services=None):
+        """Auto-classify device based on OS, IP patterns, and services"""
         if not os_info:
-            return "Unknown"
+            os_info = ""
 
         os_lower = os_info.lower()
 
+        # Check IP patterns for common device types
+        if ip:
+            ip_lower = ip.lower()
+            # Gateway typically .1
+            if ip.endswith('.1') or ip.endswith('.254'):
+                return "Router"
+
+        # Check plugin families for OS hints
+        if plugin_families:
+            plugin_families_lower = [p.lower() for p in plugin_families]
+
+            # Windows indicators
+            if any('windows' in p for p in plugin_families_lower):
+                if 'server' in os_lower or any('server' in p for p in plugin_families_lower):
+                    return "Server"
+                return "Workstation"
+
+            # Linux/Unix indicators
+            if any(keyword in p for p in plugin_families_lower for keyword in ['linux', 'unix', 'debian', 'ubuntu', 'centos', 'redhat']):
+                if 'server' in os_lower:
+                    return "Server"
+                return "Workstation"
+
+            # Network device indicators
+            if any(keyword in p for p in plugin_families_lower for keyword in ['router', 'switch', 'firewall', 'gateway', 'cisco', 'netgear', 'ubiquiti']):
+                return "Router"
+
+            # Printer indicators
+            if any(keyword in p for p in plugin_families_lower for keyword in ['printer', 'jetdirect', 'xerox', 'canon', 'hp print']):
+                return "Printer"
+
+            # Mobile indicators
+            if any(keyword in p for p in plugin_families_lower for keyword in ['mobile', 'ios', 'android', 'iphone', 'ipad']):
+                return "Mobile Device"
+
+            # IoT indicators
+            if any(keyword in p for p in plugin_families_lower for keyword in ['iot', 'embedded', 'camera', 'nvr', 'dvr', 'smart']):
+                return "IoT Device"
+
+        # Fallback to OS-based classification
         if 'router' in os_lower or 'network' in os_lower:
             return "Router"
         elif 'windows' in os_lower:
@@ -138,8 +178,10 @@ class AssetIntelligence:
         return "Unknown"
 
     def extract_assets(self, scan_data):
-        """Extract unique assets from scan host data"""
+        """Extract unique assets from scan host data with enrichment"""
         assets_by_ip = {}
+        plugin_families_by_ip = defaultdict(set)
+        os_hints_by_ip = defaultdict(set)
 
         # Extract from host-level data in scan response
         hosts = scan_data.get('hosts', [])
@@ -154,7 +196,7 @@ class AssetIntelligence:
             assets_by_ip[ip] = {
                 'ip': ip,
                 'hostname': ip,  # Default to IP; could be enriched with reverse DNS
-                'os': '',  # Not available in simple host data
+                'os': '',  # Will be enriched from plugin families
                 'device_type': 'Unknown',
                 'first_seen': datetime.now().isoformat(),
                 'last_seen': datetime.now().isoformat(),
@@ -175,17 +217,53 @@ class AssetIntelligence:
                 host.get('info', 0)
             )
 
-        # If we don't have hosts from host-level data, try to extract from vulnerabilities
-        if not assets_by_ip:
-            vulnerabilities = scan_data.get('vulnerabilities', [])
-            for vuln in vulnerabilities:
-                # Basic extraction without asset field
-                # This is fallback data
-                pass
+        # Enrich with plugin family information from vulnerabilities
+        vulnerabilities = scan_data.get('vulnerabilities', [])
 
-        # Assign device types (without OS data, default to Unknown)
+        for vuln in vulnerabilities:
+            # Vulnerabilities are global (not per-host), but we use them for classification hints
+            plugin_family = vuln.get('plugin_family', '')
+            plugin_name = vuln.get('plugin_name', '')
+            cpe = vuln.get('cpe', '')
+
+            if plugin_family:
+                # Collect plugin families for all known hosts
+                for ip in assets_by_ip.keys():
+                    plugin_families_by_ip[ip].add(plugin_family)
+
+                    # Extract OS hints from plugin family
+                    if 'Windows' in plugin_family:
+                        os_hints_by_ip[ip].add('Windows')
+                    elif any(x in plugin_family for x in ['Linux', 'Debian', 'Ubuntu', 'CentOS', 'RedHat']):
+                        os_hints_by_ip[ip].add('Linux')
+                    elif 'Mac OS' in plugin_family:
+                        os_hints_by_ip[ip].add('Mac OS')
+
+            # Extract OS from CPE if available
+            if cpe and '://' in cpe:
+                # CPE format example: cpe:/o:microsoft:windows_10
+                cpe_parts = cpe.split(':')
+                if len(cpe_parts) > 3:
+                    os_part = cpe_parts[3]  # 'o' for OS
+                    if os_part == 'o':  # OS component
+                        vendor = cpe_parts[4] if len(cpe_parts) > 4 else ''
+                        product = cpe_parts[5] if len(cpe_parts) > 5 else ''
+                        if vendor or product:
+                            for ip in assets_by_ip.keys():
+                                os_hints_by_ip[ip].add(f'{vendor} {product}'.strip())
+
+        # Apply enrichment to assets
         for ip, asset in assets_by_ip.items():
-            asset['device_type'] = self.classify_device_type(asset['os'])
+            # Set OS from collected hints
+            if os_hints_by_ip[ip]:
+                asset['os'] = ' / '.join(sorted(os_hints_by_ip[ip]))
+
+            # Classify device type using enriched information
+            asset['device_type'] = self.classify_device_type(
+                asset['os'],
+                ip=ip,
+                plugin_families=list(plugin_families_by_ip[ip])
+            )
 
         return assets_by_ip
 
