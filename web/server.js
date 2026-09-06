@@ -10,13 +10,13 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Determine state directory - try multiple locations
+// Determine state directory - use __dirname as primary source
+// web/server.js is in PROJECT_ROOT/web/, so ../state gets to PROJECT_ROOT/state
+const PRIMARY_STATE_DIR = path.join(__dirname, '..', 'state');
 const possibleDirs = [
   process.env.STATE_DIR,
-  path.join(process.cwd(), 'state'),
-  path.join(__dirname, '..', 'state'),
-  '/var/task/state', // Vercel serverless function
-  './state'
+  PRIMARY_STATE_DIR,
+  '/var/task/state', // Render deployed
 ];
 
 let STATE_DIR = '';
@@ -29,7 +29,7 @@ for (const dir of possibleDirs) {
 
 if (!STATE_DIR) {
   console.warn('[SERVER] No state directory found - API will return empty data');
-  STATE_DIR = path.join(process.cwd(), 'state');
+  STATE_DIR = PRIMARY_STATE_DIR;
 }
 
 // Middleware
