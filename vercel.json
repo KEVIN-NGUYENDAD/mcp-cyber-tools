@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "name": "sentinelops-command-center",
+  "public": false,
+  "buildCommand": "npm install",
+  "installCommand": "npm install",
+  "env": {
+    "STATE_DIR": "@state_dir"
+  },
+  "functions": {
+    "web/server.js": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "web/server.js"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/web/server.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/web/server.js"
+    }
+  ]
+}
