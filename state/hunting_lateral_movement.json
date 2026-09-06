@@ -1,0 +1,97 @@
+{
+  "timestamp": "2026-09-05T19:44:01.730191",
+  "hunting_type": "Lateral Movement",
+  "question": "Có chỉ báo di chuyển ngang trong hệ thống không?",
+  "total_indicators": 5,
+  "blast_radius": "ORGANIZATION-WIDE: Kerberos/PsExec abuse - có thể lây lan toàn hệ",
+  "by_severity": {
+    "HIGH": 3,
+    "CRITICAL": 2
+  },
+  "indicators": [
+    {
+      "type": "SMB Lateral Movement",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:44:01.730191",
+      "description": "Phát hiện kết nối SMB bất thường giữa các máy",
+      "evidence": [
+        "Port 445 (SMB) connections",
+        "Multiple failed SMB authentications",
+        "Unusual SMB client behavior"
+      ],
+      "recommendation": "Kiểm tra SMB logs, xác minh kết nối",
+      "impact": "Truyền lan malware qua share",
+      "status": "REQUIRES_VERIFICATION",
+      "affected_assets": [
+        "192.168.0.1",
+        "192.168.0.10"
+      ]
+    },
+    {
+      "type": "PsExec/Remote Execution",
+      "severity": "CRITICAL",
+      "timestamp": "2026-09-05T19:44:01.730191",
+      "description": "Phát hiện dấu hiệu PsExec hoặc remote command execution",
+      "evidence": [
+        "PSEXESVC service installation",
+        "Remote service creation",
+        "Admin share access (IPC$, ADMIN$)",
+        "Service pipe access"
+      ],
+      "recommendation": "Điều tra toàn bộ assets, kiểm tra audit logs",
+      "impact": "Thực thi code remote với quyền admin",
+      "status": "CRITICAL",
+      "affected_assets": [
+        "All systems"
+      ]
+    },
+    {
+      "type": "WinRM Remote Management",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:44:01.730191",
+      "description": "Phát hiện WinRM được dùng cho remote execution",
+      "evidence": [
+        "Port 5985/5986 (WinRM)",
+        "Kerberos/NTLM auth from unusual sources",
+        "PSRemoting connection attempts",
+        "WinRM service abuse"
+      ],
+      "recommendation": "Kiểm tra WinRM logs, audit remote sessions",
+      "impact": "Remote PowerShell execution",
+      "status": "REQUIRES_VERIFICATION",
+      "affected_assets": []
+    },
+    {
+      "type": "Remote Desktop Protocol Abuse",
+      "severity": "HIGH",
+      "timestamp": "2026-09-05T19:44:01.730191",
+      "description": "Phát hiện RDP được dùng bất thường",
+      "evidence": [
+        "Multiple RDP login attempts",
+        "RDP from non-standard hours",
+        "RDP from unusual geolocation",
+        "RDP to sensitive systems"
+      ],
+      "recommendation": "Kiểm tra RDP event logs, xác minh logins",
+      "impact": "Remote interactive access",
+      "status": "REQUIRES_VERIFICATION",
+      "affected_assets": []
+    },
+    {
+      "type": "Kerberos Delegation Abuse",
+      "severity": "CRITICAL",
+      "timestamp": "2026-09-05T19:44:01.730191",
+      "description": "Phát hiện khai thác Kerberos delegation (S4U)",
+      "evidence": [
+        "Unconstrained delegation usage",
+        "Constrained delegation abuse",
+        "Service for User (S4U) activity",
+        "Ticket granting anomalies"
+      ],
+      "recommendation": "Kiểm tra Kerberos delegation settings, audit ticket generation",
+      "impact": "Privilege escalation và lateral movement",
+      "status": "CRITICAL",
+      "affected_assets": []
+    }
+  ]
+}

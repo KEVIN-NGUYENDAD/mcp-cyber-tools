@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-09-05T19:33:20.163415",
+  "timestamp": "2026-09-05T19:44:02.037508",
   "question": "Cái gì quan trọng nhất hôm nay?",
-  "total_items_analyzed": 7,
+  "total_items_analyzed": 6,
   "top_5_critical": [
     {
       "source": "risk",
@@ -20,24 +20,6 @@
       "priority_rank": 1
     },
     {
-      "source": "timeline",
-      "priority_score": 90,
-      "title": "Xử lý: Level Change",
-      "category": "Risk",
-      "priority": "CRITICAL",
-      "description": "Mức rủi ro thay đổi: LOW → MEDIUM",
-      "impact": "Recent incident detected",
-      "reason": "Level Change",
-      "affected_assets": [],
-      "time_estimate": "1-2 hours",
-      "steps": [
-        "Investigate",
-        "Isolate if needed",
-        "Resolve"
-      ],
-      "priority_rank": 2
-    },
-    {
       "source": "risk",
       "priority_score": 50,
       "title": "Cải thiện Waap",
@@ -51,7 +33,7 @@
         "Phân tích chi tiết",
         "Lập kế hoạch cải thiện"
       ],
-      "priority_rank": 3
+      "priority_rank": 2
     },
     {
       "source": "risk",
@@ -67,7 +49,7 @@
         "Phân tích chi tiết",
         "Lập kế hoạch cải thiện"
       ],
-      "priority_rank": 4
+      "priority_rank": 3
     },
     {
       "source": "asset",
@@ -87,16 +69,35 @@
         "Test in staging",
         "Apply patches"
       ],
+      "priority_rank": 4
+    },
+    {
+      "source": "asset",
+      "priority_score": 0,
+      "title": "Patch 192.168.0.10 (Server)",
+      "category": "Patch Management",
+      "priority": "HIGH",
+      "description": "0 critical, 0 high vulnerabilities",
+      "impact": "Device có 14 vulnerability",
+      "reason": "High vulnerability count",
+      "affected_assets": [
+        "192.168.0.10"
+      ],
+      "time_estimate": "4-8 hours",
+      "steps": [
+        "Identify patches",
+        "Test in staging",
+        "Apply patches"
+      ],
       "priority_rank": 5
     }
   ],
   "summary": {
-    "critical_count": 1,
-    "high_count": 2,
+    "critical_count": 0,
+    "high_count": 3,
     "sources": {
       "risk": 3,
-      "timeline": 1,
-      "asset": 1
+      "asset": 2
     }
   }
 }

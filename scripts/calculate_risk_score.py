@@ -52,7 +52,7 @@ class RiskScoreCalculator:
         return max(0, score)
 
     def analyze_threat_hunting(self):
-        """Phân tích threat hunting indicators (Phase N.9A)"""
+        """Phân tích threat hunting indicators (Phase N.9A-N.9B)"""
         score = 100
 
         # Kiểm tra persistence indicators
@@ -70,6 +70,22 @@ class RiskScoreCalculator:
             high_count = processes.get('by_severity', {}).get('HIGH', 0)
             score -= critical_count * 20
             score -= high_count * 10
+
+        # Kiểm tra lateral movement (Phase N.9B)
+        lateral = self.load_state('hunting_lateral_movement.json')
+        if lateral:
+            critical_count = lateral.get('by_severity', {}).get('CRITICAL', 0)
+            high_count = lateral.get('by_severity', {}).get('HIGH', 0)
+            score -= critical_count * 30  # Lateral movement rất nguy hiểm
+            score -= high_count * 12
+
+        # Kiểm tra credential dumping (Phase N.9B)
+        credential = self.load_state('hunting_credential_dumping.json')
+        if credential:
+            critical_count = credential.get('by_severity', {}).get('CRITICAL', 0)
+            high_count = credential.get('by_severity', {}).get('HIGH', 0)
+            score -= critical_count * 35  # Credential dumping là mối đe dọa cao nhất
+            score -= high_count * 15
 
         return max(0, score)
 

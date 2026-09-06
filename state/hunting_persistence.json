@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T19:33:19.872685",
+  "timestamp": "2026-09-05T19:44:01.384063",
   "hunting_type": "Persistence Indicators",
   "question": "Có chỉ báo persistence nào trong hệ thống không?",
   "total_indicators": 5,
@@ -19,7 +19,7 @@
     {
       "type": "Registry Run Key Modification",
       "severity": "HIGH",
-      "timestamp": "2026-09-05T19:33:19.872685",
+      "timestamp": "2026-09-05T19:44:01.384063",
       "description": "Registry Run Key có thể bị chỉnh sửa để persistence",
       "evidence": [
         "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
@@ -27,14 +27,12 @@
       ],
       "recommendation": "Kiểm tra registry run keys, xóa entries lạ",
       "impact": "Tự động khởi động malware",
-      "status": "DETECTED",
-      "timeline_correlated": true,
-      "correlation_details": "Mức rủi ro thay đổi: LOW → MEDIUM"
+      "status": "DETECTED"
     },
     {
       "type": "Startup Folder Persistence",
       "severity": "HIGH",
-      "timestamp": "2026-09-05T19:33:19.872685",
+      "timestamp": "2026-09-05T19:44:01.384063",
       "description": "Thư mục Startup có chứa files lạ",
       "evidence": [
         "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
@@ -47,7 +45,7 @@
     {
       "type": "Scheduled Task Persistence",
       "severity": "MEDIUM",
-      "timestamp": "2026-09-05T19:33:19.872685",
+      "timestamp": "2026-09-05T19:44:01.384063",
       "description": "Scheduled task có thể dùng cho persistence",
       "evidence": [
         "C:\\Windows\\System32\\Tasks\\",
@@ -55,14 +53,12 @@
       ],
       "recommendation": "Audit scheduled tasks, xóa các tasks lạ/lạ",
       "impact": "Thực thi code theo lịch",
-      "status": "REQUIRES_AUDIT",
-      "timeline_correlated": true,
-      "correlation_details": "Mức rủi ro thay đổi: LOW → MEDIUM"
+      "status": "REQUIRES_AUDIT"
     },
     {
       "type": "Malicious Service",
       "severity": "HIGH",
-      "timestamp": "2026-09-05T19:33:19.872685",
+      "timestamp": "2026-09-05T19:44:01.384063",
       "description": "Service mới được cài đặt - kiểm tra xem có phải malware",
       "evidence": [
         "HKLM\\System\\CurrentControlSet\\Services\\",
@@ -75,7 +71,7 @@
     {
       "type": "WMI Event Consumer Subscription",
       "severity": "CRITICAL",
-      "timestamp": "2026-09-05T19:33:19.872685",
+      "timestamp": "2026-09-05T19:44:01.384063",
       "description": "WMI có thể bị dùng cho persistence",
       "evidence": [
         "WMI Event Consumers",

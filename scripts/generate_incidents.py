@@ -274,6 +274,38 @@ class IncidentEngine:
                     reason=f"Suspicious pattern: {indicator.get('category')}"
                 )
 
+    def detect_lateral_movement_threats(self):
+        """Phát hiện: Lateral movement indicators (Phase N.9B)"""
+        lateral = self.load_state('hunting_lateral_movement.json')
+
+        for indicator in lateral.get('indicators', []):
+            severity = indicator.get('severity', 'MEDIUM')
+            if severity in ['CRITICAL', 'HIGH']:
+                self.create_incident(
+                    severity=severity,
+                    title=f"LATERAL MOVEMENT THREAT: {indicator.get('type')}",
+                    assets=indicator.get('affected_assets', []),
+                    evidence=indicator.get('evidence', []),
+                    recommended_action=indicator.get('recommendation', 'Điều tra lateral movement'),
+                    reason=f"Lateral movement pattern: {indicator.get('type')}"
+                )
+
+    def detect_credential_dumping_threats(self):
+        """Phát hiện: Credential dumping indicators (Phase N.9B)"""
+        credential = self.load_state('hunting_credential_dumping.json')
+
+        for indicator in credential.get('indicators', []):
+            severity = indicator.get('severity', 'MEDIUM')
+            if severity in ['CRITICAL', 'HIGH']:
+                self.create_incident(
+                    severity=severity,
+                    title=f"CREDENTIAL DUMPING: {indicator.get('type')}",
+                    assets=indicator.get('affected_systems', []),
+                    evidence=indicator.get('evidence', []),
+                    recommended_action=indicator.get('recommendation', 'Reset passwords ngay'),
+                    reason=f"Credential threat: {indicator.get('type')}"
+                )
+
     def generate(self):
         """Phát hiện tất cả incidents"""
         self.detect_defender_disabled()
@@ -287,6 +319,9 @@ class IncidentEngine:
         # Phase N.9A: Threat Hunting Integration
         self.detect_persistence_threats()
         self.detect_suspicious_processes()
+        # Phase N.9B: Advanced Threat Hunting
+        self.detect_lateral_movement_threats()
+        self.detect_credential_dumping_threats()
 
         # Loại bỏ duplicates (kiểm tra title + severity)
         seen = set()

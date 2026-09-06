@@ -377,6 +377,22 @@ class IntelligencePipeline:
         )
         success = success and ok
 
+        # 15D. Hunt lateral movement (Phase N.9B)
+        ok, _ = self.run_stage(
+            'Lateral Movement Hunting',
+            self.scripts_dir / 'hunt_lateral_movement.py',
+            'Detecting lateral movement indicators'
+        )
+        success = success and ok
+
+        # 15E. Hunt credential dumping (Phase N.9B)
+        ok, _ = self.run_stage(
+            'Credential Dumping Hunting',
+            self.scripts_dir / 'hunt_credential_dumping.py',
+            'Detecting credential dumping attempts'
+        )
+        success = success and ok
+
         self.log('')
 
         # Stage 8: Triage Engine
