@@ -1,6 +1,14 @@
 {
-  "timestamp": "2026-09-05T19:12:44.929219",
+  "timestamp": "2026-09-05T19:19:43.367455",
   "date": "2026-09-05",
+  "incident_summary": {
+    "total_open": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 0 HIGH"
+  },
   "priority_summary": {
     "top_5": [],
     "critical_count": 0,
@@ -15,7 +23,7 @@
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 4.4,
+    "scan_age_hours": 4.5,
     "total_findings": 63,
     "critical": 0,
     "high": 0,

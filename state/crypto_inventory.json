@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T19:12:35.336088",
+  "timestamp": "2026-09-05T19:19:25.603204",
   "score": 100,
   "severity_breakdown": {
     "CRITICAL": 0,
@@ -15,133 +15,133 @@
       "plugin_name": "Target Credential Status by Authentication Protocol - No Credentials Provided",
       "plugin_family": "Settings",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL Root Certification Authority Certificate Information",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "Remote Services Using Post-Quantum Ciphers",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "Authentication",
       "plugin_name": "Microsoft Windows NTLMSSP Authentication Request Remote Network Name Disclosure",
       "plugin_family": "Windows",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "HSTS Missing From HTTPS Server",
       "plugin_family": "Web Servers",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "TLS Version 1.3 Protocol Detection",
       "plugin_family": "Service detection",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "TLS ALPN Supported Protocol Enumeration",
       "plugin_family": "Misc.",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL/TLS Recommended Cipher Suites",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL Cipher Block Chaining Cipher Suites Supported",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "Remote Services Not Using Post-Quantum Ciphers",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "TLS Version 1.2 Protocol Detection",
       "plugin_family": "Service detection",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "TLS Supported Groups",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL Perfect Forward Secrecy Cipher Suites Supported",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL Cipher Suites Supported",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL Certificate Information",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL / TLS Versions Supported",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "Encryption",
       "plugin_name": "Shor's Harvest Now Decrypt Later",
       "plugin_family": "General",
       "severity": 0,
-      "timestamp": "2026-09-05T19:12:35.335088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL Self-Signed Certificate",
       "plugin_family": "General",
       "severity": 2,
-      "timestamp": "2026-09-05T19:12:35.336088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     },
     {
       "category": "SSL",
       "plugin_name": "SSL Certificate Cannot Be Trusted",
       "plugin_family": "General",
       "severity": 2,
-      "timestamp": "2026-09-05T19:12:35.336088"
+      "timestamp": "2026-09-05T19:19:25.603204"
     }
   ]
 }

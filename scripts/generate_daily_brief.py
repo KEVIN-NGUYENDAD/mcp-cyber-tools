@@ -260,6 +260,30 @@ class DailyBriefGenerator:
             'summary_text': f"Ưu tiên: {summary.get('critical_count', 0)} CRITICAL, {summary.get('high_count', 0)} HIGH"
         }
 
+    def generate_incident_summary(self):
+        """Tóm tắt sự cố"""
+        incidents = self.load_json('incidents.json')
+        if not incidents:
+            return {
+                'total_open': 0,
+                'critical': 0,
+                'high': 0,
+                'medium': 0,
+                'summary_text': 'Không có sự cố'
+            }
+
+        by_severity = incidents.get('by_severity', {})
+        total = incidents.get('total_incidents', 0)
+
+        return {
+            'total_open': total,
+            'critical': by_severity.get('CRITICAL', 0),
+            'high': by_severity.get('HIGH', 0),
+            'medium': by_severity.get('MEDIUM', 0),
+            'low': by_severity.get('LOW', 0),
+            'summary_text': f"Sự cố mở: {by_severity.get('CRITICAL', 0)} CRITICAL, {by_severity.get('HIGH', 0)} HIGH"
+        }
+
     def generate_risk_assessment(self):
         """Generate overall risk assessment"""
         nessus = self.generate_vulnerability_summary() or {}
@@ -319,6 +343,7 @@ class DailyBriefGenerator:
         brief = {
             'timestamp': datetime.now().isoformat(),
             'date': self.today,
+            'incident_summary': self.generate_incident_summary(),
             'priority_summary': self.generate_priority_summary(),
             'change_summary': self.generate_change_summary(),
             'vulnerability_summary': self.generate_vulnerability_summary(),

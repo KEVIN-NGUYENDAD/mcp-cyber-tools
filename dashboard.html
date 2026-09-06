@@ -260,6 +260,90 @@
       font-style: italic;
     }
 
+    .incidents-section {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid #ff3333;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 15px rgba(255,51,51,0.3);
+      margin-bottom: 30px;
+    }
+
+    .incidents-title {
+      font-size: 1.5em;
+      color: #ff3333;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ff3333;
+      padding-bottom: 10px;
+    }
+
+    .incidents-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .incident-stat {
+      background: rgba(255,51,51,0.1);
+      border-left: 4px solid #ff3333;
+      padding: 12px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .incident-stat-value {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: #ff3333;
+    }
+
+    .incident-stat-label {
+      font-size: 0.85em;
+      color: #a0a0a0;
+      margin-top: 5px;
+    }
+
+    .incident-item {
+      background: rgba(255,51,51,0.08);
+      border-left: 4px solid #ff3333;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .incident-item.high {
+      border-left-color: #ff6b6b;
+    }
+
+    .incident-item.medium {
+      border-left-color: #ffa500;
+    }
+
+    .incident-id {
+      font-weight: bold;
+      color: #ff3333;
+      font-size: 0.85em;
+    }
+
+    .incident-title {
+      color: #e0e0e0;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+
+    .incident-meta {
+      color: #a0a0a0;
+      font-size: 0.85em;
+    }
+
+    .incident-empty {
+      text-align: center;
+      color: #00ff88;
+      padding: 20px;
+      font-style: italic;
+    }
+
     .recommendations-section {
       background: rgba(255,255,255,0.05);
       border: 2px solid #ff6b6b;
@@ -656,6 +740,32 @@
       </div>
     </div>
 
+    <!-- INCIDENTS SECTION (Phase N.9) -->
+    <div class="incidents-section">
+      <div class="incidents-title">🚨 SỰ CỐ ĐANG MỞ</div>
+      <div class="incidents-stats" id="incidents-stats">
+        <div class="incident-stat">
+          <div class="incident-stat-value">—</div>
+          <div class="incident-stat-label">Tổng cộng</div>
+        </div>
+        <div class="incident-stat">
+          <div class="incident-stat-value" style="color: #ff3333;">—</div>
+          <div class="incident-stat-label">CRITICAL</div>
+        </div>
+        <div class="incident-stat">
+          <div class="incident-stat-value" style="color: #ff6b6b;">—</div>
+          <div class="incident-stat-label">HIGH</div>
+        </div>
+        <div class="incident-stat">
+          <div class="incident-stat-value" style="color: #ffa500;">—</div>
+          <div class="incident-stat-label">MEDIUM</div>
+        </div>
+      </div>
+      <div id="incidents-list">
+        <div class="incident-empty">Không có sự cố mở</div>
+      </div>
+    </div>
+
     <!-- RECOMMENDATIONS SECTION -->
     <div class="recommendations-section">
       <div class="recommendations-title">💡 Recommended Actions</div>
@@ -938,6 +1048,88 @@
       document.getElementById('crypto-expired').textContent = expiredCount;
     }
 
+    function updateIncidents(incidentData) {
+      const statsDiv = document.getElementById('incidents-stats');
+      const listDiv = document.getElementById('incidents-list');
+
+      if (!incidentData || !incidentData.incidents || incidentData.incidents.length === 0) {
+        statsDiv.innerHTML = `
+          <div class="incident-stat">
+            <div class="incident-stat-value">0</div>
+            <div class="incident-stat-label">Tổng cộng</div>
+          </div>
+          <div class="incident-stat">
+            <div class="incident-stat-value" style="color: #ff3333;">0</div>
+            <div class="incident-stat-label">CRITICAL</div>
+          </div>
+          <div class="incident-stat">
+            <div class="incident-stat-value" style="color: #ff6b6b;">0</div>
+            <div class="incident-stat-label">HIGH</div>
+          </div>
+          <div class="incident-stat">
+            <div class="incident-stat-value" style="color: #ffa500;">0</div>
+            <div class="incident-stat-label">MEDIUM</div>
+          </div>
+        `;
+        listDiv.innerHTML = '<div class="incident-empty">Không có sự cố mở</div>';
+        return;
+      }
+
+      const incidents = incidentData.incidents;
+      const bySeverity = incidentData.by_severity || {};
+      const total = incidentData.total_incidents || 0;
+
+      // Update stats
+      statsDiv.innerHTML = `
+        <div class="incident-stat">
+          <div class="incident-stat-value">${total}</div>
+          <div class="incident-stat-label">Tổng cộng</div>
+        </div>
+        <div class="incident-stat">
+          <div class="incident-stat-value" style="color: #ff3333;">${bySeverity.CRITICAL || 0}</div>
+          <div class="incident-stat-label">CRITICAL</div>
+        </div>
+        <div class="incident-stat">
+          <div class="incident-stat-value" style="color: #ff6b6b;">${bySeverity.HIGH || 0}</div>
+          <div class="incident-stat-label">HIGH</div>
+        </div>
+        <div class="incident-stat">
+          <div class="incident-stat-value" style="color: #ffa500;">${bySeverity.MEDIUM || 0}</div>
+          <div class="incident-stat-label">MEDIUM</div>
+        </div>
+      `;
+
+      // Display incidents
+      listDiv.innerHTML = incidents.slice(0, 8)
+        .map(incident => {
+          const severityClass = incident.severity === 'HIGH' ? 'high' :
+                               incident.severity === 'MEDIUM' ? 'medium' : '';
+          const severityColor = incident.severity === 'CRITICAL' ? '#ff3333' :
+                               incident.severity === 'HIGH' ? '#ff6b6b' : '#ffa500';
+
+          return `
+            <div class="incident-item ${severityClass}">
+              <div style="display: flex; justify-content: space-between;">
+                <span class="incident-id">${incident.incident_id}</span>
+                <span style="color: ${severityColor}; font-weight: bold;">${incident.severity}</span>
+              </div>
+              <div class="incident-title">${incident.title}</div>
+              <div class="incident-meta">
+                Assets: ${incident.assets && incident.assets.length > 0 ? incident.assets.join(', ') : 'N/A'}
+              </div>
+              <div class="incident-meta" style="margin-top: 5px;">
+                Action: ${incident.recommended_action || 'N/A'}
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      if (incidents.length > 8) {
+        listDiv.innerHTML += `<div class="incident-empty" style="margin-top: 15px;">... và ${incidents.length - 8} sự cố khác</div>`;
+      }
+    }
+
     function updatePriorityQueue(priorityData) {
       const listDiv = document.getElementById('priority-list');
 
@@ -1055,6 +1247,9 @@
       // Priority queue data (Phase N.8)
       const priorityData = await fetchJSON('priority_queue.json');
 
+      // Incidents data (Phase N.9)
+      const incidentsData = await fetchJSON('incidents.json');
+
       updateNessusCard(nessusData);
       updateDomainCard(domainData);
       updateWAAPCard(waapStatusData, waapScoreData);
@@ -1070,6 +1265,9 @@
 
       // Update priority queue
       updatePriorityQueue(priorityData);
+
+      // Update incidents
+      updateIncidents(incidentsData);
 
       updateRefreshTime();
     }

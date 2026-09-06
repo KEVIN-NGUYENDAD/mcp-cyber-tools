@@ -371,6 +371,20 @@ class IntelligencePipeline:
 
         self.log('')
 
+        # Stage 9: Incident Engine
+        self.log('🚨 PHASE 9: INCIDENT ENGINE')
+        self.log('-' * 50)
+
+        # 17. Generate incidents
+        ok, _ = self.run_stage(
+            'Incident Detection',
+            self.scripts_dir / 'generate_incidents.py',
+            'Detecting and creating incidents'
+        )
+        success = success and ok
+
+        self.log('')
+
         # Final summary
         if success:
             self.pipeline_results['status'] = 'success'
