@@ -194,6 +194,41 @@ class DailyBriefGenerator:
 
         return summary
 
+    def generate_change_summary(self):
+        """Tóm tắt thay đổi từ timeline"""
+        timeline = self.load_json('timeline.json')
+        if not timeline:
+            return {
+                'total_changes': 0,
+                'changes_by_category': {},
+                'critical_incidents': [],
+                'summary_text': 'Không có thay đổi'
+            }
+
+        events = timeline.get('events', [])
+        summary_text = 'Không có thay đổi'
+
+        if len(events) == 0:
+            summary_text = 'Không có thay đổi'
+        elif len(events) > 0:
+            critical = [e for e in events if e.get('severity') == 'CRITICAL']
+            high = [e for e in events if e.get('severity') == 'HIGH']
+
+            if critical:
+                summary_text = f'{len(critical)} sự kiện CRITICAL, {len(high)} sự kiện HIGH'
+            elif high:
+                summary_text = f'{len(high)} sự kiện HIGH, {len(events)} thay đổi tổng cộng'
+            else:
+                summary_text = f'{len(events)} thay đổi bình thường'
+
+        return {
+            'total_changes': len(events),
+            'changes_by_category': timeline.get('by_category', {}),
+            'changes_by_severity': timeline.get('by_severity', {}),
+            'critical_incidents': [e for e in events if e.get('severity') == 'CRITICAL'],
+            'summary_text': summary_text
+        }
+
     def generate_risk_assessment(self):
         """Generate overall risk assessment"""
         nessus = self.generate_vulnerability_summary() or {}
@@ -253,6 +288,7 @@ class DailyBriefGenerator:
         brief = {
             'timestamp': datetime.now().isoformat(),
             'date': self.today,
+            'change_summary': self.generate_change_summary(),
             'vulnerability_summary': self.generate_vulnerability_summary(),
             'domain_summary': self.generate_domain_summary(),
             'waap_summary': self.generate_waap_summary(),

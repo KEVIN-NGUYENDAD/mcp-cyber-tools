@@ -269,6 +269,129 @@
       color: #a0a0a0;
       font-style: italic;
     }
+
+    .timeline-section {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid #00d4ff;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 15px rgba(0,212,255,0.2);
+      margin-bottom: 30px;
+    }
+
+    .timeline-title {
+      font-size: 1.5em;
+      color: #00d4ff;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #00d4ff;
+      padding-bottom: 10px;
+    }
+
+    .timeline-summary {
+      background: rgba(0,212,255,0.1);
+      border-left: 4px solid #00d4ff;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      color: #00d4ff;
+      font-weight: bold;
+    }
+
+    .timeline-event {
+      background: rgba(255,255,255,0.02);
+      border-left: 4px solid #00d4ff;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .timeline-event.critical {
+      border-left-color: #ff3333;
+      background: rgba(255,51,51,0.05);
+    }
+
+    .timeline-event.high {
+      border-left-color: #ff6b6b;
+      background: rgba(255,107,107,0.05);
+    }
+
+    .timeline-event.medium {
+      border-left-color: #ffa500;
+      background: rgba(255,165,0,0.05);
+    }
+
+    .timeline-event-content {
+      flex: 1;
+    }
+
+    .timeline-event-time {
+      color: #a0a0a0;
+      font-size: 0.8em;
+      margin-bottom: 4px;
+    }
+
+    .timeline-event-category {
+      display: inline-block;
+      background: #00d4ff;
+      color: #1a1a2e;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 0.7em;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    .timeline-event-type {
+      color: #e0e0e0;
+      font-weight: bold;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .timeline-event-description {
+      color: #a0a0a0;
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+
+    .timeline-event-severity {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 0.75em;
+      font-weight: bold;
+      margin-left: 8px;
+    }
+
+    .severity-critical {
+      background: rgba(255,51,51,0.3);
+      color: #ff3333;
+    }
+
+    .severity-high {
+      background: rgba(255,107,107,0.3);
+      color: #ff6b6b;
+    }
+
+    .severity-medium {
+      background: rgba(255,165,0,0.3);
+      color: #ffa500;
+    }
+
+    .severity-low {
+      background: rgba(0,212,255,0.3);
+      color: #00d4ff;
+    }
+
+    .timeline-empty {
+      text-align: center;
+      color: #a0a0a0;
+      padding: 30px;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -457,6 +580,17 @@
           <span class="metric-label">Expired Certs</span>
           <span class="metric-value high" id="crypto-expired">—</span>
         </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE SECTION (Phase N.7) -->
+    <div class="timeline-section">
+      <div class="timeline-title">📅 Incident & Change Timeline (24h)</div>
+      <div id="timeline-summary" class="timeline-summary">
+        ⏳ Loading changes...
+      </div>
+      <div id="timeline-list">
+        <div class="timeline-empty">No timeline data available</div>
       </div>
     </div>
 
@@ -742,6 +876,68 @@
       document.getElementById('crypto-expired').textContent = expiredCount;
     }
 
+    function updateTimeline(timelineData) {
+      const summaryDiv = document.getElementById('timeline-summary');
+      const listDiv = document.getElementById('timeline-list');
+
+      if (!timelineData || !timelineData.events || timelineData.events.length === 0) {
+        summaryDiv.textContent = '✓ Không có thay đổi trong 24 giờ';
+        listDiv.innerHTML = '<div class="timeline-empty">Hệ thống hoạt động bình thường</div>';
+        return;
+      }
+
+      const events = timelineData.events || [];
+      const summary = timelineData.by_severity || {};
+      const critical = summary.CRITICAL || 0;
+      const high = summary.HIGH || 0;
+      const medium = summary.MEDIUM || 0;
+
+      if (critical > 0) {
+        summaryDiv.innerHTML = `🚨 ${critical} sự kiện CRITICAL, ${high} sự kiện HIGH, ${medium} sự kiện MEDIUM`;
+        summaryDiv.style.borderLeftColor = '#ff3333';
+        summaryDiv.style.background = 'rgba(255,51,51,0.1)';
+        summaryDiv.style.color = '#ff3333';
+      } else if (high > 0) {
+        summaryDiv.innerHTML = `⚠️ ${high} sự kiện HIGH, ${medium} sự kiện MEDIUM`;
+        summaryDiv.style.borderLeftColor = '#ff6b6b';
+        summaryDiv.style.background = 'rgba(255,107,107,0.1)';
+        summaryDiv.style.color = '#ff6b6b';
+      } else if (medium > 0) {
+        summaryDiv.innerHTML = `ℹ️ ${medium} sự kiện MEDIUM - Cần chú ý`;
+        summaryDiv.style.borderLeftColor = '#ffa500';
+        summaryDiv.style.background = 'rgba(255,165,0,0.1)';
+        summaryDiv.style.color = '#ffa500';
+      } else {
+        summaryDiv.innerHTML = `✓ ${events.length} thay đổi bình thường`;
+      }
+
+      listDiv.innerHTML = events.slice(0, 10)
+        .map(event => {
+          const severity = event.severity || 'LOW';
+          const eventClass = severity.toLowerCase();
+          const time = new Date(event.timestamp).toLocaleTimeString('vi-VN', { hour12: false });
+
+          return `
+            <div class="timeline-event ${eventClass}">
+              <div class="timeline-event-content">
+                <div class="timeline-event-time">${time}</div>
+                <div>
+                  <span class="timeline-event-category">${event.category}</span>
+                  <span class="timeline-event-type">${event.type}</span>
+                  <span class="timeline-event-severity severity-${eventClass}">${severity}</span>
+                </div>
+                <div class="timeline-event-description">${event.description}</div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+
+      if (events.length > 10) {
+        listDiv.innerHTML += `<div class="timeline-empty" style="margin-top: 15px; color: #808080;">... và ${events.length - 10} sự kiện khác</div>`;
+      }
+    }
+
     async function loadDashboard() {
       document.getElementById('refresh-indicator').textContent = '⏳ Loading data...';
       document.getElementById('refresh-indicator').style.color = '#ffa500';
@@ -758,6 +954,9 @@
       const serviceChangesData = await fetchJSON('service_changes.json');
       const cryptoData = await fetchJSON('crypto_inventory.json');
 
+      // Timeline data (Phase N.7)
+      const timelineData = await fetchJSON('timeline.json');
+
       updateNessusCard(nessusData);
       updateDomainCard(domainData);
       updateWAAPCard(waapStatusData, waapScoreData);
@@ -767,6 +966,9 @@
       updateAssetCard(assetsData, assetChangesData);
       updateServiceCard(servicesData, serviceChangesData);
       updateCryptoCard(cryptoData);
+
+      // Update timeline
+      updateTimeline(timelineData);
 
       updateRefreshTime();
     }

@@ -343,6 +343,20 @@ class IntelligencePipeline:
 
         self.log('')
 
+        # Stage 7: Timeline & Change Detection
+        self.log('📅 PHASE 7: INCIDENT & CHANGE TIMELINE')
+        self.log('-' * 50)
+
+        # 15. Detect timeline events and changes
+        ok, _ = self.run_stage(
+            'Timeline Events',
+            self.scripts_dir / 'collect_timeline_events.py',
+            'Detecting changes in last 24 hours'
+        )
+        success = success and ok
+
+        self.log('')
+
         # Final summary
         if success:
             self.pipeline_results['status'] = 'success'
