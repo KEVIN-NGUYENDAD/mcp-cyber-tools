@@ -1,0 +1,76 @@
+{
+  "timestamp": "2026-09-05T17:04:45.843452",
+  "date": "2026-09-05",
+  "vulnerability_summary": {
+    "scan_name": "Home Network Discovery",
+    "scan_age_hours": 0.0,
+    "total_findings": 63,
+    "critical": 0,
+    "high": 0,
+    "medium": 3,
+    "low": 2,
+    "info": 58,
+    "scanner_status": "running"
+  },
+  "domain_summary": {
+    "domain": "sentinelops.fyi",
+    "dns_health": {
+      "spf": true,
+      "dmarc": true,
+      "nameservers": true,
+      "a_records": true,
+      "mx_records": true
+    },
+    "nameserver_count": 4,
+    "a_record_count": 2,
+    "mx_record_count": 2
+  },
+  "waap_summary": {
+    "domain": "sentinelops.fyi",
+    "ssl_status": "valid",
+    "days_until_expiry": 87,
+    "health_score": 80,
+    "grade": "B",
+    "status": "healthy",
+    "recommendation_count": 2
+  },
+  "asset_summary": {
+    "total_assets": 0,
+    "known_devices": 0,
+    "unknown_devices": 0,
+    "new_assets": 0,
+    "removed_assets": 0,
+    "top_vulnerable_devices": []
+  },
+  "service_summary": {
+    "total_services": 1,
+    "service_types": 2,
+    "new_services": 1,
+    "closed_services": 0,
+    "top_services": [
+      {
+        "name": "Service(0)",
+        "host_count": 1,
+        "finding_count": 2
+      },
+      {
+        "name": "SMB",
+        "host_count": 0,
+        "finding_count": 1
+      }
+    ]
+  },
+  "crypto_summary": {
+    "health_score": 100,
+    "certificate_count": 0,
+    "cipher_suite_count": 0,
+    "weak_cipher_count": 0,
+    "newly_expired_certs": 0,
+    "new_weak_ciphers": 0
+  },
+  "risk_assessment": {
+    "risk_level": "LOW",
+    "risk_score": 0,
+    "risk_factors": []
+  }
+}
