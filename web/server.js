@@ -60,7 +60,10 @@ function sendStateFile(filename, res) {
     'priority_queue.json',
     'asset_changes.json',
     'service_changes.json',
-    'crypto_inventory.json'
+    'crypto_inventory.json',
+    'patch_queue.json',
+    'crypto_health.json',
+    'pipeline_summary.json'
   ];
 
   if (!allowedFiles.includes(filename)) {
