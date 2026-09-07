@@ -15,7 +15,7 @@ services:
       - key: PORT
         value: 3000
     autoDeploy: git
-    branch: docs-sync
+    branch: develop
     routes:
       - path: /
         matchType: all
