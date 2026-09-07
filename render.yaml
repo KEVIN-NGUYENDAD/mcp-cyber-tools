@@ -19,3 +19,4 @@ services:
     routes:
       - path: /
         matchType: all
+    # Force redeploy - 2026-09-06
