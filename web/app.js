@@ -142,6 +142,7 @@ function switchPage(pageName) {
 // ============================================================================
 
 function renderOverviewPage() {
+  console.log('[RENDER] renderOverviewPage called');
   try {
     if (!stateData.assets || !stateData.incidents || !stateData.risk) {
       console.log('[WARN] Data not ready');
