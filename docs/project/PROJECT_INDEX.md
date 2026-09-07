@@ -1,5 +1,18 @@
 # SentinelOps Documentation Index
 
+## 🚀 QUICK START
+
+### ⚡ Ultra-Fast (1 minute)
+→ Read **START_HERE.md**
+
+### ⏱️ Fast (5 minutes)
+→ Read **M365_COPILOT_CONTEXT.md**
+
+### 📖 Complete (15 minutes)
+→ Read START_HERE.md → M365_COPILOT_CONTEXT.md → SESSION_STATE.md
+
+---
+
 📖 **START HERE** - This is your entry point to understanding SentinelOps
 
 ---

@@ -33,18 +33,67 @@ Auto-Deploy: ❌ BROKEN
 Current Render Version: ee350ba (6 commits old)
 ```
 
-## Known Problems
+## CURRENT CRITICAL ISSUES
 
-### CRITICAL (4) - Root: Render Deployment Broken
+### C-001: Executive Scorecard hiển thị UNKNOWN
+**Vấn đề**: Dashboard hiển thị "UNKNOWN" thay vì giá trị thực
+**Fix Status**: ✅ Code ready (renderExecutiveScorecard() fixed)
+**Deploy Status**: ❌ Chưa deploy (Render broken)
+**Impact**: Dashboard không hoàn chỉnh
 
-| ID | Issue | Status | Root Cause |
-|----|----|--------|-----------|
-| C-001 | Executive Scorecard "UNKNOWN" | 🟡 Code Ready | Render stale |
-| C-002 | Duplicate MCP Widgets | 🟡 Code Ready | Render stale |
-| C-003 | Incident Board Empty | 🟡 Code Ready | Render stale |
-| C-004 | Timeline Empty | 🟡 Code Ready | Render stale |
+### C-002: MCP Widget hiển thị trạng thái không nhất quán
+**Vấn đề**: ACTIVE ở phần trên, OFFLINE ở widget khác
+**Fix Status**: ✅ Code ready (renderMCPCommandCenter() fixed)
+**Deploy Status**: ❌ Chưa deploy (Render broken)
+**Impact**: UI confusing, không clear status
+
+### C-003: Incident Board không hiển thị nội dung
+**Vấn đề**: Incident Board trống, không hiển thị incident cards
+**Fix Status**: ✅ Code ready (renderIncidentBoard() fixed)
+**Deploy Status**: ❌ Chưa deploy (Render broken)
+**Impact**: Không thể xem incidents
+
+### C-004: Timeline không hiển thị nội dung
+**Vấn đề**: Timeline trống, không hiển thị events
+**Fix Status**: ✅ Code ready (renderTimeline() fixed)
+**Deploy Status**: ❌ Chưa deploy (Render broken)
+**Impact**: Mất context, không có lịch sử
 
 **All 4 issues**: Code is fixed in latest commits, but Render not deploying.
+
+---
+
+## DEPLOYMENT STATUS
+
+### Repository
+- **Name**: mcp-cyber-tools
+- **URL**: https://github.com/KEVIN-NGUYENDAD/mcp-cyber-tools
+- **Branch**: develop
+
+### Production
+- **URL**: https://sentinelops-soc.onrender.com
+- **Platform**: Render.com
+- **Status**: ❌ Chưa xác nhận deploy commit mới nhất
+
+### GitHub
+- **Status**: ✅ Có code mới (develop branch)
+- **Latest Commit**: 7703b4a
+- **New Commits**: 6+ undeployed
+
+### Render
+- **Status**: ❌ Chưa xác nhận deploy commit mới nhất
+- **Last Deploy**: ee350ba (6+ hours old)
+- **Issue**: Auto-deploy webhook broken
+
+---
+
+## NEXT PRIORITY
+
+1. Xác nhận commit production
+2. Sửa Executive Scorecard (C-001)
+3. Sửa MCP duplicate widget (C-002)
+4. Sửa Incident Board (C-003)
+5. Sửa Timeline (C-004)
 
 ## Commits Not Deployed
 
