@@ -65,45 +65,42 @@ class AssetBuilder:
         for scan in scans:
             scan_id = scan.get('id')
             scan_name = scan.get('name', 'Unknown')
+            print(f'[ASSETS] Processing scan {scan_id}: {scan_name}')
 
             try:
                 hosts = self.nessus.get_scan_hosts(scan_id)
+                print(f'[ASSETS]   Hosts found: {len(hosts)}')
+                if hosts:
+                    print(f'[ASSETS]   First host structure: {hosts[0]}')
 
                 for host in hosts:
+                    # Host data structure from Nessus API
                     host_id = host.get('host_id')
-                    host_detail = self.nessus.get_host_details(scan_id, host_id)
+                    hostname = host.get('hostname', f'Unknown-{host_id}')
 
-                    if not host_detail:
-                        continue
+                    # Severity counts are at root level: critical, high, medium, low, info
+                    vuln_counts = {
+                        'critical': host.get('critical', 0),
+                        'high': host.get('high', 0),
+                        'medium': host.get('medium', 0),
+                        'low': host.get('low', 0),
+                        'info': host.get('info', 0),
+                    }
 
-                    host_info = host_detail.get('info', {})
-                    hostname = host_info.get('host-fqdn', host_info.get('host-ip', 'Unknown'))
-                    os_type = host_info.get('os', '')
-                    ipv4 = host_info.get('host-ip', '')
+                    asset_type = self.classify_asset(hostname, '', hostname)
+                    asset_key = hostname
 
-                    asset_type = self.classify_asset(hostname, os_type, ipv4)
-
-                    # Build vulnerability counts
-                    vuln_counts = host.get('severities', {})
-
-                    asset_key = ipv4 or hostname
                     if asset_key not in asset_dict:
                         asset_dict[asset_key] = {
                             'id': len(asset_dict) + 1,
                             'hostname': hostname,
-                            'ip': ipv4,
+                            'ip': hostname,  # From Nessus, hostname is the IP
                             'type': asset_type,
-                            'os': os_type,
+                            'os': 'Unknown',  # Not available in basic host response
                             'last_scan': scan_name,
-                            'vulnerabilities': {
-                                'critical': vuln_counts.get('critical', {}).get('count', 0),
-                                'high': vuln_counts.get('high', {}).get('count', 0),
-                                'medium': vuln_counts.get('medium', {}).get('count', 0),
-                                'low': vuln_counts.get('low', {}).get('count', 0),
-                                'info': vuln_counts.get('info', {}).get('count', 0),
-                            },
-                            'risk_score': self._calculate_risk(vuln_counts),
-                            'status': 'ONLINE' if host.get('scanProfilingStatus') == 'DONE' else 'SCANNING',
+                            'vulnerabilities': vuln_counts,
+                            'risk_score': self._calculate_risk_from_counts(vuln_counts),
+                            'status': 'ONLINE',
                             'last_updated': datetime.now().isoformat()
                         }
             except Exception as e:
@@ -122,11 +119,21 @@ class AssetBuilder:
         return self.assets
 
     def _calculate_risk(self, severities: Dict) -> int:
-        """Calculate risk score: 0-100"""
+        """Calculate risk score: 0-100 (legacy format)"""
         critical = severities.get('critical', {}).get('count', 0) * 25
         high = severities.get('high', {}).get('count', 0) * 10
         medium = severities.get('medium', {}).get('count', 0) * 3
         low = severities.get('low', {}).get('count', 0)
+
+        score = min(100, critical + high + medium + low)
+        return score
+
+    def _calculate_risk_from_counts(self, counts: Dict) -> int:
+        """Calculate risk score from direct severity counts"""
+        critical = counts.get('critical', 0) * 25
+        high = counts.get('high', 0) * 10
+        medium = counts.get('medium', 0) * 3
+        low = counts.get('low', 0)
 
         score = min(100, critical + high + medium + low)
         return score
