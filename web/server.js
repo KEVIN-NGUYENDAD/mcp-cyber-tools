@@ -74,6 +74,9 @@ function sendStateFile(filename, res) {
       return res.status(404).json({ error: 'File not found', file: filename });
     }
     const data = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+    const stat = fs.statSync(filepath);
+    data._source_timestamp = stat.mtime.toISOString();
+    data._fetched_at = new Date().toISOString();
     res.json(data);
   } catch (error) {
     console.error(`[ERROR] Reading ${filename}:`, error.message);
