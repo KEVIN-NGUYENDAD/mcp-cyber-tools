@@ -1,11 +1,28 @@
 {
-  "timestamp": "2026-09-07T16:13:54.699884",
+  "timestamp": "2026-09-07T16:14:25.831506",
   "queue_by_priority": {
     "CRITICAL": [],
     "HIGH": [],
-    "MEDIUM": [],
+    "MEDIUM": [
+      {
+        "asset": "192.168.0.1",
+        "ip": "192.168.0.1",
+        "type": "Unknown",
+        "count": 1,
+        "priority": 3,
+        "estimated_time_minutes": 15
+      },
+      {
+        "asset": "192.168.0.21",
+        "ip": "192.168.0.21",
+        "type": "Unknown",
+        "count": 2,
+        "priority": 3,
+        "estimated_time_minutes": 15
+      }
+    ],
     "LOW": []
   },
-  "total_patches_pending": 0,
+  "total_patches_pending": 3,
   "estimated_time": "0h"
 }

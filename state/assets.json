@@ -1,6 +1,838 @@
 {
-  "total_assets": 0,
-  "last_updated": "2026-09-07T16:13:53.212594",
-  "assets_by_type": {},
-  "all_assets": []
+  "total_assets": 23,
+  "last_updated": "2026-09-07T16:14:25.141089",
+  "assets_by_type": {
+    "Unknown": [
+      {
+        "id": 1,
+        "hostname": "192.168.0.51",
+        "ip": "192.168.0.51",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Credential Validation - Kevin-PC",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 3
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.215757"
+      },
+      {
+        "id": 2,
+        "hostname": "192.168.0.1",
+        "ip": "192.168.0.1",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 1,
+          "low": 2,
+          "info": 36
+        },
+        "risk_score": 5,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 3,
+        "hostname": "192.168.0.3",
+        "ip": "192.168.0.3",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 1,
+          "info": 13
+        },
+        "risk_score": 1,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 4,
+        "hostname": "192.168.0.4",
+        "ip": "192.168.0.4",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 12
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 5,
+        "hostname": "192.168.0.5",
+        "ip": "192.168.0.5",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 1,
+          "info": 12
+        },
+        "risk_score": 1,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 6,
+        "hostname": "192.168.0.8",
+        "ip": "192.168.0.8",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 1,
+          "info": 13
+        },
+        "risk_score": 1,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 7,
+        "hostname": "192.168.0.10",
+        "ip": "192.168.0.10",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 1,
+          "info": 13
+        },
+        "risk_score": 1,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 8,
+        "hostname": "192.168.0.11",
+        "ip": "192.168.0.11",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 1,
+          "info": 13
+        },
+        "risk_score": 1,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 9,
+        "hostname": "192.168.0.12",
+        "ip": "192.168.0.12",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 1,
+          "info": 13
+        },
+        "risk_score": 1,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 10,
+        "hostname": "192.168.0.21",
+        "ip": "192.168.0.21",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 2,
+          "low": 1,
+          "info": 40
+        },
+        "risk_score": 7,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 11,
+        "hostname": "192.168.0.233",
+        "ip": "192.168.0.233",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 3
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.362469"
+      },
+      {
+        "id": 12,
+        "hostname": "192.168.0.15",
+        "ip": "192.168.0.15",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 13,
+        "hostname": "192.168.0.16",
+        "ip": "192.168.0.16",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 14,
+        "hostname": "192.168.0.17",
+        "ip": "192.168.0.17",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 15,
+        "hostname": "192.168.0.18",
+        "ip": "192.168.0.18",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 16,
+        "hostname": "192.168.0.19",
+        "ip": "192.168.0.19",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 17,
+        "hostname": "192.168.0.20",
+        "ip": "192.168.0.20",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 18,
+        "hostname": "192.168.0.22",
+        "ip": "192.168.0.22",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 19,
+        "hostname": "192.168.0.23",
+        "ip": "192.168.0.23",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 20,
+        "hostname": "192.168.0.25",
+        "ip": "192.168.0.25",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 21,
+        "hostname": "192.168.0.33",
+        "ip": "192.168.0.33",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 22,
+        "hostname": "192.168.0.162",
+        "ip": "192.168.0.162",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      },
+      {
+        "id": 23,
+        "hostname": "192.168.0.169",
+        "ip": "192.168.0.169",
+        "type": "Unknown",
+        "os": "Unknown",
+        "last_scan": "Host Discovery Home",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": 2
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:14:25.751073"
+      }
+    ]
+  },
+  "all_assets": [
+    {
+      "id": 1,
+      "hostname": "192.168.0.51",
+      "ip": "192.168.0.51",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Credential Validation - Kevin-PC",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 3
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.215757"
+    },
+    {
+      "id": 2,
+      "hostname": "192.168.0.1",
+      "ip": "192.168.0.1",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 1,
+        "low": 2,
+        "info": 36
+      },
+      "risk_score": 5,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 3,
+      "hostname": "192.168.0.3",
+      "ip": "192.168.0.3",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 1,
+        "info": 13
+      },
+      "risk_score": 1,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 4,
+      "hostname": "192.168.0.4",
+      "ip": "192.168.0.4",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 12
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 5,
+      "hostname": "192.168.0.5",
+      "ip": "192.168.0.5",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 1,
+        "info": 12
+      },
+      "risk_score": 1,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 6,
+      "hostname": "192.168.0.8",
+      "ip": "192.168.0.8",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 1,
+        "info": 13
+      },
+      "risk_score": 1,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 7,
+      "hostname": "192.168.0.10",
+      "ip": "192.168.0.10",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 1,
+        "info": 13
+      },
+      "risk_score": 1,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 8,
+      "hostname": "192.168.0.11",
+      "ip": "192.168.0.11",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 1,
+        "info": 13
+      },
+      "risk_score": 1,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 9,
+      "hostname": "192.168.0.12",
+      "ip": "192.168.0.12",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 1,
+        "info": 13
+      },
+      "risk_score": 1,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 10,
+      "hostname": "192.168.0.21",
+      "ip": "192.168.0.21",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 2,
+        "low": 1,
+        "info": 40
+      },
+      "risk_score": 7,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 11,
+      "hostname": "192.168.0.233",
+      "ip": "192.168.0.233",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Home Network Discovery",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 3
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.362469"
+    },
+    {
+      "id": 12,
+      "hostname": "192.168.0.15",
+      "ip": "192.168.0.15",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 13,
+      "hostname": "192.168.0.16",
+      "ip": "192.168.0.16",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 14,
+      "hostname": "192.168.0.17",
+      "ip": "192.168.0.17",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 15,
+      "hostname": "192.168.0.18",
+      "ip": "192.168.0.18",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 16,
+      "hostname": "192.168.0.19",
+      "ip": "192.168.0.19",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 17,
+      "hostname": "192.168.0.20",
+      "ip": "192.168.0.20",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 18,
+      "hostname": "192.168.0.22",
+      "ip": "192.168.0.22",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 19,
+      "hostname": "192.168.0.23",
+      "ip": "192.168.0.23",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 20,
+      "hostname": "192.168.0.25",
+      "ip": "192.168.0.25",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 21,
+      "hostname": "192.168.0.33",
+      "ip": "192.168.0.33",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 22,
+      "hostname": "192.168.0.162",
+      "ip": "192.168.0.162",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    },
+    {
+      "id": 23,
+      "hostname": "192.168.0.169",
+      "ip": "192.168.0.169",
+      "type": "Unknown",
+      "os": "Unknown",
+      "last_scan": "Host Discovery Home",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 2
+      },
+      "risk_score": 0,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T16:14:25.751073"
+    }
+  ]
 }
