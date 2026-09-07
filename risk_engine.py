@@ -34,7 +34,7 @@ class RiskEngine:
                 data = json.load(f)
                 return data.get('all_assets', [])
         except FileNotFoundError:
-            print(f'[RISK] ⚠️  Assets file not found: {self.assets_path}')
+            print(f'[RISK] WARN: Assets file not found: {self.assets_path}')
             return []
 
     def calculate_overall_score(self, assets: List[Dict]) -> int:
@@ -136,10 +136,10 @@ class RiskEngine:
         try:
             with open(filepath, 'w') as f:
                 json.dump(self.risk_data, f, indent=2)
-            print(f'[RISK] ✅ Saved to {filepath}')
+            print(f'[RISK] OK: Saved to {filepath}')
             return True
         except Exception as e:
-            print(f'[RISK] ❌ Save failed: {e}')
+            print(f'[RISK] FAIL: Save failed: {e}')
             return False
 
 if __name__ == '__main__':

@@ -36,13 +36,13 @@ class NessusClient:
         try:
             resp = self.session.get(f'{self.url}/nessus6/scans', timeout=5)
             if resp.status_code == 200:
-                print('[NESSUS] ✅ Authentication successful')
+                print('[NESSUS] OK: Authentication successful')
                 return True
             else:
-                print(f'[NESSUS] ❌ Auth failed: {resp.status_code}')
+                print(f'[NESSUS] FAIL: Auth failed: {resp.status_code}')
                 return False
         except Exception as e:
-            print(f'[NESSUS] ❌ Connection failed: {e}')
+            print(f'[NESSUS] FAIL: Connection failed: {e}')
             return False
 
     def get_scans(self) -> List[Dict]:

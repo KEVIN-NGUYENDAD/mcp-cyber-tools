@@ -27,8 +27,13 @@ class NessusPipeline:
     def log(self, message: str, level: str = 'INFO'):
         """Log message with timestamp"""
         timestamp = datetime.now().isoformat()
+        # Replace emoji with ASCII equivalents for Windows compatibility
+        message = message.replace('✅', '[OK]').replace('❌', '[FAIL]').replace('⚠️', '[WARN]').replace('⚡', '[FAST]')
         log_entry = f'[{timestamp}] [{level}] {message}'
-        print(log_entry)
+        try:
+            print(log_entry)
+        except UnicodeEncodeError:
+            print(log_entry.encode('ascii', 'ignore').decode('ascii'))
 
         try:
             with open(self.log_file, 'a') as f:
@@ -44,10 +49,10 @@ class NessusPipeline:
             builder = AssetBuilder()
             assets = builder.build_assets()
             builder.save(os.path.join(self.state_dir, 'assets.json'))
-            self.log(f'✅ Discovered {assets["total_assets"]} assets', 'SUCCESS')
+            self.log(f'[OK] Discovered {assets["total_assets"]} assets', 'SUCCESS')
             return True
         except Exception as e:
-            self.log(f'❌ Asset discovery failed: {e}', 'ERROR')
+            self.log(f'[FAIL] Asset discovery failed: {e}', 'ERROR')
             return False
 
     def run_risk_calculation(self) -> bool:
@@ -58,10 +63,10 @@ class NessusPipeline:
             engine = RiskEngine(os.path.join(self.state_dir, 'assets.json'))
             risks = engine.calculate_risks()
             engine.save(os.path.join(self.state_dir, 'risk_score.json'))
-            self.log(f'✅ Risk score: {risks["overall_score"]} ({risks["threat_level"]})', 'SUCCESS')
+            self.log(f'[OK] Risk score: {risks["overall_score"]} ({risks["threat_level"]})', 'SUCCESS')
             return True
         except Exception as e:
-            self.log(f'❌ Risk calculation failed: {e}', 'ERROR')
+            self.log(f'[FAIL] Risk calculation failed: {e}', 'ERROR')
             return False
 
     def run_patch_queue_building(self) -> bool:
@@ -72,14 +77,14 @@ class NessusPipeline:
             engine = PatchQueueEngine(os.path.join(self.state_dir, 'assets.json'))
             engine.build_patch_queue()
             engine.save_patch_queue(os.path.join(self.state_dir, 'patch_queue.json'))
-            self.log(f'✅ Patch queue: {engine.patch_queue["total_patches_pending"]} pending', 'SUCCESS')
+            self.log(f'[OK] Patch queue: {engine.patch_queue["total_patches_pending"]} pending', 'SUCCESS')
 
             engine.build_crypto_health()
             engine.save_crypto_health(os.path.join(self.state_dir, 'crypto_health.json'))
-            self.log(f'✅ Crypto health: {engine.crypto_health["health_score"]}/100', 'SUCCESS')
+            self.log(f'[OK] Crypto health: {engine.crypto_health["health_score"]}/100', 'SUCCESS')
             return True
         except Exception as e:
-            self.log(f'❌ Patch queue building failed: {e}', 'ERROR')
+            self.log(f'[FAIL] Patch queue building failed: {e}', 'ERROR')
             return False
 
     def generate_summary(self):
@@ -141,11 +146,11 @@ class NessusPipeline:
                     capture_output=True,
                     timeout=10
                 )
-                self.log('✅ Changes committed to git', 'SUCCESS')
+                self.log('[OK] Changes committed to git', 'SUCCESS')
             else:
-                self.log('⚠️  Git not available or no changes', 'WARN')
+                self.log('[WARN] Git not available or no changes', 'WARN')
         except Exception as e:
-            self.log(f'⚠️  Git commit failed: {e}', 'WARN')
+            self.log(f'[WARN] Git commit failed: {e}', 'WARN')
 
     def run_full_pipeline(self):
         """Execute complete pipeline"""
@@ -171,9 +176,9 @@ class NessusPipeline:
         elapsed = (datetime.now() - start_time).total_seconds()
         self.log('=' * 60)
         if success:
-            self.log(f'PIPELINE COMPLETE - {elapsed:.1f}s', 'SUCCESS')
+            self.log(f'[OK] PIPELINE COMPLETE - {elapsed:.1f}s', 'SUCCESS')
         else:
-            self.log(f'PIPELINE FAILED - {elapsed:.1f}s', 'ERROR')
+            self.log(f'[FAIL] PIPELINE FAILED - {elapsed:.1f}s', 'ERROR')
         self.log('=' * 60)
 
         return success
