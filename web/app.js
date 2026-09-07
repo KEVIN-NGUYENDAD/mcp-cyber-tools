@@ -488,8 +488,9 @@ function renderIncidentBoard() {
 }
 
 function renderIncidentCard(incident) {
+  const severityClass = incident.severity.toLowerCase();
   return `
-    <div class="incident-card">
+    <div class="incident-card ${severityClass}">
       <div class="incident-id">${incident.incident_id}</div>
       <div class="incident-title">${incident.title}</div>
       <div class="incident-meta">
@@ -749,9 +750,9 @@ function getThreatLevel(score) {
 function getSeverityColor(severity) {
   switch (severity) {
     case 'CRITICAL': return 'var(--color-critical)';
-    case 'HIGH': return 'var(--color-warning)';
-    case 'MEDIUM': return '#ffff00';
-    case 'LOW': return 'var(--color-healthy)';
+    case 'HIGH': return 'var(--color-high)';
+    case 'MEDIUM': return 'var(--color-medium)';
+    case 'LOW': return 'var(--color-low)';
     default: return 'var(--color-text)';
   }
 }

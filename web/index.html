@@ -16,10 +16,15 @@
       --color-bg: #0a0e27;
       --color-surface: #12172f;
       --color-border: #1e3a5f;
-      --color-accent: #00ff88;
-      --color-warning: #ffa500;
-      --color-critical: #ff4444;
-      --color-healthy: #22ff22;
+      --color-accent: #00FF9D;
+      --color-sentinel: #00FF9D;
+      --color-mcp: #8B5CF6;
+      --color-waap: #06B6D4;
+      --color-vuln: #F97316;
+      --color-critical: #FF3B5C;
+      --color-high: #FFB347;
+      --color-medium: #FFD93D;
+      --color-low: #22ff22;
       --color-text: #e0e0e0;
       --color-text-dim: #a0a0a0;
       --transition: all 0.3s ease;
@@ -330,9 +335,25 @@
       font-size: 0.9em;
     }
 
+    .incident-card.critical {
+      box-shadow: 0 0 15px rgba(255, 59, 92, 0.4), inset 0 0 10px rgba(255, 59, 92, 0.1);
+    }
+
+    .incident-card.high {
+      box-shadow: 0 0 15px rgba(255, 179, 71, 0.4), inset 0 0 10px rgba(255, 179, 71, 0.1);
+    }
+
+    .incident-card.medium {
+      box-shadow: 0 0 15px rgba(255, 217, 61, 0.4), inset 0 0 10px rgba(255, 217, 61, 0.1);
+    }
+
+    .incident-card.low {
+      box-shadow: 0 0 15px rgba(34, 255, 34, 0.4), inset 0 0 10px rgba(34, 255, 34, 0.1);
+    }
+
     .incident-card:hover {
       border-color: var(--color-accent);
-      box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
+      box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
     }
 
     .incident-id {
@@ -454,6 +475,36 @@
       letter-spacing: 1px;
     }
 
+    .section-title-waap {
+      color: var(--color-waap);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--color-waap);
+    }
+
+    .section-title-vuln {
+      color: var(--color-vuln);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--color-vuln);
+    }
+
+    .section-title-mcp {
+      color: var(--color-mcp);
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--color-mcp);
+    }
+
     /* TIMELINE */
     .timeline {
       position: relative;
@@ -531,15 +582,15 @@
     }
 
     .severity-high {
-      color: var(--color-warning);
+      color: var(--color-high);
     }
 
     .severity-medium {
-      color: #ffff00;
+      color: var(--color-medium);
     }
 
     .severity-low {
-      color: var(--color-healthy);
+      color: var(--color-low);
     }
 
     .badge {
@@ -599,7 +650,8 @@
       <div class="hero">
         <div style="font-size: 2em; margin-bottom: 20px;">━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
         <h1>SENTINELOPS</h1>
-        <p>HOME SECURITY OPERATIONS CENTER</p>
+        <p style="font-size: 1.4em; font-weight: bold;">AI-POWERED SECURITY OPERATIONS PLATFORM</p>
+        <p style="font-size: 1em; margin-top: 15px; letter-spacing: 3px;">MCP • WAAP • DFIR • THREAT HUNTING</p>
         <div class="hero-divider"></div>
       </div>
 
@@ -639,7 +691,7 @@
         <h2 style="color: var(--color-accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">━ Executive Security Dashboard ━</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
           <!-- WAAP SECURITY CARD -->
-          <div class="kpi-card" style="border-left: 4px solid #00ff88;">
+          <div class="kpi-card" style="border-left: 4px solid #06B6D4; border-top: 2px solid #06B6D4; box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);">
             <div class="kpi-label">🛡️ WAAP Security Center</div>
             <div style="margin-top: 15px;">
               <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
@@ -666,7 +718,7 @@
           </div>
 
           <!-- VULNERABILITY CENTER CARD -->
-          <div class="kpi-card" style="border-left: 4px solid #ffa500;">
+          <div class="kpi-card" style="border-left: 4px solid #F97316; border-top: 2px solid #F97316; box-shadow: 0 0 20px rgba(249, 115, 22, 0.2);">
             <div class="kpi-label">🔎 Vulnerability Center</div>
             <div style="margin-top: 15px;">
               <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 1.1em; font-weight: bold;">
@@ -689,7 +741,7 @@
           </div>
 
           <!-- MCP INTELLIGENCE CARD -->
-          <div class="kpi-card" style="border-left: 4px solid #00ffff;">
+          <div class="kpi-card" style="border-left: 4px solid #8B5CF6; border-top: 2px solid #8B5CF6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);">
             <div class="kpi-label">🤖 MCP Intelligence Center</div>
             <div style="margin-top: 15px;">
               <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
@@ -883,6 +935,7 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
           <!-- VULNERABILITY SEVERITY CHART -->
           <div class="chart-container">
+            <div class="section-title-vuln">🔍 VULNERABILITY CENTER</div>
             <div class="chart-title">Vulnerability Severity Distribution</div>
             <div id="vuln-severity-chart" style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px;">
               <div style="display: flex; align-items: center; gap: 10px;">
@@ -922,6 +975,7 @@
 
           <!-- WAAP RADAR CHART -->
           <div class="chart-container">
+            <div class="section-title-waap">🛡️ WAAP SECURITY</div>
             <div class="chart-title">WAAP Security Posture</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
               <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; border-radius: 6px; padding: 15px; text-align: center;">
@@ -945,6 +999,7 @@
 
           <!-- SOC SCORE GAUGE -->
           <div class="chart-container">
+            <div class="section-title-mcp">🤖 MCP INTELLIGENCE</div>
             <div class="chart-title">SOC Security Gauge</div>
             <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
               <div>
@@ -1142,6 +1197,18 @@
       </div>
     </div>
   </div>
+
+  <!-- FOOTER -->
+  <footer style="background: rgba(10, 14, 39, 0.95); border-top: 2px solid var(--color-border); padding: 30px 20px; margin-top: 60px; text-align: center;">
+    <div style="max-width: 1920px; margin: 0 auto;">
+      <div style="font-weight: bold; color: var(--color-sentinel); font-size: 1.1em; margin-bottom: 10px;">🛡️ SentinelOps v1.0</div>
+      <div style="color: var(--color-text-dim); font-size: 0.9em;">Built by Kevin Nguyen</div>
+      <div style="color: var(--color-text-dim); font-size: 0.9em; margin-top: 8px;">MCP • DFIR • Security Automation</div>
+      <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--color-border); font-size: 0.85em; color: var(--color-text-dim);">
+        AI-Powered Security Operations Platform | Enterprise Threat Hunting & Response
+      </div>
+    </div>
+  </footer>
 
   <script src="app.js"></script>
 </body>
