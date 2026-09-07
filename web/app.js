@@ -823,40 +823,58 @@ function renderAnalytics() {
     const domainEl = document.getElementById('domain-assessment');
     if (domainEl) domainEl.innerHTML = domainHtml;
 
-  // Executive Analytics - Vulnerability Severity Chart
-  const critVulns = assets.reduce((sum, a) => sum + (a.critical || 0), 0);
-  const highVulns = assets.reduce((sum, a) => sum + (a.high || 0), 0);
-  const medVulns = assets.reduce((sum, a) => sum + (a.medium || 0), 0);
-  const lowVulns = assets.reduce((sum, a) => sum + (a.low || 0), 0);
+    // Executive Analytics - Vulnerability Severity Chart
+    const critVulns = assets.reduce((sum, a) => sum + (a?.critical || 0), 0);
+    const highVulns = assets.reduce((sum, a) => sum + (a?.high || 0), 0);
+    const medVulns = assets.reduce((sum, a) => sum + (a?.medium || 0), 0);
+    const lowVulns = assets.reduce((sum, a) => sum + (a?.low || 0), 0);
 
-  document.getElementById('chart-vuln-crit').textContent = critVulns;
-  document.getElementById('chart-vuln-high').textContent = highVulns;
-  document.getElementById('chart-vuln-med').textContent = medVulns;
-  document.getElementById('chart-vuln-low').textContent = lowVulns;
+    const chartCrit = document.getElementById('chart-vuln-crit');
+    const chartHigh = document.getElementById('chart-vuln-high');
+    const chartMed = document.getElementById('chart-vuln-med');
+    const chartLow = document.getElementById('chart-vuln-low');
 
-  // WAAP Radar
-  const sslValid = stateData.waap.security_summary?.ssl_valid ? '✓' : '✗';
-  const wafActive = stateData.waap.security_summary?.waf_active ? '✓' : '✗';
-  const cdnActive = stateData.waap.security_summary?.cdn_active ? '✓' : '✗';
-  const protActive = stateData.waap.security_summary?.protection_active ? '✓' : '✗';
+    if (chartCrit) chartCrit.textContent = critVulns;
+    if (chartHigh) chartHigh.textContent = highVulns;
+    if (chartMed) chartMed.textContent = medVulns;
+    if (chartLow) chartLow.textContent = lowVulns;
 
-  document.getElementById('radar-ssl').textContent = sslValid;
-  document.getElementById('radar-waf').textContent = wafActive;
-  document.getElementById('radar-cdn').textContent = cdnActive;
-  document.getElementById('radar-prot').textContent = protActive;
+    // WAAP Radar
+    const sslValid = stateData.waap?.security_summary?.ssl_valid ? '✓' : '✗';
+    const wafActive = stateData.waap?.security_summary?.waf_active ? '✓' : '✗';
+    const cdnActive = stateData.waap?.security_summary?.cdn_active ? '✓' : '✗';
+    const protActive = stateData.waap?.security_summary?.protection_active ? '✓' : '✗';
 
-  // SOC Score Gauge
-  const riskScore = stateData.risk.overall_score || 0;
-  const dnsScore = dnsPercent !== '-' ? parseInt(dnsPercent) : 0;
+    const radarSsl = document.getElementById('radar-ssl');
+    const radarWaf = document.getElementById('radar-waf');
+    const radarCdn = document.getElementById('radar-cdn');
+    const radarProt = document.getElementById('radar-prot');
 
-  document.getElementById('gauge-risk').textContent = riskScore + '/100';
-  document.getElementById('gauge-risk-bar').style.width = riskScore + '%';
+    if (radarSsl) radarSsl.textContent = sslValid;
+    if (radarWaf) radarWaf.textContent = wafActive;
+    if (radarCdn) radarCdn.textContent = cdnActive;
+    if (radarProt) radarProt.textContent = protActive;
 
-  document.getElementById('gauge-waap').textContent = waapScore + '/100';
-  document.getElementById('gauge-waap-bar').style.width = waapScore + '%';
+    // SOC Score Gauge
+    const riskScore = stateData.risk?.overall_score || 0;
+    const dnsScore = dnsPercent !== '-' ? parseInt(dnsPercent) : 0;
 
-  document.getElementById('gauge-dns').textContent = dnsScore + '%';
-  document.getElementById('gauge-dns-bar').style.width = dnsScore + '%';
+    const gaugeRisk = document.getElementById('gauge-risk');
+    const gaugeRiskBar = document.getElementById('gauge-risk-bar');
+    const gaugeWaap = document.getElementById('gauge-waap');
+    const gaugeWaapBar = document.getElementById('gauge-waap-bar');
+    const gaugeDns = document.getElementById('gauge-dns');
+    const gaugeDnsBar = document.getElementById('gauge-dns-bar');
+
+    if (gaugeRisk) gaugeRisk.textContent = riskScore + '/100';
+    if (gaugeRiskBar) gaugeRiskBar.style.width = riskScore + '%';
+    if (gaugeWaap) gaugeWaap.textContent = waapScore + '/100';
+    if (gaugeWaapBar) gaugeWaapBar.style.width = waapScore + '%';
+    if (gaugeDns) gaugeDns.textContent = dnsScore + '%';
+    if (gaugeDnsBar) gaugeDnsBar.style.width = dnsScore + '%';
+  } catch (error) {
+    console.error('[ERROR] renderAnalytics:', error);
+  }
 }
 
 // ============================================================================
