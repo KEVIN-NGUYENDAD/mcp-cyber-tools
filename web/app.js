@@ -447,13 +447,11 @@ function renderExecutiveActionCenter() {
 }
 
 function drawPhysicalTopology(svg, assets) {
-  const width = svg.clientWidth;
-  const height = svg.clientHeight;
+  // Render to topology container instead of SVG
+  const container = document.getElementById('topology-content');
+  if (!container) return;
 
-  // OPERATIONAL NETWORK DISPLAY - Real Asset Data
-  svg.innerHTML = '';
-
-  let html = `<div style="padding: 20px; font-family: monospace; font-size: 12px;">`;
+  let html = `<div style="padding: 20px; font-family: monospace; font-size: 12px; background: rgba(10, 14, 39, 0.5); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2);">`;
   html += `<div style="margin-bottom: 20px; color: #00C896; font-weight: bold; text-transform: uppercase;">🌍 INTERNET</div>`;
 
   // Gateway
@@ -462,32 +460,25 @@ function drawPhysicalTopology(svg, assets) {
     html += `<div style="margin-left: 40px; margin-bottom: 15px; color: #06B6D4;">
       🚪 GATEWAY
       <div style="color: #a0a0a0; margin-left: 20px; font-size: 11px;">
-        IP: ${gateway.ip}<br>
-        Vulnerabilities: ${gateway.vulnerability_count}<br>
-        Risk: ${gateway.vulnerability_count > 30 ? '🔴 HIGH' : gateway.vulnerability_count > 15 ? '🟠 MEDIUM' : '🟢 LOW'}
+        IP: ${gateway.ip} | Vulns: ${gateway.vulnerability_count} | Risk: ${gateway.vulnerability_count > 30 ? '🔴 HIGH' : gateway.vulnerability_count > 15 ? '🟠 MEDIUM' : '🟢 LOW'}
       </div>
     </div>`;
   }
 
-  // Assets grouped by device type
+  // Assets
   const servers = assets.filter(a => a.device_type === 'Server');
   if (servers.length > 0) {
-    html += `<div style="margin-left: 80px; color: #F97316; font-weight: bold; margin-bottom: 10px;">💻 SERVERS</div>`;
-    servers.forEach(server => {
+    html += `<div style="margin-left: 80px; color: #F97316; font-weight: bold; margin-bottom: 10px;">💻 SERVERS (${servers.length})</div>`;
+    servers.slice(0, 5).forEach(server => {
       const riskColor = server.vulnerability_count > 30 ? '#FF3B5C' : server.vulnerability_count > 15 ? '#FFB347' : '#22ff22';
       html += `<div style="margin-left: 100px; margin-bottom: 8px; color: ${riskColor}; font-size: 11px;">
-        ${server.hostname} | ${server.ip}<br>
-        <span style="color: #a0a0a0;">Vulns: ${server.vulnerability_count} | Risk: ${server.vulnerability_count}</span>
+        ${server.hostname} | ${server.ip} | Vulns: ${server.vulnerability_count}
       </div>`;
     });
   }
 
   html += `</div>`;
-  svg.style.background = 'rgba(10, 14, 39, 0.5)';
-  svg.style.padding = '20px';
-  svg.style.borderRadius = '8px';
-  svg.style.border = '1px solid rgba(139, 92, 246, 0.2)';
-  svg.innerHTML = html;
+  container.innerHTML = html;
 }
 
 function hexToRgb(hex) {
@@ -498,10 +489,10 @@ function hexToRgb(hex) {
 function drawSecurityTopology(svg, incidents) {
   const assets = stateData.assets.assets || [];
   const waapScore = calculateWAAPScore();
+  const container = document.getElementById('topology-content');
+  if (!container) return;
 
-  svg.innerHTML = '';
-
-  let html = `<div style="padding: 20px; font-family: monospace; font-size: 13px; line-height: 2;">`;
+  let html = `<div style="padding: 20px; font-family: monospace; font-size: 13px; line-height: 2; background: rgba(10, 14, 39, 0.5); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2);">`;
   html += `<div style="color: #00C896; text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 14px;">SECURITY OPERATIONS FLOW</div>`;
 
   html += `<div style="color: #00C896; font-weight: bold;">🌍 INTERNET</div>`;
@@ -530,11 +521,7 @@ function drawSecurityTopology(svg, incidents) {
   html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">90+ Tools | ACTIVE</div>`;
 
   html += `</div>`;
-  svg.style.background = 'rgba(10, 14, 39, 0.5)';
-  svg.style.padding = '20px';
-  svg.style.borderRadius = '8px';
-  svg.style.border = '1px solid rgba(139, 92, 246, 0.2)';
-  svg.innerHTML = html;
+  container.innerHTML = html;
 }
 
 function calculateWAAPScore() {
