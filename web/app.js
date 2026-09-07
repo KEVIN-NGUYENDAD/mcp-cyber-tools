@@ -200,7 +200,7 @@ function renderOverviewPage() {
     const kpiDns = document.getElementById('kpi-dns');
     if (kpiDns) kpiDns.textContent = dnsPercent !== '-' ? dnsPercent + '%' : '-';
 
-    const minutesOld = Math.round((Date.now() - new Date(stateData.assets?.timestamp || Date.now())) / 60000);
+    const minutesOld = Math.round((Date.now() - new Date(stateData.assets?._fetched_at || stateData.assets?.timestamp || Date.now())) / 60000);
     const kpiFresh = document.getElementById('kpi-fresh');
     const kpiFreshSub = document.getElementById('kpi-fresh-sub');
     if (kpiFresh) kpiFresh.textContent = minutesOld;
@@ -464,12 +464,13 @@ function renderVulnerabilityCenter() {
   const highVulns = assets.reduce((sum, a) => sum + (a?.high || 0), 0);
   const medVulns = assets.reduce((sum, a) => sum + (a?.medium || 0), 0);
   const lowVulns = assets.reduce((sum, a) => sum + (a?.low || 0), 0);
+  const infoVulns = assets.reduce((sum, a) => sum + (a?.info || 0), 0);
   const totalVulns = assets.reduce((sum, a) => sum + (a?.vulnerability_count || 0), 0);
 
   element.innerHTML = `
     <div style="background: rgba(249, 115, 22, 0.1); border: 2px solid #F97316; border-radius: 8px; padding: 20px; margin-top: 20px;">
       <div style="color: #F97316; font-weight: bold; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">🔍 VULNERABILITY CENTER</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 10px; font-size: 12px; font-family: monospace;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; gap: 10px; font-size: 12px; font-family: monospace;">
         <div>
           <div style="color: #a0a0a0;">Total</div>
           <div style="color: #F97316; font-weight: bold; font-size: 18px;">${totalVulns}</div>
@@ -489,6 +490,10 @@ function renderVulnerabilityCenter() {
         <div>
           <div style="color: #a0a0a0;">Low</div>
           <div style="color: #22ff22; font-weight: bold; font-size: 18px;">${lowVulns}</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Info</div>
+          <div style="color: #888888; font-weight: bold; font-size: 18px;">${infoVulns}</div>
         </div>
       </div>
     </div>
