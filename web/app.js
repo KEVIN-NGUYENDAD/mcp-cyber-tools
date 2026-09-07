@@ -65,6 +65,7 @@ async function loadAllData() {
     stateData.alerts = alerts.value || { sent_alerts: [] };
     stateData.waap = waap.value || {};
     stateData.domain = domain.value || {};
+    stateData.mcp = { status: 'ONLINE', tool_count: '90+', threat_hunting_active: true, dfir_active: true, event_hub_active: true, last_sync: '2 min ago' };
 
     updateLastUpdate();
     console.log('[DATA] Loaded:', Object.keys(stateData).length, 'data sources');
@@ -366,6 +367,9 @@ function renderNetworkTopology() {
   renderWAAPCommandCenter();
   renderVulnerabilityCenter();
   renderExecutiveActionCenter();
+  renderIncidentBoard();
+  renderTimeline();
+  renderExecutiveScorecard();
 }
 
 function renderMCPCommandCenter() {
