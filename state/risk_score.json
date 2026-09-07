@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-07T16:17:46.757253",
+  "timestamp": "2026-09-07T16:17:48.247299",
   "overall_score": 0,
   "threat_level": "LOW",
   "risk_summary": {
@@ -26,7 +26,7 @@
       },
       "risk_score": 7,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.124641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 2,
@@ -44,7 +44,7 @@
       },
       "risk_score": 5,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 3,
@@ -62,7 +62,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 5,
@@ -80,7 +80,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 6,
@@ -98,7 +98,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     }
   ],
   "risk_by_type": {
