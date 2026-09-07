@@ -24,11 +24,15 @@ let refreshInterval = 30000;
 
 async function init() {
   console.log('[INIT] SentinelOps starting...');
-  await loadAllData();
-  renderOverviewPage();
-  if (typeof setupEventListeners === 'function') setupEventListeners();
-  startAutoRefresh();
-  console.log('[INIT] SentinelOps ready');
+  try {
+    await loadAllData();
+    renderOverviewPage();
+    if (typeof setupEventListeners === 'function') setupEventListeners();
+    startAutoRefresh();
+    console.log('[INIT] SentinelOps ready');
+  } catch (error) {
+    console.error('[INIT] Startup error:', error);
+  }
 }
 
 // ============================================================================
@@ -70,9 +74,16 @@ async function loadAllData() {
 }
 
 function updateLastUpdate() {
-  const now = new Date();
-  const time = now.toLocaleTimeString();
-  document.getElementById('lastUpdate').textContent = `Last update: ${time}`;
+  try {
+    const now = new Date();
+    const time = now.toLocaleTimeString();
+    const lastUpdateEl = document.getElementById('lastUpdate');
+    if (lastUpdateEl) {
+      lastUpdateEl.textContent = `Last update: ${time}`;
+    }
+  } catch (error) {
+    console.error('[ERROR] updateLastUpdate:', error);
+  }
 }
 
 // ============================================================================
@@ -80,36 +91,48 @@ function updateLastUpdate() {
 // ============================================================================
 
 function switchPage(pageName) {
-  // Hide all pages
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  try {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-  // Show selected page
-  document.getElementById(pageName).classList.add('active');
+    // Show selected page
+    const pageEl = document.getElementById(pageName);
+    if (!pageEl) {
+      console.error('[ERROR] Page not found:', pageName);
+      return;
+    }
+    pageEl.classList.add('active');
 
-  // Update nav
-  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-  event.target.classList.add('active');
+    // Update nav - find the clicked nav item
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    const navItem = event?.target?.closest('.nav-item');
+    if (navItem) navItem.classList.add('active');
 
-  // Render page content
-  switch (pageName) {
-    case 'overview':
-      renderOverviewPage();
-      break;
-    case 'network':
-      setTimeout(() => renderNetworkTopology(), 100);
-      break;
-    case 'incidents':
-      renderIncidentBoard();
-      break;
-    case 'analytics':
-      renderAnalytics();
-      break;
-    case 'scorecard':
-      renderExecutiveScorecard();
-      break;
-    case 'history':
-      renderTimeline();
-      break;
+    // Render page content with safety checks
+    switch (pageName) {
+      case 'overview':
+        renderOverviewPage();
+        break;
+      case 'network':
+        setTimeout(() => renderNetworkTopology(), 100);
+        break;
+      case 'incidents':
+        if (typeof renderIncidentBoard === 'function') renderIncidentBoard();
+        break;
+      case 'analytics':
+        if (typeof renderAnalytics === 'function') renderAnalytics();
+        break;
+      case 'scorecard':
+        if (typeof renderExecutiveScorecard === 'function') renderExecutiveScorecard();
+        break;
+      case 'history':
+        if (typeof renderTimeline === 'function') renderTimeline();
+        break;
+      default:
+        console.warn('[WARN] Unknown page:', pageName);
+    }
+  } catch (error) {
+    console.error('[ERROR] switchPage:', error);
   }
 }
 
@@ -118,135 +141,181 @@ function switchPage(pageName) {
 // ============================================================================
 
 function renderOverviewPage() {
-  if (!stateData.assets || !stateData.incidents || !stateData.risk) {
-    console.log('[WARN] Data not ready');
-    return;
+  try {
+    if (!stateData.assets || !stateData.incidents || !stateData.risk) {
+      console.log('[WARN] Data not ready');
+      return;
+    }
+
+    const assets = stateData.assets.assets || [];
+    const incidents = stateData.incidents.incidents || [];
+    const riskScore = stateData.risk.overall_score || 0;
+    const alerts = stateData.alerts.sent_alerts || [];
+
+    // Calculate metrics
+    const criticalIncidents = incidents.filter(i => i?.severity === 'CRITICAL').length;
+    const healthyAssets = assets.filter(a => (a?.vulnerability_count || 0) <= 10).length;
+    const avgRisk = assets.length > 0 ? Math.round(assets.reduce((sum, a) => sum + (a?.vulnerability_count || 0), 0) / assets.length) : 0;
+
+    // Update KPIs with existence checks
+    const kpiAssets = document.getElementById('kpi-assets');
+    const kpiAssetsSub = document.getElementById('kpi-assets-sub');
+    if (kpiAssets) kpiAssets.textContent = assets.length;
+    if (kpiAssetsSub) kpiAssetsSub.textContent = `${healthyAssets} healthy`;
+
+    const kpiIncidents = document.getElementById('kpi-incidents');
+    const kpiIncidentsSub = document.getElementById('kpi-incidents-sub');
+    const kpiRisk = document.getElementById('kpi-risk');
+    const kpiRiskSub = document.getElementById('kpi-risk-sub');
+
+    if (kpiIncidents) kpiIncidents.textContent = incidents.length;
+    if (kpiIncidentsSub) kpiIncidentsSub.textContent = `${criticalIncidents} critical`;
+    if (kpiRisk) kpiRisk.textContent = riskScore;
+    if (kpiRiskSub) kpiRiskSub.textContent = getRiskLevel(riskScore);
+
+    // Calculate WAAP Health Score from security_summary
+    let waapScore = 0;
+    if (stateData.waap?.security_summary) {
+      if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
+      if (stateData.waap.security_summary.waf_active) waapScore += 15;
+      if (stateData.waap.security_summary.cdn_active) waapScore += 15;
+      if (stateData.waap.security_summary.protection_active) waapScore += 10;
+    }
+    const kpiWaap = document.getElementById('kpi-waap');
+    if (kpiWaap) kpiWaap.textContent = waapScore > 0 ? waapScore : '-';
+
+    // Calculate DNS Health from dns_complete
+    let dnsHealth = 0;
+    let dnsChecks = 0;
+    if (stateData.domain?.dns_complete) {
+      const checks = ['has_nameservers', 'has_a_records', 'has_mx_records', 'has_spf', 'has_dmarc'];
+      checks.forEach(check => {
+        if (check in stateData.domain.dns_complete) {
+          dnsChecks++;
+          if (stateData.domain.dns_complete[check]) dnsHealth++;
+        }
+      });
+    }
+    const dnsPercent = dnsChecks > 0 ? Math.round((dnsHealth / dnsChecks) * 100) : '-';
+    const kpiDns = document.getElementById('kpi-dns');
+    if (kpiDns) kpiDns.textContent = dnsPercent !== '-' ? dnsPercent + '%' : '-';
+
+    const minutesOld = Math.round((Date.now() - new Date(stateData.assets?.timestamp || Date.now())) / 60000);
+    const kpiFresh = document.getElementById('kpi-fresh');
+    const kpiFreshSub = document.getElementById('kpi-fresh-sub');
+    if (kpiFresh) kpiFresh.textContent = minutesOld;
+    if (kpiFreshSub) kpiFreshSub.textContent = minutesOld > 5 ? 'STALE' : 'FRESH';
+
+    // Mission Control
+    const mcThreat = document.getElementById('mc-threat');
+    const mcAssets = document.getElementById('mc-assets');
+    const mcIncidents = document.getElementById('mc-incidents');
+    const mcCritical = document.getElementById('mc-critical');
+    const mcRisk = document.getElementById('mc-risk');
+    const mcFresh = document.getElementById('mc-fresh');
+
+    if (mcThreat) mcThreat.textContent = getThreatLevel(riskScore);
+    if (mcAssets) mcAssets.textContent = assets.length;
+    if (mcIncidents) mcIncidents.textContent = incidents.length;
+    if (mcCritical) mcCritical.textContent = criticalIncidents;
+    if (mcRisk) mcRisk.textContent = riskScore + '/100';
+    if (mcFresh) mcFresh.textContent = minutesOld + ' min';
+
+    // Recent Activity
+    const recentIncidents = incidents.slice(0, 3);
+    const activityHtml = recentIncidents.length > 0
+      ? recentIncidents.map(inc => `
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 0.9em;">
+            <span class="badge ${getBadgeClass(inc?.severity)}">${inc?.severity || 'UNKNOWN'}</span>
+            <span style="margin-left: 10px; color: var(--color-accent);">${inc?.incident_id || 'N/A'}</span>
+            <div style="color: var(--color-text-dim); margin-top: 5px;">${inc?.title || 'N/A'}</div>
+          </div>
+        `).join('')
+      : '<div style="color: var(--color-text-dim);">No recent incidents</div>';
+
+    const recentActivityEl = document.getElementById('recent-activity');
+    if (recentActivityEl) recentActivityEl.innerHTML = activityHtml;
+
+    // Alert Status
+    const criticalAlerts = alerts.filter(a => a?.severity === 'CRITICAL').length;
+    const highAlerts = alerts.filter(a => a?.severity === 'HIGH').length;
+    const lastAlert = alerts.length > 0 ? new Date(alerts[0]?.sent_at).toLocaleString() : '-';
+
+    const alertsTotal = document.getElementById('alerts-total');
+    const alertsLast = document.getElementById('alerts-last');
+    const alertsCritical = document.getElementById('alerts-critical');
+    const alertsHigh = document.getElementById('alerts-high');
+
+    if (alertsTotal) alertsTotal.textContent = alerts.length;
+    if (alertsLast) alertsLast.textContent = lastAlert;
+    if (alertsCritical) alertsCritical.textContent = criticalAlerts;
+    if (alertsHigh) alertsHigh.textContent = highAlerts;
+
+    // Update Executive Security Row
+    updateExecutiveSecurityRow(assets);
+
+    // Render Network Topology
+    setTimeout(() => renderNetworkTopology(), 100);
+  } catch (error) {
+    console.error('[ERROR] renderOverviewPage:', error);
   }
-
-  const assets = stateData.assets.assets || [];
-  const incidents = stateData.incidents.incidents || [];
-  const riskScore = stateData.risk.overall_score || 0;
-  const alerts = stateData.alerts.sent_alerts || [];
-
-  // Calculate metrics
-  const criticalIncidents = incidents.filter(i => i.severity === 'CRITICAL').length;
-  const healthyAssets = assets.filter(a => (a.vulnerability_count || 0) <= 10).length;
-  const avgRisk = assets.length > 0 ? Math.round(assets.reduce((sum, a) => sum + (a.vulnerability_count || 0), 0) / assets.length) : 0;
-
-  // Update KPIs
-  document.getElementById('kpi-assets').textContent = assets.length;
-  document.getElementById('kpi-assets-sub').textContent = `${healthyAssets} healthy`;
-
-  document.getElementById('kpi-incidents').textContent = incidents.length;
-  document.getElementById('kpi-incidents-sub').textContent = `${criticalIncidents} critical`;
-
-  document.getElementById('kpi-risk').textContent = riskScore;
-  document.getElementById('kpi-risk-sub').textContent = getRiskLevel(riskScore);
-
-  // Calculate WAAP Health Score from security_summary
-  let waapScore = 0;
-  if (stateData.waap.security_summary) {
-    if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
-    if (stateData.waap.security_summary.waf_active) waapScore += 15;
-    if (stateData.waap.security_summary.cdn_active) waapScore += 15;
-    if (stateData.waap.security_summary.protection_active) waapScore += 10;
-  }
-  document.getElementById('kpi-waap').textContent = waapScore > 0 ? waapScore : '-';
-
-  // Calculate DNS Health from dns_complete
-  let dnsHealth = 0;
-  let dnsChecks = 0;
-  if (stateData.domain.dns_complete) {
-    const checks = ['has_nameservers', 'has_a_records', 'has_mx_records', 'has_spf', 'has_dmarc'];
-    checks.forEach(check => {
-      if (check in stateData.domain.dns_complete) {
-        dnsChecks++;
-        if (stateData.domain.dns_complete[check]) dnsHealth++;
-      }
-    });
-  }
-  const dnsPercent = dnsChecks > 0 ? Math.round((dnsHealth / dnsChecks) * 100) : '-';
-  document.getElementById('kpi-dns').textContent = dnsPercent !== '-' ? dnsPercent + '%' : '-';
-
-  const minutesOld = Math.round((Date.now() - new Date(stateData.assets.timestamp || Date.now())) / 60000);
-  document.getElementById('kpi-fresh').textContent = minutesOld;
-  document.getElementById('kpi-fresh-sub').textContent = minutesOld > 5 ? 'STALE' : 'FRESH';
-
-  // Mission Control
-  document.getElementById('mc-threat').textContent = getThreatLevel(riskScore);
-  document.getElementById('mc-assets').textContent = assets.length;
-  document.getElementById('mc-incidents').textContent = incidents.length;
-  document.getElementById('mc-critical').textContent = criticalIncidents;
-  document.getElementById('mc-risk').textContent = riskScore + '/100';
-  document.getElementById('mc-fresh').textContent = minutesOld + ' min';
-
-  // Recent Activity
-  const recentIncidents = incidents.slice(0, 3);
-  const activityHtml = recentIncidents.length > 0
-    ? recentIncidents.map(inc => `
-        <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 0.9em;">
-          <span class="badge ${getBadgeClass(inc.severity)}">${inc.severity}</span>
-          <span style="margin-left: 10px; color: var(--color-accent);">${inc.incident_id}</span>
-          <div style="color: var(--color-text-dim); margin-top: 5px;">${inc.title}</div>
-        </div>
-      `).join('')
-    : '<div style="color: var(--color-text-dim);">No recent incidents</div>';
-
-  document.getElementById('recent-activity').innerHTML = activityHtml;
-
-  // Alert Status
-  const criticalAlerts = alerts.filter(a => a.severity === 'CRITICAL').length;
-  const highAlerts = alerts.filter(a => a.severity === 'HIGH').length;
-  const lastAlert = alerts.length > 0 ? new Date(alerts[0].sent_at).toLocaleString() : '-';
-
-  document.getElementById('alerts-total').textContent = alerts.length;
-  document.getElementById('alerts-last').textContent = lastAlert;
-  document.getElementById('alerts-critical').textContent = criticalAlerts;
-  document.getElementById('alerts-high').textContent = highAlerts;
-
-  // Update Executive Security Row
-  updateExecutiveSecurityRow(assets);
-
-  // Render Network Topology
-  setTimeout(() => renderNetworkTopology(), 100);
 }
 
 function updateExecutiveSecurityRow(assets) {
-  // WAAP Security
-  let waapScore = 0;
-  if (stateData.waap.security_summary) {
-    if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
-    if (stateData.waap.security_summary.waf_active) waapScore += 15;
-    if (stateData.waap.security_summary.cdn_active) waapScore += 15;
-    if (stateData.waap.security_summary.protection_active) waapScore += 10;
+  try {
+    // WAAP Security with null safety
+    let waapScore = 0;
+    if (stateData.waap?.security_summary) {
+      if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
+      if (stateData.waap.security_summary.waf_active) waapScore += 15;
+      if (stateData.waap.security_summary.cdn_active) waapScore += 15;
+      if (stateData.waap.security_summary.protection_active) waapScore += 10;
+    }
+    const sslStatus = stateData.waap?.ssl_status ? stateData.waap.ssl_status.toUpperCase() : 'UNKNOWN';
+    const wafStatus = stateData.waap?.security_summary?.waf_active ? '✓ ACTIVE' : '✗ INACTIVE';
+    const cdnStatus = stateData.waap?.security_summary?.cdn_active ? '✓ ACTIVE' : '✗ INACTIVE';
+    const certDays = stateData.waap?.days_until_expiry || '-';
+
+    const execWaapScore = document.getElementById('exec-waap-score');
+    const execWaapSsl = document.getElementById('exec-waap-ssl');
+    const execWaapWaf = document.getElementById('exec-waap-waf');
+    const execWaapCdn = document.getElementById('exec-waap-cdn');
+    const execWaapCert = document.getElementById('exec-waap-cert');
+
+    if (execWaapScore) execWaapScore.textContent = waapScore > 0 ? waapScore + '/100' : '-';
+    if (execWaapSsl) execWaapSsl.textContent = sslStatus;
+    if (execWaapWaf) execWaapWaf.textContent = wafStatus;
+    if (execWaapCdn) execWaapCdn.textContent = cdnStatus;
+    if (execWaapCert) execWaapCert.textContent = certDays + ' days';
+
+    // Vulnerability Center with array safety
+    const validAssets = Array.isArray(assets) ? assets : [];
+    const totalVulns = validAssets.reduce((sum, a) => sum + (a?.vulnerability_count || 0), 0);
+    const critVulns = validAssets.reduce((sum, a) => sum + (a?.critical || 0), 0);
+    const highVulns = validAssets.reduce((sum, a) => sum + (a?.high || 0), 0);
+    const medVulns = validAssets.reduce((sum, a) => sum + (a?.medium || 0), 0);
+    const lowVulns = validAssets.reduce((sum, a) => sum + (a?.low || 0), 0);
+
+    const execVulnTotal = document.getElementById('exec-vuln-total');
+    const execVulnAssets = document.getElementById('exec-vuln-assets');
+    const execVulnCrit = document.getElementById('exec-vuln-crit');
+    const execVulnHigh = document.getElementById('exec-vuln-high');
+    const execVulnMed = document.getElementById('exec-vuln-med');
+    const execVulnLow = document.getElementById('exec-vuln-low');
+
+    if (execVulnTotal) execVulnTotal.textContent = totalVulns;
+    if (execVulnAssets) execVulnAssets.textContent = validAssets.length;
+    if (execVulnCrit) execVulnCrit.textContent = critVulns;
+    if (execVulnHigh) execVulnHigh.textContent = highVulns;
+    if (execVulnMed) execVulnMed.textContent = medVulns;
+    if (execVulnLow) execVulnLow.textContent = lowVulns;
+
+    // MCP Intelligence
+    const execMcpQueue = document.getElementById('exec-mcp-queue');
+    if (execMcpQueue) execMcpQueue.textContent = '0';
+  } catch (error) {
+    console.error('[ERROR] updateExecutiveSecurityRow:', error);
   }
-  const sslStatus = stateData.waap.ssl_status ? stateData.waap.ssl_status.toUpperCase() : 'UNKNOWN';
-  const wafStatus = stateData.waap.security_summary?.waf_active ? '✓ ACTIVE' : '✗ INACTIVE';
-  const cdnStatus = stateData.waap.security_summary?.cdn_active ? '✓ ACTIVE' : '✗ INACTIVE';
-  const certDays = stateData.waap.days_until_expiry || '-';
-
-  document.getElementById('exec-waap-score').textContent = waapScore > 0 ? waapScore + '/100' : '-';
-  document.getElementById('exec-waap-ssl').textContent = sslStatus;
-  document.getElementById('exec-waap-waf').textContent = wafStatus;
-  document.getElementById('exec-waap-cdn').textContent = cdnStatus;
-  document.getElementById('exec-waap-cert').textContent = certDays + ' days';
-
-  // Vulnerability Center
-  const totalVulns = assets.reduce((sum, a) => sum + (a.vulnerability_count || 0), 0);
-  const critVulns = assets.reduce((sum, a) => sum + (a.critical || 0), 0);
-  const highVulns = assets.reduce((sum, a) => sum + (a.high || 0), 0);
-  const medVulns = assets.reduce((sum, a) => sum + (a.medium || 0), 0);
-  const lowVulns = assets.reduce((sum, a) => sum + (a.low || 0), 0);
-
-  document.getElementById('exec-vuln-total').textContent = totalVulns;
-  document.getElementById('exec-vuln-assets').textContent = assets.length;
-  document.getElementById('exec-vuln-crit').textContent = critVulns;
-  document.getElementById('exec-vuln-high').textContent = highVulns;
-  document.getElementById('exec-vuln-med').textContent = medVulns;
-  document.getElementById('exec-vuln-low').textContent = lowVulns;
-
-  // MCP Intelligence
-  document.getElementById('exec-mcp-queue').textContent = '0';
 }
 
 // ============================================================================
@@ -254,10 +323,15 @@ function updateExecutiveSecurityRow(assets) {
 // ============================================================================
 
 function switchTopology(mode) {
-  currentTopology = mode;
-  document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-  event.target.classList.add('active');
-  renderNetworkTopology();
+  try {
+    currentTopology = mode;
+    document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+    const toggleBtn = event?.target?.closest('.toggle-btn');
+    if (toggleBtn) toggleBtn.classList.add('active');
+    renderNetworkTopology();
+  } catch (error) {
+    console.error('[ERROR] switchTopology:', error);
+  }
 }
 
 function renderNetworkTopology() {
@@ -270,19 +344,21 @@ function renderNetworkTopology() {
   const criticalCount = assets.filter(a => (a.vulnerability_count || 0) > 20).length;
   const avgRisk = assets.length > 0 ? Math.round(assets.reduce((sum, a) => sum + (a.vulnerability_count || 0), 0) / assets.length) : 0;
 
-  document.getElementById('net-healthy').textContent = healthyCount;
-  document.getElementById('net-warning').textContent = warningCount;
-  document.getElementById('net-critical').textContent = criticalCount;
-  document.getElementById('net-avg-risk').textContent = avgRisk;
+  const netHealthy = document.getElementById('net-healthy');
+  const netWarning = document.getElementById('net-warning');
+  const netCritical = document.getElementById('net-critical');
+  const netAvgRisk = document.getElementById('net-avg-risk');
 
-  // Draw topology
-  const svg = document.getElementById('topology-svg');
-  svg.innerHTML = '';
+  if (netHealthy) netHealthy.textContent = healthyCount;
+  if (netWarning) netWarning.textContent = warningCount;
+  if (netCritical) netCritical.textContent = criticalCount;
+  if (netAvgRisk) netAvgRisk.textContent = avgRisk;
 
+  // Draw topology to div container (not SVG)
   if (currentTopology === 'physical') {
-    drawPhysicalTopology(svg, assets);
+    drawPhysicalTopology(assets);
   } else {
-    drawSecurityTopology(svg, incidents);
+    drawSecurityTopology(incidents);
   }
 
   // Render command centers
@@ -296,33 +372,41 @@ function renderMCPCommandCenter() {
   const element = document.getElementById('mcp-command-center');
   if (!element) return;
 
+  // Read MCP status from state data or default to ONLINE
+  const mcpStatus = stateData.mcp?.status || 'ONLINE';
+  const mcpToolCount = stateData.mcp?.tool_count || '90+';
+  const mcpThreatHunting = stateData.mcp?.threat_hunting_active ? 'ACTIVE' : 'OFFLINE';
+  const mcpDfir = stateData.mcp?.dfir_active ? 'ACTIVE' : 'OFFLINE';
+  const mcpEventHub = stateData.mcp?.event_hub_active ? 'ACTIVE' : 'OFFLINE';
+  const mcpLastSync = stateData.mcp?.last_sync || '2 min ago';
+
   element.innerHTML = `
     <div style="background: rgba(139, 92, 246, 0.1); border: 2px solid #8B5CF6; border-radius: 8px; padding: 20px; margin-top: 20px;">
       <div style="color: #8B5CF6; font-weight: bold; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">🤖 MCP INTELLIGENCE CENTER</div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13px; font-family: monospace;">
         <div>
           <div style="color: #a0a0a0;">Status</div>
-          <div style="color: #00C896; font-weight: bold; font-size: 16px;">● ONLINE</div>
+          <div style="color: #00C896; font-weight: bold; font-size: 16px;">● ${mcpStatus}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Tool Count</div>
-          <div style="color: #8B5CF6; font-weight: bold; font-size: 16px;">90+</div>
+          <div style="color: #8B5CF6; font-weight: bold; font-size: 16px;">${mcpToolCount}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Threat Hunting</div>
-          <div style="color: #00C896; font-weight: bold;">ACTIVE</div>
+          <div style="color: ${mcpThreatHunting === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${mcpThreatHunting}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">DFIR</div>
-          <div style="color: #00C896; font-weight: bold;">ACTIVE</div>
+          <div style="color: ${mcpDfir === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${mcpDfir}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Event Hub</div>
-          <div style="color: #00C896; font-weight: bold;">ACTIVE</div>
+          <div style="color: ${mcpEventHub === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${mcpEventHub}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Last Sync</div>
-          <div style="color: #8B5CF6; font-weight: bold;">2 min ago</div>
+          <div style="color: #8B5CF6; font-weight: bold;">${mcpLastSync}</div>
         </div>
       </div>
     </div>
@@ -449,33 +533,43 @@ function renderExecutiveActionCenter() {
   `;
 }
 
-function drawPhysicalTopology(svg, assets) {
-  // Render to topology container instead of SVG
+function drawPhysicalTopology(assets) {
+  // Render to topology container (div, not SVG)
   const container = document.getElementById('topology-content');
-  if (!container) return;
+  if (!container) {
+    console.error('[RENDER] topology-content container not found');
+    return;
+  }
+
+  if (!Array.isArray(assets)) {
+    console.error('[RENDER] assets is not an array');
+    return;
+  }
 
   let html = `<div style="padding: 20px; font-family: monospace; font-size: 12px; background: rgba(10, 14, 39, 0.5); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2);">`;
   html += `<div style="margin-bottom: 20px; color: #00C896; font-weight: bold; text-transform: uppercase;">🌍 INTERNET</div>`;
 
   // Gateway
-  const gateway = assets.find(a => a.device_type === 'Router');
+  const gateway = assets.find(a => a?.device_type === 'Router');
   if (gateway) {
+    const vulnCount = gateway.vulnerability_count || 0;
     html += `<div style="margin-left: 40px; margin-bottom: 15px; color: #06B6D4;">
       🚪 GATEWAY
       <div style="color: #a0a0a0; margin-left: 20px; font-size: 11px;">
-        IP: ${gateway.ip} | Vulns: ${gateway.vulnerability_count} | Risk: ${gateway.vulnerability_count > 30 ? '🔴 HIGH' : gateway.vulnerability_count > 15 ? '🟠 MEDIUM' : '🟢 LOW'}
+        IP: ${gateway.ip || 'N/A'} | Vulns: ${vulnCount} | Risk: ${vulnCount > 30 ? '🔴 HIGH' : vulnCount > 15 ? '🟠 MEDIUM' : '🟢 LOW'}
       </div>
     </div>`;
   }
 
   // Assets
-  const servers = assets.filter(a => a.device_type === 'Server');
-  if (servers.length > 0) {
+  const servers = assets.filter(a => a?.device_type === 'Server');
+  if (servers && servers.length > 0) {
     html += `<div style="margin-left: 80px; color: #F97316; font-weight: bold; margin-bottom: 10px;">💻 SERVERS (${servers.length})</div>`;
     servers.slice(0, 5).forEach(server => {
-      const riskColor = server.vulnerability_count > 30 ? '#FF3B5C' : server.vulnerability_count > 15 ? '#FFB347' : '#22ff22';
+      const vulnCount = server?.vulnerability_count || 0;
+      const riskColor = vulnCount > 30 ? '#FF3B5C' : vulnCount > 15 ? '#FFB347' : '#22ff22';
       html += `<div style="margin-left: 100px; margin-bottom: 8px; color: ${riskColor}; font-size: 11px;">
-        ${server.hostname} | ${server.ip} | Vulns: ${server.vulnerability_count}
+        ${server?.hostname || 'Unknown'} | ${server?.ip || 'N/A'} | Vulns: ${vulnCount}
       </div>`;
     });
   }
@@ -489,11 +583,19 @@ function hexToRgb(hex) {
   return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [0, 0, 0];
 }
 
-function drawSecurityTopology(svg, incidents) {
-  const assets = stateData.assets.assets || [];
+function drawSecurityTopology(incidents) {
+  const assets = stateData.assets?.assets || [];
   const waapScore = calculateWAAPScore();
   const container = document.getElementById('topology-content');
-  if (!container) return;
+  if (!container) {
+    console.error('[RENDER] topology-content container not found');
+    return;
+  }
+
+  if (!Array.isArray(incidents)) {
+    console.error('[RENDER] incidents is not an array');
+    return;
+  }
 
   let html = `<div style="padding: 20px; font-family: monospace; font-size: 13px; line-height: 2; background: rgba(10, 14, 39, 0.5); border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.2);">`;
   html += `<div style="color: #00C896; text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 14px;">SECURITY OPERATIONS FLOW</div>`;
@@ -506,8 +608,8 @@ function drawSecurityTopology(svg, incidents) {
   html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
   html += `<div style="color: #F97316; font-weight: bold;">🚪 GATEWAY</div>`;
-  const gateway = assets.find(a => a.device_type === 'Router');
-  if (gateway) {
+  const gateway = assets.find(a => a?.device_type === 'Router');
+  if (gateway?.ip) {
     html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">${gateway.ip}</div>`;
   }
   html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
@@ -521,7 +623,9 @@ function drawSecurityTopology(svg, incidents) {
   html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
   html += `<div style="color: #8B5CF6; font-weight: bold;">🤖 MCP INTELLIGENCE</div>`;
-  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">90+ Tools | ACTIVE</div>`;
+  const mcpToolCount = stateData.mcp?.tool_count || '90+';
+  const mcpStatus = stateData.mcp?.status || 'ACTIVE';
+  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">${mcpToolCount} Tools | ${mcpStatus}</div>`;
 
   html += `</div>`;
   container.innerHTML = html;
