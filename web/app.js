@@ -144,10 +144,12 @@ function switchPage(pageName) {
 function renderOverviewPage() {
   console.log('[RENDER] renderOverviewPage called');
   try {
+    console.log('[DEBUG] stateData:', { assets: !!stateData.assets, incidents: !!stateData.incidents, risk: !!stateData.risk });
     if (!stateData.assets || !stateData.incidents || !stateData.risk) {
-      console.log('[WARN] Data not ready');
+      console.log('[WARN] Data not ready - RETURNING EARLY');
       return;
     }
+    console.log('[RENDER] Data ready - proceeding');
 
     const assets = stateData.assets.assets || [];
     const incidents = stateData.incidents.incidents || [];
