@@ -3,6 +3,8 @@
 // Real-time dashboard reading from state files
 // ============================================================================
 
+console.log('[APP.JS] Script loaded at:', new Date().toISOString());
+
 let stateData = {
   assets: null,
   incidents: null,
