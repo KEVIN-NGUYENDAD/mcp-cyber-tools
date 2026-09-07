@@ -3,26 +3,34 @@ import { z } from "zod";
 
 export { z };
 
+const COMMAND_TIMEOUT = 30000; // 30 seconds timeout to prevent server blocking
+
 export function runPowerShell(command) {
   try {
     const fullCommand = `powershell -NoProfile -Command "${command}"`;
-    console.log("\n=== DEBUG: runPowerShell ===");
-    console.log("INPUT_COMMAND:", command.substring(0, 100) + "...");
+    console.error("[CMD-POWERSHELL] Starting:", command.substring(0, 100) + "...");
+    const startTime = Date.now();
 
-    const output = execSync(fullCommand, { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] });
+    const output = execSync(fullCommand, {
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+      timeout: COMMAND_TIMEOUT,
+      maxBuffer: 10 * 1024 * 1024 // 10MB buffer for large outputs
+    });
 
-    console.log("RAW_OUTPUT_LENGTH:", output.length);
-    console.log("RAW_OUTPUT (first 1000):", output.substring(0, 1000));
-    console.log("=== END DEBUG ===\n");
+    const elapsed = Date.now() - startTime;
+    console.error(`[CMD-POWERSHELL-OK] Completed in ${elapsed}ms, output length: ${output.length}`);
 
     return { success: true, data: output };
   } catch (error) {
-    console.log("\n=== DEBUG: Command Failed ===");
-    console.log("ERROR_TYPE:", error.constructor.name);
-    console.log("ERROR_MESSAGE:", error.message.substring(0, 300));
-    if (error.stdout) console.log("ERROR_STDOUT:", error.stdout.substring(0, 300));
-    if (error.stderr) console.log("ERROR_STDERR:", error.stderr.substring(0, 300));
-    console.log("=== END DEBUG ===\n");
+    console.error("[CMD-POWERSHELL-ERROR]", {
+      name: error.constructor.name,
+      code: error.code,
+      signal: error.signal,
+      message: error.message.substring(0, 300),
+      stdout: error.stdout ? error.stdout.substring(0, 300) : null,
+      stderr: error.stderr ? error.stderr.substring(0, 300) : null
+    });
 
     return { success: false, error: error.message };
   }
@@ -30,9 +38,29 @@ export function runPowerShell(command) {
 
 export function runCmd(command) {
   try {
-    const output = execSync(command, { encoding: "utf8" });
+    console.error("[CMD-EXEC] Starting:", command.substring(0, 100) + "...");
+    const startTime = Date.now();
+
+    const output = execSync(command, {
+      encoding: "utf8",
+      timeout: COMMAND_TIMEOUT,
+      maxBuffer: 10 * 1024 * 1024
+    });
+
+    const elapsed = Date.now() - startTime;
+    console.error(`[CMD-EXEC-OK] Completed in ${elapsed}ms, output length: ${output.length}`);
+
     return { success: true, data: output };
   } catch (error) {
+    console.error("[CMD-EXEC-ERROR]", {
+      name: error.constructor.name,
+      code: error.code,
+      signal: error.signal,
+      message: error.message.substring(0, 300),
+      stdout: error.stdout ? error.stdout.substring(0, 300) : null,
+      stderr: error.stderr ? error.stderr.substring(0, 300) : null
+    });
+
     return { success: false, error: error.message };
   }
 }

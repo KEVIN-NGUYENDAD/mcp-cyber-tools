@@ -581,6 +581,7 @@
         <li class="nav-item" onclick="switchPage('network')">🌐 Network Map</li>
         <li class="nav-item" onclick="switchPage('incidents')">🚨 Incidents</li>
         <li class="nav-item" onclick="switchPage('analytics')">📊 Analytics</li>
+        <li class="nav-item" onclick="switchPage('scorecard')">📈 Executive</li>
         <li class="nav-item" onclick="switchPage('history')">📜 History</li>
         <li class="nav-item" onclick="switchPage('settings')">⚙️ Settings</li>
       </ul>
@@ -629,6 +630,89 @@
           <div class="mission-item">
             <div class="mission-label">Data Freshness</div>
             <div class="mission-value" id="mc-fresh" style="font-size: 1.2em;">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXECUTIVE SECURITY ROW -->
+      <div style="margin-top: 40px;">
+        <h2 style="color: var(--color-accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">━ Executive Security Dashboard ━</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+          <!-- WAAP SECURITY CARD -->
+          <div class="kpi-card" style="border-left: 4px solid #00ff88;">
+            <div class="kpi-label">🛡️ WAAP Security Center</div>
+            <div style="margin-top: 15px;">
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">SECURITY SCORE</span>
+                <span style="color: var(--color-accent); font-weight: bold;" id="exec-waap-score">-</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">SSL STATUS</span>
+                <span id="exec-waap-ssl">-</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">WAF</span>
+                <span id="exec-waap-waf">-</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">CDN</span>
+                <span id="exec-waap-cdn">-</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">CERT DAYS LEFT</span>
+                <span style="color: var(--color-accent);" id="exec-waap-cert">-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VULNERABILITY CENTER CARD -->
+          <div class="kpi-card" style="border-left: 4px solid #ffa500;">
+            <div class="kpi-label">🔎 Vulnerability Center</div>
+            <div style="margin-top: 15px;">
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 1.1em; font-weight: bold;">
+                <span style="color: var(--color-text-dim);">TOTAL FINDINGS</span>
+                <span style="color: var(--color-accent);" id="exec-vuln-total">-</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">ASSET COVERAGE</span>
+                <span style="color: var(--color-accent);" id="exec-vuln-assets">-</span>
+              </div>
+              <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--color-border);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.85em;">
+                  <div><span class="severity-critical">Critical</span><br><span style="color: var(--color-accent); font-weight: bold;" id="exec-vuln-crit">-</span></div>
+                  <div><span class="severity-high">High</span><br><span style="color: var(--color-accent); font-weight: bold;" id="exec-vuln-high">-</span></div>
+                  <div><span class="severity-medium">Medium</span><br><span style="color: var(--color-accent); font-weight: bold;" id="exec-vuln-med">-</span></div>
+                  <div><span class="severity-low">Low</span><br><span style="color: var(--color-accent); font-weight: bold;" id="exec-vuln-low">-</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MCP INTELLIGENCE CARD -->
+          <div class="kpi-card" style="border-left: 4px solid #00ffff;">
+            <div class="kpi-label">🤖 MCP Intelligence Center</div>
+            <div style="margin-top: 15px;">
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">STATUS</span>
+                <span style="color: #00ff88; font-weight: bold;">ONLINE</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">TOOL COUNT</span>
+                <span style="color: var(--color-accent); font-weight: bold;">90+</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">THREAT HUNTING</span>
+                <span style="color: #00ff88; font-weight: bold;">ACTIVE</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">DFIR TOOLS</span>
+                <span style="color: #00ff88; font-weight: bold;">ACTIVE</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
+                <span style="color: var(--color-text-dim);">INVESTIGATION QUEUE</span>
+                <span style="color: var(--color-accent); font-weight: bold;" id="exec-mcp-queue">0</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -788,6 +872,223 @@
           <div class="chart-container">
             <div class="chart-title">Domain Security</div>
             <div id="domain-assessment"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXECUTIVE ANALYTICS SECTION -->
+      <div class="card" style="margin-top: 40px;">
+        <div class="card-title">━ Executive Security Metrics ━</div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+          <!-- VULNERABILITY SEVERITY CHART -->
+          <div class="chart-container">
+            <div class="chart-title">Vulnerability Severity Distribution</div>
+            <div id="vuln-severity-chart" style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 100%; background: rgba(255, 68, 68, 0.2); border: 1px solid #ff4444; border-radius: 4px; padding: 10px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
+                    <span class="severity-critical">🔴 CRITICAL</span>
+                    <span id="chart-vuln-crit" style="color: var(--color-accent); font-weight: bold;">-</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 100%; background: rgba(255, 165, 0, 0.2); border: 1px solid #ffa500; border-radius: 4px; padding: 10px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
+                    <span class="severity-high">🟠 HIGH</span>
+                    <span id="chart-vuln-high" style="color: var(--color-accent); font-weight: bold;">-</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 100%; background: rgba(255, 255, 0, 0.2); border: 1px solid #ffff00; border-radius: 4px; padding: 10px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
+                    <span class="severity-medium">🟡 MEDIUM</span>
+                    <span id="chart-vuln-med" style="color: var(--color-accent); font-weight: bold;">-</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 100%; background: rgba(34, 255, 34, 0.2); border: 1px solid #22ff22; border-radius: 4px; padding: 10px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
+                    <span class="severity-low">🟢 LOW</span>
+                    <span id="chart-vuln-low" style="color: var(--color-accent); font-weight: bold;">-</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- WAAP RADAR CHART -->
+          <div class="chart-container">
+            <div class="chart-title">WAAP Security Posture</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+              <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; border-radius: 6px; padding: 15px; text-align: center;">
+                <div style="font-size: 0.85em; color: var(--color-text-dim); margin-bottom: 5px;">SSL</div>
+                <div style="font-size: 1.3em; color: #00ff88; font-weight: bold;" id="radar-ssl">✓</div>
+              </div>
+              <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; border-radius: 6px; padding: 15px; text-align: center;">
+                <div style="font-size: 0.85em; color: var(--color-text-dim); margin-bottom: 5px;">WAF</div>
+                <div style="font-size: 1.3em; color: #00ff88; font-weight: bold;" id="radar-waf">✓</div>
+              </div>
+              <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; border-radius: 6px; padding: 15px; text-align: center;">
+                <div style="font-size: 0.85em; color: var(--color-text-dim); margin-bottom: 5px;">CDN</div>
+                <div style="font-size: 1.3em; color: #00ff88; font-weight: bold;" id="radar-cdn">✓</div>
+              </div>
+              <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; border-radius: 6px; padding: 15px; text-align: center;">
+                <div style="font-size: 0.85em; color: var(--color-text-dim); margin-bottom: 5px;">PROTECTION</div>
+                <div style="font-size: 1.3em; color: #00ff88; font-weight: bold;" id="radar-prot">✓</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SOC SCORE GAUGE -->
+          <div class="chart-container">
+            <div class="chart-title">SOC Security Gauge</div>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9em;">
+                  <span style="color: var(--color-text-dim);">Risk Score</span>
+                  <span style="color: var(--color-accent); font-weight: bold;" id="gauge-risk">-</span>
+                </div>
+                <div style="width: 100%; height: 20px; background: rgba(10, 14, 39, 0.5); border: 1px solid var(--color-border); border-radius: 4px; overflow: hidden;">
+                  <div id="gauge-risk-bar" style="height: 100%; background: linear-gradient(90deg, #22ff22, #ffff00, #ff4444); width: 0%;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9em;">
+                  <span style="color: var(--color-text-dim);">WAAP Health</span>
+                  <span style="color: var(--color-accent); font-weight: bold;" id="gauge-waap">-</span>
+                </div>
+                <div style="width: 100%; height: 20px; background: rgba(10, 14, 39, 0.5); border: 1px solid var(--color-border); border-radius: 4px; overflow: hidden;">
+                  <div id="gauge-waap-bar" style="height: 100%; background: linear-gradient(90deg, #22ff22, #ffff00, #ff4444); width: 0%;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9em;">
+                  <span style="color: var(--color-text-dim);">DNS Health</span>
+                  <span style="color: var(--color-accent); font-weight: bold;" id="gauge-dns">-</span>
+                </div>
+                <div style="width: 100%; height: 20px; background: rgba(10, 14, 39, 0.5); border: 1px solid var(--color-border); border-radius: 4px; overflow: hidden;">
+                  <div id="gauge-dns-bar" style="height: 100%; background: linear-gradient(90deg, #22ff22, #ffff00, #ff4444); width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: EXECUTIVE SCORECARD -->
+    <div id="scorecard" class="page">
+      <div class="card">
+        <div class="card-title">━ SOC EXECUTIVE SECURITY SCORECARD ━</div>
+
+        <div style="margin-top: 40px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
+            <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.05)); border: 2px solid #00ff88; border-radius: 10px; padding: 30px; text-align: center;">
+              <div style="font-size: 0.85em; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Risk Score</div>
+              <div style="font-size: 3em; font-weight: bold; color: var(--color-accent);" id="score-risk">-</div>
+              <div style="font-size: 0.9em; color: var(--color-text-dim); margin-top: 10px;" id="score-risk-level">UNKNOWN</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(255, 165, 0, 0.1), rgba(255, 165, 0, 0.05)); border: 2px solid #ffa500; border-radius: 10px; padding: 30px; text-align: center;">
+              <div style="font-size: 0.85em; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">WAAP Score</div>
+              <div style="font-size: 3em; font-weight: bold; color: var(--color-accent);" id="score-waap">-</div>
+              <div style="font-size: 0.9em; color: var(--color-text-dim); margin-top: 10px;">Security Health</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.05)); border: 2px solid #00ffff; border-radius: 10px; padding: 30px; text-align: center;">
+              <div style="font-size: 0.85em; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">DNS Health</div>
+              <div style="font-size: 3em; font-weight: bold; color: var(--color-accent);" id="score-dns">-</div>
+              <div style="font-size: 0.9em; color: var(--color-text-dim); margin-top: 10px;">Domain Operations</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(255, 68, 68, 0.1), rgba(255, 68, 68, 0.05)); border: 2px solid #ff4444; border-radius: 10px; padding: 30px; text-align: center;">
+              <div style="font-size: 0.85em; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Assets</div>
+              <div style="font-size: 3em; font-weight: bold; color: var(--color-accent);" id="score-assets">-</div>
+              <div style="font-size: 0.9em; color: var(--color-text-dim); margin-top: 10px;">Monitored</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(34, 255, 34, 0.1), rgba(34, 255, 34, 0.05)); border: 2px solid #22ff22; border-radius: 10px; padding: 30px; text-align: center;">
+              <div style="font-size: 0.85em; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Incidents</div>
+              <div style="font-size: 3em; font-weight: bold; color: var(--color-accent);" id="score-incidents">-</div>
+              <div style="font-size: 0.9em; color: var(--color-text-dim); margin-top: 10px;">Open Cases</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(255, 255, 0, 0.1), rgba(255, 255, 0, 0.05)); border: 2px solid #ffff00; border-radius: 10px; padding: 30px; text-align: center;">
+              <div style="font-size: 0.85em; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Vulnerabilities</div>
+              <div style="font-size: 3em; font-weight: bold; color: var(--color-accent);" id="score-vulns">-</div>
+              <div style="font-size: 0.9em; color: var(--color-text-dim); margin-top: 10px;">Total Findings</div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(200, 100, 255, 0.1), rgba(200, 100, 255, 0.05)); border: 2px solid #c864ff; border-radius: 10px; padding: 30px; text-align: center;">
+              <div style="font-size: 0.85em; color: var(--color-text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Threat Level</div>
+              <div style="font-size: 2.2em; font-weight: bold;" id="score-threat" style="color: var(--color-accent);">UNKNOWN</div>
+              <div style="font-size: 0.9em; color: var(--color-text-dim); margin-top: 10px;" id="score-threat-detail">Not Calculated</div>
+            </div>
+          </div>
+
+          <!-- EXECUTIVE SUMMARY -->
+          <div style="background: rgba(18, 23, 47, 0.5); border: 2px solid var(--color-border); border-radius: 10px; padding: 30px; margin-top: 30px;">
+            <h3 style="color: var(--color-accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">━ SECURITY POSTURE SUMMARY ━</h3>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+              <div>
+                <div style="color: var(--color-text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">🎯 Primary Metrics</div>
+                <div style="background: rgba(10, 14, 39, 0.5); border-left: 3px solid var(--color-accent); padding: 15px; border-radius: 4px;">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; font-size: 0.9em;">
+                    <div>
+                      <div style="color: var(--color-text-dim); margin-bottom: 5px;">OVERALL RISK</div>
+                      <div style="font-size: 1.3em; font-weight: bold; color: var(--color-accent);" id="summary-risk">-</div>
+                    </div>
+                    <div>
+                      <div style="color: var(--color-text-dim); margin-bottom: 5px;">ASSETS AT RISK</div>
+                      <div style="font-size: 1.3em; font-weight: bold; color: var(--color-accent);" id="summary-at-risk">-</div>
+                    </div>
+                    <div>
+                      <div style="color: var(--color-text-dim); margin-bottom: 5px;">CRITICAL VULNS</div>
+                      <div style="font-size: 1.3em; font-weight: bold; color: var(--color-critical);" id="summary-crit-vulns">-</div>
+                    </div>
+                    <div>
+                      <div style="color: var(--color-text-dim); margin-bottom: 5px;">URGENT INCIDENTS</div>
+                      <div style="font-size: 1.3em; font-weight: bold; color: var(--color-warning);" id="summary-urgent">-</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div style="color: var(--color-text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9em;">🔒 Security Infrastructure</div>
+                <div style="background: rgba(10, 14, 39, 0.5); border-left: 3px solid #00ff88; padding: 15px; border-radius: 4px;">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; font-size: 0.9em;">
+                    <div>
+                      <div style="color: var(--color-text-dim); margin-bottom: 5px;">DNS PROTECTION</div>
+                      <div style="font-size: 1.3em; font-weight: bold; color: var(--color-accent);" id="summary-dns">-</div>
+                    </div>
+                    <div>
+                      <div style="color: var(--color-text-dim); margin-bottom: 5px;">WAAP PROTECTION</div>
+                      <div style="font-size: 1.3em; font-weight: bold; color: var(--color-accent);" id="summary-waap">-</div>
+                    </div>
+                    <div>
+                      <div style="color: var(--color-text-dim); margin-bottom: 5px;">THREAT HUNTING</div>
+                      <div style="font-size: 1.3em; font-weight: bold; color: #00ff88;">ACTIVE</div>
+                    </div>
+                    <div>
+                      <div style="color: var(--color-text-dim); margin-bottom: 5px;">INCIDENT RESPONSE</div>
+                      <div style="font-size: 1.3em; font-weight: bold; color: #00ff88;">READY</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RECOMMENDATIONS -->
+          <div style="background: rgba(18, 23, 47, 0.5); border: 2px solid var(--color-border); border-radius: 10px; padding: 30px; margin-top: 30px;">
+            <h3 style="color: var(--color-accent); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">━ RECOMMENDED ACTIONS ━</h3>
+            <div id="exec-recommendations" style="display: grid; grid-template-columns: 1fr; gap: 10px;"></div>
           </div>
         </div>
       </div>

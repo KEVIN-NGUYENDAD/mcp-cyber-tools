@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T19:44:01.730191",
+  "timestamp": "2026-09-05T23:13:18.476530",
   "hunting_type": "Lateral Movement",
   "question": "Có chỉ báo di chuyển ngang trong hệ thống không?",
   "total_indicators": 5,
@@ -12,7 +12,7 @@
     {
       "type": "SMB Lateral Movement",
       "severity": "HIGH",
-      "timestamp": "2026-09-05T19:44:01.730191",
+      "timestamp": "2026-09-05T23:13:18.476530",
       "description": "Phát hiện kết nối SMB bất thường giữa các máy",
       "evidence": [
         "Port 445 (SMB) connections",
@@ -30,7 +30,7 @@
     {
       "type": "PsExec/Remote Execution",
       "severity": "CRITICAL",
-      "timestamp": "2026-09-05T19:44:01.730191",
+      "timestamp": "2026-09-05T23:13:18.476530",
       "description": "Phát hiện dấu hiệu PsExec hoặc remote command execution",
       "evidence": [
         "PSEXESVC service installation",
@@ -48,7 +48,7 @@
     {
       "type": "WinRM Remote Management",
       "severity": "HIGH",
-      "timestamp": "2026-09-05T19:44:01.730191",
+      "timestamp": "2026-09-05T23:13:18.476530",
       "description": "Phát hiện WinRM được dùng cho remote execution",
       "evidence": [
         "Port 5985/5986 (WinRM)",
@@ -64,7 +64,7 @@
     {
       "type": "Remote Desktop Protocol Abuse",
       "severity": "HIGH",
-      "timestamp": "2026-09-05T19:44:01.730191",
+      "timestamp": "2026-09-05T23:13:18.476530",
       "description": "Phát hiện RDP được dùng bất thường",
       "evidence": [
         "Multiple RDP login attempts",
@@ -80,7 +80,7 @@
     {
       "type": "Kerberos Delegation Abuse",
       "severity": "CRITICAL",
-      "timestamp": "2026-09-05T19:44:01.730191",
+      "timestamp": "2026-09-05T23:13:18.476530",
       "description": "Phát hiện khai thác Kerberos delegation (S4U)",
       "evidence": [
         "Unconstrained delegation usage",

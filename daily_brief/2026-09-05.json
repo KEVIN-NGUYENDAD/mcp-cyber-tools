@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-05T19:44:00.420199",
+  "timestamp": "2026-09-05T23:13:17.311686",
   "date": "2026-09-05",
   "incident_summary": {
     "total_open": 0,
@@ -14,33 +14,15 @@
     "summary_text": "Kh\u00f4ng c\u00f3 \u01b0u ti\u00ean"
   },
   "change_summary": {
-    "total_changes": 1,
-    "changes_by_category": {
-      "Risk": 1
-    },
-    "changes_by_severity": {
-      "CRITICAL": 1
-    },
-    "critical_incidents": [
-      {
-        "timestamp": "2026-09-05T19:33:19.688933",
-        "category": "Risk",
-        "type": "Level Change",
-        "severity": "CRITICAL",
-        "description": "M\u1ee9c r\u1ee7i ro thay \u0111\u1ed5i: LOW \u2192 MEDIUM",
-        "details": {
-          "previous_level": "LOW",
-          "current_level": "MEDIUM",
-          "previous_score": 88,
-          "current_score": 74
-        }
-      }
-    ],
-    "summary_text": "1 s\u1ef1 ki\u1ec7n CRITICAL, 0 s\u1ef1 ki\u1ec7n HIGH"
+    "total_changes": 0,
+    "changes_by_category": {},
+    "changes_by_severity": {},
+    "critical_incidents": [],
+    "summary_text": "Kh\u00f4ng c\u00f3 thay \u0111\u1ed5i"
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 4.9,
+    "scan_age_hours": 8.4,
     "total_findings": 63,
     "critical": 0,
     "high": 0,
