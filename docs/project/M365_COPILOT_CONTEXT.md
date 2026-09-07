@@ -6,6 +6,30 @@ Read this first to understand the entire project in 5 minutes.
 
 ---
 
+## AI RULES
+
+### Ngôn ngữ
+Tiếng Việt
+
+### Workflow
+- **TEAM A**: Audit → Kiểm tra production
+- **TEAM B**: Fix → Sửa code
+- **LOOP**: Audit → Fix → Audit (liên tục không dừng)
+
+### Ưu Tiên
+1. Production (ổn định trước)
+2. Deployment (hoạt động trước)
+3. Critical Issues
+4. High Issues
+5. Medium Issues
+
+### Không được phép
+- ❌ Thêm feature mới khi còn Critical
+- ❌ Đổi giao diện khi còn Critical
+- ❌ Chuyển v1.1 khi v1.0 chưa PASS
+
+---
+
 ## Một dòng tóm tắt
 
 **SentinelOps**: Security Operations Center dashboard monitoring 11 assets, 18 incidents, 385 vulnerabilities, deployed on Render, currently BLOCKED by deployment infrastructure failure.
