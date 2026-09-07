@@ -455,12 +455,16 @@ function renderVulnerabilityCenter() {
   const element = document.getElementById('vuln-command-center');
   if (!element) return;
 
-  const assets = stateData.assets.assets || [];
-  const critVulns = assets.reduce((sum, a) => sum + (a.critical || 0), 0);
-  const highVulns = assets.reduce((sum, a) => sum + (a.high || 0), 0);
-  const medVulns = assets.reduce((sum, a) => sum + (a.medium || 0), 0);
-  const lowVulns = assets.reduce((sum, a) => sum + (a.low || 0), 0);
-  const totalVulns = assets.reduce((sum, a) => sum + (a.vulnerability_count || 0), 0);
+  const assets = stateData.assets?.assets || [];
+  if (!Array.isArray(assets)) {
+    console.error('[RENDER] assets is not an array in renderVulnerabilityCenter');
+    return;
+  }
+  const critVulns = assets.reduce((sum, a) => sum + (a?.critical || 0), 0);
+  const highVulns = assets.reduce((sum, a) => sum + (a?.high || 0), 0);
+  const medVulns = assets.reduce((sum, a) => sum + (a?.medium || 0), 0);
+  const lowVulns = assets.reduce((sum, a) => sum + (a?.low || 0), 0);
+  const totalVulns = assets.reduce((sum, a) => sum + (a?.vulnerability_count || 0), 0);
 
   element.innerHTML = `
     <div style="background: rgba(249, 115, 22, 0.1); border: 2px solid #F97316; border-radius: 8px; padding: 20px; margin-top: 20px;">
@@ -693,36 +697,45 @@ function closeDevicePanel() {
 // ============================================================================
 
 function renderIncidentBoard() {
-  const incidents = stateData.incidents.incidents || [];
+  try {
+    const incidents = stateData.incidents?.incidents || [];
+    if (!Array.isArray(incidents)) {
+      console.error('[RENDER] incidents is not an array in renderIncidentBoard');
+      return;
+    }
 
-  const critical = incidents.filter(i => i.severity === 'CRITICAL');
-  const high = incidents.filter(i => i.severity === 'HIGH');
-  const medium = incidents.filter(i => i.severity === 'MEDIUM');
-  const low = incidents.filter(i => i.severity === 'LOW');
+    const critical = incidents.filter(i => i?.severity === 'CRITICAL');
+    const high = incidents.filter(i => i?.severity === 'HIGH');
+    const medium = incidents.filter(i => i?.severity === 'MEDIUM');
+    const low = incidents.filter(i => i?.severity === 'LOW');
 
-  const boardHtml = `
-    <div class="board-column critical">
-      <div class="board-header">🔴 CRITICAL (${critical.length})</div>
-      ${critical.map(inc => renderIncidentCard(inc)).join('')}
-    </div>
+    const boardHtml = `
+      <div class="board-column critical">
+        <div class="board-header">🔴 CRITICAL (${critical.length})</div>
+        ${critical.map(inc => renderIncidentCard(inc)).join('')}
+      </div>
 
-    <div class="board-column high">
-      <div class="board-header">🟠 HIGH (${high.length})</div>
-      ${high.map(inc => renderIncidentCard(inc)).join('')}
-    </div>
+      <div class="board-column high">
+        <div class="board-header">🟠 HIGH (${high.length})</div>
+        ${high.map(inc => renderIncidentCard(inc)).join('')}
+      </div>
 
-    <div class="board-column medium">
-      <div class="board-header">🟡 MEDIUM (${medium.length})</div>
-      ${medium.map(inc => renderIncidentCard(inc)).join('')}
-    </div>
+      <div class="board-column medium">
+        <div class="board-header">🟡 MEDIUM (${medium.length})</div>
+        ${medium.map(inc => renderIncidentCard(inc)).join('')}
+      </div>
 
-    <div class="board-column low">
-      <div class="board-header">🟢 LOW (${low.length})</div>
-      ${low.map(inc => renderIncidentCard(inc)).join('')}
-    </div>
-  `;
+      <div class="board-column low">
+        <div class="board-header">🟢 LOW (${low.length})</div>
+        ${low.map(inc => renderIncidentCard(inc)).join('')}
+      </div>
+    `;
 
-  document.getElementById('incident-board').innerHTML = boardHtml;
+    const boardEl = document.getElementById('incident-board');
+    if (boardEl) boardEl.innerHTML = boardHtml;
+  } catch (error) {
+    console.error('[ERROR] renderIncidentBoard:', error);
+  }
 }
 
 function renderIncidentCard(incident) {
@@ -744,63 +757,71 @@ function renderIncidentCard(incident) {
 // ============================================================================
 
 function renderAnalytics() {
-  const incidents = stateData.incidents.incidents || [];
-  const assets = stateData.assets.assets || [];
+  try {
+    const incidents = stateData.incidents?.incidents || [];
+    const assets = stateData.assets?.assets || [];
+    if (!Array.isArray(incidents) || !Array.isArray(assets)) {
+      console.error('[RENDER] incidents or assets is not an array in renderAnalytics');
+      return;
+    }
 
-  // Vulnerability Assessment
-  const vulnHtml = `
-    <div style="font-size: 0.9em;">
-      <div style="margin: 10px 0;">Total Vulnerabilities: <span style="color: var(--color-accent); font-weight: bold;">${assets.reduce((sum, a) => sum + (a.vulnerability_count || 0), 0)}</span></div>
-      <div style="margin: 10px 0;">Critical: <span class="severity-critical">${assets.reduce((sum, a) => sum + (a.critical || 0), 0)}</span></div>
-      <div style="margin: 10px 0;">High: <span class="severity-high">${assets.reduce((sum, a) => sum + (a.high || 0), 0)}</span></div>
-      <div style="margin: 10px 0;">Medium: <span class="severity-medium">${assets.reduce((sum, a) => sum + (a.medium || 0), 0)}</span></div>
-      <div style="margin: 10px 0;">Low: <span class="severity-low">${assets.reduce((sum, a) => sum + (a.low || 0), 0)}</span></div>
-    </div>
-  `;
-  document.getElementById('vuln-assessment').innerHTML = vulnHtml;
+    // Vulnerability Assessment
+    const vulnHtml = `
+      <div style="font-size: 0.9em;">
+        <div style="margin: 10px 0;">Total Vulnerabilities: <span style="color: var(--color-accent); font-weight: bold;">${assets.reduce((sum, a) => sum + (a?.vulnerability_count || 0), 0)}</span></div>
+        <div style="margin: 10px 0;">Critical: <span class="severity-critical">${assets.reduce((sum, a) => sum + (a?.critical || 0), 0)}</span></div>
+        <div style="margin: 10px 0;">High: <span class="severity-high">${assets.reduce((sum, a) => sum + (a?.high || 0), 0)}</span></div>
+        <div style="margin: 10px 0;">Medium: <span class="severity-medium">${assets.reduce((sum, a) => sum + (a?.medium || 0), 0)}</span></div>
+        <div style="margin: 10px 0;">Low: <span class="severity-low">${assets.reduce((sum, a) => sum + (a?.low || 0), 0)}</span></div>
+      </div>
+    `;
+    const vulnEl = document.getElementById('vuln-assessment');
+    if (vulnEl) vulnEl.innerHTML = vulnHtml;
 
-  // WAAP Assessment - Calculate score from security_summary
-  let waapScore = 0;
-  if (stateData.waap.security_summary) {
-    if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
-    if (stateData.waap.security_summary.waf_active) waapScore += 15;
-    if (stateData.waap.security_summary.cdn_active) waapScore += 15;
-    if (stateData.waap.security_summary.protection_active) waapScore += 10;
-  }
-  const sslStatus = stateData.waap.ssl_status ? stateData.waap.ssl_status.toUpperCase() : 'UNKNOWN';
-  const waapHtml = `
-    <div style="font-size: 0.9em;">
-      <div style="margin: 10px 0;">Health Score: <span style="color: var(--color-accent); font-weight: bold;">${waapScore || '-'}/100</span></div>
-      <div style="margin: 10px 0;">SSL Status: <span>${sslStatus}</span></div>
-      <div style="margin: 10px 0;">Days to Renewal: <span style="color: var(--color-accent);">${stateData.waap.days_until_expiry || '-'}</span></div>
-      <div style="margin: 10px 0;">WAF Active: <span>${stateData.waap.security_summary?.waf_active ? 'YES' : 'NO'}</span></div>
-      <div style="margin: 10px 0;">CDN Active: <span>${stateData.waap.security_summary?.cdn_active ? 'YES' : 'NO'}</span></div>
-    </div>
-  `;
-  document.getElementById('waap-assessment').innerHTML = waapHtml;
+    // WAAP Assessment - Calculate score from security_summary
+    let waapScore = 0;
+    if (stateData.waap?.security_summary) {
+      if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
+      if (stateData.waap.security_summary.waf_active) waapScore += 15;
+      if (stateData.waap.security_summary.cdn_active) waapScore += 15;
+      if (stateData.waap.security_summary.protection_active) waapScore += 10;
+    }
+    const sslStatus = stateData.waap?.ssl_status ? stateData.waap.ssl_status.toUpperCase() : 'UNKNOWN';
+    const waapHtml = `
+      <div style="font-size: 0.9em;">
+        <div style="margin: 10px 0;">Health Score: <span style="color: var(--color-accent); font-weight: bold;">${waapScore || '-'}/100</span></div>
+        <div style="margin: 10px 0;">SSL Status: <span>${sslStatus}</span></div>
+        <div style="margin: 10px 0;">Days to Renewal: <span style="color: var(--color-accent);">${stateData.waap?.days_until_expiry || '-'}</span></div>
+        <div style="margin: 10px 0;">WAF Active: <span>${stateData.waap?.security_summary?.waf_active ? 'YES' : 'NO'}</span></div>
+        <div style="margin: 10px 0;">CDN Active: <span>${stateData.waap?.security_summary?.cdn_active ? 'YES' : 'NO'}</span></div>
+      </div>
+    `;
+    const waapEl = document.getElementById('waap-assessment');
+    if (waapEl) waapEl.innerHTML = waapHtml;
 
-  // Domain Assessment - Calculate DNS Health from dns_complete
-  let dnsHealth = 0;
-  let dnsChecks = 0;
-  if (stateData.domain.dns_complete) {
-    const checks = ['has_nameservers', 'has_a_records', 'has_mx_records', 'has_spf', 'has_dmarc'];
-    checks.forEach(check => {
-      if (check in stateData.domain.dns_complete) {
-        dnsChecks++;
-        if (stateData.domain.dns_complete[check]) dnsHealth++;
-      }
-    });
-  }
-  const dnsPercent = dnsChecks > 0 ? Math.round((dnsHealth / dnsChecks) * 100) : '-';
-  const domainHtml = `
-    <div style="font-size: 0.9em;">
-      <div style="margin: 10px 0;">DNS Health: <span style="color: var(--color-accent); font-weight: bold;">${dnsPercent !== '-' ? dnsPercent + '%' : '-'}</span></div>
-      <div style="margin: 10px 0;">Domain: <span>${stateData.domain.domain || 'UNKNOWN'}</span></div>
-      <div style="margin: 10px 0;">SSL Expiry: <span style="color: var(--color-accent);">${stateData.domain.days_until_expiry || '-'} days</span></div>
-      <div style="margin: 10px 0;">Nameservers: <span>${stateData.domain.nameservers?.length || 0} configured</span></div>
-    </div>
-  `;
-  document.getElementById('domain-assessment').innerHTML = domainHtml;
+    // Domain Assessment - Calculate DNS Health from dns_complete
+    let dnsHealth = 0;
+    let dnsChecks = 0;
+    if (stateData.domain?.dns_complete) {
+      const checks = ['has_nameservers', 'has_a_records', 'has_mx_records', 'has_spf', 'has_dmarc'];
+      checks.forEach(check => {
+        if (check in stateData.domain.dns_complete) {
+          dnsChecks++;
+          if (stateData.domain.dns_complete[check]) dnsHealth++;
+        }
+      });
+    }
+    const dnsPercent = dnsChecks > 0 ? Math.round((dnsHealth / dnsChecks) * 100) : '-';
+    const domainHtml = `
+      <div style="font-size: 0.9em;">
+        <div style="margin: 10px 0;">DNS Health: <span style="color: var(--color-accent); font-weight: bold;">${dnsPercent !== '-' ? dnsPercent + '%' : '-'}</span></div>
+        <div style="margin: 10px 0;">Domain: <span>${stateData.domain?.domain || 'UNKNOWN'}</span></div>
+        <div style="margin: 10px 0;">SSL Expiry: <span style="color: var(--color-accent);">${stateData.domain?.days_until_expiry || '-'} days</span></div>
+        <div style="margin: 10px 0;">Nameservers: <span>${stateData.domain?.nameservers?.length || 0} configured</span></div>
+      </div>
+    `;
+    const domainEl = document.getElementById('domain-assessment');
+    if (domainEl) domainEl.innerHTML = domainHtml;
 
   // Executive Analytics - Vulnerability Severity Chart
   const critVulns = assets.reduce((sum, a) => sum + (a.critical || 0), 0);
@@ -843,84 +864,103 @@ function renderAnalytics() {
 // ============================================================================
 
 function renderExecutiveScorecard() {
-  const incidents = stateData.incidents.incidents || [];
-  const assets = stateData.assets.assets || [];
-  const riskScore = stateData.risk.overall_score || 0;
+  try {
+    const incidents = stateData.incidents?.incidents || [];
+    const assets = stateData.assets?.assets || [];
+    const riskScore = stateData.risk?.overall_score || 0;
 
-  // Calculate metrics
-  const totalVulns = assets.reduce((sum, a) => sum + (a.vulnerability_count || 0), 0);
-  const critVulns = assets.reduce((sum, a) => sum + (a.critical || 0), 0);
-  const highVulns = assets.reduce((sum, a) => sum + (a.high || 0), 0);
-  const criticalIncidents = incidents.filter(i => i.severity === 'CRITICAL').length;
-  const highIncidents = incidents.filter(i => i.severity === 'HIGH').length;
-  const atRiskAssets = assets.filter(a => (a.vulnerability_count || 0) > 10).length;
+    // Calculate metrics
+    const totalVulns = assets.reduce((sum, a) => sum + (a?.vulnerability_count || 0), 0);
+    const critVulns = assets.reduce((sum, a) => sum + (a?.critical || 0), 0);
+    const highVulns = assets.reduce((sum, a) => sum + (a?.high || 0), 0);
+    const criticalIncidents = incidents.filter(i => i?.severity === 'CRITICAL').length;
+    const highIncidents = incidents.filter(i => i?.severity === 'HIGH').length;
+    const atRiskAssets = assets.filter(a => (a?.vulnerability_count || 0) > 10).length;
 
-  // Calculate WAAP Score
-  let waapScore = 0;
-  if (stateData.waap.security_summary) {
-    if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
-    if (stateData.waap.security_summary.waf_active) waapScore += 15;
-    if (stateData.waap.security_summary.cdn_active) waapScore += 15;
-    if (stateData.waap.security_summary.protection_active) waapScore += 10;
+    // Calculate WAAP Score
+    let waapScore = 0;
+    if (stateData.waap?.security_summary) {
+      if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
+      if (stateData.waap.security_summary.waf_active) waapScore += 15;
+      if (stateData.waap.security_summary.cdn_active) waapScore += 15;
+      if (stateData.waap.security_summary.protection_active) waapScore += 10;
+    }
+
+    // Calculate DNS Health
+    let dnsHealth = 0;
+    let dnsChecks = 0;
+    if (stateData.domain?.dns_complete) {
+      const checks = ['has_nameservers', 'has_a_records', 'has_mx_records', 'has_spf', 'has_dmarc'];
+      checks.forEach(check => {
+        if (check in stateData.domain.dns_complete) {
+          dnsChecks++;
+          if (stateData.domain.dns_complete[check]) dnsHealth++;
+        }
+      });
+    }
+    const dnsPercent = dnsChecks > 0 ? Math.round((dnsHealth / dnsChecks) * 100) : 0;
+
+    // Update scorecard values
+    const scoreRisk = document.getElementById('score-risk');
+    const scoreRiskLevel = document.getElementById('score-risk-level');
+    const scoreWaap = document.getElementById('score-waap');
+    const scoreDns = document.getElementById('score-dns');
+    const scoreAssets = document.getElementById('score-assets');
+    const scoreIncidents = document.getElementById('score-incidents');
+    const scoreVulns = document.getElementById('score-vulns');
+    const scoreThreat = document.getElementById('score-threat');
+    const scoreThreatDetail = document.getElementById('score-threat-detail');
+
+    if (scoreRisk) scoreRisk.textContent = riskScore;
+    if (scoreRiskLevel) scoreRiskLevel.textContent = getThreatLevel(riskScore);
+    if (scoreWaap) scoreWaap.textContent = waapScore > 0 ? waapScore : '-';
+    if (scoreDns) scoreDns.textContent = dnsPercent + '%';
+    if (scoreAssets) scoreAssets.textContent = assets.length;
+    if (scoreIncidents) scoreIncidents.textContent = incidents.length;
+    if (scoreVulns) scoreVulns.textContent = totalVulns;
+    if (scoreThreat) scoreThreat.textContent = getThreatLevel(riskScore);
+    if (scoreThreatDetail) scoreThreatDetail.textContent = getRiskDetail(riskScore);
+
+    // Summary metrics
+    const summaryRisk = document.getElementById('summary-risk');
+    const summaryAtRisk = document.getElementById('summary-at-risk');
+    const summaryCritVulns = document.getElementById('summary-crit-vulns');
+    const summaryUrgent = document.getElementById('summary-urgent');
+    const summaryDns = document.getElementById('summary-dns');
+    const summaryWaap = document.getElementById('summary-waap');
+
+    if (summaryRisk) summaryRisk.textContent = riskScore + '/100';
+    if (summaryAtRisk) summaryAtRisk.textContent = atRiskAssets + ' of ' + assets.length;
+    if (summaryCritVulns) summaryCritVulns.textContent = critVulns;
+    if (summaryUrgent) summaryUrgent.textContent = criticalIncidents + ' Critical, ' + highIncidents + ' High';
+    if (summaryDns) summaryDns.textContent = dnsPercent + '%';
+    if (summaryWaap) summaryWaap.textContent = waapScore > 0 ? waapScore + '/100' : 'Not Configured';
+
+    // Recommendations
+    const recommendations = [];
+    if (critVulns > 0) recommendations.push('🔴 Address ' + critVulns + ' critical vulnerabilities immediately');
+    if (riskScore > 70) recommendations.push('🔴 Risk score is HIGH - escalate to security team');
+    if (dnsPercent < 100) recommendations.push('🟠 Complete DNS security configuration (currently ' + dnsPercent + '%)');
+    if (waapScore < 80) recommendations.push('🟠 Enhance WAAP protection - score at ' + waapScore + '/100');
+    if (highVulns > 5) recommendations.push('🟡 High severity vulnerabilities require remediation planning');
+    if (atRiskAssets > 3) recommendations.push('🟡 Multiple assets at risk - prioritize security patching');
+    if (criticalIncidents > 0) recommendations.push('🔴 ' + criticalIncidents + ' critical incidents require immediate response');
+
+    if (recommendations.length === 0) {
+      recommendations.push('✅ Security posture is healthy - continue monitoring');
+    }
+
+    const recHtml = recommendations.slice(0, 5).map(rec => `
+      <div style="background: rgba(10, 14, 39, 0.5); border-left: 3px solid var(--color-accent); padding: 12px 15px; border-radius: 4px; margin-bottom: 10px;">
+        ${rec}
+      </div>
+    `).join('');
+
+    const recEl = document.getElementById('exec-recommendations');
+    if (recEl) recEl.innerHTML = recHtml;
+  } catch (error) {
+    console.error('[ERROR] renderExecutiveScorecard:', error);
   }
-
-  // Calculate DNS Health
-  let dnsHealth = 0;
-  let dnsChecks = 0;
-  if (stateData.domain.dns_complete) {
-    const checks = ['has_nameservers', 'has_a_records', 'has_mx_records', 'has_spf', 'has_dmarc'];
-    checks.forEach(check => {
-      if (check in stateData.domain.dns_complete) {
-        dnsChecks++;
-        if (stateData.domain.dns_complete[check]) dnsHealth++;
-      }
-    });
-  }
-  const dnsPercent = dnsChecks > 0 ? Math.round((dnsHealth / dnsChecks) * 100) : 0;
-
-  // Update scorecard values
-  document.getElementById('score-risk').textContent = riskScore;
-  document.getElementById('score-risk-level').textContent = getThreatLevel(riskScore);
-
-  document.getElementById('score-waap').textContent = waapScore > 0 ? waapScore : '-';
-  document.getElementById('score-dns').textContent = dnsPercent + '%';
-  document.getElementById('score-assets').textContent = assets.length;
-  document.getElementById('score-incidents').textContent = incidents.length;
-  document.getElementById('score-vulns').textContent = totalVulns;
-
-  document.getElementById('score-threat').textContent = getThreatLevel(riskScore);
-  document.getElementById('score-threat-detail').textContent = getRiskDetail(riskScore);
-
-  // Summary metrics
-  document.getElementById('summary-risk').textContent = riskScore + '/100';
-  document.getElementById('summary-at-risk').textContent = atRiskAssets + ' of ' + assets.length;
-  document.getElementById('summary-crit-vulns').textContent = critVulns;
-  document.getElementById('summary-urgent').textContent = criticalIncidents + ' Critical, ' + highIncidents + ' High';
-
-  document.getElementById('summary-dns').textContent = dnsPercent + '%';
-  document.getElementById('summary-waap').textContent = waapScore > 0 ? waapScore + '/100' : 'Not Configured';
-
-  // Recommendations
-  const recommendations = [];
-  if (critVulns > 0) recommendations.push('🔴 Address ' + critVulns + ' critical vulnerabilities immediately');
-  if (riskScore > 70) recommendations.push('🔴 Risk score is HIGH - escalate to security team');
-  if (dnsPercent < 100) recommendations.push('🟠 Complete DNS security configuration (currently ' + dnsPercent + '%)');
-  if (waapScore < 80) recommendations.push('🟠 Enhance WAAP protection - score at ' + waapScore + '/100');
-  if (highVulns > 5) recommendations.push('🟡 High severity vulnerabilities require remediation planning');
-  if (atRiskAssets > 3) recommendations.push('🟡 Multiple assets at risk - prioritize security patching');
-  if (criticalIncidents > 0) recommendations.push('🔴 ' + criticalIncidents + ' critical incidents require immediate response');
-
-  if (recommendations.length === 0) {
-    recommendations.push('✅ Security posture is healthy - continue monitoring');
-  }
-
-  const recHtml = recommendations.slice(0, 5).map(rec => `
-    <div style="background: rgba(10, 14, 39, 0.5); border-left: 3px solid var(--color-accent); padding: 12px 15px; border-radius: 4px; margin-bottom: 10px;">
-      ${rec}
-    </div>
-  `).join('');
-
-  document.getElementById('exec-recommendations').innerHTML = recHtml;
 }
 
 function getRiskDetail(score) {
@@ -935,36 +975,43 @@ function getRiskDetail(score) {
 // ============================================================================
 
 function renderTimeline() {
-  const alerts = stateData.alerts.sent_alerts || [];
-  const incidents = stateData.incidents.incidents || [];
+  try {
+    const alerts = stateData.alerts?.sent_alerts || [];
+    const incidents = stateData.incidents?.incidents || [];
 
-  const events = [
-    ...alerts.map(a => ({
-      timestamp: a.sent_at,
-      type: 'Alert Sent',
-      title: `${a.severity} - ${a.title}`,
-      severity: a.severity
-    })),
-    ...incidents.slice(0, 5).map(i => ({
-      timestamp: i.created_at,
-      type: 'Incident Created',
-      title: i.title,
-      severity: i.severity
-    }))
-  ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 20);
+    const events = [
+      ...alerts.map(a => ({
+        timestamp: a?.sent_at,
+        type: 'Alert Sent',
+        title: `${a?.severity || 'UNKNOWN'} - ${a?.title || 'N/A'}`,
+        severity: a?.severity
+      })),
+      ...incidents.slice(0, 5).map(i => ({
+        timestamp: i?.created_at,
+        type: 'Incident Created',
+        title: i?.title || 'N/A',
+        severity: i?.severity
+      }))
+    ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 20);
 
-  const timelineHtml = events.map(evt => `
-    <div class="timeline-item">
-      <div class="timeline-marker"></div>
-      <div class="timeline-content">
-        <div class="timeline-time">${new Date(evt.timestamp).toLocaleString()}</div>
-        <div style="color: var(--color-accent); font-weight: bold; margin-top: 5px;">${evt.type}</div>
-        <div class="timeline-event" style="color: ${getSeverityColor(evt.severity)};">${evt.title}</div>
+    const timelineHtml = events.map(evt => `
+      <div class="timeline-item">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="timeline-time">${new Date(evt.timestamp).toLocaleString()}</div>
+          <div style="color: var(--color-accent); font-weight: bold; margin-top: 5px;">${evt.type}</div>
+          <div class="timeline-event" style="color: ${getSeverityColor(evt.severity)};">${evt.title}</div>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `).join('');
 
-  document.getElementById('timeline').innerHTML = timelineHtml || '<div style="color: var(--color-text-dim);">No events recorded</div>';
+    const timelineEl = document.getElementById('timeline');
+    if (timelineEl) {
+      timelineEl.innerHTML = timelineHtml || '<div style="color: var(--color-text-dim);">No events recorded</div>';
+    }
+  } catch (error) {
+    console.error('[ERROR] renderTimeline:', error);
+  }
 }
 
 // ============================================================================
@@ -1012,9 +1059,16 @@ function setRefreshInterval(ms) {
 function startAutoRefresh() {
   window.refreshTimer = setInterval(() => {
     loadAllData();
-    const activePage = document.querySelector('.page.active').id;
-    if (activePage === 'overview') renderOverviewPage();
-    else if (activePage === 'incidents') renderIncidentBoard();
+    try {
+      const activePage = document.querySelector('.page.active');
+      if (activePage) {
+        const pageId = activePage.id;
+        if (pageId === 'overview') renderOverviewPage();
+        else if (pageId === 'incidents') renderIncidentBoard();
+      }
+    } catch (error) {
+      console.error('[ERROR] Auto-refresh update:', error);
+    }
   }, refreshInterval);
 }
 
