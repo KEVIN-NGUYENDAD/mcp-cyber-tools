@@ -230,6 +230,16 @@ Score: *${score}/100*
         domain = JSON.parse(fs.readFileSync(paths.domainStatus, 'utf8'));
       }
 
+      console.log('[DEBUG] handleExecutive loaded:', {
+        totalAssets: assets.total_assets,
+        totalIncidents: incidents.total_incidents,
+        critical: incidents.by_severity?.CRITICAL,
+        high: incidents.by_severity?.HIGH,
+        riskScore: risk.overall_score,
+        waapScore: waap.health_score,
+        dnsHealth: domain.dns_health
+      });
+
       const score = risk.overall_score || 0;
       const scoreEmoji = score >= 80 ? '🔴' : score >= 60 ? '🟠' : score >= 40 ? '🟡' : '🟢';
       const scoreLevel = score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW';
@@ -245,8 +255,8 @@ Multiple Security Zones Active
 
 *🚨 THREAT LANDSCAPE*
 ${incidents.total_incidents || 0} Open Incidents
-  └ 🔴 ${incidents.critical || 0} Critical
-  └ 🟠 ${incidents.high || 0} High Severity
+  └ 🔴 ${incidents.by_severity?.CRITICAL || 0} Critical
+  └ 🟠 ${incidents.by_severity?.HIGH || 0} High Severity
 
 *🎯 OVERALL RISK*
 ${scoreEmoji} *${scoreLevel}*
@@ -393,36 +403,79 @@ ${dnsEmoji} DNS Health: ${domain.dns_health || 'N/A'}
     console.log('[CMD] /analytics received from', msg.chat.id);
     try {
       let incidents = { total_incidents: 0, critical: 0, high: 0 };
-      let nessus = { vulnerabilities: 0, assets: 0, total_issues: 0 };
-      let waap = { health_score: 0 };
+      let assets = { total_assets: 0, assets: [] };
+      let risk = { overall_score: 0 };
+      let waap = { health_score: 0, security_summary: {} };
+      let domain = { dns_complete: {} };
 
       // Read data
       if (fs.existsSync(paths.incidents)) {
         incidents = JSON.parse(fs.readFileSync(paths.incidents, 'utf8'));
       }
 
-      if (fs.existsSync(path.join(paths.stateDir, 'nessus_status.json'))) {
-        nessus = JSON.parse(fs.readFileSync(path.join(paths.stateDir, 'nessus_status.json'), 'utf8'));
+      if (fs.existsSync(paths.assets)) {
+        assets = JSON.parse(fs.readFileSync(paths.assets, 'utf8'));
+      }
+
+      if (fs.existsSync(paths.riskScore)) {
+        risk = JSON.parse(fs.readFileSync(paths.riskScore, 'utf8'));
       }
 
       if (fs.existsSync(paths.waapStatus)) {
         waap = JSON.parse(fs.readFileSync(paths.waapStatus, 'utf8'));
       }
 
+      if (fs.existsSync(paths.domainStatus)) {
+        domain = JSON.parse(fs.readFileSync(paths.domainStatus, 'utf8'));
+      }
+
+      // Calculate vulnerabilities from assets
+      const totalVulnerabilities = (assets.assets || []).reduce((sum, asset) =>
+        sum + (asset.vulnerability_count || 0), 0);
+
+      // Calculate WAAP score
+      const waapScore = (
+        (waap.security_summary?.ssl_valid ? 60 : 0) +
+        (waap.security_summary?.waf_active ? 15 : 0) +
+        (waap.security_summary?.cdn_active ? 15 : 0) +
+        (waap.security_summary?.protection_active ? 10 : 0)
+      );
+
+      // Calculate DNS health
+      const dnsChecks = domain.dns_complete || {};
+      const dnsHealthPercent = Math.round(
+        ((Object.values(dnsChecks).filter(v => v === true).length || 0) / 5) * 100
+      );
+
+      console.log('[DEBUG] handleAnalytics loaded:', {
+        totalAssets: assets.total_assets,
+        totalVulnerabilities: totalVulnerabilities,
+        totalIncidents: incidents.total_incidents,
+        critical: incidents.by_severity?.CRITICAL,
+        high: incidents.by_severity?.HIGH,
+        riskScore: risk.overall_score,
+        waapScore: waapScore,
+        dnsHealth: dnsHealthPercent
+      });
+
       const analytics = `*📊 SECURITY ANALYTICS*
 
 *Vulnerability Assessment*
-${nessus.vulnerabilities || 0} Vulnerabilities Found
-${nessus.total_issues || 0} Issues Aggregated
-Scan Coverage: ${nessus.assets || 0} Assets
+${totalVulnerabilities} Vulnerabilities Found
+${incidents.total_incidents} Issues Aggregated
+Scan Coverage: ${assets.total_assets} Assets
 
 *Threat Detection*
-${incidents.total_incidents || 0} Incidents Detected
+${incidents.total_incidents} Incidents Detected
 🔴 ${incidents.by_severity?.CRITICAL || 0} Critical
 🟠 ${incidents.by_severity?.HIGH || 0} High Severity
 
+*Risk Assessment*
+Score: ${risk.overall_score || 0}/100
+
 *Application Security*
-Score: ${waap.health_score || 0}/100
+WAAP Score: ${waapScore}/100
+DNS Health: ${dnsHealthPercent}%
 
 ${'─'.repeat(32)}
 
