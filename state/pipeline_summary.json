@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-07T16:13:54.700883",
+  "timestamp": "2026-09-07T16:14:25.833506",
   "pipeline_status": "COMPLETE",
   "state_files_updated": [
     "assets.json",
@@ -7,7 +7,7 @@
     "patch_queue.json",
     "crypto_health.json"
   ],
-  "total_assets": 0,
+  "total_assets": 23,
   "risk_score": 0,
   "threat_level": "LOW"
 }
