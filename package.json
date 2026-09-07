@@ -2,13 +2,19 @@
   "name": "mcp-cyber-tools",
   "version": "1.0.0",
   "type": "module",
-  "main": "server.js",
-  "scripts": {},
+  "main": "web/server.js",
+  "scripts": {
+    "start": "PORT=3000 STATE_DIR=./state node web/server.js",
+    "dev": "node web/server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
+    "cors": "^2.8.6",
+    "express": "^4.22.2",
+    "node-telegram-bot-api": "^0.61.0",
     "zod": "^4.4.3"
   }
 }

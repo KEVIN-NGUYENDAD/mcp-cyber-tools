@@ -1,11 +1,12 @@
 services:
   - type: web
-    name: sentinelops-command-center
+    name: sentinelops
     runtime: node
     region: oregon
     plan: free
+    rootDir: .
     buildCommand: npm install
-    startCommand: PORT=3000 STATE_DIR=./state node web/server.js
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
