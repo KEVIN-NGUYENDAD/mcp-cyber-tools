@@ -142,10 +142,10 @@ class PatchQueueEngine:
         try:
             with open(filepath, 'w') as f:
                 json.dump(self.patch_queue, f, indent=2)
-            print(f'[PATCH] ✅ Saved to {filepath}')
+            print(f'[PATCH] OK: Saved to {filepath}')
             return True
         except Exception as e:
-            print(f'[PATCH] ❌ Save failed: {e}')
+            print(f'[PATCH] FAIL: Save failed: {e}')
             return False
 
     def save_crypto_health(self, filepath: str):
@@ -153,10 +153,10 @@ class PatchQueueEngine:
         try:
             with open(filepath, 'w') as f:
                 json.dump(self.crypto_health, f, indent=2)
-            print(f'[CRYPTO] ✅ Saved to {filepath}')
+            print(f'[CRYPTO] OK: Saved to {filepath}')
             return True
         except Exception as e:
-            print(f'[CRYPTO] ❌ Save failed: {e}')
+            print(f'[CRYPTO] FAIL: Save failed: {e}')
             return False
 
 if __name__ == '__main__':

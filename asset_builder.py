@@ -136,10 +136,10 @@ class AssetBuilder:
         try:
             with open(filepath, 'w') as f:
                 json.dump(self.assets, f, indent=2)
-            print(f'[ASSETS] ✅ Saved to {filepath}')
+            print(f'[ASSETS] OK: Saved to {filepath}')
             return True
         except Exception as e:
-            print(f'[ASSETS] ❌ Save failed: {e}')
+            print(f'[ASSETS] FAIL: Save failed: {e}')
             return False
 
 if __name__ == '__main__':
