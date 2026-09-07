@@ -206,6 +206,9 @@ function renderOverviewPage() {
 
   // Update Executive Security Row
   updateExecutiveSecurityRow(assets);
+
+  // Render Network Topology
+  setTimeout(() => renderNetworkTopology(), 100);
 }
 
 function updateExecutiveSecurityRow(assets) {
