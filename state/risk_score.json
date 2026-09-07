@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-07T16:17:48.247299",
+  "timestamp": "2026-09-07T16:23:56.639087",
   "overall_score": 0,
   "threat_level": "LOW",
   "risk_summary": {
@@ -16,6 +16,8 @@
       "ip": "192.168.0.21",
       "type": "Unknown",
       "os": "Unknown",
+      "vendor": "Unknown",
+      "mac": "Unknown",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
@@ -26,7 +28,7 @@
       },
       "risk_score": 7,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:47.762201"
+      "last_updated": "2026-09-07T16:23:56.035762"
     },
     {
       "id": 2,
@@ -34,6 +36,8 @@
       "ip": "192.168.0.1",
       "type": "Unknown",
       "os": "Unknown",
+      "vendor": "Unknown",
+      "mac": "Unknown",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
@@ -44,7 +48,7 @@
       },
       "risk_score": 5,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:47.762201"
+      "last_updated": "2026-09-07T16:23:56.035762"
     },
     {
       "id": 3,
@@ -52,6 +56,8 @@
       "ip": "192.168.0.3",
       "type": "Unknown",
       "os": "Unknown",
+      "vendor": "Unknown",
+      "mac": "Unknown",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
@@ -62,7 +68,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:47.762201"
+      "last_updated": "2026-09-07T16:23:56.035762"
     },
     {
       "id": 5,
@@ -70,6 +76,8 @@
       "ip": "192.168.0.5",
       "type": "Unknown",
       "os": "Unknown",
+      "vendor": "Unknown",
+      "mac": "Unknown",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
@@ -80,7 +88,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:47.762201"
+      "last_updated": "2026-09-07T16:23:56.035762"
     },
     {
       "id": 6,
@@ -88,6 +96,8 @@
       "ip": "192.168.0.8",
       "type": "Unknown",
       "os": "Unknown",
+      "vendor": "Unknown",
+      "mac": "Unknown",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
@@ -98,7 +108,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:47.762201"
+      "last_updated": "2026-09-07T16:23:56.035762"
     }
   ],
   "risk_by_type": {
