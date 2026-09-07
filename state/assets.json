@@ -1,6 +1,6 @@
 {
   "total_assets": 23,
-  "last_updated": "2026-09-07T16:17:45.687131",
+  "last_updated": "2026-09-07T16:17:47.477201",
   "assets_by_type": {
     "Unknown": [
       {
@@ -19,7 +19,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:45.853072"
+        "last_updated": "2026-09-07T16:17:47.575688"
       },
       {
         "id": 2,
@@ -37,7 +37,7 @@
         },
         "risk_score": 5,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.123641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 3,
@@ -55,7 +55,7 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.123641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 4,
@@ -73,7 +73,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.123641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 5,
@@ -91,7 +91,7 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.123641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 6,
@@ -109,7 +109,7 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.123641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 7,
@@ -127,7 +127,7 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.124641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 8,
@@ -145,7 +145,7 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.124641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 9,
@@ -163,7 +163,7 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.124641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 10,
@@ -181,7 +181,7 @@
         },
         "risk_score": 7,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.124641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 11,
@@ -199,7 +199,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.124641"
+        "last_updated": "2026-09-07T16:17:47.762201"
       },
       {
         "id": 12,
@@ -217,7 +217,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 13,
@@ -235,7 +235,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 14,
@@ -253,7 +253,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 15,
@@ -271,7 +271,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 16,
@@ -289,7 +289,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 17,
@@ -307,7 +307,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 18,
@@ -325,7 +325,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 19,
@@ -343,7 +343,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 20,
@@ -361,7 +361,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 21,
@@ -379,7 +379,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 22,
@@ -397,7 +397,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       },
       {
         "id": 23,
@@ -415,7 +415,7 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:17:46.654523"
+        "last_updated": "2026-09-07T16:17:48.144114"
       }
     ]
   },
@@ -436,7 +436,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:45.853072"
+      "last_updated": "2026-09-07T16:17:47.575688"
     },
     {
       "id": 2,
@@ -454,7 +454,7 @@
       },
       "risk_score": 5,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 3,
@@ -472,7 +472,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 4,
@@ -490,7 +490,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 5,
@@ -508,7 +508,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 6,
@@ -526,7 +526,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.123641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 7,
@@ -544,7 +544,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.124641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 8,
@@ -562,7 +562,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.124641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 9,
@@ -580,7 +580,7 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.124641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 10,
@@ -598,7 +598,7 @@
       },
       "risk_score": 7,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.124641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 11,
@@ -616,7 +616,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.124641"
+      "last_updated": "2026-09-07T16:17:47.762201"
     },
     {
       "id": 12,
@@ -634,7 +634,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 13,
@@ -652,7 +652,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 14,
@@ -670,7 +670,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 15,
@@ -688,7 +688,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 16,
@@ -706,7 +706,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 17,
@@ -724,7 +724,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 18,
@@ -742,7 +742,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 19,
@@ -760,7 +760,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 20,
@@ -778,7 +778,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 21,
@@ -796,7 +796,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 22,
@@ -814,7 +814,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     },
     {
       "id": 23,
@@ -832,7 +832,7 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:17:46.654523"
+      "last_updated": "2026-09-07T16:17:48.144114"
     }
   ]
 }
