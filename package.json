@@ -4,7 +4,7 @@
   "type": "module",
   "main": "web/server.js",
   "scripts": {
-    "start": "PORT=3000 STATE_DIR=./state node web/server.js",
+    "start": "node web/server.js",
     "dev": "node web/server.js"
   },
   "keywords": [],
