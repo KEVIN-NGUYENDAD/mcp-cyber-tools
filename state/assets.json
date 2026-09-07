@@ -1,14 +1,14 @@
 {
   "total_assets": 23,
-  "last_updated": "2026-09-07T16:23:55.682202",
+  "last_updated": "2026-09-07T16:26:49.479051",
   "assets_by_type": {
-    "Unknown": [
+    "Windows": [
       {
         "id": 1,
         "hostname": "192.168.0.51",
         "ip": "192.168.0.51",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Windows",
+        "os": "Windows 11",
         "vendor": "Unknown",
         "mac": "Unknown",
         "last_scan": "Credential Validation - Kevin-PC",
@@ -17,191 +17,267 @@
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 3
+          "info": {
+            "host_start": "Sat Sep  5 16:53:23 2026",
+            "host_end": "Sat Sep  5 16:54:46 2026",
+            "operating-system": "Windows 11",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.51"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:55.755704"
-      },
+        "last_updated": "2026-09-07T16:26:49.604003"
+      }
+    ],
+    "Linux": [
       {
         "id": 2,
         "hostname": "192.168.0.1",
         "ip": "192.168.0.1",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Linux",
+        "os": "Linux Kernel 2.6",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "48:BD:CE:0E:1E:3C",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 1,
           "low": 2,
-          "info": 36
+          "info": {
+            "host_start": "Sat Sep  5 12:20:13 2026",
+            "mac-address": "48:BD:CE:0E:1E:3C",
+            "host_end": "Sat Sep  5 12:34:31 2026",
+            "operating-system": "Linux Kernel 2.6",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.1"
+          }
         },
         "risk_score": 5,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
-      },
+        "last_updated": "2026-09-07T16:26:49.858134"
+      }
+    ],
+    "Camera": [
       {
         "id": 3,
         "hostname": "192.168.0.3",
         "ip": "192.168.0.3",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Camera",
+        "os": "Reolink Reolink TrackMix PoE",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:77:60:AE",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 1,
-          "info": 13
+          "info": {
+            "host_start": "Sat Sep  5 12:20:13 2026",
+            "mac-address": "EC:71:DB:77:60:AE",
+            "host_end": "Sat Sep  5 12:25:54 2026",
+            "operating-system": "Reolink Reolink TrackMix PoE",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.3"
+          }
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
-      },
-      {
-        "id": 4,
-        "hostname": "192.168.0.4",
-        "ip": "192.168.0.4",
-        "type": "Unknown",
-        "os": "Unknown",
-        "vendor": "Unknown",
-        "mac": "Unknown",
-        "last_scan": "Home Network Discovery",
-        "vulnerabilities": {
-          "critical": 0,
-          "high": 0,
-          "medium": 0,
-          "low": 0,
-          "info": 12
-        },
-        "risk_score": 0,
-        "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
+        "last_updated": "2026-09-07T16:26:49.921235"
       },
       {
         "id": 5,
         "hostname": "192.168.0.5",
         "ip": "192.168.0.5",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Camera",
+        "os": "Reolink GARAGE",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "54:EF:33:90:03:23",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 1,
-          "info": 12
+          "info": {
+            "host_start": "Sat Sep  5 12:20:13 2026",
+            "mac-address": "54:EF:33:90:03:23",
+            "host_end": "Sat Sep  5 12:25:39 2026",
+            "operating-system": "Reolink GARAGE",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.5"
+          }
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
+        "last_updated": "2026-09-07T16:26:50.023603"
       },
       {
         "id": 6,
         "hostname": "192.168.0.8",
         "ip": "192.168.0.8",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Camera",
+        "os": "Reolink FRONT DOOR",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:85:8D:32",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 1,
-          "info": 13
+          "info": {
+            "host_start": "Sat Sep  5 12:20:13 2026",
+            "mac-address": "EC:71:DB:85:8D:32",
+            "host_end": "Sat Sep  5 12:25:59 2026",
+            "operating-system": "Reolink FRONT DOOR",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.8"
+          }
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
+        "last_updated": "2026-09-07T16:26:50.079349"
       },
       {
         "id": 7,
         "hostname": "192.168.0.10",
         "ip": "192.168.0.10",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Camera",
+        "os": "Reolink BACK YARD",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:5D:16:EF",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 1,
-          "info": 13
+          "info": {
+            "host_start": "Sat Sep  5 12:20:13 2026",
+            "mac-address": "EC:71:DB:5D:16:EF",
+            "host_end": "Sat Sep  5 12:26:01 2026",
+            "operating-system": "Reolink BACK YARD",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.10"
+          }
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
+        "last_updated": "2026-09-07T16:26:50.134078"
       },
       {
         "id": 8,
         "hostname": "192.168.0.11",
         "ip": "192.168.0.11",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Camera",
+        "os": "Reolink HUGO SIDE",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:84:A8:BA",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 1,
-          "info": 13
+          "info": {
+            "host_start": "Sat Sep  5 12:20:14 2026",
+            "mac-address": "EC:71:DB:84:A8:BA",
+            "host_end": "Sat Sep  5 12:25:58 2026",
+            "operating-system": "Reolink HUGO SIDE",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.11"
+          }
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
+        "last_updated": "2026-09-07T16:26:50.191739"
       },
       {
         "id": 9,
         "hostname": "192.168.0.12",
         "ip": "192.168.0.12",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Camera",
+        "os": "Reolink BACK DOOR",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:C9:DF:8A",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 1,
-          "info": 13
+          "info": {
+            "host_start": "Sat Sep  5 12:20:14 2026",
+            "mac-address": "EC:71:DB:C9:DF:8A",
+            "host_end": "Sat Sep  5 12:25:56 2026",
+            "operating-system": "Reolink BACK DOOR",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.12"
+          }
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
+        "last_updated": "2026-09-07T16:26:50.244869"
       },
       {
         "id": 10,
         "hostname": "192.168.0.21",
         "ip": "192.168.0.21",
-        "type": "Unknown",
-        "os": "Unknown",
+        "type": "Camera",
+        "os": "an operating system associated with Reolink Innovation Limited",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:0B:49:37",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 2,
           "low": 1,
-          "info": 40
+          "info": {
+            "host_start": "Sat Sep  5 12:20:14 2026",
+            "mac-address": "EC:71:DB:0B:49:37",
+            "host_end": "Sat Sep  5 14:47:12 2026",
+            "operating-system": "an operating system associated with Reolink Innovation Limited",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.21"
+          }
         },
         "risk_score": 7,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
+        "last_updated": "2026-09-07T16:26:50.294935"
+      }
+    ],
+    "Unknown": [
+      {
+        "id": 4,
+        "hostname": "192.168.0.4",
+        "ip": "192.168.0.4",
+        "type": "Unknown",
+        "os": "iPhone or iPad",
+        "vendor": "Unknown",
+        "mac": "CA:DB:84:32:F3:2D",
+        "last_scan": "Home Network Discovery",
+        "vulnerabilities": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 0,
+          "info": {
+            "host_start": "Sat Sep  5 12:20:13 2026",
+            "mac-address": "CA:DB:84:32:F3:2D",
+            "host-fqdn": "Ngan-Tos-iPad.local",
+            "host_end": "Sat Sep  5 12:25:28 2026",
+            "operating-system": "iPhone or iPad",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.4"
+          }
+        },
+        "risk_score": 0,
+        "status": "ONLINE",
+        "last_updated": "2026-09-07T16:26:49.976756"
       },
       {
         "id": 11,
@@ -210,18 +286,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "9C:B1:50:FE:04:20",
         "last_scan": "Home Network Discovery",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 3
+          "info": {
+            "host_start": "Sat Sep  5 12:20:14 2026",
+            "mac-address": "9C:B1:50:FE:04:20",
+            "host_end": "Sat Sep  5 12:34:36 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.233"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.035762"
+        "last_updated": "2026-09-07T16:26:50.393179"
       },
       {
         "id": 12,
@@ -230,18 +312,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:42:0F:A8",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "EC:71:DB:42:0F:A8",
+            "host_end": "Fri Aug 14 08:56:55 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.15"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:51.549127"
       },
       {
         "id": 13,
@@ -250,18 +338,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "3A:45:17:C5:1F:0C",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "3A:45:17:C5:1F:0C",
+            "host_end": "Fri Aug 14 08:57:33 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.16"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:51.593773"
       },
       {
         "id": 14,
@@ -270,18 +364,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:37:A2:94",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "EC:71:DB:37:A2:94",
+            "host_end": "Fri Aug 14 08:56:55 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.17"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:51.642951"
       },
       {
         "id": 15,
@@ -290,18 +390,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:FC:FD:BA",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "EC:71:DB:FC:FD:BA",
+            "host_end": "Fri Aug 14 08:56:55 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.18"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:51.692962"
       },
       {
         "id": 16,
@@ -310,18 +416,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "60:FB:00:00:A6:83",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "60:FB:00:00:A6:83",
+            "host_end": "Fri Aug 14 08:56:55 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.19"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:51.738047"
       },
       {
         "id": 17,
@@ -330,18 +442,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:2D:85:48",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "EC:71:DB:2D:85:48",
+            "host_end": "Fri Aug 14 08:56:55 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.20"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:51.783540"
       },
       {
         "id": 18,
@@ -350,18 +468,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "EC:71:DB:88:BC:97",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "EC:71:DB:88:BC:97",
+            "host_end": "Fri Aug 14 08:56:55 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.22"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:51.884297"
       },
       {
         "id": 19,
@@ -370,18 +494,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "60:FB:00:00:AF:D9",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "60:FB:00:00:AF:D9",
+            "host_end": "Fri Aug 14 08:56:56 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.23"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:51.944283"
       },
       {
         "id": 20,
@@ -390,18 +520,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "1C:BF:CE:74:B4:51",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "1C:BF:CE:74:B4:51",
+            "host_end": "Fri Aug 14 08:56:54 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.25"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:52.002825"
       },
       {
         "id": 21,
@@ -410,18 +546,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "1C:D6:BE:D6:B4:D9",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:17 2026",
+            "mac-address": "1C:D6:BE:D6:B4:D9",
+            "host_end": "Fri Aug 14 08:57:33 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.33"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:52.065813"
       },
       {
         "id": 22,
@@ -430,18 +572,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "B6:D3:ED:94:35:85",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:32 2026",
+            "mac-address": "B6:D3:ED:94:35:85",
+            "host_end": "Fri Aug 14 08:57:48 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.162"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:52.162597"
       },
       {
         "id": 23,
@@ -450,18 +598,24 @@
         "type": "Unknown",
         "os": "Unknown",
         "vendor": "Unknown",
-        "mac": "Unknown",
+        "mac": "9E:E5:B2:B8:93:95",
         "last_scan": "Host Discovery Home",
         "vulnerabilities": {
           "critical": 0,
           "high": 0,
           "medium": 0,
           "low": 0,
-          "info": 2
+          "info": {
+            "host_start": "Fri Aug 14 08:55:33 2026",
+            "mac-address": "9E:E5:B2:B8:93:95",
+            "host_end": "Fri Aug 14 08:57:51 2026",
+            "credentialed_scan": "false",
+            "host-ip": "192.168.0.169"
+          }
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T16:23:56.540162"
+        "last_updated": "2026-09-07T16:26:52.209169"
       }
     ]
   },
@@ -470,8 +624,8 @@
       "id": 1,
       "hostname": "192.168.0.51",
       "ip": "192.168.0.51",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Windows",
+      "os": "Windows 11",
       "vendor": "Unknown",
       "mac": "Unknown",
       "last_scan": "Credential Validation - Kevin-PC",
@@ -480,191 +634,261 @@
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 3
+        "info": {
+          "host_start": "Sat Sep  5 16:53:23 2026",
+          "host_end": "Sat Sep  5 16:54:46 2026",
+          "operating-system": "Windows 11",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.51"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:55.755704"
+      "last_updated": "2026-09-07T16:26:49.604003"
     },
     {
       "id": 2,
       "hostname": "192.168.0.1",
       "ip": "192.168.0.1",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Linux",
+      "os": "Linux Kernel 2.6",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "48:BD:CE:0E:1E:3C",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 1,
         "low": 2,
-        "info": 36
+        "info": {
+          "host_start": "Sat Sep  5 12:20:13 2026",
+          "mac-address": "48:BD:CE:0E:1E:3C",
+          "host_end": "Sat Sep  5 12:34:31 2026",
+          "operating-system": "Linux Kernel 2.6",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.1"
+        }
       },
       "risk_score": 5,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:49.858134"
     },
     {
       "id": 3,
       "hostname": "192.168.0.3",
       "ip": "192.168.0.3",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Camera",
+      "os": "Reolink Reolink TrackMix PoE",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:77:60:AE",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 1,
-        "info": 13
+        "info": {
+          "host_start": "Sat Sep  5 12:20:13 2026",
+          "mac-address": "EC:71:DB:77:60:AE",
+          "host_end": "Sat Sep  5 12:25:54 2026",
+          "operating-system": "Reolink Reolink TrackMix PoE",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.3"
+        }
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:49.921235"
     },
     {
       "id": 4,
       "hostname": "192.168.0.4",
       "ip": "192.168.0.4",
       "type": "Unknown",
-      "os": "Unknown",
+      "os": "iPhone or iPad",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "CA:DB:84:32:F3:2D",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 12
+        "info": {
+          "host_start": "Sat Sep  5 12:20:13 2026",
+          "mac-address": "CA:DB:84:32:F3:2D",
+          "host-fqdn": "Ngan-Tos-iPad.local",
+          "host_end": "Sat Sep  5 12:25:28 2026",
+          "operating-system": "iPhone or iPad",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.4"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:49.976756"
     },
     {
       "id": 5,
       "hostname": "192.168.0.5",
       "ip": "192.168.0.5",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Camera",
+      "os": "Reolink GARAGE",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "54:EF:33:90:03:23",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 1,
-        "info": 12
+        "info": {
+          "host_start": "Sat Sep  5 12:20:13 2026",
+          "mac-address": "54:EF:33:90:03:23",
+          "host_end": "Sat Sep  5 12:25:39 2026",
+          "operating-system": "Reolink GARAGE",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.5"
+        }
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:50.023603"
     },
     {
       "id": 6,
       "hostname": "192.168.0.8",
       "ip": "192.168.0.8",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Camera",
+      "os": "Reolink FRONT DOOR",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:85:8D:32",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 1,
-        "info": 13
+        "info": {
+          "host_start": "Sat Sep  5 12:20:13 2026",
+          "mac-address": "EC:71:DB:85:8D:32",
+          "host_end": "Sat Sep  5 12:25:59 2026",
+          "operating-system": "Reolink FRONT DOOR",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.8"
+        }
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:50.079349"
     },
     {
       "id": 7,
       "hostname": "192.168.0.10",
       "ip": "192.168.0.10",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Camera",
+      "os": "Reolink BACK YARD",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:5D:16:EF",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 1,
-        "info": 13
+        "info": {
+          "host_start": "Sat Sep  5 12:20:13 2026",
+          "mac-address": "EC:71:DB:5D:16:EF",
+          "host_end": "Sat Sep  5 12:26:01 2026",
+          "operating-system": "Reolink BACK YARD",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.10"
+        }
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:50.134078"
     },
     {
       "id": 8,
       "hostname": "192.168.0.11",
       "ip": "192.168.0.11",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Camera",
+      "os": "Reolink HUGO SIDE",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:84:A8:BA",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 1,
-        "info": 13
+        "info": {
+          "host_start": "Sat Sep  5 12:20:14 2026",
+          "mac-address": "EC:71:DB:84:A8:BA",
+          "host_end": "Sat Sep  5 12:25:58 2026",
+          "operating-system": "Reolink HUGO SIDE",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.11"
+        }
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:50.191739"
     },
     {
       "id": 9,
       "hostname": "192.168.0.12",
       "ip": "192.168.0.12",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Camera",
+      "os": "Reolink BACK DOOR",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:C9:DF:8A",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 1,
-        "info": 13
+        "info": {
+          "host_start": "Sat Sep  5 12:20:14 2026",
+          "mac-address": "EC:71:DB:C9:DF:8A",
+          "host_end": "Sat Sep  5 12:25:56 2026",
+          "operating-system": "Reolink BACK DOOR",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.12"
+        }
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:50.244869"
     },
     {
       "id": 10,
       "hostname": "192.168.0.21",
       "ip": "192.168.0.21",
-      "type": "Unknown",
-      "os": "Unknown",
+      "type": "Camera",
+      "os": "an operating system associated with Reolink Innovation Limited",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:0B:49:37",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 2,
         "low": 1,
-        "info": 40
+        "info": {
+          "host_start": "Sat Sep  5 12:20:14 2026",
+          "mac-address": "EC:71:DB:0B:49:37",
+          "host_end": "Sat Sep  5 14:47:12 2026",
+          "operating-system": "an operating system associated with Reolink Innovation Limited",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.21"
+        }
       },
       "risk_score": 7,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:50.294935"
     },
     {
       "id": 11,
@@ -673,18 +897,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "9C:B1:50:FE:04:20",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 3
+        "info": {
+          "host_start": "Sat Sep  5 12:20:14 2026",
+          "mac-address": "9C:B1:50:FE:04:20",
+          "host_end": "Sat Sep  5 12:34:36 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.233"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.035762"
+      "last_updated": "2026-09-07T16:26:50.393179"
     },
     {
       "id": 12,
@@ -693,18 +923,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:42:0F:A8",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "EC:71:DB:42:0F:A8",
+          "host_end": "Fri Aug 14 08:56:55 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.15"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:51.549127"
     },
     {
       "id": 13,
@@ -713,18 +949,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "3A:45:17:C5:1F:0C",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "3A:45:17:C5:1F:0C",
+          "host_end": "Fri Aug 14 08:57:33 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.16"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:51.593773"
     },
     {
       "id": 14,
@@ -733,18 +975,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:37:A2:94",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "EC:71:DB:37:A2:94",
+          "host_end": "Fri Aug 14 08:56:55 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.17"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:51.642951"
     },
     {
       "id": 15,
@@ -753,18 +1001,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:FC:FD:BA",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "EC:71:DB:FC:FD:BA",
+          "host_end": "Fri Aug 14 08:56:55 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.18"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:51.692962"
     },
     {
       "id": 16,
@@ -773,18 +1027,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "60:FB:00:00:A6:83",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "60:FB:00:00:A6:83",
+          "host_end": "Fri Aug 14 08:56:55 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.19"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:51.738047"
     },
     {
       "id": 17,
@@ -793,18 +1053,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:2D:85:48",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "EC:71:DB:2D:85:48",
+          "host_end": "Fri Aug 14 08:56:55 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.20"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:51.783540"
     },
     {
       "id": 18,
@@ -813,18 +1079,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "EC:71:DB:88:BC:97",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "EC:71:DB:88:BC:97",
+          "host_end": "Fri Aug 14 08:56:55 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.22"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:51.884297"
     },
     {
       "id": 19,
@@ -833,18 +1105,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "60:FB:00:00:AF:D9",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "60:FB:00:00:AF:D9",
+          "host_end": "Fri Aug 14 08:56:56 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.23"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:51.944283"
     },
     {
       "id": 20,
@@ -853,18 +1131,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "1C:BF:CE:74:B4:51",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "1C:BF:CE:74:B4:51",
+          "host_end": "Fri Aug 14 08:56:54 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.25"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:52.002825"
     },
     {
       "id": 21,
@@ -873,18 +1157,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "1C:D6:BE:D6:B4:D9",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:17 2026",
+          "mac-address": "1C:D6:BE:D6:B4:D9",
+          "host_end": "Fri Aug 14 08:57:33 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.33"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:52.065813"
     },
     {
       "id": 22,
@@ -893,18 +1183,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "B6:D3:ED:94:35:85",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:32 2026",
+          "mac-address": "B6:D3:ED:94:35:85",
+          "host_end": "Fri Aug 14 08:57:48 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.162"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:52.162597"
     },
     {
       "id": 23,
@@ -913,18 +1209,24 @@
       "type": "Unknown",
       "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "Unknown",
+      "mac": "9E:E5:B2:B8:93:95",
       "last_scan": "Host Discovery Home",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 0,
-        "info": 2
+        "info": {
+          "host_start": "Fri Aug 14 08:55:33 2026",
+          "mac-address": "9E:E5:B2:B8:93:95",
+          "host_end": "Fri Aug 14 08:57:51 2026",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.169"
+        }
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:23:56.540162"
+      "last_updated": "2026-09-07T16:26:52.209169"
     }
   ]
 }

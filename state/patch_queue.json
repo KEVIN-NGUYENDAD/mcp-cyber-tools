@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-07T16:23:56.647597",
+  "timestamp": "2026-09-07T16:26:52.479170",
   "queue_by_priority": {
     "CRITICAL": [],
     "HIGH": [],
@@ -7,7 +7,7 @@
       {
         "asset": "192.168.0.1",
         "ip": "192.168.0.1",
-        "type": "Unknown",
+        "type": "Linux",
         "count": 1,
         "priority": 3,
         "estimated_time_minutes": 15
@@ -15,7 +15,7 @@
       {
         "asset": "192.168.0.21",
         "ip": "192.168.0.21",
-        "type": "Unknown",
+        "type": "Camera",
         "count": 2,
         "priority": 3,
         "estimated_time_minutes": 15
