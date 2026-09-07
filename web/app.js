@@ -281,60 +281,213 @@ function renderNetworkTopology() {
   } else {
     drawSecurityTopology(svg, incidents);
   }
+
+  // Render command centers
+  renderMCPCommandCenter();
+  renderWAAPCommandCenter();
+  renderVulnerabilityCenter();
+  renderExecutiveActionCenter();
+}
+
+function renderMCPCommandCenter() {
+  const element = document.getElementById('mcp-command-center');
+  if (!element) return;
+
+  element.innerHTML = `
+    <div style="background: rgba(139, 92, 246, 0.1); border: 2px solid #8B5CF6; border-radius: 8px; padding: 20px; margin-top: 20px;">
+      <div style="color: #8B5CF6; font-weight: bold; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">🤖 MCP INTELLIGENCE CENTER</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13px; font-family: monospace;">
+        <div>
+          <div style="color: #a0a0a0;">Status</div>
+          <div style="color: #00C896; font-weight: bold; font-size: 16px;">● ONLINE</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Tool Count</div>
+          <div style="color: #8B5CF6; font-weight: bold; font-size: 16px;">90+</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Threat Hunting</div>
+          <div style="color: #00C896; font-weight: bold;">ACTIVE</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">DFIR</div>
+          <div style="color: #00C896; font-weight: bold;">ACTIVE</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Event Hub</div>
+          <div style="color: #00C896; font-weight: bold;">ACTIVE</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Last Sync</div>
+          <div style="color: #8B5CF6; font-weight: bold;">2 min ago</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderWAAPCommandCenter() {
+  const element = document.getElementById('waap-command-center');
+  if (!element) return;
+
+  const waapScore = calculateWAAPScore();
+  const sslStatus = stateData.waap?.security_summary?.ssl_valid ? '✅' : '❌';
+  const wafStatus = stateData.waap?.security_summary?.waf_active ? '✅' : '❌';
+  const cdnStatus = stateData.waap?.security_summary?.cdn_active ? '✅' : '❌';
+
+  element.innerHTML = `
+    <div style="background: rgba(6, 182, 212, 0.1); border: 2px solid #06B6D4; border-radius: 8px; padding: 20px; margin-top: 20px;">
+      <div style="color: #06B6D4; font-weight: bold; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">🛡️ WAAP COMMAND CENTER</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13px; font-family: monospace;">
+        <div style="grid-column: 1/-1;">
+          <div style="color: #a0a0a0; margin-bottom: 10px;">Security Score</div>
+          <div style="font-size: 28px; font-weight: bold; color: ${waapScore >= 80 ? '#00C896' : waapScore >= 60 ? '#FFD93D' : '#FF3B5C'};">${waapScore}/100</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">SSL</div>
+          <div style="font-weight: bold; font-size: 14px;">${sslStatus}</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">WAF</div>
+          <div style="font-weight: bold; font-size: 14px;">${wafStatus}</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">CDN</div>
+          <div style="font-weight: bold; font-size: 14px;">${cdnStatus}</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Protection</div>
+          <div style="font-weight: bold; font-size: 14px;">${stateData.waap?.security_summary?.protection_active ? '✅' : '⚠️'}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderVulnerabilityCenter() {
+  const element = document.getElementById('vuln-command-center');
+  if (!element) return;
+
+  const assets = stateData.assets.assets || [];
+  const critVulns = assets.reduce((sum, a) => sum + (a.critical || 0), 0);
+  const highVulns = assets.reduce((sum, a) => sum + (a.high || 0), 0);
+  const medVulns = assets.reduce((sum, a) => sum + (a.medium || 0), 0);
+  const lowVulns = assets.reduce((sum, a) => sum + (a.low || 0), 0);
+  const totalVulns = assets.reduce((sum, a) => sum + (a.vulnerability_count || 0), 0);
+
+  element.innerHTML = `
+    <div style="background: rgba(249, 115, 22, 0.1); border: 2px solid #F97316; border-radius: 8px; padding: 20px; margin-top: 20px;">
+      <div style="color: #F97316; font-weight: bold; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">🔍 VULNERABILITY CENTER</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 10px; font-size: 12px; font-family: monospace;">
+        <div>
+          <div style="color: #a0a0a0;">Total</div>
+          <div style="color: #F97316; font-weight: bold; font-size: 18px;">${totalVulns}</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Critical</div>
+          <div style="color: #FF3B5C; font-weight: bold; font-size: 18px;">${critVulns}</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">High</div>
+          <div style="color: #FFB347; font-weight: bold; font-size: 18px;">${highVulns}</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Medium</div>
+          <div style="color: #FFD93D; font-weight: bold; font-size: 18px;">${medVulns}</div>
+        </div>
+        <div>
+          <div style="color: #a0a0a0;">Low</div>
+          <div style="color: #22ff22; font-weight: bold; font-size: 18px;">${lowVulns}</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderExecutiveActionCenter() {
+  const element = document.getElementById('exec-action-center');
+  if (!element) return;
+
+  const incidents = stateData.incidents.incidents || [];
+  const criticalCount = incidents.filter(i => i.severity === 'CRITICAL').length;
+
+  element.innerHTML = `
+    <div style="background: rgba(10, 14, 39, 0.5); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 8px; padding: 20px; margin-top: 20px;">
+      <div style="color: #00C896; font-weight: bold; font-size: 16px; text-transform: uppercase; margin-bottom: 15px;">📊 EXECUTIVE ACTION CENTER</div>
+
+      <div style="margin-bottom: 20px;">
+        <div style="color: #00C896; font-weight: bold; margin-bottom: 10px;">✅ COMPLETED</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">DNS Hardening</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Threat Monitoring</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Domain Security</div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div style="color: #FFB347; font-weight: bold; margin-bottom: 10px;">🟠 IN PROGRESS</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">WAAP Hardening (75%)</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Vulnerability Remediation (45%)</div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div style="color: #FFD93D; font-weight: bold; margin-bottom: 10px;">🟡 TODO</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Enable WAF</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Enable CDN</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Patch High-Risk Assets</div>
+      </div>
+
+      <div>
+        <div style="color: #FF3B5C; font-weight: bold; margin-bottom: 10px;">🔴 IMMEDIATE ACTIONS</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Investigate ${criticalCount} Critical Incidents</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Analyze WMI Persistence</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Review Lateral Movement</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Check LSASS Activity</div>
+      </div>
+    </div>
+  `;
 }
 
 function drawPhysicalTopology(svg, assets) {
   const width = svg.clientWidth;
   const height = svg.clientHeight;
-  const centerX = width / 2;
 
-  // Professional architecture layers
-  const layers = [
-    { y: 60, label: 'INTERNET', icon: '🌍', color: '#00C896', nodes: 1 },
-    { y: 160, label: 'GATEWAY', icon: '🚪', color: '#06B6D4', nodes: 1 },
-    { y: 280, label: 'SERVERS', icon: '💻', color: '#F97316', nodes: Math.min(3, assets.filter(a => a.device_type === 'Server').length) },
-    { y: 380, label: 'USERS', icon: '👥', color: '#8B5CF6', nodes: 1 },
-    { y: 450, label: 'IoT', icon: '📡', color: '#FFD93D', nodes: 1 }
-  ];
-
+  // OPERATIONAL NETWORK DISPLAY - Real Asset Data
   svg.innerHTML = '';
 
-  // Draw vertical center line
-  svg.innerHTML += `<line x1="${centerX}" y1="30" x2="${centerX}" y2="${height - 30}" stroke="rgba(139, 92, 246, 0.2)" stroke-width="2"/>`;
+  let html = `<div style="padding: 20px; font-family: monospace; font-size: 12px;">`;
+  html += `<div style="margin-bottom: 20px; color: #00C896; font-weight: bold; text-transform: uppercase;">🌍 INTERNET</div>`;
 
-  layers.forEach((layer, idx) => {
-    const nodeRadius = 28;
-    const nodeSpacing = (width - 120) / (layer.nodes > 1 ? layer.nodes - 1 : 1);
+  // Gateway
+  const gateway = assets.find(a => a.device_type === 'Router');
+  if (gateway) {
+    html += `<div style="margin-left: 40px; margin-bottom: 15px; color: #06B6D4;">
+      🚪 GATEWAY
+      <div style="color: #a0a0a0; margin-left: 20px; font-size: 11px;">
+        IP: ${gateway.ip}<br>
+        Vulnerabilities: ${gateway.vulnerability_count}<br>
+        Risk: ${gateway.vulnerability_count > 30 ? '🔴 HIGH' : gateway.vulnerability_count > 15 ? '🟠 MEDIUM' : '🟢 LOW'}
+      </div>
+    </div>`;
+  }
 
-    // Draw layer label
-    svg.innerHTML += `<text x="20" y="${layer.y + 8}" font-size="12" font-weight="bold" fill="${layer.color}">${layer.label}</text>`;
+  // Assets grouped by device type
+  const servers = assets.filter(a => a.device_type === 'Server');
+  if (servers.length > 0) {
+    html += `<div style="margin-left: 80px; color: #F97316; font-weight: bold; margin-bottom: 10px;">💻 SERVERS</div>`;
+    servers.forEach(server => {
+      const riskColor = server.vulnerability_count > 30 ? '#FF3B5C' : server.vulnerability_count > 15 ? '#FFB347' : '#22ff22';
+      html += `<div style="margin-left: 100px; margin-bottom: 8px; color: ${riskColor}; font-size: 11px;">
+        ${server.hostname} | ${server.ip}<br>
+        <span style="color: #a0a0a0;">Vulns: ${server.vulnerability_count} | Risk: ${server.vulnerability_count}</span>
+      </div>`;
+    });
+  }
 
-    for (let i = 0; i < layer.nodes; i++) {
-      const x = layer.nodes > 1 ? 80 + i * nodeSpacing : centerX;
-
-      // Draw node background
-      svg.innerHTML += `
-        <rect x="${x - nodeRadius}" y="${layer.y - nodeRadius}" width="${nodeRadius * 2}" height="${nodeRadius * 2}"
-              fill="rgba(${hexToRgb(layer.color).join(',')}, 0.1)" stroke="${layer.color}" stroke-width="2" rx="8"/>
-        <text x="${x}" y="${layer.y - 8}" font-size="24" text-anchor="middle">${layer.icon}</text>
-      `;
-    }
-
-    // Draw connection to next layer
-    if (idx < layers.length - 1) {
-      svg.innerHTML += `<line x1="${centerX}" y1="${layer.y + nodeRadius + 5}" x2="${centerX}" y2="${layers[idx + 1].y - nodeRadius - 5}"
-                               stroke="${layer.color}" stroke-width="2.5" marker-end="url(#arrowhead)"/>`;
-    }
-  });
-
-  // Add arrow marker
-  svg.innerHTML += `
-    <defs>
-      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-        <polygon points="0 0, 10 3, 0 6" fill="#8B5CF6"/>
-      </marker>
-    </defs>
-  `;
+  html += `</div>`;
+  svg.style.background = 'rgba(10, 14, 39, 0.5)';
+  svg.style.padding = '20px';
+  svg.style.borderRadius = '8px';
+  svg.style.border = '1px solid rgba(139, 92, 246, 0.2)';
+  svg.innerHTML = html;
 }
 
 function hexToRgb(hex) {
@@ -343,72 +496,56 @@ function hexToRgb(hex) {
 }
 
 function drawSecurityTopology(svg, incidents) {
-  const width = svg.clientWidth;
-  const height = svg.clientHeight;
-  const centerX = width / 2;
-
-  // Security flow architecture with professional colors
-  const layers = [
-    { y: 50, icon: '🌍', label: 'INTERNET', color: '#00C896', nodes: 1 },
-    { y: 140, icon: '🛡️', label: 'WAAP DEFENSE', color: '#06B6D4', nodes: 1 },
-    { y: 230, icon: '🚪', label: 'GATEWAY', color: '#F97316', nodes: 1 },
-    { y: 320, icon: '💻', label: 'ASSETS', color: '#FFD93D', nodes: Math.min(4, Math.max(1, (stateData.assets.assets || []).length)) },
-    { y: 410, icon: '🚨', label: 'INCIDENTS', color: '#FF3B5C', nodes: Math.min(3, Math.max(0, (incidents || []).length)) },
-    { y: 480, icon: '🤖', label: 'MCP INTELLIGENCE', color: '#8B5CF6', nodes: 1 }
-  ];
+  const assets = stateData.assets.assets || [];
+  const waapScore = calculateWAAPScore();
 
   svg.innerHTML = '';
 
-  // Draw center vertical flow line
-  svg.innerHTML += `<line x1="${centerX}" y1="20" x2="${centerX}" y2="${height - 20}" stroke="rgba(139, 92, 246, 0.15)" stroke-width="3"/>`;
+  let html = `<div style="padding: 20px; font-family: monospace; font-size: 13px; line-height: 2;">`;
+  html += `<div style="color: #00C896; text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 14px;">SECURITY OPERATIONS FLOW</div>`;
 
-  layers.forEach((layer, idx) => {
-    const nodeRadius = 32;
-    const nodeSpacing = layer.nodes > 1 ? (width - 120) / (layer.nodes - 1) : 0;
+  html += `<div style="color: #00C896; font-weight: bold;">🌍 INTERNET</div>`;
+  html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
-    // Draw layer label on left
-    svg.innerHTML += `<text x="15" y="${layer.y + 10}" font-size="13" font-weight="bold" fill="${layer.color}">${layer.label}</text>`;
+  html += `<div style="color: #06B6D4; font-weight: bold;">🛡️ WAAP DEFENSE</div>`;
+  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">Score: ${waapScore}/100</div>`;
+  html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
-    for (let i = 0; i < layer.nodes; i++) {
-      const x = layer.nodes > 1 ? 90 + i * nodeSpacing : centerX;
+  html += `<div style="color: #F97316; font-weight: bold;">🚪 GATEWAY</div>`;
+  const gateway = assets.find(a => a.device_type === 'Router');
+  if (gateway) {
+    html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">${gateway.ip}</div>`;
+  }
+  html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
-      // Draw large professional node with shadow
-      svg.innerHTML += `
-        <g filter="url(#shadow)">
-          <circle cx="${x}" cy="${layer.y}" r="${nodeRadius}" fill="rgba(${hexToRgb(layer.color).join(',')}, 0.15)"
-                  stroke="${layer.color}" stroke-width="2.5"/>
-          <text x="${x}" y="${layer.y + 2}" font-size="28" text-anchor="middle">${layer.icon}</text>
-        </g>
-      `;
-    }
+  html += `<div style="color: #FFD93D; font-weight: bold;">💻 ASSETS</div>`;
+  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">${assets.length} Devices</div>`;
+  html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
-    // Draw arrow to next layer
-    if (idx < layers.length - 1) {
-      const nextLayer = layers[idx + 1];
-      svg.innerHTML += `
-        <defs>
-          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
-          </filter>
-        </defs>
-        <line x1="${centerX}" y1="${layer.y + nodeRadius + 5}" x2="${centerX}" y2="${nextLayer.y - nodeRadius - 5}"
-              stroke="${layer.color}" stroke-width="3" opacity="0.6"
-              marker-end="url(#arrow-${idx})"/>
-        <defs>
-          <marker id="arrow-${idx}" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
-            <polygon points="0 0, 12 6, 0 12" fill="${layer.color}" opacity="0.8"/>
-          </marker>
-        </defs>
-      `;
-    }
-  });
+  html += `<div style="color: #FF3B5C; font-weight: bold;">🚨 INCIDENTS</div>`;
+  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">${incidents.length} Open</div>`;
+  html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
-  // Add title and flow legend
-  svg.innerHTML += `
-    <text x="${centerX}" y="${height - 8}" text-anchor="middle" font-size="11" fill="rgba(255, 255, 255, 0.5)">
-      SECURITY CHAIN: Internet → WAAP → Gateway → Assets → Incidents → Intelligence
-    </text>
-  `;
+  html += `<div style="color: #8B5CF6; font-weight: bold;">🤖 MCP INTELLIGENCE</div>`;
+  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">90+ Tools | ACTIVE</div>`;
+
+  html += `</div>`;
+  svg.style.background = 'rgba(10, 14, 39, 0.5)';
+  svg.style.padding = '20px';
+  svg.style.borderRadius = '8px';
+  svg.style.border = '1px solid rgba(139, 92, 246, 0.2)';
+  svg.innerHTML = html;
+}
+
+function calculateWAAPScore() {
+  let score = 0;
+  if (stateData.waap?.security_summary) {
+    if (stateData.waap.security_summary.ssl_valid) score += 60;
+    if (stateData.waap.security_summary.waf_active) score += 15;
+    if (stateData.waap.security_summary.cdn_active) score += 15;
+    if (stateData.waap.security_summary.protection_active) score += 10;
+  }
+  return score;
 }
 
 function showDevicePanel(element, hostname, ip, vulns) {
