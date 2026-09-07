@@ -4,7 +4,7 @@
     {
       "name": "sentinel-dev",
       "runtimeExecutable": "node",
-      "runtimeArgs": ["web/server.js"],
+      "runtimeArgs": ["C:\\Users\\tamng\\Projects\\mcp-cyber-tools\\web\\server.js"],
       "port": 3000
     }
   ]
