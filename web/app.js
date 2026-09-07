@@ -708,6 +708,7 @@ function closeDevicePanel() {
 function renderIncidentBoard() {
   try {
     const incidents = stateData.incidents?.incidents || [];
+    console.log('[RENDER] renderIncidentBoard - incidents:', incidents.length);
     if (!Array.isArray(incidents)) {
       console.error('[RENDER] incidents is not an array in renderIncidentBoard');
       return;
@@ -895,6 +896,7 @@ function renderExecutiveScorecard() {
     const incidents = stateData.incidents?.incidents || [];
     const assets = stateData.assets?.assets || [];
     const riskScore = stateData.risk?.overall_score || 0;
+    console.log('[RENDER] renderExecutiveScorecard:', { incidents: incidents.length, assets: assets.length, riskScore });
 
     // Calculate metrics
     const totalVulns = assets.reduce((sum, a) => sum + (a?.vulnerability_count || 0), 0);
@@ -1005,6 +1007,7 @@ function renderTimeline() {
   try {
     const alerts = stateData.alerts?.sent_alerts || [];
     const incidents = stateData.incidents?.incidents || [];
+    console.log('[RENDER] renderTimeline - incidents:', incidents.length, 'alerts:', alerts.length);
 
     const events = [
       ...alerts.map(a => ({
