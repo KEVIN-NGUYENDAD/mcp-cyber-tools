@@ -1,23 +1,14 @@
 {
-  "timestamp": "2026-09-05T23:13:17.630488",
-  "overall_score": 74,
-  "risk_level": "MEDIUM",
-  "component_scores": {
-    "asset": 100,
-    "waap": 50,
-    "crypto": 100,
-    "defender": 100,
-    "firewall": 90,
-    "security_events": 87,
-    "threat_hunting": 0
+  "timestamp": "2026-09-07T16:05:55.335937",
+  "overall_score": 0,
+  "threat_level": "LOW",
+  "risk_summary": {
+    "critical_count": 0,
+    "high_count": 0,
+    "medium_count": 0,
+    "low_count": 0
   },
-  "weights": {
-    "asset": 0.25,
-    "waap": 0.18,
-    "crypto": 0.13,
-    "defender": 0.13,
-    "firewall": 0.08,
-    "security_events": 0.08,
-    "threat_hunting": 0.15
-  }
+  "top_risk_hosts": [],
+  "risk_by_type": {},
+  "trend": "stable"
 }

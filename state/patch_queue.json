@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-09-07T16:05:55.343477",
+  "queue_by_priority": {
+    "CRITICAL": [],
+    "HIGH": [],
+    "MEDIUM": [],
+    "LOW": []
+  },
+  "total_patches_pending": 0,
+  "estimated_time": "0h"
+}
