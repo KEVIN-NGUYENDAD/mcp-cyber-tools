@@ -203,41 +203,66 @@ Score: *${score}/100*
   async handleExecutive(msg) {
     console.log('[CMD] /executive received from', msg.chat.id);
     try {
+      console.log('[EXEC-START] Starting handleExecutive...');
+
       let assets = { total_assets: 0 };
-      let incidents = { total_incidents: 0, critical: 0, high: 0 };
+      let incidents = { total_incidents: 0, by_severity: { CRITICAL: 0, HIGH: 0 } };
       let risk = { overall_score: 0 };
       let waap = { health_score: 0, ssl_status: 'UNKNOWN', days_until_expiry: 0 };
       let domain = { dns_health: 'N/A' };
 
       // Read all metrics
+      console.log('[EXEC-FILES] Reading files from:', paths.stateDir);
+
       if (fs.existsSync(paths.assets)) {
         assets = JSON.parse(fs.readFileSync(paths.assets, 'utf8'));
+        console.log('[EXEC-ASSETS] Loaded:', { total: assets.total_assets });
+      } else {
+        console.log('[EXEC-ERROR] Assets file not found at:', paths.assets);
       }
 
       if (fs.existsSync(paths.incidents)) {
         incidents = JSON.parse(fs.readFileSync(paths.incidents, 'utf8'));
+        console.log('[EXEC-INCIDENTS] Loaded:', { total: incidents.total_incidents, by_severity: incidents.by_severity });
+      } else {
+        console.log('[EXEC-ERROR] Incidents file not found at:', paths.incidents);
       }
 
       if (fs.existsSync(paths.riskScore)) {
         risk = JSON.parse(fs.readFileSync(paths.riskScore, 'utf8'));
+        console.log('[EXEC-RISK] Loaded:', { score: risk.overall_score });
+      } else {
+        console.log('[EXEC-ERROR] Risk score file not found at:', paths.riskScore);
       }
 
       if (fs.existsSync(paths.waapStatus)) {
         waap = JSON.parse(fs.readFileSync(paths.waapStatus, 'utf8'));
+        console.log('[EXEC-WAAP] Loaded:', { health: waap.health_score, summary: waap.security_summary });
+      } else {
+        console.log('[EXEC-ERROR] WAAP file not found at:', paths.waapStatus);
       }
 
       if (fs.existsSync(paths.domainStatus)) {
         domain = JSON.parse(fs.readFileSync(paths.domainStatus, 'utf8'));
+        console.log('[EXEC-DOMAIN] Loaded:', { dns_complete: domain.dns_complete });
+      } else {
+        console.log('[EXEC-ERROR] Domain file not found at:', paths.domainStatus);
       }
 
-      console.log('[DEBUG] handleExecutive loaded:', {
+      // Calculate DNS health (same as analytics)
+      const dnsChecks = domain.dns_complete || {};
+      const dnsHealthPercent = Math.round(
+        ((Object.values(dnsChecks).filter(v => v === true).length || 0) / 5) * 100
+      );
+
+      console.log('[EXEC-DEBUG] Final values:', {
         totalAssets: assets.total_assets,
         totalIncidents: incidents.total_incidents,
         critical: incidents.by_severity?.CRITICAL,
         high: incidents.by_severity?.HIGH,
         riskScore: risk.overall_score,
         waapScore: waap.health_score,
-        dnsHealth: domain.dns_health
+        dnsHealth: dnsHealthPercent
       });
 
       const score = risk.overall_score || 0;
@@ -245,7 +270,17 @@ Score: *${score}/100*
       const scoreLevel = score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW';
 
       const waapEmoji = waap.health_score >= 80 ? '✅' : waap.health_score >= 60 ? '⚠️' : '🔴';
-      const dnsEmoji = domain.dns_health === '100%' ? '✅' : domain.dns_health >= '90%' ? '⚠️' : '🔴';
+      const dnsEmoji = dnsHealthPercent >= 90 ? '✅' : dnsHealthPercent >= 60 ? '⚠️' : '🔴';
+
+      // CAPTURE ACTUAL RUNTIME VALUES IMMEDIATELY BEFORE MESSAGE BUILD
+      const critical = incidents.by_severity?.CRITICAL;
+      const high = incidents.by_severity?.HIGH;
+      console.error('[EXEC-FINAL]', JSON.stringify({
+        critical,
+        high,
+        dnsHealth: dnsHealthPercent,
+        incidents
+      }, null, 2));
 
       const dashboard = `*┌─ SENTINELOPS EXECUTIVE ─┐*
 
@@ -255,8 +290,8 @@ Multiple Security Zones Active
 
 *🚨 THREAT LANDSCAPE*
 ${incidents.total_incidents || 0} Open Incidents
-  └ 🔴 ${incidents.by_severity?.CRITICAL || 0} Critical
-  └ 🟠 ${incidents.by_severity?.HIGH || 0} High Severity
+  └ 🔴 ${critical || 0} Critical
+  └ 🟠 ${high || 0} High Severity
 
 *🎯 OVERALL RISK*
 ${scoreEmoji} *${scoreLevel}*
@@ -267,10 +302,11 @@ ${waapEmoji} SSL/TLS: ${waap.ssl_status || 'N/A'}
   ${waap.days_until_expiry || 0} days until cert renewal
 
 *🌐 DOMAIN OPERATIONS*
-${dnsEmoji} DNS Health: ${domain.dns_health || 'N/A'}
+${dnsEmoji} DNS Health: ${dnsHealthPercent}%
 
 *└────────────────────┘*`;
 
+      console.error('[EXEC-MESSAGE]', dashboard);
       await this.bot.sendMessage(msg.chat.id, dashboard, { parse_mode: 'Markdown' });
     } catch (error) {
       console.error('Error in handleExecutive:', error);
@@ -402,36 +438,57 @@ ${dnsEmoji} DNS Health: ${domain.dns_health || 'N/A'}
   async handleAnalytics(msg) {
     console.log('[CMD] /analytics received from', msg.chat.id);
     try {
-      let incidents = { total_incidents: 0, critical: 0, high: 0 };
+      console.log('[ANALYTICS-START] Starting handleAnalytics...');
+
+      let incidents = { total_incidents: 0, by_severity: { CRITICAL: 0, HIGH: 0 } };
       let assets = { total_assets: 0, assets: [] };
       let risk = { overall_score: 0 };
       let waap = { health_score: 0, security_summary: {} };
       let domain = { dns_complete: {} };
 
       // Read data
+      console.log('[ANALYTICS-FILES] Reading files from:', paths.stateDir);
+
       if (fs.existsSync(paths.incidents)) {
         incidents = JSON.parse(fs.readFileSync(paths.incidents, 'utf8'));
+        console.log('[ANALYTICS-INCIDENTS] Loaded:', { total: incidents.total_incidents, by_severity: incidents.by_severity });
+      } else {
+        console.log('[ANALYTICS-ERROR] Incidents file not found at:', paths.incidents);
       }
 
       if (fs.existsSync(paths.assets)) {
         assets = JSON.parse(fs.readFileSync(paths.assets, 'utf8'));
+        console.log('[ANALYTICS-ASSETS] Loaded:', { total: assets.total_assets, count: assets.assets?.length });
+      } else {
+        console.log('[ANALYTICS-ERROR] Assets file not found at:', paths.assets);
       }
 
       if (fs.existsSync(paths.riskScore)) {
         risk = JSON.parse(fs.readFileSync(paths.riskScore, 'utf8'));
+        console.log('[ANALYTICS-RISK] Loaded:', { score: risk.overall_score });
+      } else {
+        console.log('[ANALYTICS-ERROR] Risk score file not found at:', paths.riskScore);
       }
 
       if (fs.existsSync(paths.waapStatus)) {
         waap = JSON.parse(fs.readFileSync(paths.waapStatus, 'utf8'));
+        console.log('[ANALYTICS-WAAP] Loaded:', { health: waap.health_score, summary: waap.security_summary });
+      } else {
+        console.log('[ANALYTICS-ERROR] WAAP file not found at:', paths.waapStatus);
       }
 
       if (fs.existsSync(paths.domainStatus)) {
         domain = JSON.parse(fs.readFileSync(paths.domainStatus, 'utf8'));
+        console.log('[ANALYTICS-DOMAIN] Loaded:', { dns_complete: domain.dns_complete });
+      } else {
+        console.log('[ANALYTICS-ERROR] Domain file not found at:', paths.domainStatus);
       }
 
       // Calculate vulnerabilities from assets
       const totalVulnerabilities = (assets.assets || []).reduce((sum, asset) =>
         sum + (asset.vulnerability_count || 0), 0);
+
+      console.log('[ANALYTICS-VULNS] Calculated:', { total: totalVulnerabilities });
 
       // Calculate WAAP score
       const waapScore = (
@@ -441,13 +498,17 @@ ${dnsEmoji} DNS Health: ${domain.dns_health || 'N/A'}
         (waap.security_summary?.protection_active ? 10 : 0)
       );
 
+      console.log('[ANALYTICS-WAAP-SCORE] Calculated:', { score: waapScore });
+
       // Calculate DNS health
       const dnsChecks = domain.dns_complete || {};
       const dnsHealthPercent = Math.round(
         ((Object.values(dnsChecks).filter(v => v === true).length || 0) / 5) * 100
       );
 
-      console.log('[DEBUG] handleAnalytics loaded:', {
+      console.log('[ANALYTICS-DNS] Calculated:', { percent: dnsHealthPercent });
+
+      console.log('[ANALYTICS-DEBUG] Final values:', {
         totalAssets: assets.total_assets,
         totalVulnerabilities: totalVulnerabilities,
         totalIncidents: incidents.total_incidents,
@@ -458,17 +519,35 @@ ${dnsEmoji} DNS Health: ${domain.dns_health || 'N/A'}
         dnsHealth: dnsHealthPercent
       });
 
+      // CAPTURE ACTUAL RUNTIME VALUES IMMEDIATELY BEFORE MESSAGE BUILD
+      const analyticsVulns = totalVulnerabilities;
+      const analyticsAssets = assets.total_assets;
+      const analyticsIncidents = incidents.total_incidents;
+      const analyticsCritical = incidents.by_severity?.CRITICAL;
+      const analyticsHigh = incidents.by_severity?.HIGH;
+      const analyticsRisk = risk.overall_score;
+
+      console.error('[ANALYTICS-FINAL]', JSON.stringify({
+        assets: analyticsAssets,
+        vulnerabilities: analyticsVulns,
+        waap: waapScore,
+        dns: dnsHealthPercent,
+        incidents: analyticsIncidents,
+        critical: analyticsCritical,
+        high: analyticsHigh
+      }, null, 2));
+
       const analytics = `*📊 SECURITY ANALYTICS*
 
 *Vulnerability Assessment*
-${totalVulnerabilities} Vulnerabilities Found
-${incidents.total_incidents} Issues Aggregated
-Scan Coverage: ${assets.total_assets} Assets
+${analyticsVulns} Vulnerabilities Found
+${analyticsIncidents} Issues Aggregated
+Scan Coverage: ${analyticsAssets} Assets
 
 *Threat Detection*
-${incidents.total_incidents} Incidents Detected
-🔴 ${incidents.by_severity?.CRITICAL || 0} Critical
-🟠 ${incidents.by_severity?.HIGH || 0} High Severity
+${analyticsIncidents} Incidents Detected
+🔴 ${analyticsCritical || 0} Critical
+🟠 ${analyticsHigh || 0} High Severity
 
 *Risk Assessment*
 Score: ${risk.overall_score || 0}/100
@@ -485,6 +564,7 @@ Top Risks:
 • Credential Access (15%)
 • Privilege Escalation (14%)`;
 
+      console.error('[ANALYTICS-MESSAGE]', analytics);
       await this.bot.sendMessage(msg.chat.id, analytics, { parse_mode: 'Markdown' });
     } catch (error) {
       console.error('Error in handleAnalytics:', error);
