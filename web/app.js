@@ -286,120 +286,127 @@ function renderNetworkTopology() {
 function drawPhysicalTopology(svg, assets) {
   const width = svg.clientWidth;
   const height = svg.clientHeight;
+  const centerX = width / 2;
 
-  // Group by device type
-  const routers = assets.filter(a => a.device_type === 'Router');
-  const servers = assets.filter(a => a.device_type === 'Server');
+  // Professional architecture layers
+  const layers = [
+    { y: 60, label: 'INTERNET', icon: '🌍', color: '#00C896', nodes: 1 },
+    { y: 160, label: 'GATEWAY', icon: '🚪', color: '#06B6D4', nodes: 1 },
+    { y: 280, label: 'SERVERS', icon: '💻', color: '#F97316', nodes: Math.min(3, assets.filter(a => a.device_type === 'Server').length) },
+    { y: 380, label: 'USERS', icon: '👥', color: '#8B5CF6', nodes: 1 },
+    { y: 450, label: 'IoT', icon: '📡', color: '#FFD93D', nodes: 1 }
+  ];
 
-  // Draw internet at top
-  svg.innerHTML += `
-    <text x="${width/2}" y="40" text-anchor="middle" fill="var(--color-accent)" font-size="14" font-weight="bold">🌍 INTERNET</text>
-    <circle cx="${width/2}" cy="60" r="15" fill="none" stroke="var(--color-accent)" stroke-width="2"/>
-  `;
+  svg.innerHTML = '';
 
-  // Draw routers
-  let routerX = 100;
-  routers.forEach((router, idx) => {
-    const risk = router.vulnerability_count || 0;
-    const color = risk > 20 ? 'var(--color-critical)' : risk > 10 ? 'var(--color-warning)' : 'var(--color-healthy)';
+  // Draw vertical center line
+  svg.innerHTML += `<line x1="${centerX}" y1="30" x2="${centerX}" y2="${height - 30}" stroke="rgba(139, 92, 246, 0.2)" stroke-width="2"/>`;
 
-    svg.innerHTML += `
-      <g class="device-node" onclick="showDevicePanel(this, '${router.hostname}', '${router.ip}', ${risk})">
-        <circle cx="${routerX}" cy="150" r="20" fill="none" stroke="${color}" stroke-width="2"/>
-        <text x="${routerX}" y="155" text-anchor="middle" fill="${color}" font-size="12" font-weight="bold">🛡</text>
-        <text x="${routerX}" y="190" text-anchor="middle" fill="var(--color-text)" font-size="10">${router.hostname}</text>
-      </g>
-    `;
-    routerX += 120;
-  });
+  layers.forEach((layer, idx) => {
+    const nodeRadius = 28;
+    const nodeSpacing = (width - 120) / (layer.nodes > 1 ? layer.nodes - 1 : 1);
 
-  // Draw connection from internet to routers
-  routers.forEach((_, idx) => {
-    const x = 100 + idx * 120;
-    svg.innerHTML += `<line x1="${width/2}" y1="75" x2="${x}" y2="130" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="5,5"/>`;
-  });
+    // Draw layer label
+    svg.innerHTML += `<text x="20" y="${layer.y + 8}" font-size="12" font-weight="bold" fill="${layer.color}">${layer.label}</text>`;
 
-  // Draw servers
-  let serverIdx = 0;
-  const serversPerRow = 5;
-  servers.forEach((server, idx) => {
-    const risk = server.vulnerability_count || 0;
-    const color = risk > 20 ? 'var(--color-critical)' : risk > 10 ? 'var(--color-warning)' : 'var(--color-healthy)';
-    const row = Math.floor(idx / serversPerRow);
-    const col = idx % serversPerRow;
-    const x = 100 + col * 100;
-    const y = 300 + row * 120;
+    for (let i = 0; i < layer.nodes; i++) {
+      const x = layer.nodes > 1 ? 80 + i * nodeSpacing : centerX;
 
-    svg.innerHTML += `
-      <g class="device-node" onclick="showDevicePanel(this, '${server.hostname}', '${server.ip}', ${risk})">
-        <circle cx="${x}" cy="${y}" r="18" fill="none" stroke="${color}" stroke-width="2"/>
-        <text x="${x}" y="${y+4}" text-anchor="middle" fill="${color}" font-size="12" font-weight="bold">💻</text>
-        <text x="${x}" y="${y+35}" text-anchor="middle" fill="var(--color-text)" font-size="9">${server.hostname}</text>
-      </g>
-    `;
+      // Draw node background
+      svg.innerHTML += `
+        <rect x="${x - nodeRadius}" y="${layer.y - nodeRadius}" width="${nodeRadius * 2}" height="${nodeRadius * 2}"
+              fill="rgba(${hexToRgb(layer.color).join(',')}, 0.1)" stroke="${layer.color}" stroke-width="2" rx="8"/>
+        <text x="${x}" y="${layer.y - 8}" font-size="24" text-anchor="middle">${layer.icon}</text>
+      `;
+    }
 
-    // Connect to first router
-    if (routers.length > 0) {
-      svg.innerHTML += `<line x1="${100}" y1="170" x2="${x}" y2="${y-18}" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="3,3"/>`;
+    // Draw connection to next layer
+    if (idx < layers.length - 1) {
+      svg.innerHTML += `<line x1="${centerX}" y1="${layer.y + nodeRadius + 5}" x2="${centerX}" y2="${layers[idx + 1].y - nodeRadius - 5}"
+                               stroke="${layer.color}" stroke-width="2.5" marker-end="url(#arrowhead)"/>`;
     }
   });
+
+  // Add arrow marker
+  svg.innerHTML += `
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+        <polygon points="0 0, 10 3, 0 6" fill="#8B5CF6"/>
+      </marker>
+    </defs>
+  `;
+}
+
+function hexToRgb(hex) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [0, 0, 0];
 }
 
 function drawSecurityTopology(svg, incidents) {
-  // Enhanced Security Relationship Chain
-  // Internet → WAAP → Gateway → Assets → Incidents → MCP Intelligence
   const width = svg.clientWidth;
   const height = svg.clientHeight;
   const centerX = width / 2;
 
-  // Layer definitions
+  // Security flow architecture with professional colors
   const layers = [
-    { y: 40, icon: '🌍', label: 'INTERNET', nodes: 1 },
-    { y: 120, icon: '🛡️', label: 'WAAP DEFENSE', nodes: 1 },
-    { y: 200, icon: '🚪', label: 'GATEWAY', nodes: 1 },
-    { y: 280, icon: '💻', label: 'ASSETS', nodes: Math.min(5, Math.max(1, (stateData.assets.assets || []).length)) },
-    { y: 380, icon: '🚨', label: 'INCIDENTS', nodes: Math.min(3, (incidents || []).length) },
-    { y: 450, icon: '🤖', label: 'MCP INTELLIGENCE', nodes: 1 }
+    { y: 50, icon: '🌍', label: 'INTERNET', color: '#00C896', nodes: 1 },
+    { y: 140, icon: '🛡️', label: 'WAAP DEFENSE', color: '#06B6D4', nodes: 1 },
+    { y: 230, icon: '🚪', label: 'GATEWAY', color: '#F97316', nodes: 1 },
+    { y: 320, icon: '💻', label: 'ASSETS', color: '#FFD93D', nodes: Math.min(4, Math.max(1, (stateData.assets.assets || []).length)) },
+    { y: 410, icon: '🚨', label: 'INCIDENTS', color: '#FF3B5C', nodes: Math.min(3, Math.max(0, (incidents || []).length)) },
+    { y: 480, icon: '🤖', label: 'MCP INTELLIGENCE', color: '#8B5CF6', nodes: 1 }
   ];
 
-  // Draw layers with vertical connections
-  let previousLayer = null;
+  svg.innerHTML = '';
 
-  layers.forEach((layer, layerIdx) => {
-    const nodeRadius = 15;
-    const spacing = (width - 100) / (layer.nodes + 1);
+  // Draw center vertical flow line
+  svg.innerHTML += `<line x1="${centerX}" y1="20" x2="${centerX}" y2="${height - 20}" stroke="rgba(139, 92, 246, 0.15)" stroke-width="3"/>`;
+
+  layers.forEach((layer, idx) => {
+    const nodeRadius = 32;
+    const nodeSpacing = layer.nodes > 1 ? (width - 120) / (layer.nodes - 1) : 0;
+
+    // Draw layer label on left
+    svg.innerHTML += `<text x="15" y="${layer.y + 10}" font-size="13" font-weight="bold" fill="${layer.color}">${layer.label}</text>`;
 
     for (let i = 0; i < layer.nodes; i++) {
-      const x = 50 + spacing * (i + 1);
+      const x = layer.nodes > 1 ? 90 + i * nodeSpacing : centerX;
 
-      // Draw node
-      const color = layerIdx === 4 ? 'var(--color-critical)' : layerIdx === 3 ? 'var(--color-warning)' : 'var(--color-accent)';
+      // Draw large professional node with shadow
       svg.innerHTML += `
-        <g>
-          <circle cx="${x}" cy="${layer.y}" r="${nodeRadius}" fill="none" stroke="${color}" stroke-width="2"/>
-          <text x="${x}" y="${layer.y + 5}" text-anchor="middle" fill="${color}" font-size="12" font-weight="bold">${layer.icon}</text>
+        <g filter="url(#shadow)">
+          <circle cx="${x}" cy="${layer.y}" r="${nodeRadius}" fill="rgba(${hexToRgb(layer.color).join(',')}, 0.15)"
+                  stroke="${layer.color}" stroke-width="2.5"/>
+          <text x="${x}" y="${layer.y + 2}" font-size="28" text-anchor="middle">${layer.icon}</text>
         </g>
       `;
-
-      // Draw connection to previous layer
-      if (previousLayer) {
-        const prevSpacing = (width - 100) / (previousLayer.nodes + 1);
-        const prevX = 50 + prevSpacing * ((previousLayer.nodes > 1) ? Math.floor(layer.nodes / 2) : 1);
-        const lineColor = layerIdx === 4 ? 'var(--color-critical)' : layerIdx === 3 ? 'var(--color-warning)' : 'var(--color-accent)';
-        svg.innerHTML += `<line x1="${prevX}" y1="${previousLayer.y + nodeRadius}" x2="${x}" y2="${layer.y - nodeRadius}" stroke="${lineColor}" stroke-width="1.5" stroke-dasharray="5,5"/>`;
-      }
     }
 
-    // Draw layer label
-    svg.innerHTML += `<text x="15" y="${layer.y + 5}" fill="var(--color-text-dim)" font-size="11" font-weight="bold">${layer.label}</text>`;
-
-    previousLayer = layer;
+    // Draw arrow to next layer
+    if (idx < layers.length - 1) {
+      const nextLayer = layers[idx + 1];
+      svg.innerHTML += `
+        <defs>
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+          </filter>
+        </defs>
+        <line x1="${centerX}" y1="${layer.y + nodeRadius + 5}" x2="${centerX}" y2="${nextLayer.y - nodeRadius - 5}"
+              stroke="${layer.color}" stroke-width="3" opacity="0.6"
+              marker-end="url(#arrow-${idx})"/>
+        <defs>
+          <marker id="arrow-${idx}" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto">
+            <polygon points="0 0, 12 6, 0 12" fill="${layer.color}" opacity="0.8"/>
+          </marker>
+        </defs>
+      `;
+    }
   });
 
-  // Add legend
+  // Add title and flow legend
   svg.innerHTML += `
-    <text x="20" y="${height - 20}" fill="var(--color-text-dim)" font-size="10">
-      Security Chain: Internet → WAAP → Gateway → Assets → Incidents → Intelligence
+    <text x="${centerX}" y="${height - 8}" text-anchor="middle" font-size="11" fill="rgba(255, 255, 255, 0.5)">
+      SECURITY CHAIN: Internet → WAAP → Gateway → Assets → Incidents → Intelligence
     </text>
   `;
 }
