@@ -44,9 +44,52 @@ class AssetBuilder:
             'all_assets': []
         }
 
-    def classify_asset(self, hostname: str, os_info: str, ipv4: str = '') -> str:
-        """Auto-classify asset based on hostname, OS, and IP"""
-        text = f"{hostname} {os_info} {ipv4}".upper()
+    def _extract_host_properties(self, host: Dict) -> Dict:
+        """Extract vendor, OS, MAC from detailed host info"""
+        props = {
+            'vendor': '',
+            'os': '',
+            'mac': '',
+        }
+
+        # Try to get from 'info' section (detailed host response)
+        info = host.get('info', {})
+        if isinstance(info, dict):
+            # operating-system field in detailed response
+            if 'operating-system' in info:
+                props['os'] = info['operating-system']
+            # mac-address field
+            if 'mac-address' in info:
+                props['mac'] = info['mac-address']
+
+        # Fallback: Parse host_properties array if present
+        host_props = host.get('host_properties', [])
+        if isinstance(host_props, list):
+            for prop in host_props:
+                if isinstance(prop, dict):
+                    name = prop.get('name', '').lower()
+                    value = prop.get('value', '')
+
+                    if 'vendor' in name:
+                        props['vendor'] = value
+                    elif 'os' in name or 'operating' in name:
+                        props['os'] = value
+                    elif 'mac' in name or 'address' in name:
+                        props['mac'] = value
+
+        # Fallback to operating_system field
+        if not props['os']:
+            props['os'] = host.get('operating_system', '')
+
+        # Fallback MAC
+        if not props['mac']:
+            props['mac'] = host.get('mac_address', '')
+
+        return props
+
+    def classify_asset(self, hostname: str, os_info: str, ipv4: str = '', vendor: str = '') -> str:
+        """Auto-classify asset based on hostname, OS, IP, and vendor"""
+        text = f"{hostname} {os_info} {ipv4} {vendor}".upper()
 
         for asset_type, patterns in self.PATTERNS.items():
             for pattern in patterns:
@@ -78,6 +121,18 @@ class AssetBuilder:
                     host_id = host.get('host_id')
                     hostname = host.get('hostname', f'Unknown-{host_id}')
 
+                    # Try to get detailed host info for OS/Vendor/MAC
+                    detailed_host = self.nessus.get_host_details(scan_id, host_id)
+                    if detailed_host:
+                        # Merge detailed info into host object
+                        host = {**host, **detailed_host}
+
+                    # Extract properties from host (basic + detailed)
+                    props = self._extract_host_properties(host)
+                    vendor = props['vendor']
+                    os_info = props['os']
+                    mac = props['mac']
+
                     # Severity counts are at root level: critical, high, medium, low, info
                     vuln_counts = {
                         'critical': host.get('critical', 0),
@@ -87,7 +142,8 @@ class AssetBuilder:
                         'info': host.get('info', 0),
                     }
 
-                    asset_type = self.classify_asset(hostname, '', hostname)
+                    # Classify using real OS and vendor data
+                    asset_type = self.classify_asset(hostname, os_info, hostname, vendor)
                     asset_key = hostname
 
                     if asset_key not in asset_dict:
@@ -96,7 +152,9 @@ class AssetBuilder:
                             'hostname': hostname,
                             'ip': hostname,  # From Nessus, hostname is the IP
                             'type': asset_type,
-                            'os': 'Unknown',  # Not available in basic host response
+                            'os': os_info if os_info else 'Unknown',
+                            'vendor': vendor if vendor else 'Unknown',
+                            'mac': mac if mac else 'Unknown',
                             'last_scan': scan_name,
                             'vulnerabilities': vuln_counts,
                             'risk_score': self._calculate_risk_from_counts(vuln_counts),
