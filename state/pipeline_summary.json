@@ -1,13 +1,14 @@
 {
-  "timestamp": "2026-09-07T16:26:52.481171",
+  "timestamp": "2026-09-07T17:23:24.086470",
   "pipeline_status": "COMPLETE",
   "state_files_updated": [
     "assets.json",
     "risk_score.json",
     "patch_queue.json",
-    "crypto_health.json"
+    "crypto_health.json",
+    "asset_aging.json"
   ],
-  "total_assets": 23,
-  "risk_score": 0,
+  "total_assets": 24,
+  "risk_score": 1,
   "threat_level": "LOW"
 }

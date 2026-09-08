@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026-09-07T17:23:24.084964",
+  "summary": {
+    "total_assets": 24,
+    "stale_count": 0,
+    "zombie_count": 0,
+    "definitions": {
+      "stale": "Last scanned > 30 days ago",
+      "zombie": "Last seen > 60 days ago or missing from recent scans"
+    }
+  },
+  "oldest_scan": {
+    "asset": "192.168.0.14",
+    "ip": "192.168.0.14",
+    "days_since_scan": 0,
+    "last_scanned": "2026-09-07T17:23:20.021049",
+    "type": "Unknown"
+  },
+  "oldest_last_seen": {
+    "asset": "192.168.0.14",
+    "ip": "192.168.0.14",
+    "days_since_last_seen": 0,
+    "last_seen": "2026-09-07T17:23:20.021049",
+    "status": "ONLINE"
+  },
+  "stale_assets": [],
+  "zombie_assets": [],
+  "aging_score": {
+    "overall_score": 100,
+    "status": "HEALTHY",
+    "assets_scanned": 24,
+    "assets_total": 24
+  }
+}

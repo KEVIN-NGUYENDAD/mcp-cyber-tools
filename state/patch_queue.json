@@ -1,9 +1,17 @@
 {
-  "timestamp": "2026-09-07T16:26:52.479170",
+  "timestamp": "2026-09-07T17:23:24.079697",
   "queue_by_priority": {
     "CRITICAL": [],
     "HIGH": [],
     "MEDIUM": [
+      {
+        "asset": "192.168.0.51",
+        "ip": "192.168.0.51",
+        "type": "Windows",
+        "count": 1,
+        "priority": 3,
+        "estimated_time_minutes": 15
+      },
       {
         "asset": "192.168.0.1",
         "ip": "192.168.0.1",
@@ -15,7 +23,7 @@
       {
         "asset": "192.168.0.21",
         "ip": "192.168.0.21",
-        "type": "Camera",
+        "type": "Unknown",
         "count": 2,
         "priority": 3,
         "estimated_time_minutes": 15
@@ -23,6 +31,6 @@
     ],
     "LOW": []
   },
-  "total_patches_pending": 3,
-  "estimated_time": "0h"
+  "total_patches_pending": 4,
+  "estimated_time": "1h"
 }
