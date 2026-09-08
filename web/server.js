@@ -63,6 +63,7 @@ function sendStateFile(filename, res) {
     'crypto_inventory.json',
     'patch_queue.json',
     'crypto_health.json',
+    'asset_aging.json',
     'pipeline_summary.json'
   ];
 
@@ -129,6 +130,10 @@ app.get('/api/waap', (req, res) => {
 app.get('/api/domain', (req, res) => {
   console.log('[ROUTE] /api/domain called');
   sendStateFile('domain_status.json', res);
+});
+app.get('/api/aging', (req, res) => {
+  console.log('[ROUTE] /api/aging called');
+  sendStateFile('asset_aging.json', res);
 });
 console.log('[ROUTES] Convenience routes registered');
 

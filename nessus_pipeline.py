@@ -87,6 +87,19 @@ class NessusPipeline:
             self.log(f'[FAIL] Patch queue building failed: {e}', 'ERROR')
             return False
 
+    def run_asset_aging_analysis(self) -> bool:
+        """Step 4: Calculate asset aging metrics"""
+        try:
+            self.log('Step 4: Calculating asset aging metrics...')
+            from asset_aging import AssetAgingEngine
+            engine = AssetAgingEngine(os.path.join(self.state_dir, 'assets.json'))
+            engine.run()
+            self.log(f'[OK] Asset aging analysis complete', 'SUCCESS')
+            return True
+        except Exception as e:
+            self.log(f'[FAIL] Asset aging analysis failed: {e}', 'ERROR')
+            return False
+
     def generate_summary(self):
         """Generate and save pipeline summary"""
         try:
@@ -101,6 +114,7 @@ class NessusPipeline:
                     'risk_score.json',
                     'patch_queue.json',
                     'crypto_health.json',
+                    'asset_aging.json',
                 ],
             }
 
@@ -165,6 +179,7 @@ class NessusPipeline:
         success = success and self.run_asset_discovery()
         success = success and self.run_risk_calculation()
         success = success and self.run_patch_queue_building()
+        success = success and self.run_asset_aging_analysis()
 
         # Generate summary
         self.generate_summary()

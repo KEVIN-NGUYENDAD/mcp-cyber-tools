@@ -138,9 +138,16 @@ class NessusClient:
 
     def get_host_details(self, scan_id: int, host_id: int) -> Optional[Dict]:
         try:
+            # Try v6 endpoint first
             resp = self.session.get(f'{self.url}/nessus6/scans/{scan_id}/hosts/{host_id}')
             if resp.status_code == 200:
                 return resp.json()
+
+            # Try alternate endpoint
+            resp = self.session.get(f'{self.url}/scans/{scan_id}/hosts/{host_id}')
+            if resp.status_code == 200:
+                return resp.json()
+
             return None
         except Exception as e:
             print(f'[NESSUS] Error fetching host {host_id}: {e}')
