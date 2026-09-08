@@ -1,23 +1,23 @@
 {
-  "timestamp": "2026-09-07T16:26:52.470099",
-  "overall_score": 0,
+  "timestamp": "2026-09-07T17:23:24.071669",
+  "overall_score": 1,
   "threat_level": "LOW",
   "risk_summary": {
     "critical_count": 0,
     "high_count": 0,
-    "medium_count": 3,
-    "low_count": 9,
-    "total_vulnerabilities": 12
+    "medium_count": 4,
+    "low_count": 16,
+    "total_vulnerabilities": 20
   },
   "top_risk_hosts": [
     {
-      "id": 10,
+      "id": 20,
       "hostname": "192.168.0.21",
       "ip": "192.168.0.21",
-      "type": "Camera",
-      "os": "an operating system associated with Reolink Innovation Limited",
+      "type": "Unknown",
+      "os": "Unknown",
       "vendor": "Unknown",
-      "mac": "EC:71:DB:0B:49:37",
+      "mac": "Unknown",
       "last_scan": "Home Network Discovery",
       "vulnerabilities": {
         "critical": 0,
@@ -25,36 +25,32 @@
         "medium": 2,
         "low": 1,
         "info": {
-          "host_start": "Sat Sep  5 12:20:14 2026",
-          "mac-address": "EC:71:DB:0B:49:37",
-          "host_end": "Sat Sep  5 14:47:12 2026",
-          "operating-system": "an operating system associated with Reolink Innovation Limited",
-          "credentialed_scan": "false",
-          "host-ip": "192.168.0.21"
+          "host-ip": "192.168.0.21",
+          "host_start": "Mon Sep  7 16:48:17 2026"
         }
       },
       "risk_score": 7,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:26:50.294935"
+      "last_updated": "2026-09-07T17:23:21.669944"
     },
     {
-      "id": 2,
+      "id": 18,
       "hostname": "192.168.0.1",
       "ip": "192.168.0.1",
       "type": "Linux",
       "os": "Linux Kernel 2.6",
       "vendor": "Unknown",
       "mac": "48:BD:CE:0E:1E:3C",
-      "last_scan": "Home Network Discovery",
+      "last_scan": "Home Network Scan",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 1,
         "low": 2,
         "info": {
-          "host_start": "Sat Sep  5 12:20:13 2026",
+          "host_start": "Mon Sep  7 17:02:36 2026",
           "mac-address": "48:BD:CE:0E:1E:3C",
-          "host_end": "Sat Sep  5 12:34:31 2026",
+          "host_end": "Mon Sep  7 17:16:58 2026",
           "operating-system": "Linux Kernel 2.6",
           "credentialed_scan": "false",
           "host-ip": "192.168.0.1"
@@ -62,110 +58,110 @@
       },
       "risk_score": 5,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:26:49.858134"
+      "last_updated": "2026-09-07T17:23:20.921789"
+    },
+    {
+      "id": 17,
+      "hostname": "192.168.0.51",
+      "ip": "192.168.0.51",
+      "type": "Windows",
+      "os": "Windows 11",
+      "vendor": "Unknown",
+      "mac": "Unknown",
+      "last_scan": "Home Network Scan",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 1,
+        "low": 0,
+        "info": {
+          "host_start": "Mon Sep  7 17:02:33 2026",
+          "host_end": "Mon Sep  7 17:16:47 2026",
+          "operating-system": "Windows 11",
+          "netbios-name": "KEVIN",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.51"
+        }
+      },
+      "risk_score": 3,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T17:23:20.871425"
+    },
+    {
+      "id": 2,
+      "hostname": "192.168.0.15",
+      "ip": "192.168.0.15",
+      "type": "Camera",
+      "os": "Reolink LIVING ROOM",
+      "vendor": "Unknown",
+      "mac": "EC:71:DB:42:0F:A8",
+      "last_scan": "Home Network Scan",
+      "vulnerabilities": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 1,
+        "info": {
+          "host_start": "Mon Sep  7 16:52:04 2026",
+          "mac-address": "EC:71:DB:42:0F:A8",
+          "host_end": "Mon Sep  7 16:57:46 2026",
+          "operating-system": "Reolink LIVING ROOM",
+          "credentialed_scan": "false",
+          "host-ip": "192.168.0.15"
+        }
+      },
+      "risk_score": 1,
+      "status": "ONLINE",
+      "last_updated": "2026-09-07T17:23:20.072387"
     },
     {
       "id": 3,
-      "hostname": "192.168.0.3",
-      "ip": "192.168.0.3",
+      "hostname": "192.168.0.17",
+      "ip": "192.168.0.17",
       "type": "Camera",
-      "os": "Reolink Reolink TrackMix PoE",
+      "os": "Reolink TOY ROOM",
       "vendor": "Unknown",
-      "mac": "EC:71:DB:77:60:AE",
-      "last_scan": "Home Network Discovery",
+      "mac": "EC:71:DB:37:A2:94",
+      "last_scan": "Home Network Scan",
       "vulnerabilities": {
         "critical": 0,
         "high": 0,
         "medium": 0,
         "low": 1,
         "info": {
-          "host_start": "Sat Sep  5 12:20:13 2026",
-          "mac-address": "EC:71:DB:77:60:AE",
-          "host_end": "Sat Sep  5 12:25:54 2026",
-          "operating-system": "Reolink Reolink TrackMix PoE",
+          "host_start": "Mon Sep  7 16:52:04 2026",
+          "mac-address": "EC:71:DB:37:A2:94",
+          "host_end": "Mon Sep  7 16:57:28 2026",
+          "operating-system": "Reolink TOY ROOM",
           "credentialed_scan": "false",
-          "host-ip": "192.168.0.3"
+          "host-ip": "192.168.0.17"
         }
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T16:26:49.921235"
-    },
-    {
-      "id": 5,
-      "hostname": "192.168.0.5",
-      "ip": "192.168.0.5",
-      "type": "Camera",
-      "os": "Reolink GARAGE",
-      "vendor": "Unknown",
-      "mac": "54:EF:33:90:03:23",
-      "last_scan": "Home Network Discovery",
-      "vulnerabilities": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 1,
-        "info": {
-          "host_start": "Sat Sep  5 12:20:13 2026",
-          "mac-address": "54:EF:33:90:03:23",
-          "host_end": "Sat Sep  5 12:25:39 2026",
-          "operating-system": "Reolink GARAGE",
-          "credentialed_scan": "false",
-          "host-ip": "192.168.0.5"
-        }
-      },
-      "risk_score": 1,
-      "status": "ONLINE",
-      "last_updated": "2026-09-07T16:26:50.023603"
-    },
-    {
-      "id": 6,
-      "hostname": "192.168.0.8",
-      "ip": "192.168.0.8",
-      "type": "Camera",
-      "os": "Reolink FRONT DOOR",
-      "vendor": "Unknown",
-      "mac": "EC:71:DB:85:8D:32",
-      "last_scan": "Home Network Discovery",
-      "vulnerabilities": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 1,
-        "info": {
-          "host_start": "Sat Sep  5 12:20:13 2026",
-          "mac-address": "EC:71:DB:85:8D:32",
-          "host_end": "Sat Sep  5 12:25:59 2026",
-          "operating-system": "Reolink FRONT DOOR",
-          "credentialed_scan": "false",
-          "host-ip": "192.168.0.8"
-        }
-      },
-      "risk_score": 1,
-      "status": "ONLINE",
-      "last_updated": "2026-09-07T16:26:50.079349"
+      "last_updated": "2026-09-07T17:23:20.121952"
     }
   ],
   "risk_by_type": {
+    "Unknown": {
+      "count": 9,
+      "total_risk": 7,
+      "avg_risk": 0
+    },
+    "Camera": {
+      "count": 13,
+      "total_risk": 13,
+      "avg_risk": 1
+    },
     "Windows": {
       "count": 1,
-      "total_risk": 0,
-      "avg_risk": 0
+      "total_risk": 3,
+      "avg_risk": 3
     },
     "Linux": {
       "count": 1,
       "total_risk": 5,
       "avg_risk": 5
-    },
-    "Camera": {
-      "count": 7,
-      "total_risk": 13,
-      "avg_risk": 1
-    },
-    "Unknown": {
-      "count": 14,
-      "total_risk": 0,
-      "avg_risk": 0
     }
   },
   "trend": "stable"
