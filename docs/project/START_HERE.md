@@ -2,6 +2,18 @@
 
 Đây là điểm bắt đầu duy nhất cho mọi AI và developer.
 
+---
+
+## Repository Source of Truth
+
+**Primary Branch**: `develop`  
+**Status**: Production-ready, continuously updated  
+**Last Update**: 2026-09-08
+
+**⚠️ IMPORTANT**: Do NOT use `docs-sync` as primary data source. See [GIT_BRANCH_ANALYSIS.md](GIT_BRANCH_ANALYSIS.md) for details.
+
+---
+
 ## Bắt buộc đọc theo thứ tự
 
 1. **PROJECT_INDEX.md** - Điểm định hướng
