@@ -1,0 +1,218 @@
+{
+  "192.168.0.14": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      0
+    ]
+  },
+  "192.168.0.15": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.17": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.18": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.19": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.20": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.22": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.23": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.33": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      0
+    ]
+  },
+  "192.168.0.4": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      0
+    ]
+  },
+  "192.168.0.5": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.8": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.3": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.12": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.11": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.10": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      1
+    ]
+  },
+  "192.168.0.51": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      3
+    ]
+  },
+  "192.168.0.1": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      5
+    ]
+  },
+  "192.168.0.233": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      0
+    ]
+  },
+  "192.168.0.21": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      7
+    ]
+  },
+  "192.168.0.16": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      0
+    ]
+  },
+  "192.168.0.25": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      0
+    ]
+  },
+  "192.168.0.162": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      0
+    ]
+  },
+  "192.168.0.169": {
+    "mac_changes": 0,
+    "ip_changes": 0,
+    "first_seen": "2026-09-09T10:07:46.190379",
+    "observations": 1,
+    "risk_scores": [
+      0
+    ]
+  }
+}
