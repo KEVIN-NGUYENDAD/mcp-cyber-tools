@@ -334,8 +334,10 @@ GITHUB_TOKEN=<configured>
 DOMAIN=sentinelops.fyi
 
 # Telegram Alerting (Phase N.12)
-TELEGRAM_BOT_TOKEN=8779048449:AAHHRr2aWnp50EiMcGgfGSUuNp2aVnLgU4Q
-TELEGRAM_CHAT_ID=8814186709
+# NOTE: Use .env.example as template
+# Actual credentials should NOT be committed to git
+TELEGRAM_BOT_TOKEN=<REDACTED>
+TELEGRAM_CHAT_ID=<REDACTED>
 ```
 
 ### State Directory Structure
