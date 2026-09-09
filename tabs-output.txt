@@ -2,11 +2,11 @@
 [MAIN] Loading credentials from .env...
 [MAIN] Loading .env file...
 [MAIN] Credentials loaded from .env
-[MAIN] Bot Token: 8779048449...
-[MAIN] Chat ID: 8814186709
+[MAIN] Bot Token: <REDACTED>
+[MAIN] Chat ID: <REDACTED>
 [INIT] Loading Telegram Bot Token...
 [INIT] Bot Token Loaded
-[INIT] Chat ID: 8814186709
+[INIT] Chat ID: <REDACTED>
 [INIT] Starting bot with polling enabled...
 [HANDLERS] Registering command handlers...
 [HANDLERS] Command Handler Registered
@@ -14,16 +14,16 @@
 [START] Polling Started
 [STATUS] Bot Ready - Listening for commands
 [MAIN] Bot Ready - Awaiting Telegram commands
-[CMD] /status received from 8814186709
-[CMD] /executive received from 8814186709
-[CMD] /open received from 8814186709
-[CMD] /status received from 8814186709
-[CMD] /open received from 8814186709
-[CMD] /analytics received from 8814186709
-[CMD] /executive received from 8814186709
-[CMD] /network received from 8814186709
-[CMD] /status received from 8814186709
-[CMD] /open received from 8814186709
-[CMD] /network received from 8814186709
-[CMD] /executive received from 8814186709
-[CMD] /analytics received from 8814186709
+[CMD] /status received from <REDACTED>
+[CMD] /executive received from <REDACTED>
+[CMD] /open received from <REDACTED>
+[CMD] /status received from <REDACTED>
+[CMD] /open received from <REDACTED>
+[CMD] /analytics received from <REDACTED>
+[CMD] /executive received from <REDACTED>
+[CMD] /network received from <REDACTED>
+[CMD] /status received from <REDACTED>
+[CMD] /open received from <REDACTED>
+[CMD] /network received from <REDACTED>
+[CMD] /executive received from <REDACTED>
+[CMD] /analytics received from <REDACTED>
