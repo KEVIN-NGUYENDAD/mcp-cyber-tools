@@ -17,6 +17,10 @@ from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
 
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from utils import get_alert_engine
+
 
 class ShadowAssetDetector:
     """Detect and flag shadow assets (unknown/suspicious devices)"""
@@ -178,13 +182,72 @@ class ShadowAssetDetector:
 
         return flagged_count, shadows
 
+    def send_alerts_for_shadows(self, shadows):
+        """Send alerts to Alert Engine for HIGH confidence shadows.
+
+        Args:
+            shadows: List of shadow asset detections
+
+        Returns:
+            Number of alerts sent
+        """
+        if not shadows:
+            return 0
+
+        try:
+            engine = get_alert_engine()
+            alerts_sent = 0
+
+            for shadow in shadows:
+                # Only alert on HIGH confidence detections to avoid spam
+                if shadow.get('confidence') != 'HIGH':
+                    continue
+
+                # Create event compatible with Alert Engine
+                event = {
+                    'source': 'shadow_asset_detector',
+                    'change_type': 'new_entity',
+                    'entity_id': shadow.get('ip') or shadow.get('mac'),
+                    'description': f"Shadow asset detected: {shadow.get('reason')}",
+                    'old_value': 'not_present',
+                    'new_value': 'present',
+                    'evidence': [
+                        f"IP: {shadow.get('ip')}",
+                        f"MAC: {shadow.get('mac')}",
+                        f"Type: {shadow.get('type')}",
+                        f"Trust Score: {shadow.get('trust_score')}",
+                        f"Detected: {shadow.get('detected_at')}"
+                    ]
+                }
+
+                # Create and route alert
+                alert = engine.create_alert(event)
+                success, routing_result = engine.route_alert(alert)
+
+                if success:
+                    alerts_sent += 1
+                    print(f"[OK] Alert sent for shadow: {event['entity_id']} ({alert['id']})")
+                else:
+                    print(f"[WARN] Alert routing failed: {routing_result.get('errors')}")
+
+            return alerts_sent
+
+        except Exception as e:
+            print(f"[ERROR] Failed to send shadow alerts: {e}")
+            return 0
+
     def save_detection_report(self):
-        """Save shadow detection report"""
+        """Save shadow detection report and send alerts"""
         flagged_count, shadows = self.flag_shadow_assets()
 
         if not shadows:
             print("[INFO] No shadow assets detected")
             return 0
+
+        # Send alerts to Telegram for HIGH confidence shadows
+        alerts_sent = self.send_alerts_for_shadows(shadows)
+        if alerts_sent > 0:
+            print(f"[OK] Sent {alerts_sent} alert(s) to Telegram queue")
 
         # Save updated assets
         try:
