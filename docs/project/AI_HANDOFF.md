@@ -17,6 +17,28 @@ GitHub ✅ → Render ❌ → Production ❌
 
 ---
 
+## 🎯 SOURCE OF TRUTH
+
+### **Repository Authority = `develop` branch**
+
+```
+✅ DEVELOP (41dc197)
+   Status: Production-ready, protected
+   Contents: All features, all code, all docs
+   Updates: Daily (Nessus pipeline runs)
+   Trust: ABSOLUTE - Use this branch always
+
+❌ docs-sync (c70391b) 
+   Status: STALE & ARCHIVED
+   Contents: 10+ commits behind, missing 4500+ lines
+   Risk: DO NOT MERGE - would delete production code
+   See: REPOSITORY_AUTHORITY.md for official policy
+```
+
+**CRITICAL**: Read REPOSITORY_AUTHORITY.md - it defines what is authoritative in this repository.
+
+---
+
 ## Dữ Liệu Cần Biết (60 giây)
 
 ### Repository

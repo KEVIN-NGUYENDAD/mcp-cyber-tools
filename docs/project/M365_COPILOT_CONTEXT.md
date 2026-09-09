@@ -30,6 +30,21 @@ Tiếng Việt
 
 ---
 
+## Repository Authority (Critical)
+
+**Source of Truth**: `develop` branch (commit 41dc197)
+
+**Status**: PR #7 pending merge (git cleanup & documentation)
+
+**Important**: Do NOT use `docs-sync` for data - it is stale (10+ commits behind)
+
+**See**: 
+- REPOSITORY_AUTHORITY.md (official policy)
+- GIT_BRANCH_ANALYSIS.md (technical details)
+- BRANCH_ARCHIVAL_PLAN.md (branch strategy)
+
+---
+
 ## Một dòng tóm tắt
 
 **SentinelOps**: Security Operations Center dashboard monitoring 11 assets, 18 incidents, 385 vulnerabilities, deployed on Render, currently BLOCKED by deployment infrastructure failure.
