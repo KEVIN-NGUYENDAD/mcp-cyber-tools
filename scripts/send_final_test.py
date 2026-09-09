@@ -2,10 +2,30 @@
 """Send final SentinelOps Test Alert - Phase N.12 Completion"""
 import requests
 import json
+import os
 from datetime import datetime
+from pathlib import Path
 
-bot_token = '8779048449:AAHHRr2aWnp50EiMcGgfGSUuNp2aVnLgU4Q'
-chat_id = '8814186709'
+# Load credentials from .env
+env_path = Path('.env')
+bot_token = None
+chat_id = None
+
+if env_path.exists():
+    with open(env_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if line.startswith('TELEGRAM_BOT_TOKEN='):
+                bot_token = line.split('=', 1)[1].strip()
+            elif line.startswith('TELEGRAM_CHAT_ID='):
+                chat_id = line.split('=', 1)[1].strip()
+
+# Fallback to environment variables
+bot_token = bot_token or os.getenv('TELEGRAM_BOT_TOKEN')
+chat_id = chat_id or os.getenv('TELEGRAM_CHAT_ID')
+
+if not bot_token or not chat_id:
+    print('[ERROR] Telegram credentials not found. Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env')
+    exit(1)
 
 message = """🚨 SentinelOps Test Alert
 

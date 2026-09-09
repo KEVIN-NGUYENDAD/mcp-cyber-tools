@@ -2,8 +2,26 @@
 """Get correct chat ID from Telegram getUpdates"""
 import requests
 import json
+import os
+from pathlib import Path
 
-bot_token = '8779048449:AAHHRr2aWnp50EiMcGgfGSUuNp2aVnLgU4Q'
+# Load token from .env
+env_path = Path('.env')
+bot_token = None
+
+if env_path.exists():
+    with open(env_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if line.startswith('TELEGRAM_BOT_TOKEN='):
+                bot_token = line.split('=', 1)[1].strip()
+
+if not bot_token:
+    bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
+
+if not bot_token:
+    print('[ERROR] TELEGRAM_BOT_TOKEN not found. Set it in .env or environment variable.')
+    exit(1)
+
 api_url = f'https://api.telegram.org/bot{bot_token}/getUpdates'
 
 print("Fetching getUpdates...")
