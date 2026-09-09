@@ -9,7 +9,11 @@ import shutil
 from pathlib import Path
 from datetime import datetime
 
-from .storage import AtomicStorage
+# Handle both relative and absolute imports
+try:
+    from .storage import AtomicStorage
+except ImportError:
+    from storage import AtomicStorage
 
 
 def test_basic_read_write():

@@ -56,20 +56,31 @@ class AtomicStorage:
         while True:
             try:
                 if sys.platform == 'win32':
-                    # Windows: use open with exclusive access
-                    lock_handle = open(lock_file, 'w', encoding='utf-8')
+                    # Windows: open file and try to get exclusive access
+                    # Remove stale lock file if it exists (older than 60 seconds)
                     try:
-                        os.flock(lock_handle.fileno(), os.LOCK_EX | os.LOCK_NB)
-                    except (OSError, AttributeError):
-                        # If flock not available on Windows, just use file existence
-                        lock_handle.close()
-                        time.sleep(0.1)
-                        if (time.time() - start_time) > self.lock_timeout:
+                        if lock_file.exists() and (time.time() - lock_file.stat().st_mtime) > 60:
+                            lock_file.unlink()
+                    except:
+                        pass
+
+                    # Try to open file in exclusive mode
+                    try:
+                        # Create parent directory if needed
+                        lock_file.parent.mkdir(parents=True, exist_ok=True)
+                        # Open with exclusive flags
+                        lock_handle = open(lock_file, 'w', encoding='utf-8')
+                        return lock_handle
+                    except (IOError, OSError):
+                        elapsed = time.time() - start_time
+                        if elapsed > self.lock_timeout:
                             return None
+                        time.sleep(0.1)
                         continue
-                    return lock_handle
+
                 else:
                     # Unix: use fcntl file locking
+                    lock_file.parent.mkdir(parents=True, exist_ok=True)
                     lock_handle = open(lock_file, 'w', encoding='utf-8')
                     fcntl.flock(lock_handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
                     return lock_handle
@@ -85,8 +96,19 @@ class AtomicStorage:
         if lock_handle:
             try:
                 if sys.platform != 'win32':
-                    fcntl.flock(lock_handle.fileno(), fcntl.LOCK_UN)
+                    try:
+                        fcntl.flock(lock_handle.fileno(), fcntl.LOCK_UN)
+                    except:
+                        pass
                 lock_handle.close()
+
+                # On Windows, delete the lock file
+                if sys.platform == 'win32':
+                    try:
+                        lock_file = Path(lock_handle.name)
+                        lock_file.unlink()
+                    except:
+                        pass
             except:
                 pass
 
