@@ -347,6 +347,44 @@ Edit `scripts/asset_builder.py` TrustScoreEngine class:
 
 ---
 
+## KNOWN LIMITATIONS & PHASE 3 ROADMAP
+
+### Skills Implementation (Interface Scaffold)
+- **Current Status (Phase 2)**: Thư mục `skills/` đóng vai trò là Interface & Architecture Scaffold
+- **Function Stubs**: Tất cả 5 skills (nessus-audit, waap-audit, asset-intelligence, daily-soc, git-governance) hiện chỉ return mock data
+- **Phase 3 Work**: Kết nối trực tiếp vào Nessus API, WAAP systems, subprocess thực tế sẽ được hoàn thiện
+- **Timeline**: Dự kiến Q4 2026 hoặc sớm hơn
+
+### Trust Score Thresholds Calibration
+- **Current Settings**: 
+  - MAC stability threshold: 1.1 (10% tolerance)
+  - Risk degradation threshold: 1.5 (50% tolerance)  
+  - Baseline observation points: 8 (neutral for first-seen)
+- **Calibration Method**: Các ngưỡng được thiết lập theo kinh nghiệm ban đầu
+- **Phase 3 Refinement**: Sẽ được hiệu chỉnh bằng dữ liệu thực nghiệm sau 30 ngày vận hành
+- **Data-Driven Update**: Sử dụng asset_trust_history.json để phân tích pattern thực tế
+
+### Shadow Asset Classification Refinement
+- **Phase 2 Classification**: 
+  - `UNCLASSIFIED` (MAC unknown hoặc type unknown)
+  - `SUSPICIOUS` (trust score < 30)
+- **Phase 3 Enhancement**: Phân định chi tiết:
+  - `UNCLASSIFIED_KNOWN_DEVICE` (đã biết MAC nhưng chưa rõ OS)
+  - `ROGUE_SHADOW_ASSET` (MAC hoàn toàn lạ, chưa từng thấy)
+  - `POTENTIALLY_COMPROMISED` (trust score tụt mạnh)
+- **Detection Methods**: Sẽ thêm behavioral analysis & anomaly scoring
+
+### Future Enhancements (Phase 3+)
+- ML-based anomaly detection for asset behavior
+- Automated remediation playbooks
+- Advanced reporting & compliance integration
+- Cross-asset vulnerability correlation
+- Device lifecycle tracking & ROI analysis
+
+---
+
 **Specification Version**: 1.0  
 **Last Updated**: 2026-09-09  
-**Maintainer**: SentinelOps Architecture Team
+**CTO Approved**: Yes (with known limitations)  
+**Maintainer**: SentinelOps Architecture Team  
+**Next Review**: Phase 3 Kickoff (Q4 2026)
