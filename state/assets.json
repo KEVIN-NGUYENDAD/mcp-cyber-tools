@@ -29,7 +29,12 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.021049"
+        "last_updated": "2026-09-07T17:23:20.021049",
+        "trust_score": 82,
+        "trust_level": "TRUSTED",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.021049"
       },
       {
         "id": 9,
@@ -55,7 +60,12 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.432576"
+        "last_updated": "2026-09-07T17:23:20.432576",
+        "trust_score": 77,
+        "trust_level": "TRUSTED",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.432576"
       },
       {
         "id": 10,
@@ -83,7 +93,12 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.483717"
+        "last_updated": "2026-09-07T17:23:20.483717",
+        "trust_score": 82,
+        "trust_level": "TRUSTED",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.483717"
       },
       {
         "id": 19,
@@ -109,7 +124,12 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.971545"
+        "last_updated": "2026-09-07T17:23:20.971545",
+        "trust_score": 77,
+        "trust_level": "TRUSTED",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.971545"
       },
       {
         "id": 20,
@@ -132,7 +152,13 @@
         },
         "risk_score": 7,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:21.669944"
+        "last_updated": "2026-09-07T17:23:21.669944",
+        "trust_score": 37,
+        "trust_level": "SUSPICIOUS",
+        "shadow_flag": true,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:21.669944",
+        "shadow_detected_at": "2026-09-09T10:08:30.205878"
       },
       {
         "id": 21,
@@ -158,7 +184,12 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:23.160597"
+        "last_updated": "2026-09-07T17:23:23.160597",
+        "trust_score": 77,
+        "trust_level": "TRUSTED",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:23.160597"
       },
       {
         "id": 22,
@@ -184,7 +215,12 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:23.594796"
+        "last_updated": "2026-09-07T17:23:23.594796",
+        "trust_score": 77,
+        "trust_level": "TRUSTED",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:23.594796"
       },
       {
         "id": 23,
@@ -210,7 +246,12 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:23.741437"
+        "last_updated": "2026-09-07T17:23:23.741437",
+        "trust_score": 77,
+        "trust_level": "TRUSTED",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:23.741437"
       },
       {
         "id": 24,
@@ -236,7 +277,12 @@
         },
         "risk_score": 0,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:23.806357"
+        "last_updated": "2026-09-07T17:23:23.806357",
+        "trust_score": 77,
+        "trust_level": "TRUSTED",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:23.806357"
       }
     ],
     "Camera": [
@@ -265,7 +311,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.072387"
+        "last_updated": "2026-09-07T17:23:20.072387",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.072387"
       },
       {
         "id": 3,
@@ -292,7 +343,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.121952"
+        "last_updated": "2026-09-07T17:23:20.121952",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.121952"
       },
       {
         "id": 4,
@@ -319,7 +375,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.172589"
+        "last_updated": "2026-09-07T17:23:20.172589",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.172589"
       },
       {
         "id": 5,
@@ -346,7 +407,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.221340"
+        "last_updated": "2026-09-07T17:23:20.221340",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.221340"
       },
       {
         "id": 6,
@@ -373,7 +439,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.273932"
+        "last_updated": "2026-09-07T17:23:20.273932",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.273932"
       },
       {
         "id": 7,
@@ -400,7 +471,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.331504"
+        "last_updated": "2026-09-07T17:23:20.331504",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.331504"
       },
       {
         "id": 8,
@@ -427,7 +503,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.383503"
+        "last_updated": "2026-09-07T17:23:20.383503",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.383503"
       },
       {
         "id": 11,
@@ -454,7 +535,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.538341"
+        "last_updated": "2026-09-07T17:23:20.538341",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.538341"
       },
       {
         "id": 12,
@@ -481,7 +567,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.587946"
+        "last_updated": "2026-09-07T17:23:20.587946",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.587946"
       },
       {
         "id": 13,
@@ -508,7 +599,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.637523"
+        "last_updated": "2026-09-07T17:23:20.637523",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.637523"
       },
       {
         "id": 14,
@@ -535,7 +631,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.686266"
+        "last_updated": "2026-09-07T17:23:20.686266",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.686266"
       },
       {
         "id": 15,
@@ -562,7 +663,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.742990"
+        "last_updated": "2026-09-07T17:23:20.742990",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.742990"
       },
       {
         "id": 16,
@@ -589,7 +695,12 @@
         },
         "risk_score": 1,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.813277"
+        "last_updated": "2026-09-07T17:23:20.813277",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.813277"
       }
     ],
     "Windows": [
@@ -618,7 +729,13 @@
         },
         "risk_score": 3,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.871425"
+        "last_updated": "2026-09-07T17:23:20.871425",
+        "trust_score": 52,
+        "trust_level": "MONITORED",
+        "shadow_flag": true,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.871425",
+        "shadow_detected_at": "2026-09-09T10:08:30.205878"
       }
     ],
     "Linux": [
@@ -647,7 +764,12 @@
         },
         "risk_score": 5,
         "status": "ONLINE",
-        "last_updated": "2026-09-07T17:23:20.921789"
+        "last_updated": "2026-09-07T17:23:20.921789",
+        "trust_score": 92,
+        "trust_level": "CRITICAL_ASSET",
+        "shadow_flag": false,
+        "first_seen": "2026-09-09T10:07:46.190379",
+        "last_change_time": "2026-09-07T17:23:20.921789"
       }
     ]
   },
@@ -678,7 +800,12 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.021049"
+      "last_updated": "2026-09-07T17:23:20.021049",
+      "trust_score": 82,
+      "trust_level": "TRUSTED",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.021049"
     },
     {
       "id": 2,
@@ -705,7 +832,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.072387"
+      "last_updated": "2026-09-07T17:23:20.072387",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.072387"
     },
     {
       "id": 3,
@@ -732,7 +864,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.121952"
+      "last_updated": "2026-09-07T17:23:20.121952",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.121952"
     },
     {
       "id": 4,
@@ -759,7 +896,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.172589"
+      "last_updated": "2026-09-07T17:23:20.172589",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.172589"
     },
     {
       "id": 5,
@@ -786,7 +928,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.221340"
+      "last_updated": "2026-09-07T17:23:20.221340",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.221340"
     },
     {
       "id": 6,
@@ -813,7 +960,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.273932"
+      "last_updated": "2026-09-07T17:23:20.273932",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.273932"
     },
     {
       "id": 7,
@@ -840,7 +992,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.331504"
+      "last_updated": "2026-09-07T17:23:20.331504",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.331504"
     },
     {
       "id": 8,
@@ -867,7 +1024,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.383503"
+      "last_updated": "2026-09-07T17:23:20.383503",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.383503"
     },
     {
       "id": 9,
@@ -893,7 +1055,12 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.432576"
+      "last_updated": "2026-09-07T17:23:20.432576",
+      "trust_score": 77,
+      "trust_level": "TRUSTED",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.432576"
     },
     {
       "id": 10,
@@ -921,7 +1088,12 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.483717"
+      "last_updated": "2026-09-07T17:23:20.483717",
+      "trust_score": 82,
+      "trust_level": "TRUSTED",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.483717"
     },
     {
       "id": 11,
@@ -948,7 +1120,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.538341"
+      "last_updated": "2026-09-07T17:23:20.538341",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.538341"
     },
     {
       "id": 12,
@@ -975,7 +1152,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.587946"
+      "last_updated": "2026-09-07T17:23:20.587946",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.587946"
     },
     {
       "id": 13,
@@ -1002,7 +1184,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.637523"
+      "last_updated": "2026-09-07T17:23:20.637523",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.637523"
     },
     {
       "id": 14,
@@ -1029,7 +1216,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.686266"
+      "last_updated": "2026-09-07T17:23:20.686266",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.686266"
     },
     {
       "id": 15,
@@ -1056,7 +1248,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.742990"
+      "last_updated": "2026-09-07T17:23:20.742990",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.742990"
     },
     {
       "id": 16,
@@ -1083,7 +1280,12 @@
       },
       "risk_score": 1,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.813277"
+      "last_updated": "2026-09-07T17:23:20.813277",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.813277"
     },
     {
       "id": 17,
@@ -1110,7 +1312,13 @@
       },
       "risk_score": 3,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.871425"
+      "last_updated": "2026-09-07T17:23:20.871425",
+      "trust_score": 52,
+      "trust_level": "MONITORED",
+      "shadow_flag": true,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.871425",
+      "shadow_detected_at": "2026-09-09T10:08:30.205878"
     },
     {
       "id": 18,
@@ -1137,7 +1345,12 @@
       },
       "risk_score": 5,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.921789"
+      "last_updated": "2026-09-07T17:23:20.921789",
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.921789"
     },
     {
       "id": 19,
@@ -1163,7 +1376,12 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.971545"
+      "last_updated": "2026-09-07T17:23:20.971545",
+      "trust_score": 77,
+      "trust_level": "TRUSTED",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:20.971545"
     },
     {
       "id": 20,
@@ -1186,7 +1404,13 @@
       },
       "risk_score": 7,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:21.669944"
+      "last_updated": "2026-09-07T17:23:21.669944",
+      "trust_score": 37,
+      "trust_level": "SUSPICIOUS",
+      "shadow_flag": true,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:21.669944",
+      "shadow_detected_at": "2026-09-09T10:08:30.205878"
     },
     {
       "id": 21,
@@ -1212,7 +1436,12 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:23.160597"
+      "last_updated": "2026-09-07T17:23:23.160597",
+      "trust_score": 77,
+      "trust_level": "TRUSTED",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:23.160597"
     },
     {
       "id": 22,
@@ -1238,7 +1467,12 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:23.594796"
+      "last_updated": "2026-09-07T17:23:23.594796",
+      "trust_score": 77,
+      "trust_level": "TRUSTED",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:23.594796"
     },
     {
       "id": 23,
@@ -1264,7 +1498,12 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:23.741437"
+      "last_updated": "2026-09-07T17:23:23.741437",
+      "trust_score": 77,
+      "trust_level": "TRUSTED",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:23.741437"
     },
     {
       "id": 24,
@@ -1290,7 +1529,12 @@
       },
       "risk_score": 0,
       "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:23.806357"
+      "last_updated": "2026-09-07T17:23:23.806357",
+      "trust_score": 77,
+      "trust_level": "TRUSTED",
+      "shadow_flag": false,
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_change_time": "2026-09-07T17:23:23.806357"
     }
   ]
 }

@@ -1,0 +1,32 @@
+{
+  "scan_time": "2026-09-09T10:08:30.208930",
+  "total_assets": 24,
+  "shadows_detected": 2,
+  "flagged_count": 2,
+  "shadows": [
+    {
+      "ip": "192.168.0.51",
+      "hostname": "192.168.0.51",
+      "type": "Windows",
+      "mac": "Unknown",
+      "trust_score": 52,
+      "risk_score": 3,
+      "detected_at": "2026-09-09T10:08:30.205878",
+      "reason": "MAC address cannot be determined",
+      "confidence": "HIGH",
+      "recommended_action": "Investigate via network scan"
+    },
+    {
+      "ip": "192.168.0.21",
+      "hostname": "192.168.0.21",
+      "type": "Unknown",
+      "mac": "Unknown",
+      "trust_score": 37,
+      "risk_score": 7,
+      "detected_at": "2026-09-09T10:08:30.205878",
+      "reason": "MAC address cannot be determined",
+      "confidence": "HIGH",
+      "recommended_action": "Investigate via network scan"
+    }
+  ]
+}
