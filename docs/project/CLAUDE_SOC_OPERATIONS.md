@@ -531,7 +531,84 @@ Track and improve:
 
 ---
 
+## KNOWN LIMITATIONS & PHASE 3 ROADMAP
+
+### Skills as Interface Scaffolds (Phase 2)
+- **Current Scope**: 5 skills structure & interface defined, function stubs in place
+- **Mock Implementation**: All skill actions (launch_scan, analyze_logs, etc.) currently return mock data
+- **Actual Integration**: Direct Nessus API, WAAP system, and subprocess execution planned for Phase 3
+- **No Production Impact**: Stubs allow architecture validation without external dependencies
+- **API Ready**: All interface signatures finalized for Phase 3 implementation
+
+### Trust Score Thresholds - Empirical Tuning Required
+- **Phase 2 Settings (Based on Initial Analysis)**:
+  - MAC stability: 40 points (no changes = full credit)
+  - Risk trend comparison: 1.1x and 1.5x multipliers
+  - First observation baseline: 8 points (neutral, not zero)
+- **Validation Status**: Values chosen from domain knowledge, not yet validated on production data
+- **Phase 3 Calibration**: After 30 days of operational data, adjust multipliers based on:
+  - False positive/negative rates in shadow detection
+  - Asset population characteristics
+  - Network change patterns
+- **Data Source**: asset_trust_history.json accumulates patterns for analysis
+
+### Shadow Asset Classification - Future Refinement
+- **Phase 2 Detection**: Binary - "Unknown" vs "Known"
+- **Phase 3 Enhancement**:
+  - Separate `UNCLASSIFIED_KNOWN_DEVICE` (MAC known, OS unknown)
+  - Separate `ROGUE_SHADOW_ASSET` (completely unknown MAC)
+  - Add `POTENTIALLY_COMPROMISED` (behavioral anomaly)
+- **Behavioral Analysis**: Phase 3 will add anomaly scoring based on:
+  - Network traffic patterns
+  - Service fingerprinting consistency
+  - Temporal activity analysis
+
+### Skill Orchestration - Sequential Execution Only
+- **Phase 2 Limitation**: Skills execute sequentially, no parallelization
+- **Phase 3 Roadmap**: Implement parallel skill execution with dependency graph
+- **Current Implication**: Large scan batches will take longer
+- **Workaround**: Manual skill invocation for high-priority assets
+
+### External Service Dependencies - Not Yet Integrated
+- **Nessus API**: Interface ready, actual API calls in Phase 3
+- **WAAP Systems**: Interface ready, actual ingestion in Phase 3
+- **GitHub API**: Ready (used for incident creation)
+- **Telegram**: Ready (used for alerts)
+- **Missing**: Slack integration, email summaries (planned Phase 3)
+
+### Compliance & Audit Trail - Foundation Ready
+- **Phase 2 Scope**: Basic logging to state files + GitHub incidents
+- **Phase 3 Enhancement**: Formal audit log with tamper-proof timestamping
+- **Phase 4 Goal**: Full SOX/ISO27001 compliance package
+
+---
+
+## Phase 3 Priorities
+
+1. **Skills API Integration** (Weeks 1-2)
+   - [ ] Nessus API client (launch_scan, poll_results)
+   - [ ] WAAP log ingestion
+   - [ ] Asset profiling subprocess calls
+
+2. **Trust Score Calibration** (Weeks 2-3)
+   - [ ] Collect operational metrics
+   - [ ] Analyze false positive patterns
+   - [ ] Adjust thresholds
+
+3. **Shadow Classification Enhancement** (Week 3)
+   - [ ] Implement behavioral scoring
+   - [ ] Add device fingerprinting
+   - [ ] Refine rogue asset detection
+
+4. **Performance & Scale** (Weeks 4-5)
+   - [ ] Parallel skill execution
+   - [ ] Batch processing optimization
+   - [ ] Database indexing for large datasets
+
+---
+
 **Framework Version**: 1.0.0  
 **Last Updated**: 2026-09-09  
-**Status**: Implementation Phase  
-**Next Review**: 2026-09-16
+**Status**: Implementation Phase (Phase 2 Complete)  
+**CTO Approved**: Yes (with known limitations)  
+**Next Review**: Phase 3 Kickoff (Target: Q4 2026)
