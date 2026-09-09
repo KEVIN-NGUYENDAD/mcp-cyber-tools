@@ -104,6 +104,26 @@
 | **TROUBLESHOOTING.md** | 10 min | Common issues and solutions | Everyone |
 | **GIT_STATE.md** | 5 min | Git commit history and status | DevOps, Backend |
 
+### Authority & Repository Management
+
+| File | Length | Purpose | Audience |
+|------|--------|---------|----------|
+| **REPOSITORY_AUTHORITY.md** | 5 min | Source of Truth = develop branch (OFFICIAL) | Everyone |
+| **GIT_BRANCH_ANALYSIS.md** | 10 min | Technical analysis of develop vs docs-sync | Developers |
+| **BRANCH_ARCHIVAL_PLAN.md** | 5 min | Strategy for docs-sync deprecation | DevOps, Leads |
+
+### Strategic Reviews & Planning
+
+| File | Length | Purpose | Audience |
+|------|--------|---------|----------|
+| **CTO_AUDIT.md** | 10 min | Technical maturity assessment (6.5/10) | Leadership, Architects |
+| **TECHNICAL_DEBT_REGISTER.md** | 5 min | Debt catalog and prioritization | Developers, Leads |
+| **SECURITY_REVIEW.md** | 3 min | Security assessment findings | Security, Leadership |
+| **NEXT_90_DAYS_ROADMAP.md** | 3 min | Strategic priorities and timeline | Leadership, Product |
+| **EXECUTIVE_SUMMARY.md** | 5 min | Current state + risks + opportunities | Everyone |
+| **REPO_HEALTH.md** | 5 min | Repository and documentation health | DevOps, Leads |
+| **DOCUMENTATION_COVERAGE.md** | 5 min | Complete doc inventory and status | Everyone |
+
 ---
 
 ## Quick Facts
