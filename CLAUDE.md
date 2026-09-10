@@ -53,6 +53,39 @@ Co-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>
 
 ---
 
+## 💬 Quy tắc Giao tiếp (Communication Rules)
+
+### Ngôn ngữ & Lối trình bày
+- **Luôn trả lời bằng tiếng Việt**: Tất cả giải thích, tài liệu, và phản hồi phải bằng tiếng Việt
+- **Trình bày ngắn gọn & súc tích**: 
+  - Tránh dài dòng, đi thẳng vào vấn đề
+  - Ưu tiên kết quả và giải pháp
+  - Sử dụng bullet points hoặc structured format
+- **Dễ hiểu**: Giải thích phức tạp bằng ví dụ cụ thể và từng bước rõ ràng
+
+### Thuật ngữ Kỹ thuật
+- **Giữ thuật ngữ tiếng Anh chuẩn**: DFIR, SOC, Commit, PR, SIEM, MCP, etc.
+- **Giải thích bằng tiếng Việt**: 
+  - Commit = Lần ghi nhân code (Lần commit)
+  - PR = Yêu cầu hợp nhất code (Pull Request)
+  - DFIR = Điều tra và phục hồi dữ liệu số hóa
+  - SOC = Trung tâm vận hành bảo mật
+  - SIEM = Hệ thống quản lý sự kiện bảo mật
+  - MCP = Giao thức bối cảnh mô hình
+
+### Ví dụ Giao tiếp Tốt
+```
+❌ KHÔNG TỐT:
+"The trust engine's source credibility scoring mechanism exhibits suboptimal performance characteristics..."
+
+✅ TỐT:
+"Trust Engine (hệ thống xác minh độ tin cậy) hiện đang có vấn đề:
+- Điểm số tin cậy tính toán chậm
+- Độ chính xác chưa đạt 90%"
+```
+
+---
+
 ## 🛠️ Lệnh Chạy Công Cụ (Command Reference)
 
 ### Lệnh phát triển
@@ -99,6 +132,27 @@ npm run deploy:staging
 
 ---
 
+## 💬 Quy tắc Giao tiếp (Communication Rules)
+
+### Ngôn ngữ & Phong cách
+- **Luôn trả lời và giải thích bằng tiếng Việt** - Tất cả nội dung hướng dẫn, giải thích, và kết quả phải bằng tiếng Việt
+- **Ngắn gọn, súc tích, dễ hiểu** - Tránh văn vở, đi thẳng vào giải pháp và kết quả thay vì lý thuyết dài dòng
+- **Thuật ngữ kỹ thuật chuẩn** - Giữ các thuật ngữ tiếng Anh phổ biến trong ngành (DFIR, SOC, Commit, PR, MCP, API, etc.) nhưng luôn giải thích bằng tiếng Việt khi cần thiết
+- **Trực tiếp và hành động** - Tập trung vào "làm gì bây giờ" thay vì "tại sao" nếu ngữ cảnh đã rõ
+
+### Ví dụ Giao tiếp Tốt
+```
+❌ Xấu: "Chúng tôi cần thực hiện một số tùy chỉnh liên quan đến việc xử lý các yếu tố nhất định trong quy trình."
+
+✅ Tốt: "Cần cập nhật scheduler để chạy `collect_soc_intelligence.py` sau Nessus collector. Tôi sẽ sửa file scheduler.py ngay."
+
+❌ Xấu: "PR là một khái niệm trong Git workflow..."
+
+✅ Tốt: "Merge yêu cầu (PR - Pull Request) vào branch `develop` sau khi tests pass."
+```
+
+---
+
 ## 🔐 Security Policies
 
 ### Incident Handling
@@ -131,5 +185,5 @@ npm run deploy:staging
 
 ---
 
-**Last Updated**: 2026-09-10  
+**Last Updated**: 2026-09-10 (Communication Rules added)  
 **Maintainer**: Kevin (Tam) Nguyen - Security Architect
