@@ -1,4 +1,4 @@
-# PROJECT_STATE.md - Current Status & Phase
+﻿# PROJECT_STATE.md - Current Status & Phase
 
 **Last Updated**: 2026-09-10  
 **Project**: SentinelOps MCP Cyber Tools  
