@@ -872,19 +872,19 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
     try {
       switch (action) {
         case 'details':
-          await this.showIncidentDetails(query.message.chat.id, incidentId, query.id);
+          await this.showIncidentDetails(query.message.chat.id, incidentId, query.id, query.message.message_id);
           break;
         case 'runbook':
-          await this.showRunbook(query.message.chat.id, incidentId, query.id);
+          await this.showRunbook(query.message.chat.id, incidentId, query.id, query.message.message_id);
           break;
         case 'validate':
-          await this.showValidation(query.message.chat.id, incidentId, query.id);
+          await this.showValidation(query.message.chat.id, incidentId, query.id, query.message.message_id);
           break;
         case 'approve':
-          await this.showApproval(query.message.chat.id, incidentId, query.id);
+          await this.showApproval(query.message.chat.id, incidentId, query.id, query.message.message_id);
           break;
         case 'close':
-          await this.closeIncident(query.message.chat.id, incidentId, query.id);
+          await this.closeIncident(query.message.chat.id, incidentId, query.id, query.message.message_id);
           break;
         default:
           await this.bot.answerCallbackQuery(query.id, 'Unknown action');
@@ -895,7 +895,7 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
     }
   }
 
-  async showIncidentDetails(chatId, incidentId, queryId) {
+  async showIncidentDetails(chatId, incidentId, queryId, messageId) {
     try {
       const incident = await this.getIncident(incidentId);
 
@@ -934,7 +934,7 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
 
       await this.bot.editMessageText(details, {
         chat_id: chatId,
-        message_id: undefined,
+        message_id: messageId,
         reply_markup: { inline_keyboard: keyboard },
         parse_mode: 'Markdown'
       });
@@ -946,7 +946,7 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
     }
   }
 
-  async showRunbook(chatId, incidentId, queryId) {
+  async showRunbook(chatId, incidentId, queryId, messageId) {
     try {
       const incident = await this.getIncident(incidentId);
 
@@ -994,7 +994,7 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
 
       await this.bot.editMessageText(runbook, {
         chat_id: chatId,
-        message_id: undefined,
+        message_id: messageId,
         reply_markup: { inline_keyboard: keyboard },
         parse_mode: 'Markdown'
       });
@@ -1006,7 +1006,7 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
     }
   }
 
-  async showValidation(chatId, incidentId, queryId) {
+  async showValidation(chatId, incidentId, queryId, messageId) {
     try {
       const incident = await this.getIncident(incidentId);
 
@@ -1055,7 +1055,7 @@ ${evidenceList || 'No evidence'}
 
       await this.bot.editMessageText(validation, {
         chat_id: chatId,
-        message_id: undefined,
+        message_id: messageId,
         reply_markup: { inline_keyboard: keyboard },
         parse_mode: 'Markdown'
       });
@@ -1067,7 +1067,7 @@ ${evidenceList || 'No evidence'}
     }
   }
 
-  async showApproval(chatId, incidentId, queryId) {
+  async showApproval(chatId, incidentId, queryId, messageId) {
     try {
       const incident = await this.getIncident(incidentId);
 
@@ -1104,7 +1104,7 @@ All remediation requires explicit human authorization.
 
       await this.bot.editMessageText(approval, {
         chat_id: chatId,
-        message_id: undefined,
+        message_id: messageId,
         reply_markup: { inline_keyboard: keyboard },
         parse_mode: 'Markdown'
       });
@@ -1116,7 +1116,7 @@ All remediation requires explicit human authorization.
     }
   }
 
-  async closeIncident(chatId, incidentId, queryId) {
+  async closeIncident(chatId, incidentId, queryId, messageId) {
     try {
       const incident = await this.getIncident(incidentId);
 
@@ -1150,7 +1150,7 @@ All remediation requires explicit human authorization.
 
       await this.bot.editMessageText(closed, {
         chat_id: chatId,
-        message_id: undefined,
+        message_id: messageId,
         reply_markup: { inline_keyboard: keyboard },
         parse_mode: 'Markdown'
       });
