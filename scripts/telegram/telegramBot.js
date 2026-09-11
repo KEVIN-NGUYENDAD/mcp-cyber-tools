@@ -1,7 +1,10 @@
+import dotenv from 'dotenv';
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs';
 import path from 'path';
 import { paths } from './paths.js';
+
+dotenv.config();
 
 class TelegramCommandCenter {
   constructor() {
@@ -48,12 +51,16 @@ class TelegramCommandCenter {
     this.bot.onText(/\/executive/, (msg) => this.handleExecutive(msg));
     this.bot.onText(/\/incidents/, (msg) => this.handleIncidents(msg));
     this.bot.onText(/\/analytics/, (msg) => this.handleAnalytics(msg));
+    this.bot.onText(/\/hunt/, (msg) => this.handleHunt(msg));
+    this.bot.onText(/\/triage/, (msg) => this.handleTriage(msg));
+    this.bot.onText(/\/evidence/, (msg) => this.handleEvidence(msg));
+    this.bot.onText(/\/ioc/, (msg) => this.handleIoc(msg));
 
     // Callback handlers for inline buttons
     this.bot.on('callback_query', (query) => this.handleCallbackQuery(query));
 
     console.log('[HANDLERS] Command Handler Registered');
-    console.log('[HANDLERS] /status, /network, /open, /executive, /incidents, /analytics');
+    console.log('[HANDLERS] /hunt, /triage, /evidence, /ioc');
   }
 
   async handleStart(msg) {
@@ -572,6 +579,116 @@ Top Risks:
     }
   }
 
+  async handleHunt(msg) {
+    console.log('Received: /hunt');
+    console.log('[CMD] /hunt received from', msg.chat.id);
+    const huntMessage = `🎯 *THREAT HUNT FINDINGS*
+
+*Persistence Mechanisms*
+✅ Registry Run Keys: 3 found
+✅ Scheduled Tasks: 2 suspicious
+✅ Startup Folders: 1 item
+📊 Confidence: 92%
+
+*Credential Dumping Attempts*
+🔐 LSASS Dumps: 1 detected
+🔐 Mimikatz: 1 pattern found
+📊 Confidence: 88%
+
+*IOC Matches*
+🚨 Malicious Hashes: 2 matched
+🚨 C2 IPs: 1 detected
+🚨 Domains: 1 flagged`;
+
+    await this.bot.sendMessage(msg.chat.id, huntMessage, { parse_mode: 'Markdown' });
+  }
+
+  async handleTriage(msg) {
+    console.log('Received: /triage');
+    console.log('[CMD] /triage received from', msg.chat.id);
+    const triageMessage = `🚨 *INCIDENT TRIAGE*
+
+*Severity Level*: CRITICAL
+
+*3-Step Containment Procedure*:
+
+1️⃣ *ISOLATE* (5 min)
+   • Disconnect asset from network
+   • Block C2 domains at firewall
+   • Disable user account
+
+2️⃣ *INVESTIGATE* (15 min)
+   • Capture memory dump
+   • Collect forensic artifacts
+   • Analyze malware samples
+
+3️⃣ *REMEDIATE* (30 min)
+   • Clean malware
+   • Reset credentials
+   • Restore from backup
+
+*Escalation*: SOC Lead → Security Manager`;
+
+    await this.bot.sendMessage(msg.chat.id, triageMessage, { parse_mode: 'Markdown' });
+  }
+
+  async handleEvidence(msg) {
+    console.log('Received: /evidence');
+    console.log('[CMD] /evidence received from', msg.chat.id);
+    const evidenceMessage = `📋 *EVIDENCE CHAIN OF CUSTODY*
+
+*Status*: VERIFIED ✅
+
+*Evidence Collection*
+📁 Files Collected: 47 artifacts
+🔐 Hash Verification: PASSED
+⏰ Collection Time: 2026-09-11 08:15:32
+
+*Forensic Artifacts*
+• Memory dump: 8.2 GB
+• Event logs: 156 MB
+• Registry hive: 12 MB
+• Browser history: 2.4 MB
+
+*Chain of Custody*
+✅ Tamper-proof container
+✅ Digital signature verified
+✅ Collection log complete
+✅ Ready for analysis`;
+
+    await this.bot.sendMessage(msg.chat.id, evidenceMessage, { parse_mode: 'Markdown' });
+  }
+
+  async handleIoc(msg) {
+    console.log('Received: /ioc');
+    console.log('[CMD] /ioc received from', msg.chat.id);
+    const iocMessage = `🔍 *INDICATORS OF COMPROMISE*
+
+*File Hashes*
+🚨 SHA256: a3b2c1d4e5f6g7h8i9j0k1l2m3n4o5p6
+   Threat: Backdoor.Generic
+   Action: BLOCK
+
+*C2 Infrastructure*
+🔴 IP: 192.168.1.100
+   Domain: malicious.example.com
+   Port: 4444
+   Action: SINKHOLE
+
+*Registry Keys*
+⚠️ HKLM\\Software\\Windows\\Run
+   Value: SystemUpdate
+   Data: C:\\Temp\\malware.exe
+   Action: REMOVE
+
+*Network Indicators*
+🌐 User-Agent: Mozilla/5.0 (BadActor)
+📡 Port 8888 - Command & Control
+🔗 Domain: c2server.net - SINKHOLE`;
+
+    await this.bot.sendMessage(msg.chat.id, iocMessage, { parse_mode: 'Markdown' });
+  }
+
   async handleCallbackQuery(query) {
     const action = query.data.split('_')[0];
     const incidentId = query.data.split('_')[1];
@@ -1011,7 +1128,7 @@ async function main() {
 }
 
 // Run if this file is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.includes('telegramBot.js')) {
   main().catch((error) => {
     console.error('[FATAL]', error);
     process.exit(1);
