@@ -580,27 +580,71 @@ Top Risks:
   }
 
   async handleHunt(msg) {
-    console.log('Received: /hunt');
     console.log('[CMD] /hunt received from', msg.chat.id);
-    const huntMessage = `🎯 *THREAT HUNT FINDINGS*
+    try {
+      // Load incidents data
+      console.log('[DATA] Loading incidents...');
+      let incidents = { total_incidents: 0, by_severity: { CRITICAL: 0, HIGH: 0 }, by_status: { OPEN: 0 }, incidents: [] };
 
-*Persistence Mechanisms*
-✅ Registry Run Keys: 3 found
-✅ Scheduled Tasks: 2 suspicious
-✅ Startup Folders: 1 item
-📊 Confidence: 92%
+      if (fs.existsSync(paths.incidents)) {
+        incidents = JSON.parse(fs.readFileSync(paths.incidents, 'utf8'));
+        console.log('[DATA] incidents loaded:', { total: incidents.total_incidents, critical: incidents.by_severity?.CRITICAL, high: incidents.by_severity?.HIGH });
+      } else {
+        console.log('[DATA] incidents file not found');
+      }
 
-*Credential Dumping Attempts*
-🔐 LSASS Dumps: 1 detected
-🔐 Mimikatz: 1 pattern found
-📊 Confidence: 88%
+      // Load intelligence data
+      console.log('[DATA] Loading SOC intelligence...');
+      let intelligence = { extractors: {}, summary: {} };
 
-*IOC Matches*
-🚨 Malicious Hashes: 2 matched
-🚨 C2 IPs: 1 detected
-🚨 Domains: 1 flagged`;
+      if (fs.existsSync(paths.socIntelligence)) {
+        intelligence = JSON.parse(fs.readFileSync(paths.socIntelligence, 'utf8'));
+        console.log('[DATA] intelligence loaded');
+      } else {
+        console.log('[DATA] intelligence file not found');
+      }
 
-    await this.bot.sendMessage(msg.chat.id, huntMessage, { parse_mode: 'Markdown' });
+      // Extract findings
+      const openIncidents = incidents.by_status?.OPEN || 0;
+      const criticalCount = incidents.by_severity?.CRITICAL || 0;
+      const highCount = incidents.by_severity?.HIGH || 0;
+
+      // Get top 3 recent findings
+      const recentFindings = (incidents.incidents || [])
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 3);
+
+      // Build findings list
+      const findingsList = recentFindings
+        .map((inc, idx) => `${idx + 1}. *${inc.title}* (${inc.severity})`)
+        .join('\n');
+
+      // Get recommended actions
+      const recommendedActions = recentFindings
+        .map((inc, idx) => `${idx + 1}. ${inc.recommended_action}`)
+        .join('\n');
+
+      // Build response
+      const huntMessage = `🎯 *THREAT HUNT RESULTS*
+
+*Open Incidents*: ${openIncidents}
+🔴 *CRITICAL*: ${criticalCount}
+🟠 *HIGH*: ${highCount}
+
+*Recent Findings*:
+${findingsList || '• No findings detected'}
+
+*Recommended Actions*:
+${recommendedActions || '• No actions required'}
+
+_Last updated: ${new Date().toISOString().substring(0, 19)}_`;
+
+      console.log('[RESP] hunt response sent');
+      await this.bot.sendMessage(msg.chat.id, huntMessage, { parse_mode: 'Markdown' });
+    } catch (error) {
+      console.error('[ERROR] handleHunt failed:', error.message);
+      await this.bot.sendMessage(msg.chat.id, '⚠️ No intelligence data available', { parse_mode: 'Markdown' });
+    }
   }
 
   async handleTriage(msg) {

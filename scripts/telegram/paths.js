@@ -17,6 +17,7 @@ export const paths = {
 
   // Common state files
   incidents: path.join(PROJECT_ROOT, 'state', 'incidents.json'),
+  socIntelligence: path.join(PROJECT_ROOT, 'state', 'soc_intelligence.json'),
   assets: path.join(PROJECT_ROOT, 'state', 'assets.json'),
   riskScore: path.join(PROJECT_ROOT, 'state', 'risk_score.json'),
   waapStatus: path.join(PROJECT_ROOT, 'state', 'waap_status.json'),
