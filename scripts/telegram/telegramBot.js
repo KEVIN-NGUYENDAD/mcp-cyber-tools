@@ -648,89 +648,221 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
   }
 
   async handleTriage(msg) {
-    console.log('Received: /triage');
     console.log('[CMD] /triage received from', msg.chat.id);
-    const triageMessage = `🚨 *INCIDENT TRIAGE*
+    try {
+      // Load incidents data
+      console.log('[DATA] Loading incidents for triage...');
+      let incidents = { total_incidents: 0, by_severity: { CRITICAL: 0, HIGH: 0 }, incidents: [] };
 
-*Severity Level*: CRITICAL
+      if (fs.existsSync(paths.incidents)) {
+        incidents = JSON.parse(fs.readFileSync(paths.incidents, 'utf8'));
+        console.log('[DATA] incidents loaded:', { total: incidents.total_incidents, critical: incidents.by_severity?.CRITICAL, high: incidents.by_severity?.HIGH });
+      } else {
+        console.log('[DATA] incidents file not found');
+      }
 
-*3-Step Containment Procedure*:
+      // Extract critical and high incidents
+      const allIncidents = incidents.incidents || [];
+      const criticalIncidents = allIncidents.filter(i => i.severity === 'CRITICAL').slice(0, 3);
+      const highIncidents = allIncidents.filter(i => i.severity === 'HIGH').slice(0, 2);
 
-1️⃣ *ISOLATE* (5 min)
-   • Disconnect asset from network
-   • Block C2 domains at firewall
-   • Disable user account
+      // Build critical list
+      const criticalList = criticalIncidents
+        .map((inc, idx) => `${idx + 1}. *${inc.title}*\n   Status: ${inc.status}`)
+        .join('\n');
 
-2️⃣ *INVESTIGATE* (15 min)
-   • Capture memory dump
-   • Collect forensic artifacts
-   • Analyze malware samples
+      // Build high list
+      const highList = highIncidents
+        .map((inc, idx) => `${idx + 1}. *${inc.title}*\n   Status: ${inc.status}`)
+        .join('\n');
 
-3️⃣ *REMEDIATE* (30 min)
-   • Clean malware
-   • Reset credentials
-   • Restore from backup
+      // Get top 3 recommended actions
+      const topIncidents = allIncidents
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 3);
 
-*Escalation*: SOC Lead → Security Manager`;
+      const recommendedActions = topIncidents
+        .map((inc, idx) => `${idx + 1}. ${inc.recommended_action}`)
+        .join('\n');
 
-    await this.bot.sendMessage(msg.chat.id, triageMessage, { parse_mode: 'Markdown' });
+      // Build response
+      const triageMessage = `🚨 *INCIDENT TRIAGE*
+
+*Tổng sự cố mở*: ${incidents.total_incidents}
+
+*🔴 CRITICAL INCIDENTS* (${incidents.by_severity?.CRITICAL || 0}):
+${criticalList || '• No critical incidents'}
+
+*🟠 HIGH PRIORITY* (${incidents.by_severity?.HIGH || 0}):
+${highList || '• No high incidents'}
+
+*📋 Khuyến nghị xử lý*:
+${recommendedActions || '• No recommendations'}
+
+_Last updated: ${new Date().toISOString().substring(0, 19)}_`;
+
+      console.log('[RESP] triage response sent');
+      await this.bot.sendMessage(msg.chat.id, triageMessage, { parse_mode: 'Markdown' });
+    } catch (error) {
+      console.error('[ERROR] handleTriage failed:', error.message);
+      await this.bot.sendMessage(msg.chat.id, '⚠️ No triage data available', { parse_mode: 'Markdown' });
+    }
   }
 
   async handleEvidence(msg) {
-    console.log('Received: /evidence');
     console.log('[CMD] /evidence received from', msg.chat.id);
-    const evidenceMessage = `📋 *EVIDENCE CHAIN OF CUSTODY*
+    try {
+      // Load notification history for evidence/reports
+      console.log('[DATA] Loading evidence data...');
+      let notificationHistory = { notifications: [] };
+      let timeline = { events: [] };
 
-*Status*: VERIFIED ✅
+      if (fs.existsSync(paths.notificationHistory)) {
+        notificationHistory = JSON.parse(fs.readFileSync(paths.notificationHistory, 'utf8'));
+        console.log('[DATA] notification history loaded:', { count: notificationHistory.notifications?.length });
+      } else {
+        console.log('[DATA] notification history file not found');
+      }
+
+      if (fs.existsSync(paths.timeline)) {
+        timeline = JSON.parse(fs.readFileSync(paths.timeline, 'utf8'));
+        console.log('[DATA] timeline loaded:', { events: timeline.events?.length });
+      } else {
+        console.log('[DATA] timeline file not found');
+      }
+
+      // Extract latest reports/evidence
+      const allNotifications = notificationHistory.notifications || [];
+      const latestNotifications = allNotifications
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 3);
+
+      // Build evidence list
+      const evidenceList = latestNotifications
+        .map((notif, idx) => `${idx + 1}. ${notif.title || notif.event_type} (${notif.timestamp?.substring(0, 10) || 'Unknown'})`)
+        .join('\n');
+
+      // Calculate chain of custody status
+      const reportCount = allNotifications.length;
+      const custodyValid = reportCount > 0;
+
+      // Build response
+      const evidenceMessage = `📋 *EVIDENCE CHAIN OF CUSTODY*
+
+*Status*: ${custodyValid ? 'VERIFIED ✅' : '⚠️ PENDING'}
 
 *Evidence Collection*
-📁 Files Collected: 47 artifacts
-🔐 Hash Verification: PASSED
-⏰ Collection Time: 2026-09-11 08:15:32
+📁 Reports Collected: ${reportCount} artifacts
+🔐 Hash Verification: ${custodyValid ? 'PASSED' : 'PENDING'}
+⏰ Last Updated: ${new Date().toISOString().substring(0, 19)}
 
-*Forensic Artifacts*
-• Memory dump: 8.2 GB
-• Event logs: 156 MB
-• Registry hive: 12 MB
-• Browser history: 2.4 MB
+*Latest Reports*:
+${evidenceList || '• No evidence collected'}
 
 *Chain of Custody*
-✅ Tamper-proof container
-✅ Digital signature verified
-✅ Collection log complete
-✅ Ready for analysis`;
+${custodyValid ? '✅ Tamper-proof container' : '⚠️ Containers pending'}
+${custodyValid ? '✅ Digital signature verified' : '⚠️ Signatures pending'}
+${custodyValid ? '✅ Collection log complete' : '⚠️ Logs incomplete'}
+${custodyValid ? '✅ Ready for analysis' : '⚠️ Incomplete'}`;
 
-    await this.bot.sendMessage(msg.chat.id, evidenceMessage, { parse_mode: 'Markdown' });
+      console.log('[RESP] evidence response sent');
+      await this.bot.sendMessage(msg.chat.id, evidenceMessage, { parse_mode: 'Markdown' });
+    } catch (error) {
+      console.error('[ERROR] handleEvidence failed:', error.message);
+      await this.bot.sendMessage(msg.chat.id, '⚠️ No evidence data available', { parse_mode: 'Markdown' });
+    }
   }
 
   async handleIoc(msg) {
-    console.log('Received: /ioc');
     console.log('[CMD] /ioc received from', msg.chat.id);
-    const iocMessage = `🔍 *INDICATORS OF COMPROMISE*
+    try {
+      // Load hunting data
+      console.log('[DATA] Loading IOC hunting data...');
+      const huntingFiles = [
+        paths.hunting_credential_dumping || path.join(paths.stateDir, 'hunting_credential_dumping.json'),
+        paths.hunting_lateral_movement || path.join(paths.stateDir, 'hunting_lateral_movement.json'),
+        paths.hunting_persistence || path.join(paths.stateDir, 'hunting_persistence.json'),
+        paths.hunting_suspicious_processes || path.join(paths.stateDir, 'hunting_suspicious_processes.json')
+      ];
 
-*File Hashes*
-🚨 SHA256: a3b2c1d4e5f6g7h8i9j0k1l2m3n4o5p6
-   Threat: Backdoor.Generic
-   Action: BLOCK
+      let allIndicators = [];
+      let totalIocs = 0;
+      const threatCategories = {
+        'Credential Access': [],
+        'Lateral Movement': [],
+        'Persistence': [],
+        'Suspicious Processes': []
+      };
 
-*C2 Infrastructure*
-🔴 IP: 192.168.1.100
-   Domain: malicious.example.com
-   Port: 4444
-   Action: SINKHOLE
+      // Read all hunting files
+      for (const file of huntingFiles) {
+        if (fs.existsSync(file)) {
+          const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+          console.log('[DATA] loaded', path.basename(file));
 
-*Registry Keys*
-⚠️ HKLM\\Software\\Windows\\Run
-   Value: SystemUpdate
-   Data: C:\\Temp\\malware.exe
-   Action: REMOVE
+          // Categorize indicators
+          if (file.includes('credential')) {
+            threatCategories['Credential Access'] = (data.indicators || []).slice(0, 2);
+          } else if (file.includes('lateral')) {
+            threatCategories['Lateral Movement'] = (data.indicators || []).slice(0, 2);
+          } else if (file.includes('persistence')) {
+            threatCategories['Persistence'] = (data.indicators || []).slice(0, 2);
+          } else if (file.includes('suspicious')) {
+            threatCategories['Suspicious Processes'] = (data.indicators || []).slice(0, 2);
+          }
 
-*Network Indicators*
-🌐 User-Agent: Mozilla/5.0 (BadActor)
-📡 Port 8888 - Command & Control
-🔗 Domain: c2server.net - SINKHOLE`;
+          totalIocs += data.total_indicators || 0;
+          allIndicators = allIndicators.concat(data.indicators || []);
+        }
+      }
 
-    await this.bot.sendMessage(msg.chat.id, iocMessage, { parse_mode: 'Markdown' });
+      // Get top critical indicators
+      const criticalIndicators = allIndicators
+        .filter(i => i.severity === 'CRITICAL')
+        .slice(0, 3);
+
+      // Build IOC list
+      const iocList = criticalIndicators
+        .map((ind, idx) => `${idx + 1}. *${ind.type}* (${ind.severity})\n   Threat: ${ind.threat_actor || 'Unknown'}`)
+        .join('\n');
+
+      // Build threat groups
+      let threatGroupsText = '';
+      for (const [category, indicators] of Object.entries(threatCategories)) {
+        if (indicators.length > 0) {
+          const types = indicators.map(i => i.type).join(', ');
+          threatGroupsText += `• ${category}: ${types}\n`;
+        }
+      }
+
+      // Get top recommendations
+      const topRecommendations = allIndicators
+        .filter(i => i.recommendation)
+        .slice(0, 3)
+        .map((ind, idx) => `${idx + 1}. ${ind.recommendation}`);
+
+      // Build response
+      const iocMessage = `🎯 *IOC SUMMARY*
+
+*Tổng IOC*: ${totalIocs}
+
+*IOC nổi bật*:
+${iocList || '• No critical indicators'}
+
+*Nhóm đe dọa*:
+${threatGroupsText || '• No threats detected'}
+
+*Khuyến nghị*:
+${topRecommendations.join('\n') || '• No recommendations'}
+
+_Last updated: ${new Date().toISOString().substring(0, 19)}_`;
+
+      console.log('[RESP] ioc response sent');
+      await this.bot.sendMessage(msg.chat.id, iocMessage, { parse_mode: 'Markdown' });
+    } catch (error) {
+      console.error('[ERROR] handleIoc failed:', error.message);
+      await this.bot.sendMessage(msg.chat.id, '⚠️ No IOC data available', { parse_mode: 'Markdown' });
+    }
   }
 
   async handleCallbackQuery(query) {
