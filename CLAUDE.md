@@ -176,14 +176,83 @@ npm run deploy:staging
 
 ---
 
+---
+
+## 🏪 PATH GOVERNANCE (SINGLE SOURCE OF TRUTH - 2026-09-11)
+
+### ✅ CONSOLIDATED PATH
+```
+C:\GitHub\mcp-cyber-tools
+```
+
+**All 7 Repositories Now at `C:\GitHub`:**
+- mcp-cyber-tools (PRIMARY - Telegram bot, SOC skills)
+- home-soc-reports
+- sentinelops-homepage
+- KEVIN-NGUYENDAD
+- cybersecurity-labs
+- network-security-audit-frontend
+- uber-order-filter
+
+See `C:\GitHub\REPO_INVENTORY.md` for complete list.
+
+### ❌ DEPRECATED PATHS (Archived)
+- `C:\Projects\` → `C:\Projects_OLD` (7-day retention)
+- `C:\Users\tamng\Projects\` → `C:\Users\tamng\Projects_OLD` (7-day retention)
+- `C:\Users\tamng\AppData\Roaming\Claude\Projects\` - Duplicates removed
+
+### Git Pre-Commit Checklist
+Before ANY change:
+```bash
+pwd  # Must show: C:\GitHub\mcp-cyber-tools
+git branch --show-current  # Must show: feature/* or hotfix/* or develop
+git status  # Review uncommitted changes
+```
+
+---
+
+## 🚀 OPERATION MODE (SPRINT B Complete)
+
+**Current Phase**: Production Stability & Bug Fixes  
+**Focus**: Runtime monitoring, telemetry, operational excellence
+
+### What's Allowed ✅
+- Bug fixes (breaking issues)
+- Runtime stability improvements
+- Error handling & graceful degradation
+- Monitoring & logging enhancements
+- Documentation updates
+
+### What's BLOCKED ❌
+- No new Sprints (Sprint C forbidden)
+- No new Skills
+- No new Tools
+- No feature expansion
+- No dashboard/UI work
+
+### Telegram Bot Deployment
+```bash
+cd C:\GitHub\mcp-cyber-tools
+node scripts/telegram/telegramBot.js
+```
+- Bot must load `.env` via `dotenv.config()`
+- Bot must stay alive (never exit)
+- All commands: `/hunt`, `/triage`, `/evidence`, `/ioc`
+- Handlers return real security data from Python skills
+
+---
+
 ## 📚 Thông tin Thêm
 
 - **Docs**: `/docs` folder - architecture, API reference, playbooks
 - **Tests**: `/tests` folder - unit, integration, E2E tests
 - **Issue Tracking**: GitHub Issues with `priority:*` labels
 - **Runbook**: `/docs/runbooks` - operational playbooks
+- **Repository Inventory**: `C:\GitHub\REPO_INVENTORY.md`
+- **Telegram Bot**: `scripts/telegram/telegramBot.js` - SOC operations center
 
 ---
 
-**Last Updated**: 2026-09-10 (Communication Rules added)  
-**Maintainer**: Kevin (Tam) Nguyen - Security Architect
+**Last Updated**: 2026-09-11 (Repository Consolidation - moved to C:\GitHub)  
+**Maintainer**: Kevin (Tam) Nguyen - Security Architect  
+**Phase**: Sprint B Complete - Operation Mode Active
