@@ -1,0 +1,23 @@
+[
+  {
+    "incident_id": "INC-0004",
+    "timestamp": "2026-09-11T20:35:55.449Z",
+    "action": "APPROVED",
+    "approver": "TelegramConsole",
+    "status": "RECORDED"
+  },
+  {
+    "incident_id": "INC-0004",
+    "timestamp": "2026-09-11T20:36:12.753Z",
+    "action": "APPROVED",
+    "approver": "TelegramConsole",
+    "status": "RECORDED"
+  },
+  {
+    "incident_id": "INC-0015",
+    "timestamp": "2026-09-11T20:36:28.576Z",
+    "action": "APPROVED",
+    "approver": "TelegramConsole",
+    "status": "RECORDED"
+  }
+]
