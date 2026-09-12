@@ -19,22 +19,23 @@ if (-not $isAdmin) {
     exit 1
 }
 
-Write-Host "✓ Running with Administrator privileges" -ForegroundColor Green
+Write-Host "[OK] Running with Administrator privileges" -ForegroundColor Green
 Write-Host ""
 
 # Set execution policy for this process
 Write-Host "Setting execution policy..." -ForegroundColor Cyan
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
 
-Write-Host "✓ Execution policy set" -ForegroundColor Green
+Write-Host "[OK] Execution policy set" -ForegroundColor Green
 Write-Host ""
 
 # Check if PM2 is installed
 Write-Host "Checking PM2 installation..." -ForegroundColor Cyan
 $pm2Check = & npm list -g pm2 2>&1
 if ($pm2Check -match "pm2") {
-    Write-Host "✓ PM2 is installed" -ForegroundColor Green
-} else {
+    Write-Host "[OK] PM2 is installed" -ForegroundColor Green
+}
+else {
     Write-Host "ERROR: PM2 is not installed globally" -ForegroundColor Red
     Write-Host "Please install PM2 first: npm install -g pm2" -ForegroundColor Yellow
     exit 1
@@ -46,9 +47,10 @@ Write-Host ""
 Write-Host "Checking pm2-windows-service module..." -ForegroundColor Cyan
 $modules = & pm2 module:list 2>&1
 if ($modules -match "pm2-windows-service") {
-    Write-Host "✓ pm2-windows-service module is installed" -ForegroundColor Green
-} else {
-    Write-Host "⚠ pm2-windows-service module not installed, installing..." -ForegroundColor Yellow
+    Write-Host "[OK] pm2-windows-service module is installed" -ForegroundColor Green
+}
+else {
+    Write-Host "[WARNING] pm2-windows-service module not installed, installing..." -ForegroundColor Yellow
     & pm2 install pm2-windows-service
     Start-Sleep -Seconds 3
 }
@@ -66,16 +68,20 @@ Write-Host "(This will create a Windows service that auto-starts PM2 processes o
 Write-Host ""
 
 # The pm2-windows-service module should handle the installation
-# If it doesn't work, try running this directly:
 $pm2ModulePath = "$env:USERPROFILE\.pm2\modules\pm2-windows-service"
 if (Test-Path "$pm2ModulePath\node_modules\pm2-windows-service\bin\pm2-service-install.cmd") {
     Write-Host "Running installer from module..." -ForegroundColor Cyan
     & "$pm2ModulePath\node_modules\pm2-windows-service\bin\pm2-service-install.cmd"
-} else {
+}
+else {
     Write-Host "Module installer not found, attempting alternative method..." -ForegroundColor Yellow
-    # Alternative: Use npm to run the module's CLI
     Write-Host "Creating Windows service with NPM..." -ForegroundColor Cyan
-    & npm run -g pm2 windows-service-install 2>&1 || Write-Host "Note: NPM script method may not be available" -ForegroundColor Yellow
+    try {
+        & npm run -g pm2 windows-service-install 2>&1
+    }
+    catch {
+        Write-Host "Note: NPM script method may not be available" -ForegroundColor Yellow
+    }
 }
 
 Write-Host ""
@@ -86,7 +92,7 @@ Start-Sleep -Seconds 2
 
 $service = Get-Service -Name "PM2*" -ErrorAction SilentlyContinue
 if ($service) {
-    Write-Host "✓ Service found!" -ForegroundColor Green
+    Write-Host "[OK] Service found!" -ForegroundColor Green
     Write-Host ""
     $service | Format-Table Name, Status, StartType
     Write-Host ""
@@ -97,8 +103,9 @@ if ($service) {
         Start-Sleep -Seconds 2
         Get-Service -Name $service.Name
     }
-} else {
-    Write-Host "❌ Service not created yet" -ForegroundColor Red
+}
+else {
+    Write-Host "[ERROR] Service not created yet" -ForegroundColor Red
     Write-Host ""
     Write-Host "Troubleshooting:" -ForegroundColor Yellow
     Write-Host "  1. Check PM2 module logs:" -ForegroundColor White
@@ -132,4 +139,4 @@ Write-Host "  4. After reboot, check service status:" -ForegroundColor White
 Write-Host "     services.msc (or Get-Service PM2*)" -ForegroundColor Cyan
 Write-Host ""
 
-Write-Host "✓ Setup complete!" -ForegroundColor Green
+Write-Host "[OK] Setup complete!" -ForegroundColor Green
