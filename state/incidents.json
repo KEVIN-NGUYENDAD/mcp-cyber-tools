@@ -13,7 +13,7 @@
     {
       "incident_id": "INC-0004",
       "severity": "CRITICAL",
-      "status": "OPEN",
+      "status": "Closed",
       "title": "PERSISTENCE THREAT: WMI Event Consumer Subscription",
       "description": "Persistence type: WMI Event Consumer Subscription",
       "assets": [],
@@ -23,12 +23,13 @@
         "Filter to Consumer Binding"
       ],
       "recommended_action": "Kiểm tra WMI event subscribers, xóa các subscriptions lạ",
-      "created_at": "2026-09-05T23:13:18.944133"
+      "created_at": "2026-09-05T23:13:18.944133",
+      "updated_at": "2026-09-11T20:36:03.220Z"
     },
     {
       "incident_id": "INC-0010",
       "severity": "CRITICAL",
-      "status": "OPEN",
+      "status": "Closed",
       "title": "LATERAL MOVEMENT THREAT: PsExec/Remote Execution",
       "description": "Lateral movement pattern: PsExec/Remote Execution",
       "assets": [
@@ -41,7 +42,8 @@
         "Service pipe access"
       ],
       "recommended_action": "Điều tra toàn bộ assets, kiểm tra audit logs",
-      "created_at": "2026-09-05T23:13:18.973797"
+      "created_at": "2026-09-05T23:13:18.973797",
+      "updated_at": "2026-09-11T20:36:20.697Z"
     },
     {
       "incident_id": "INC-0013",

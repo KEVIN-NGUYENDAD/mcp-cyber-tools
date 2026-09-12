@@ -1,0 +1,6 @@
+{
+    "singleSourceOfTruth":  "C:\\GitHub",
+    "requiredPath":  "C:\\GitHub\\mcp-cyber-tools",
+    "enforcePathCheck":  true,
+    "workspaceRoot":  "C:\\GitHub\\mcp-cyber-tools"
+}

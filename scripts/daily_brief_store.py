@@ -28,7 +28,7 @@ from datetime import datetime, timezone
 # Sibling to baseline_store.py's state\\ and security-watch.js's
 # alerts.json -- local-only state, outside the git repo.
 DAILY_BRIEF_DIR = (
-    r"C:\Users\tamng\AppData\Roaming\Claude\Projects\mcp-cyber-tools\daily_brief"
+    r"C:\GitHub\mcp-cyber-tools\daily_brief"
 )
 
 CATEGORIES = ("changes", "incidents", "recommendations", "score_deltas")

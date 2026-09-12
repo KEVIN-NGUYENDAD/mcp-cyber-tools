@@ -1,21 +1,27 @@
 services:
   - type: web
-    name: sentinelops
+    name: sentinelops-soc
     runtime: node
     region: oregon
     plan: free
     rootDir: .
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node web-server.js
     envVars:
       - key: NODE_ENV
         value: production
-      - key: STATE_DIR
-        value: ./state
       - key: PORT
         value: 3000
     autoDeploy: git
-    branch: production
+    branch: main
     routes:
       - path: /
+        matchType: all
+      - path: /latest
+        matchType: all
+      - path: /brief
+        matchType: path
+      - path: /api
+        matchType: path
+      - path: /health
         matchType: all
