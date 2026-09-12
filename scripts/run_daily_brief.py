@@ -1,8 +1,9 @@
 """Automation Layer: Daily Brief Run (3:00 PM).
 
-Generates and logs the Daily Brief (JSON + text) via
-daily_brief_generator.py. Saves the JSON brief to daily_brief/YYYY-MM-DD.json,
-prints the text output, and sends via Telegram + Email.
+Generates and logs the Daily Brief (JSON + text + HTML) via
+daily_brief_generator.py. Saves JSON to daily_brief/YYYY-MM-DD.json and
+HTML to daily_brief/YYYY-MM-DD.html and latest.html, sends Telegram with
+web link to https://sentinelops-soc.onrender.com/.
 Read-only against the Daily Brief Store -- does not call reset_daily_brief(),
 so a failed or duplicate run never loses today's data.
 """
@@ -14,7 +15,6 @@ from datetime import datetime, timezone
 
 from daily_brief_generator import generate_daily_brief
 from send_daily_brief_telegram import send_daily_brief_telegram
-from send_daily_brief_email import send_daily_brief_email
 
 
 def run() -> int:
@@ -35,29 +35,28 @@ def run() -> int:
             json.dump(brief["json"], f, indent=2)
         print(f"[BRIEF] Saved to {brief_path}")
 
-        # Send via Telegram
+        # Determine web URL (production or local)
+        # Production: https://sentinelops-soc.onrender.com/
+        # Local: http://localhost:3000/
+        env_mode = os.getenv("ENV", "local").lower()
+        if env_mode == "production":
+            web_url = "https://sentinelops-soc.onrender.com/"
+        else:
+            web_url = "http://localhost:3000/"
+
+        # Send via Telegram with web link
         print("[BRIEF] Sending via Telegram...")
-        telegram_ok = send_daily_brief_telegram(today)
+        telegram_ok = send_daily_brief_telegram(today, web_url=web_url)
         if telegram_ok:
             print("[BRIEF] Telegram delivery successful")
+            print(f"[BRIEF] View brief online: {web_url}")
         else:
             print("[ERROR] Telegram delivery failed")
 
-        # Send via Email
-        print("[BRIEF] Sending via Email...")
-        email_ok = send_daily_brief_email(today)
-        if email_ok:
-            print("[BRIEF] Email delivery successful")
-        else:
-            print("[ERROR] Email delivery failed")
-
-        # Overall status
-        if telegram_ok or email_ok:
-            print(f"[BRIEF] Daily Brief run finished at {timestamp}")
-            return 0
-        else:
-            print(f"[ERROR] All delivery methods failed")
-            return 1
+        # Note: Email delivery removed - using web-based delivery instead
+        print(f"[BRIEF] Daily Brief available at: {web_url}latest")
+        print(f"[BRIEF] Daily Brief run finished at {timestamp}")
+        return 0 if telegram_ok else 1
 
     except Exception:
         traceback.print_exc()
