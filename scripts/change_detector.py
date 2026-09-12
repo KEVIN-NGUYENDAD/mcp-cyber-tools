@@ -33,7 +33,13 @@ create_defender_incident.py already reuse for their own alert sources.
 """
 import os
 import re
+import sys
+from pathlib import Path
 from datetime import datetime, timezone
+
+# Add parent directory to path for Alert Engine
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from utils import get_alert_engine
 
 from baseline_store import load_snapshot, save_snapshot
 from create_test_incident import ASSIGNEE, assign_issue, build_issue, create_issue, score_alert
@@ -226,12 +232,52 @@ def route_change_event(event: dict) -> dict:
     return {"routed_to": "daily_brief_store", "risk_score": risk_score}
 
 
+def send_alerts_for_events(events: list) -> int:
+    """Send alerts to Alert Engine for detected changes.
+
+    Args:
+        events: List of change events from detect_changes()
+
+    Returns:
+        Number of alerts sent
+    """
+    if not events:
+        return 0
+
+    try:
+        engine = get_alert_engine()
+        alerts_sent = 0
+
+        for event in events:
+            try:
+                # Event already has compatible format from _new_entity_event, etc.
+                alert = engine.create_alert(event)
+                success, routing_result = engine.route_alert(alert)
+
+                if success:
+                    alerts_sent += 1
+                # Failed alerts are logged by route_alert
+
+            except Exception as e:
+                pass  # Non-blocking: one failed alert doesn't stop others
+
+        return alerts_sent
+
+    except Exception as e:
+        pass  # Non-blocking: Alert Engine unavailable
+
+
 def process_snapshot(source: str, asset_id: str, state: dict) -> list:
     """Full pipeline wiring: Snapshot -> Baseline Store -> Change Detector
     -> Risk Scoring -> Critical?-branch -> GitHub Incident / Daily Brief
-    Store. Returns one route_change_event() result per detected change
-    (empty on a source's first run -- nothing to diff against yet)."""
+    Store -> Alert Engine for Telegram. Returns one route_change_event() result
+    per detected change (empty on a source's first run -- nothing to diff against yet)."""
     previous = load_snapshot(source)
     current = save_snapshot(source, asset_id, state)
     events = detect_changes(previous, current)
+
+    # Send alerts for detected changes (non-blocking)
+    if events:
+        send_alerts_for_events(events)
+
     return [route_change_event(event) for event in events]
