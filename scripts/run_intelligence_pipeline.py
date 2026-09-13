@@ -426,6 +426,20 @@ class IntelligencePipeline:
 
         self.log('')
 
+        # Stage 10: Executive Correlation (Sprint 5)
+        self.log('🔗 PHASE 10: EXECUTIVE CORRELATION')
+        self.log('-' * 50)
+
+        # 18. Correlate shadow assets + incidents + hunting into executive findings
+        ok, _ = self.run_stage(
+            'Correlation Engine',
+            self.scripts_dir / 'correlation_engine.py',
+            'Correlating multi-source signals into executive findings'
+        )
+        success = success and ok
+
+        self.log('')
+
         # Final summary
         if success:
             self.pipeline_results['status'] = 'success'
