@@ -353,8 +353,8 @@ class IncidentEngine:
             severity = incident.get('severity', 'UNKNOWN')
             output['by_severity'][severity] = output['by_severity'].get(severity, 0) + 1
 
-        with open(self.incidents_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, indent=2, ensure_ascii=False)
+        # Atomic write for file safety (TD-L3-001: atomic writes, TD-L3-002: file locking)
+        write_state_atomic(str(self.incidents_file), output, indent=2)
 
         return {
             'status': 'success',
