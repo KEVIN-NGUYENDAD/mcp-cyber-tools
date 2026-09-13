@@ -629,11 +629,13 @@
       <div class="nav-logo">⬢ SentinelOps</div>
       <ul class="nav-menu">
         <li class="nav-item active" onclick="switchPage('overview')">🏠 Overview</li>
+        <li class="nav-item" onclick="switchPage('assets')">💾 Assets</li>
+        <li class="nav-item" onclick="switchPage('threats')">🎯 Threats</li>
+        <li class="nav-item" onclick="switchPage('brief')">📋 Brief</li>
         <li class="nav-item" onclick="switchPage('network')">🌐 Network Map</li>
         <li class="nav-item" onclick="switchPage('incidents')">🚨 Incidents</li>
         <li class="nav-item" onclick="switchPage('analytics')">📊 Analytics</li>
         <li class="nav-item" onclick="switchPage('scorecard')">📈 Executive</li>
-        <li class="nav-item" onclick="switchPage('history')">📜 History</li>
         <li class="nav-item" onclick="switchPage('settings')">⚙️ Settings</li>
       </ul>
       <div class="nav-status">
@@ -834,6 +836,156 @@
             <div style="color: var(--color-text-dim); font-size: 0.9em; margin-bottom: 5px;">High Sent</div>
             <div style="font-size: 1.5em; color: var(--color-warning); font-weight: bold;" id="alerts-high">-</div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: ASSET COMMAND CENTER -->
+    <div id="assets" class="page">
+      <div class="card">
+        <div class="card-title">━ Asset Command Center ━</div>
+        <div class="kpi-grid" style="margin-bottom: 30px;">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Assets</div>
+            <div class="kpi-value" id="assets-total">-</div>
+            <div class="kpi-subtext" id="assets-online">-</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Average Trust Score</div>
+            <div class="kpi-value" id="assets-trust">-</div>
+            <div class="kpi-subtext">Last Update</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Risk Score</div>
+            <div class="kpi-value" id="assets-risk">-</div>
+            <div class="kpi-subtext" id="assets-risk-level">-</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Shadow Assets</div>
+            <div class="kpi-value severity-critical" id="assets-shadow">-</div>
+            <div class="kpi-subtext">Unmanaged</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">━ Asset Inventory ━</div>
+        <div id="assets-list-container" style="max-height: 600px; overflow-y: auto;">
+          <table style="width: 100%; font-size: 0.9em;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--color-border);">
+                <th style="text-align: left; padding: 10px; color: var(--color-accent);">IP Address</th>
+                <th style="text-align: left; padding: 10px; color: var(--color-accent);">Type</th>
+                <th style="text-align: left; padding: 10px; color: var(--color-accent);">Trust Score</th>
+                <th style="text-align: left; padding: 10px; color: var(--color-accent);">Status</th>
+              </tr>
+            </thead>
+            <tbody id="assets-table-body">
+              <tr><td colspan="4" style="padding: 10px; text-align: center; color: var(--color-text-dim);">Loading assets...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: THREAT INTELLIGENCE & IOC -->
+    <div id="threats" class="page">
+      <div class="card">
+        <div class="card-title">━ Threat Intelligence ━</div>
+        <div class="kpi-grid" style="margin-bottom: 30px;">
+          <div class="kpi-card">
+            <div class="kpi-label">Total IOCs</div>
+            <div class="kpi-value" id="threats-total">-</div>
+            <div class="kpi-subtext">Indicators of Compromise</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Critical Count</div>
+            <div class="kpi-value severity-critical" id="threats-critical">-</div>
+            <div class="kpi-subtext">Requires Action</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">High Severity</div>
+            <div class="kpi-value severity-high" id="threats-high">-</div>
+            <div class="kpi-subtext">Monitor Closely</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Active Categories</div>
+            <div class="kpi-value" id="threats-categories">-</div>
+            <div class="kpi-subtext">Threat Types</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="card">
+          <div class="card-title">━ Persistence Threats ━</div>
+          <div id="threats-persistence" style="max-height: 400px; overflow-y: auto;">
+            <div style="padding: 10px; color: var(--color-text-dim);">Loading...</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">━ Lateral Movement ━</div>
+          <div id="threats-lateral" style="max-height: 400px; overflow-y: auto;">
+            <div style="padding: 10px; color: var(--color-text-dim);">Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div class="card">
+          <div class="card-title">━ Credential Dumping ━</div>
+          <div id="threats-credential" style="max-height: 400px; overflow-y: auto;">
+            <div style="padding: 10px; color: var(--color-text-dim);">Loading...</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">━ Suspicious Processes ━</div>
+          <div id="threats-processes" style="max-height: 400px; overflow-y: auto;">
+            <div style="padding: 10px; color: var(--color-text-dim);">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: DAILY BRIEF ARCHIVE -->
+    <div id="brief" class="page">
+      <div class="card">
+        <div class="card-title">━ Daily Brief Archive ━</div>
+        <div class="kpi-grid" style="margin-bottom: 30px;">
+          <div class="kpi-card">
+            <div class="kpi-label">Current Security Score</div>
+            <div class="kpi-value" id="brief-score">-</div>
+            <div class="kpi-subtext" id="brief-score-date">-</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Risk Level</div>
+            <div class="kpi-value" id="brief-risk">-</div>
+            <div class="kpi-subtext">Overall System Health</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Available Briefs</div>
+            <div class="kpi-value" id="brief-count">-</div>
+            <div class="kpi-subtext">Historical Records</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Last Updated</div>
+            <div class="kpi-value" id="brief-updated" style="font-size: 1.5em;">-</div>
+            <div class="kpi-subtext">Data Freshness</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">━ Recommended Actions ━</div>
+        <div id="brief-actions" style="max-height: 300px; overflow-y: auto;">
+          <div style="padding: 10px; color: var(--color-text-dim);">Loading recommendations...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">━ Security Timeline ━</div>
+        <div class="timeline" id="brief-timeline">
+          <div style="padding: 10px; text-align: center; color: var(--color-text-dim);">Loading events...</div>
         </div>
       </div>
     </div>

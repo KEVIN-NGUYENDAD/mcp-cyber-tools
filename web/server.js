@@ -49,6 +49,7 @@ console.log('[SERVER] Node environment:', process.env.NODE_ENV || 'development')
 function sendStateFile(filename, res) {
   const allowedFiles = [
     'assets.json',
+    'shadow_assets.json',
     'incidents.json',
     'risk_score.json',
     'system_health.json',
@@ -64,7 +65,13 @@ function sendStateFile(filename, res) {
     'patch_queue.json',
     'crypto_health.json',
     'asset_aging.json',
-    'pipeline_summary.json'
+    'pipeline_summary.json',
+    'hunting_persistence.json',
+    'hunting_lateral_movement.json',
+    'hunting_credential_dumping.json',
+    'hunting_suspicious_processes.json',
+    'timeline.json',
+    'alert_queue.json'
   ];
 
   if (!allowedFiles.includes(filename)) {
