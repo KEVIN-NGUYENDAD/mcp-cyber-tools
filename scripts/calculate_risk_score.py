@@ -4,6 +4,9 @@ import json, sys
 from datetime import datetime
 from pathlib import Path
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 class RiskScoreCalculator:
     def __init__(self):
         self.state_dir = Path(__file__).parent.parent / 'state'

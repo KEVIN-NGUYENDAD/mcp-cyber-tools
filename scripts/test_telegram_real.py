@@ -6,6 +6,9 @@ import requests
 from datetime import datetime
 from pathlib import Path
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 # Step 1: Print environment
 cwd = os.getcwd()
 print(f"Current working directory: {cwd}")
@@ -95,8 +98,7 @@ try:
             "chat_id": chat_id
         }
 
-        with open(history_file, 'w') as f:
-            json.dump(history, f, indent=2)
+        write_state_atomic(history_file, history, indent=2)
 
         print(f"Updated: state/notification_history.json")
         print()

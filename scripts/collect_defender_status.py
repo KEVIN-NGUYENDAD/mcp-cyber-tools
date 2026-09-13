@@ -4,6 +4,9 @@ import json, sys
 from datetime import datetime
 from pathlib import Path
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 class DefenderCollector:
     def __init__(self):
         self.state_dir = Path(__file__).parent.parent / 'state'
@@ -18,8 +21,7 @@ class DefenderCollector:
             'quarantined_count': 0,
             'status': 'ACTIVE'
         }
-        with open(self.state_dir / 'defender_status.json', 'w') as f:
-            json.dump(output, f, indent=2)
+        write_state_atomic(self.state_dir / 'defender_status.json', output, indent=2)
         return {'status': 'success', 'defender_enabled': True, 'threats': 0}
 
 if __name__ == '__main__':
