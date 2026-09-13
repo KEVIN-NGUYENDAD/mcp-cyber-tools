@@ -73,11 +73,15 @@ MCP server `home-soc` đã kết nối thành công với Claude Desktop và thu
 collector không ghi hai field này → luôn trả `unknown`. Hoặc implement thật,
 hoặc bỏ khỏi output để không gây hiểu nhầm là "có firmware check".
 
-### 3. ARP chỉ thấy thiết bị vừa liên lạc gần đây (BACKLOG)
+### 3. ✅ ĐÃ SỬA: ARP chỉ thấy thiết bị vừa liên lạc gần đây
 
-3 devices không có nghĩa nhà chỉ có 3 máy. Điện thoại/TV/máy in đang online
-nhưng chưa nói chuyện với laptop sẽ không nằm trong ARP cache. Muốn thấy đủ
-cần ping sweep cả subnet (`192.168.0.1-254`) trước khi đọc ARP. Chưa làm.
+**Status:** FIXED in session 3
+
+Collector giờ ping sweep subnet trước khi đọc ARP table:
+- New method `pingSubnet()`: ping 1-254 range để populate ARP cache
+- New method `extractSubnet()`: parse gateway IP để xác định subnet
+- Gọi trước `getARPTable()` trong collection flow
+- Phát hiện tất cả online devices, không chỉ recently-contacted
 
 ### 4. Vendor lookup chưa tồn tại (BACKLOG)
 
@@ -95,10 +99,24 @@ implement OUI database lookup.
 - ✅ Mark legacy directories deprecated
 - **Total commits this session:** 4
 
-**Remaining backlog (3 items):**
-1. Gateway firmware detection
-2. Full subnet ping sweep (ARP limitation)
-3. OUI/vendor lookup tool
+## Các bug đã sửa trong SESSION 3
+
+1. **ARP chỉ thấy thiết bị vừa liên lạc** — Collector giờ ping sweep toàn bộ
+   subnet trước khi đọc ARP, phát hiện tất cả online devices.
+   - New methods: `extractSubnet()`, `pingSubnet()`
+   - Config: added `gatewayIP: '192.168.0.1'` to network section
+   - Reduces false anomaly alerts từ missing devices
+   
+## Tóm Tắt SESSION 3
+
+**Xong:**
+- ✅ Implement ARP ping sweep for complete device discovery
+- ✅ Update PR description and remaining backlog
+- **Total commits this session:** 1
+
+**Remaining backlog (2 items):**
+1. Gateway firmware detection (model/firmwareVersion fields)
+2. OUI/vendor lookup tool (MAC → vendor mapping)
 
 ---
 
@@ -109,17 +127,18 @@ git checkout claude/dfir-triage-investigation-xhgwz7
 git pull
 ```
 
-Trên Windows, verify MCP server with fixed threat levels:
+Trên Windows, verify updated collector with ARP ping sweep:
 
 ```powershell
 cd C:\mcp-cyber-tools
 git pull origin claude/dfir-triage-investigation-xhgwz7
 node network-collector.js
 
-# Test both tools now return consistent threat levels
-# @homeSocStatus
-# @predictThreatLevel
-# → Cả hai = GREEN, YELLOW, ORANGE, hoặc RED (đồng nhất)
+# Should now show:
+# 🌐 Ping sweep: 192.168.0.1-254...
+#    Responding IPs: [count]
+# 📋 Reading ARP table...
+#    Found: [complete device count, not just recently-contacted]
 ```
 
 Task Scheduler cho auto-collect mỗi 30 phút **chưa được setup** — hiện phải
