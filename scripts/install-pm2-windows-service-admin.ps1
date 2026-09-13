@@ -67,20 +67,37 @@ Write-Host "Installing PM2 as Windows Service..." -ForegroundColor Cyan
 Write-Host "(This will create a Windows service that auto-starts PM2 processes on boot)" -ForegroundColor Gray
 Write-Host ""
 
-# The pm2-windows-service module should handle the installation
-$pm2ModulePath = "$env:USERPROFILE\.pm2\modules\pm2-windows-service"
-if (Test-Path "$pm2ModulePath\node_modules\pm2-windows-service\bin\pm2-service-install.cmd") {
-    Write-Host "Running installer from module..." -ForegroundColor Cyan
-    & "$pm2ModulePath\node_modules\pm2-windows-service\bin\pm2-service-install.cmd"
+# Debug: Show PM2 path
+Write-Host "PM2 Path:" -ForegroundColor Cyan
+$pm2Path = (Get-Command pm2 -ErrorAction SilentlyContinue).Source
+if ($pm2Path) {
+    Write-Host "  $pm2Path" -ForegroundColor Green
 }
 else {
-    Write-Host "Module installer not found, attempting alternative method..." -ForegroundColor Yellow
-    Write-Host "Creating Windows service with NPM..." -ForegroundColor Cyan
+    Write-Host "  [WARNING] PM2 command not found in PATH" -ForegroundColor Yellow
+}
+
+Write-Host ""
+
+# The pm2-windows-service module should handle the installation
+$pm2ModulePath = "$env:USERPROFILE\.pm2\modules\pm2-windows-service"
+$installerPath = "$pm2ModulePath\node_modules\pm2-windows-service\bin\pm2-service-install.cmd"
+
+if (Test-Path $installerPath) {
+    Write-Host "Running installer from module..." -ForegroundColor Cyan
+    Write-Host "  Installer: $installerPath" -ForegroundColor Gray
+    & cmd /c $installerPath
+}
+else {
+    Write-Host "Module installer not found at: $installerPath" -ForegroundColor Yellow
+    Write-Host "Attempting alternative method with pm2 startup..." -ForegroundColor Cyan
     try {
-        & npm run -g pm2 windows-service-install 2>&1
+        & pm2 startup
+        & pm2 save
     }
     catch {
-        Write-Host "Note: NPM script method may not be available" -ForegroundColor Yellow
+        Write-Host "ERROR: Failed to run pm2 startup" -ForegroundColor Red
+        Write-Host "Note: Make sure PM2 is installed globally" -ForegroundColor Yellow
     }
 }
 
