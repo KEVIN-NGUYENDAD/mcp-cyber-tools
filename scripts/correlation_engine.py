@@ -112,7 +112,10 @@ class CorrelationEngine:
         return 'EF-{:04d}'.format(self._seq)
 
     def add_finding(self, rule_id, rule_name, severity, title, summary,
-                    entities, evidence, recommended_action, confidence, sources):
+                    entities, evidence, recommended_action, confidence, sources,
+                    evidence_quality='REAL'):
+        # evidence_quality tách "mức nghiêm trọng nếu có thật" khỏi "có thật hay
+        # không". Người trực ca cần thấy cả hai trước khi đi cô lập một thiết bị.
         self.findings.append({
             'finding_id': self.next_finding_id(),
             'rule_id': rule_id,
@@ -124,6 +127,7 @@ class CorrelationEngine:
             'evidence': evidence,
             'recommended_action': recommended_action,
             'confidence': confidence,
+            'evidence_quality': evidence_quality,
             'sources': sources,
             'detected_at': datetime.now().isoformat(),
         })
@@ -136,14 +140,46 @@ class CorrelationEngine:
             'detail': detail,
         })
 
+    # Các trường mô tả *phạm vi săn*, không phải *bằng chứng*. Quét IP trong đây
+    # sẽ quy kết mọi chỉ báo cho mọi máy trong tầm — đúng kiểu sai lầm mà
+    # Sprint 6.1 sinh ra để ngăn.
+    SCOPE_FIELDS = ('hunt_scope', 'attribution', 'data_source')
+
+    @staticmethod
+    def is_simulated(indicator):
+        return indicator.get('data_source') == 'SIMULATED'
+
     def indicator_ips(self, indicator):
-        """IP gắn với một IOC: các trường quy ước trước, sau đó quét toàn bộ text."""
+        """IP gắn với một IOC.
+
+        Sprint 6.1: chỉ báo mô phỏng KHÔNG bao giờ sinh ra quy kết thiết bị.
+        Trước đây hàm này quét toàn bộ dict, nên bất kỳ IP nào lọt vào chỉ báo -
+        kể cả IP hardcode hay IP của phạm vi săn - đều thành "bằng chứng".
+        """
+        if self.is_simulated(indicator):
+            return set()
+
         ips = set()
         for field in ('affected_systems', 'affected_assets', 'assets', 'host', 'ip'):
             if field in indicator:
                 ips |= extract_ips(indicator[field])
-        ips |= extract_ips(indicator)
+
+        # Quét phần còn lại, nhưng bỏ các trường chỉ mô tả phạm vi.
+        rest = dict((k, v) for k, v in indicator.items()
+                    if k not in self.SCOPE_FIELDS)
+        ips |= extract_ips(rest)
         return ips
+
+    def simulated_counts(self, filenames):
+        """Đếm chỉ báo mô phỏng trong các nguồn, để giải thích vì sao rule im lặng."""
+        total = 0
+        simulated = 0
+        for filename in filenames:
+            for indicator in self.indicators(filename):
+                total += 1
+                if self.is_simulated(indicator):
+                    simulated += 1
+        return total, simulated
 
     def incident_ips(self, incident):
         ips = extract_ips(incident.get('assets'))
@@ -198,11 +234,22 @@ class CorrelationEngine:
         if not hits:
             total_iocs = sum(len(self.indicators(f)) for f, _ in ioc_stages)
             if attributed == 0 and total_iocs > 0:
-                self.add_gap(
-                    rule_id, 'IOC_NOT_IP_ATTRIBUTED',
-                    '{} IOC credential-dumping/persistence không mang IP nào '
-                    '(affected_systems rỗng), nên không thể ghép với {} shadow asset.'
-                    .format(total_iocs, len(shadow_by_ip)))
+                _, simulated = self.simulated_counts([f for f, _ in ioc_stages])
+                if simulated == total_iocs:
+                    self.add_gap(
+                        rule_id, 'IOC_SIMULATED',
+                        'Toàn bộ {} IOC credential-dumping/persistence mang '
+                        'data_source=SIMULATED (hardcode trong script hunting), '
+                        'nên không được quy kết cho {} shadow asset. Rule 1 im '
+                        'lặng ở đây là ĐÚNG: quy kết chỉ báo giả vào IP thật sẽ '
+                        'tạo bằng chứng xâm nhập không có thật.'
+                        .format(total_iocs, len(shadow_by_ip)))
+                else:
+                    self.add_gap(
+                        rule_id, 'IOC_NOT_IP_ATTRIBUTED',
+                        '{} IOC credential-dumping/persistence không mang IP nào '
+                        '(affected_systems rỗng), nên không thể ghép với {} shadow asset.'
+                        .format(total_iocs, len(shadow_by_ip)))
             return
 
         for ip in sorted(hits):
@@ -337,20 +384,57 @@ class CorrelationEngine:
         # Không IOC nào quy kết được IP: vẫn kết luận ở mức hệ thống, mức thấp hơn.
         if not by_ip:
             techniques = sorted(set(i.get('type', 'Unknown') for i in lateral))
-            self.add_finding(
-                rule_id=rule_id,
-                rule_name=rule_name,
-                severity='HIGH',
-                title='Dò quét di chuyển ngang ở mức hệ thống (chưa quy kết được thiết bị)',
-                summary=(
+            simulated = sum(1 for i in lateral if self.is_simulated(i))
+            all_simulated = simulated == len(lateral)
+
+            if all_simulated:
+                # Bằng chứng hoàn toàn là mô phỏng. Vẫn xuất phát hiện - im lặng
+                # thì không ai biết nhánh này tồn tại - nhưng không được để nó
+                # nằm cùng mức với sự cố có thật.
+                quality = 'SIMULATED'
+                severity = 'INFO'
+                title = ('Lateral movement: chỉ có bằng chứng MÔ PHỎNG, '
+                         'không kết luận được')
+                summary = (
+                    '{} kỹ thuật lateral movement ({}) đều mang '
+                    'data_source=SIMULATED - chúng là dữ liệu hardcode trong '
+                    'hunt_lateral_movement.py, không phải quan sát từ mạng thật. '
+                    '{} lần đăng nhập thất bại trong {} là số liệu thật, nhưng '
+                    'một mình nó chưa đủ để kết luận.'
+                ).format(len(lateral), ', '.join(techniques), failed_logons, period)
+                action = (
+                    '1. Nối hunt_lateral_movement với MCP huntLateralMovement để '
+                    'có IOC thật | '
+                    '2. Rà Event ID 4625 thủ công cho {} lần đăng nhập thất bại | '
+                    '3. Không cô lập thiết bị nào dựa trên phát hiện này'
+                ).format(failed_logons)
+            else:
+                quality = 'REAL'
+                severity = 'HIGH'
+                title = 'Dò quét di chuyển ngang ở mức hệ thống (chưa quy kết được thiết bị)'
+                summary = (
                     '{} kỹ thuật lateral movement ({}) cùng tồn tại với {} lần đăng nhập '
                     'thất bại trong {}, nhưng không IOC nào mang IP nên chưa khoanh được '
                     'thiết bị nguồn.'
-                ).format(len(lateral), ', '.join(techniques), failed_logons, period),
+                ).format(len(lateral), ', '.join(techniques), failed_logons, period)
+                action = (
+                    '1. Bật quy kết tài sản cho hunt_lateral_movement | '
+                    '2. Rà Event ID 4625 để tìm nguồn | '
+                    '3. Soát lại quyền truy cập admin share'
+                )
+
+            self.add_finding(
+                rule_id=rule_id,
+                rule_name=rule_name,
+                severity=severity,
+                evidence_quality=quality,
+                title=title,
+                summary=summary,
                 entities={
                     'ip': None,
                     'techniques': techniques,
                     'failed_logons': failed_logons,
+                    'simulated_indicators': simulated,
                 },
                 evidence=(
                     ['[Lateral] {}: {}'.format(i.get('type', 'Unknown'),
@@ -358,11 +442,7 @@ class CorrelationEngine:
                      for i in lateral]
                     + ['[Security Events] failed_logons={} trong {}'.format(failed_logons, period)]
                 ),
-                recommended_action=(
-                    '1. Bật quy kết tài sản cho hunt_lateral_movement | '
-                    '2. Rà Event ID 4625 để tìm nguồn | '
-                    '3. Soát lại quyền truy cập admin share'
-                ),
+                recommended_action=action,
                 confidence='LOW',
                 sources=['hunting_lateral_movement.json', 'security_events.json'],
             )
@@ -441,6 +521,11 @@ class CorrelationEngine:
                 '3. Đối chiếu hash payload với lịch sử quarantine'
             ).format(', '.join(process_names)),
             confidence='HIGH',
+            # Defender là quan sát thật; danh sách tiến trình thì chưa chắc.
+            # Cụm chỉ đáng tin khi cả hai vế đều thật.
+            evidence_quality=('SIMULATED'
+                              if all(self.is_simulated(p) for p in cluster)
+                              else 'REAL'),
             sources=['defender_status.json', 'hunting_suspicious_processes.json'],
         )
 
@@ -459,9 +544,12 @@ class CorrelationEngine:
 
         by_severity = {}
         by_rule = {}
+        by_quality = {}
         for finding in self.findings:
             by_severity[finding['severity']] = by_severity.get(finding['severity'], 0) + 1
             by_rule[finding['rule_id']] = by_rule.get(finding['rule_id'], 0) + 1
+            quality = finding.get('evidence_quality', 'REAL')
+            by_quality[quality] = by_quality.get(quality, 0) + 1
 
         report = {
             'timestamp': datetime.now().isoformat(),
@@ -472,6 +560,7 @@ class CorrelationEngine:
             'total_findings': len(self.findings),
             'by_severity': by_severity,
             'by_rule': by_rule,
+            'by_evidence_quality': by_quality,
             'sources': self.sources,
             'coverage_gaps': self.coverage_gaps,
             'findings': self.findings,
@@ -490,6 +579,7 @@ def main():
         'total_findings': report['total_findings'],
         'by_severity': report['by_severity'],
         'by_rule': report['by_rule'],
+        'by_evidence_quality': report['by_evidence_quality'],
         'coverage_gaps': len(report['coverage_gaps']),
         'output': str(engine.output_file),
     }, ensure_ascii=False, indent=2))
