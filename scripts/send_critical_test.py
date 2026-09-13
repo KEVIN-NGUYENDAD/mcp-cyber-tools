@@ -5,6 +5,9 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 # Load credentials from .env
 env_file = Path('C:\\Users\\tamng\\Projects\\mcp-cyber-tools\\.env')
 bot_token = None
@@ -82,7 +85,6 @@ Recommended Action: {alert.get('recommended_action')}"""
             }
         }
 
-        with open('state/notification_history.json', 'w') as f:
-            json.dump(history, f, indent=2)
+        write_state_atomic('state/notification_history.json', history, indent=2)
 
         print("Logged to state/notification_history.json")

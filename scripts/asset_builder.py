@@ -15,6 +15,9 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 
 class TrustScoreEngine:
     """Calculate trust score for assets"""
@@ -219,19 +222,17 @@ class TrustScoreEngine:
                 asset['first_seen'] = history[ip].get('first_seen', now)
                 asset['last_change_time'] = asset.get('last_updated', now)
 
-        # Save upgraded assets
+        # Save upgraded assets (atomic write for file safety - TD-L3-001, TD-L3-002, TD-L3-003)
         try:
-            with open(self.assets_file, 'w', encoding='utf-8') as f:
-                json.dump(assets_data, f, indent=2, ensure_ascii=False)
+            write_state_atomic(str(self.assets_file), assets_data, indent=2)
             print(f"[OK] Upgraded {len(assets_data.get('all_assets', []))} assets with trust_score")
         except Exception as e:
             print(f"Error saving assets: {e}", file=sys.stderr)
             return False
 
-        # Save trust history
+        # Save trust history (atomic write for file safety)
         try:
-            with open(self.trust_history_file, 'w', encoding='utf-8') as f:
-                json.dump(history, f, indent=2, ensure_ascii=False)
+            write_state_atomic(str(self.trust_history_file), history, indent=2)
             print(f"[OK] Saved trust history for {len(history)} assets")
         except Exception as e:
             print(f"Error saving trust history: {e}", file=sys.stderr)

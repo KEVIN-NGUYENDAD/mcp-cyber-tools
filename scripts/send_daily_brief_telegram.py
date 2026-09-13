@@ -6,6 +6,9 @@ import requests
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 
 def load_credentials():
     """Load TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID from .env"""
