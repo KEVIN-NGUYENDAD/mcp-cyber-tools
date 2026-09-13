@@ -1,200 +1,209 @@
 #!/usr/bin/env python3
 """
-CREDENTIAL DUMPING THREAT HUNTING (Phase N.9B)
-Tích hợp MCP huntCredentialDumping module
-Phát hiện chỉ báo đánh cắp credentials
+CREDENTIAL DUMPING THREAT HUNTING — LIVE
+
+Nguồn: MCP tool `huntCredentialDumping` (Security log, Event ID 4688) qua
+scripts/mcp_bridge.py.
+
+Điều quan trọng nhất ở script này KHÔNG phải là những gì nó tìm thấy, mà là
+việc nó thừa nhận khi không nhìn được.
+
+Bản cũ luôn xuất 5 chỉ báo CRITICAL hardcode ("LSASS Memory Access",
+"Mimikatz Activity"...) — 4 trong số 14 phát hiện CRITICAL từng đẩy risk_level
+lên HIGH đến từ đây, và không cái nào có thật.
+
+Sự thật trên máy này: Security log không đọc được (Windows Home, audit process
+creation tắt mặc định, tiến trình không chạy quyền admin). Nên kết quả đúng là
+0 phát hiện KÈM cờ `coverage.observable = false` — "chưa quan sát được", tuyệt
+đối không phải "đã kiểm tra và sạch".
+
 Populates: state/hunting_credential_dumping.json
 """
 
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
-# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
-from state_manager import write_state_atomic, read_state_safe
+from state_manager import write_state_atomic
 import ioc_attribution
+from mcp_bridge import McpBridge, McpBridgeError, as_list
 
-class CredentialDumpingHunter:
+HUNT_VERSION = '2.0.0'
+
+TECHNIQUE_RE = [
+    (re.compile(r'\blsass\b', re.I), 'LSASS Memory Access', 'CRITICAL'),
+    (re.compile(r'\bmimikatz\b', re.I), 'Mimikatz Activity', 'CRITICAL'),
+    (re.compile(r'\bntdsutil\b', re.I), 'NTDS Extraction', 'CRITICAL'),
+    (re.compile(r'\bcomsvcs\b', re.I), 'comsvcs.dll MiniDump', 'CRITICAL'),
+    (re.compile(r'\bprocdump\b', re.I), 'Process Dumping', 'HIGH'),
+]
+
+
+class CredentialDumpingHunter(object):
+
     def __init__(self):
         self.state_dir = Path(__file__).parent.parent / 'state'
         self.hunting_file = self.state_dir / 'hunting_credential_dumping.json'
         self.indicators = []
+        self.errors = []
+        self.observable = False
+        self.coverage_reason = None
+        self.tools_used = []
 
-    def load_state(self, filename):
-        """Tải state file"""
-        fp = self.state_dir / filename
-        return json.load(open(fp, encoding='utf-8')) if fp.exists() else {}
+    # -- thu thập ---------------------------------------------------------
 
-    def detect_credential_dumping_indicators(self):
-        """Phát hiện chỉ báo đánh cắp credentials"""
+    def probe_security_log(self, bridge):
+        """Security log có đọc được không?
 
-        # Simulate: Phát hiện các chỉ báo credential dumping
-        # (Trong production, sẽ call MCP huntCredentialDumping)
-
-        # Chỉ báo 1: LSASS Access
-        self.indicators.append({
-            'type': 'LSASS Memory Access',
-            'severity': 'CRITICAL',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Phát hiện truy cập LSASS process - dấu hiệu credential dumping',
-            'evidence': [
-                'LSASS.exe memory read access',
-                'SeDebugPrivilege abuse',
-                'Process handle duplication',
-                'Suspicious API calls (ReadProcessMemory, etc.)'
-            ],
-            'recommendation': 'Kiểm tra ngay lập tức, isolate affected systems',
-            'impact': 'Đánh cắp plaintext credentials từ memory',
-            'threat_actor': 'Mimikatz, Procdump, LaZagne',
-            'status': 'CRITICAL',
-            'affected_systems': []
+        Cần biết điều này VÌ `huntCredentialDumping` trả `[]` trong cả hai
+        trường hợp: không có sự kiện đáng ngờ, và không đọc được log. Hai câu
+        trả lời trái ngược nhau mà nhìn giống hệt nhau là thứ nguy hiểm nhất
+        trong một hệ thống giám sát.
+        """
+        outcome = bridge.call_tool('securityLogs', {'count': 5})
+        self.tools_used.append({
+            'tool': 'securityLogs (probe)',
+            'ok': outcome['ok'],
+            'records': len(as_list(outcome['parsed'])),
+            'duration': outcome['duration'],
+            'error': outcome['error'],
         })
+        if outcome['ok']:
+            return True, None
+        return False, ('Security event log không đọc được. Nguyên nhân thường gặp: '
+                       'audit "Process Creation" (4688) tắt mặc định trên Windows '
+                       'Home, và/hoặc tiến trình không chạy quyền Administrator.')
 
-        # Chỉ báo 2: Mimikatz Indicators
-        self.indicators.append({
-            'type': 'Mimikatz Activity',
-            'severity': 'CRITICAL',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Phát hiện dấu hiệu chạy Mimikatz hoặc tương tự',
-            'evidence': [
-                'sekurlsa.dll module load',
-                'wdigest registry modifications',
-                'Credential provider abuse',
-                'Golden ticket generation',
-                'Pass-the-hash activity'
-            ],
-            'recommendation': 'Reset tất cả passwords, kiểm tra kerberos tickets',
-            'impact': 'Đánh cắp hashes/plaintext credentials, privilege escalation',
-            'threat_actor': 'Mimikatz, GhostPack, Impacket',
-            'status': 'CRITICAL',
-            'affected_systems': []
+    def collect(self, bridge):
+        readable, reason = self.probe_security_log(bridge)
+        self.coverage_reason = reason
+
+        outcome = bridge.call_tool('huntCredentialDumping')
+        self.tools_used.append({
+            'tool': 'huntCredentialDumping',
+            'ok': outcome['ok'],
+            'records': len(as_list(outcome['parsed'])),
+            'duration': outcome['duration'],
+            'error': outcome['error'],
         })
+        if not outcome['ok']:
+            self.errors.append('huntCredentialDumping: {}'.format(outcome['error']))
+            return []
 
-        # Chỉ báo 3: Kerberos Ticket Dumping
-        self.indicators.append({
-            'type': 'Kerberos Ticket Extraction',
-            'severity': 'CRITICAL',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Phát hiện cố gắng dump Kerberos tickets',
-            'evidence': [
-                'Klist command execution',
-                'Kerberos cache manipulation',
-                'Ticket file access anomalies',
-                'KRBTGT ticket access'
-            ],
-            'recommendation': 'Kiểm tra Kerberos logs, reset KRBTGT password',
-            'impact': 'Đánh cắp tickets cho lateral movement và privilege escalation',
-            'threat_actor': 'Mimikatz, Rubeus, Impacket',
-            'status': 'CRITICAL',
-            'affected_systems': []
-        })
+        # Tool chạy được, nhưng chỉ coi là "quan sát được" khi log thực sự đọc được.
+        self.observable = readable
+        return as_list(outcome['parsed'])
 
-        # Chỉ báo 4: SAM Database Access
-        self.indicators.append({
-            'type': 'SAM Database Dumping',
-            'severity': 'CRITICAL',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Phát hiện cố gắng dump SAM database hoặc registry hives',
-            'evidence': [
-                'Registry hive export attempts',
-                'SAM/SYSTEM/SECURITY file copies',
-                'Volume Shadow Copy abuse (VSS)',
-                'Reg command (reg save) usage'
-            ],
-            'recommendation': 'Kiểm tra registry access logs, audit VSS usage',
-            'impact': 'Đánh cắp local account hashes, offline cracking',
-            'threat_actor': 'Mimikatz, pwdump, QuarksPWDump',
-            'status': 'CRITICAL',
-            'affected_systems': []
-        })
+    # -- dựng chỉ báo -----------------------------------------------------
 
-        # Chỉ báo 5: Network Sniffing
-        self.indicators.append({
-            'type': 'Credential Transmission Over Network',
-            'severity': 'HIGH',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Phát hiện credentials truyền qua mạng dưới dạng plaintext',
-            'evidence': [
-                'HTTP authentication attempts',
-                'Telnet/FTP usage',
-                'Unencrypted LDAP',
-                'WinRM without encryption',
-                'Plaintext SMB auth'
-            ],
-            'recommendation': 'Enforce encryption, disable plaintext protocols',
-            'impact': 'Credentials bị sniff trên mạng',
-            'threat_actor': 'Network monitoring tools, Responder',
-            'status': 'HIGH',
-            'affected_systems': []
-        })
+    def build_indicators(self, events):
+        for event in events:
+            message = str(event.get('Message') or '')
+            technique, severity = 'Credential Access Attempt', 'HIGH'
+            for pattern, label, level in TECHNIQUE_RE:
+                if pattern.search(message):
+                    technique, severity = label, level
+                    break
 
-    def estimate_credential_risk(self):
-        """Ước tính mức độ rủi ro về credentials"""
-        critical_count = sum(1 for i in self.indicators if i['severity'] == 'CRITICAL')
+            self.indicators.append({
+                'type': technique,
+                'severity': severity,
+                'timestamp': datetime.now().isoformat(),
+                'event_time': event.get('TimeCreated'),
+                'event_id': event.get('Id'),
+                'description': 'Sự kiện Security {} khớp mẫu credential dumping'.format(
+                    event.get('Id')),
+                'evidence': [message[:600]],
+                'assessment': 'Khớp mẫu {} trong Event ID {}'.format(
+                    technique, event.get('Id')),
+                'recommendation': 'Điều tra ngay, đổi toàn bộ mật khẩu đã dùng trên máy',
+                'status': severity,
+                'detection_method': 'MCP huntCredentialDumping (Security 4688)',
+            })
 
-        if critical_count > 2:
-            risk = 'EXTREME: Nhiều dấu hiệu credential compromise - assume breach'
-        elif critical_count > 0:
-            risk = 'SEVERE: Phát hiện credential dumping attempt - reset passwords ngay'
-        else:
-            risk = 'HIGH: Potential credential exposure'
-
-        return risk
+    # -- xuất báo cáo -----------------------------------------------------
 
     def generate_hunting_report(self):
-        """Tạo report threat hunting"""
-        # Sprint 6.1: khai báo nguồn gốc trước khi xuất. Các chỉ báo dưới đây là
-        # hardcode trong script (xem chú thích "Simulate" ở detect_*), nên chúng
-        # KHÔNG được quy kết cho thiết bị thật — ioc_attribution cưỡng chế điều đó.
-        hunt_scope = ioc_attribution.resolve_hunt_scope()
-        ioc_attribution.apply_to_indicators(
-            self.indicators,
-            ioc_attribution.SOURCE_SIMULATED,
-            hunt_scope,
-            affected_key='affected_systems'
-        )
+        coverage = ioc_attribution.coverage_block(
+            self.observable, 'Security event log (ID 4688)', self.coverage_reason)
+
+        scope = ioc_attribution.live_scope(
+            coverage=coverage['status'],
+            source_detail='huntCredentialDumping',
+            reason=self.coverage_reason)
+
+        local_ips = scope['local_host']['ips']
+        for indicator in self.indicators:
+            block = ioc_attribution.attribute(
+                ioc_attribution.SOURCE_LIVE,
+                affected_systems=local_ips,
+                method='host-local observation via MCP',
+                confidence='HIGH' if local_ips else 'LOW',
+                reason='Quan sát trực tiếp trên máy {}'.format(
+                    scope['local_host']['hostname']))
+            indicator['data_source'] = block['data_source']
+            indicator['affected_systems'] = block['affected_systems']
+            indicator['attribution'] = block['attribution']
+            indicator['hunt_scope'] = local_ips
+
+        if self.observable:
+            risk = ('SEVERE: phát hiện dấu hiệu credential dumping - đổi mật khẩu ngay'
+                    if self.indicators else
+                    'LOW: đã đọc Security log, không thấy dấu hiệu credential dumping')
+        else:
+            risk = ('UNKNOWN: chưa quan sát được Security log. Không có kết luận nào '
+                    'về credential dumping trên máy này.')
 
         output = {
             'timestamp': datetime.now().isoformat(),
-            'data_source': ioc_attribution.SOURCE_SIMULATED,
-            'hunt_scope': hunt_scope,
-            'attribution_note': ioc_attribution.coverage_note(
-                ioc_attribution.SOURCE_SIMULATED, len(self.indicators)
-            ),
             'hunting_type': 'Credential Dumping',
+            'hunt_version': HUNT_VERSION,
+            'data_source': ioc_attribution.SOURCE_LIVE,
+            'coverage': coverage,
+            'hunt_scope': scope,
+            'tools_used': self.tools_used,
+            'errors': self.errors,
             'question': 'Có chỉ báo đánh cắp credentials nào không?',
             'total_indicators': len(self.indicators),
-            'credential_risk_level': self.estimate_credential_risk(),
+            'credential_risk_level': risk,
             'by_severity': {},
-            'indicators': self.indicators
+            'indicators': self.indicators,
         }
 
-        # Thống kê by severity
         for indicator in self.indicators:
-            severity = indicator.get('severity', 'UNKNOWN')
-            output['by_severity'][severity] = output['by_severity'].get(severity, 0) + 1
+            sev = indicator.get('severity', 'UNKNOWN')
+            output['by_severity'][sev] = output['by_severity'].get(sev, 0) + 1
 
         write_state_atomic(self.hunting_file, output, indent=2)
-
         return output
 
     def hunt(self):
-        """Chạy threat hunting"""
-        self.detect_credential_dumping_indicators()
-        report = self.generate_hunting_report()
+        try:
+            with McpBridge() as bridge:
+                events = self.collect(bridge)
+            self.build_indicators(events)
+        except McpBridgeError as error:
+            self.errors.append('MCP bridge: {}'.format(error))
+            self.coverage_reason = 'MCP bridge không dùng được: {}'.format(error)
 
+        report = self.generate_hunting_report()
         return {
-            'status': 'success',
+            'status': 'success' if self.observable else 'degraded',
             'hunting_type': 'Credential Dumping',
+            'data_source': report['data_source'],
+            'observable': report['coverage']['observable'],
+            'coverage_reason': report['coverage']['reason'],
             'total_indicators': len(self.indicators),
             'critical': report['by_severity'].get('CRITICAL', 0),
             'high': report['by_severity'].get('HIGH', 0),
-            'risk_level': report['credential_risk_level']
+            'errors': self.errors,
         }
+
 
 if __name__ == '__main__':
     hunter = CredentialDumpingHunter()
     result = hunter.hunt()
-    print(json.dumps(result, indent=2))
-    sys.exit(0 if result.get('status') == 'success' else 1)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    sys.exit(0)

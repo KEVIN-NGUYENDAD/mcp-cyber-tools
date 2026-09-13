@@ -1,24 +1,18 @@
 {
-  "timestamp": "2026-09-13T16:01:15.155407",
+  "timestamp": "2026-09-13T16:15:23.115700",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
   "rules_evaluated": 3,
-  "total_findings": 1,
-  "by_severity": {
-    "INFO": 1
-  },
-  "by_rule": {
-    "RULE-2": 1
-  },
-  "by_evidence_quality": {
-    "SIMULATED": 1
-  },
+  "total_findings": 0,
+  "by_severity": {},
+  "by_rule": {},
+  "by_evidence_quality": {},
   "sources": {
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-13T16:01:10.859928"
+      "timestamp": "2026-09-13T16:15:10.193733"
     },
     "shadow_assets.json": {
       "present": true,
@@ -27,88 +21,66 @@
     },
     "incidents.json": {
       "present": true,
-      "records": 19,
-      "timestamp": "2026-09-13T16:01:14.788898"
+      "records": 0,
+      "timestamp": "2026-09-13T16:15:22.722594"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T16:01:10.129585"
+      "timestamp": "2026-09-13T16:15:09.421196"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T16:01:10.433572"
+      "timestamp": "2026-09-13T16:15:09.712151"
     },
     "hunting_persistence.json": {
       "present": true,
-      "records": 5,
-      "timestamp": "2026-09-13T16:01:13.829716"
+      "records": 96,
+      "timestamp": "2026-09-13T16:15:16.585804"
     },
     "hunting_credential_dumping.json": {
       "present": true,
-      "records": 5,
-      "timestamp": "2026-09-13T16:01:14.404685"
+      "records": 0,
+      "timestamp": "2026-09-13T16:15:22.295370"
     },
     "hunting_lateral_movement.json": {
       "present": true,
-      "records": 5,
-      "timestamp": "2026-09-13T16:01:14.214827"
+      "records": 0,
+      "timestamp": "2026-09-13T16:15:20.938115"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
-      "records": 6,
-      "timestamp": "2026-09-13T16:01:14.031458"
+      "records": 47,
+      "timestamp": "2026-09-13T16:15:19.516674"
     }
   },
   "coverage_gaps": [
+    {
+      "rule_id": "SOURCE",
+      "reason": "NOT_OBSERVABLE",
+      "detail": "hunting_credential_dumping.json: Security event log kh\u00f4ng \u0111\u1ecdc \u0111\u01b0\u1ee3c. Nguy\u00ean nh\u00e2n th\u01b0\u1eddng g\u1eb7p: audit \"Process Creation\" (4688) t\u1eaft m\u1eb7c \u0111\u1ecbnh tr\u00ean Windows Home, v\u00e0/ho\u1eb7c ti\u1ebfn tr\u00ecnh kh\u00f4ng ch\u1ea1y quy\u1ec1n Administrator."
+    },
+    {
+      "rule_id": "SOURCE",
+      "reason": "NOT_OBSERVABLE",
+      "detail": "hunting_lateral_movement.json: Security event log kh\u00f4ng \u0111\u1ecdc \u0111\u01b0\u1ee3c. Kh\u00f4ng th\u1ec3 k\u1ebft lu\u1eadn g\u00ec v\u1ec1 di chuy\u1ec3n ngang: 0 ph\u00e1t hi\u1ec7n \u1edf \u0111\u00e2y l\u00e0 do KH\u00d4NG NH\u00ccN \u0110\u01af\u1ee2C, kh\u00f4ng ph\u1ea3i do s\u1ea1ch."
+    },
     {
       "rule_id": "RULE-1",
       "reason": "NO_SHADOW_ASSETS",
       "detail": "state/shadow_assets.json kh\u00f4ng c\u00f3 m\u1ee5c shadows n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan."
     },
     {
+      "rule_id": "RULE-2",
+      "reason": "NO_LATERAL_IOC",
+      "detail": "state/hunting_lateral_movement.json kh\u00f4ng c\u00f3 indicator n\u00e0o."
+    },
+    {
       "rule_id": "RULE-3",
       "reason": "NO_DEFENDER_DETECTION",
-      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 6 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
+      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 47 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
     }
   ],
-  "findings": [
-    {
-      "finding_id": "EF-0001",
-      "rule_id": "RULE-2",
-      "rule_name": "Lateral Movement Probe",
-      "severity": "INFO",
-      "title": "Lateral movement: ch\u1ec9 c\u00f3 b\u1eb1ng ch\u1ee9ng M\u00d4 PH\u1eceNG, kh\u00f4ng k\u1ebft lu\u1eadn \u0111\u01b0\u1ee3c",
-      "summary": "5 k\u1ef9 thu\u1eadt lateral movement (Kerberos Delegation Abuse, PsExec/Remote Execution, Remote Desktop Protocol Abuse, SMB Lateral Movement, WinRM Remote Management) \u0111\u1ec1u mang data_source=SIMULATED - ch\u00fang l\u00e0 d\u1eef li\u1ec7u hardcode trong hunt_lateral_movement.py, kh\u00f4ng ph\u1ea3i quan s\u00e1t t\u1eeb m\u1ea1ng th\u1eadt. 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i trong last_24_hours l\u00e0 s\u1ed1 li\u1ec7u th\u1eadt, nh\u01b0ng m\u1ed9t m\u00ecnh n\u00f3 ch\u01b0a \u0111\u1ee7 \u0111\u1ec3 k\u1ebft lu\u1eadn.",
-      "entities": {
-        "ip": null,
-        "techniques": [
-          "Kerberos Delegation Abuse",
-          "PsExec/Remote Execution",
-          "Remote Desktop Protocol Abuse",
-          "SMB Lateral Movement",
-          "WinRM Remote Management"
-        ],
-        "failed_logons": 3,
-        "simulated_indicators": 5
-      },
-      "evidence": [
-        "[Lateral] SMB Lateral Movement: Ph\u00e1t hi\u1ec7n k\u1ebft n\u1ed1i SMB b\u1ea5t th\u01b0\u1eddng gi\u1eefa c\u00e1c m\u00e1y",
-        "[Lateral] PsExec/Remote Execution: Ph\u00e1t hi\u1ec7n d\u1ea5u hi\u1ec7u PsExec ho\u1eb7c remote command execution",
-        "[Lateral] WinRM Remote Management: Ph\u00e1t hi\u1ec7n WinRM \u0111\u01b0\u1ee3c d\u00f9ng cho remote execution",
-        "[Lateral] Remote Desktop Protocol Abuse: Ph\u00e1t hi\u1ec7n RDP \u0111\u01b0\u1ee3c d\u00f9ng b\u1ea5t th\u01b0\u1eddng",
-        "[Lateral] Kerberos Delegation Abuse: Ph\u00e1t hi\u1ec7n khai th\u00e1c Kerberos delegation (S4U)",
-        "[Security Events] failed_logons=3 trong last_24_hours"
-      ],
-      "recommended_action": "1. N\u1ed1i hunt_lateral_movement v\u1edbi MCP huntLateralMovement \u0111\u1ec3 c\u00f3 IOC th\u1eadt | 2. R\u00e0 Event ID 4625 th\u1ee7 c\u00f4ng cho 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i | 3. Kh\u00f4ng c\u00f4 l\u1eadp thi\u1ebft b\u1ecb n\u00e0o d\u1ef1a tr\u00ean ph\u00e1t hi\u1ec7n n\u00e0y",
-      "confidence": "LOW",
-      "evidence_quality": "SIMULATED",
-      "sources": [
-        "hunting_lateral_movement.json",
-        "security_events.json"
-      ],
-      "detected_at": "2026-09-13T16:01:15.155407"
-    }
-  ]
+  "findings": []
 }
