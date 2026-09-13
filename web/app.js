@@ -1022,10 +1022,12 @@ function renderExecutiveScorecard() {
 }
 
 function getRiskDetail(score) {
-  if (score >= 80) return 'Immediate action required';
-  if (score >= 60) return 'High priority remediation needed';
-  if (score >= 40) return 'Medium priority - plan remediation';
-  return 'Acceptable risk level';
+  switch (getThreatLevel(score)) {
+    case 'CRITICAL': return 'Immediate action required';
+    case 'HIGH': return 'High priority remediation needed';
+    case 'MEDIUM': return 'Medium priority - plan remediation';
+    default: return 'Acceptable risk level';
+  }
 }
 
 // ============================================================================
@@ -1077,18 +1079,25 @@ function renderTimeline() {
 // UTILITY FUNCTIONS
 // ============================================================================
 
-function getRiskLevel(score) {
-  if (score >= 80) return '🔴 CRITICAL';
-  if (score >= 60) return '🟠 HIGH';
-  if (score >= 40) return '🟡 MEDIUM';
-  return '🟢 LOW';
-}
+// risk_score.json is risk-ascending: a higher overall_score means more danger.
+// The engine also publishes risk_level, which carries the severity floor that
+// raw thresholds cannot reproduce - so prefer it and keep the bands as fallback.
+const RISK_EMOJI = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢' };
 
-function getThreatLevel(score) {
+function bandFromScore(score) {
   if (score >= 80) return 'CRITICAL';
   if (score >= 60) return 'HIGH';
   if (score >= 40) return 'MEDIUM';
   return 'LOW';
+}
+
+function getThreatLevel(score) {
+  return stateData.risk?.risk_level || bandFromScore(score);
+}
+
+function getRiskLevel(score) {
+  const level = getThreatLevel(score);
+  return `${RISK_EMOJI[level] || '⚪'} ${level}`;
 }
 
 function getSeverityColor(severity) {
@@ -1290,7 +1299,8 @@ function renderDailyBriefArchive() {
 
       if (criticalCount > 0) recommendations.push(`Investigate ${criticalCount} critical incidents`);
       if (highCount > 0) recommendations.push(`Review ${highCount} high-priority issues`);
-      if ((risk.overall_score || 0) < 50) recommendations.push('Risk score below threshold - take immediate action');
+      // Risk-ascending: a HIGH score is the alarming case, not a low one.
+      if ((risk.overall_score || 0) >= 60) recommendations.push(`Risk score ${risk.overall_score}/100 - take immediate action`);
       if (recommendations.length === 0) recommendations.push('System operating normally');
 
       const html = recommendations.map((rec, idx) => `
