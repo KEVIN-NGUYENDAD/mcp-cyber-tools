@@ -1,7 +1,36 @@
 {
-  "timestamp": "2026-09-13T15:51:15.898524",
+  "timestamp": "2026-09-13T16:01:13.829716",
+  "data_source": "SIMULATED",
+  "hunt_scope": {
+    "inventory_ips": [
+      "192.168.0.1",
+      "192.168.0.10",
+      "192.168.0.11",
+      "192.168.0.12",
+      "192.168.0.21",
+      "192.168.0.233",
+      "192.168.0.3",
+      "192.168.0.4",
+      "192.168.0.5",
+      "192.168.0.51",
+      "192.168.0.8"
+    ],
+    "arp_visible_ips": [
+      "192.168.0.1",
+      "192.168.0.21",
+      "192.168.0.233"
+    ],
+    "in_inventory_and_live": [
+      "192.168.0.1",
+      "192.168.0.21",
+      "192.168.0.233"
+    ],
+    "resolved_at_layer2": true,
+    "method": "assets.json + arp -a"
+  },
+  "attribution_note": "5 ch\u1ec9 b\u00e1o l\u00e0 d\u1eef li\u1ec7u M\u00d4 PH\u1eceNG hardcode trong script, kh\u00f4ng ph\u1ea3i quan s\u00e1t t\u1eeb m\u00e1y th\u1eadt. Kh\u00f4ng quy k\u1ebft thi\u1ebft b\u1ecb. Mu\u1ed1n quy k\u1ebft th\u1eadt, hunting ph\u1ea3i g\u1ecdi MCP tool t\u01b0\u01a1ng \u1ee9ng.",
   "hunting_type": "Persistence Indicators",
-  "question": "Có chỉ báo persistence nào trong hệ thống không?",
+  "question": "C\u00f3 ch\u1ec9 b\u00e1o persistence n\u00e0o trong h\u1ec7 th\u1ed1ng kh\u00f4ng?",
   "total_indicators": 5,
   "by_severity": {
     "HIGH": 3,
@@ -19,68 +48,128 @@
     {
       "type": "Registry Run Key Modification",
       "severity": "HIGH",
-      "timestamp": "2026-09-13T15:51:15.898524",
-      "description": "Registry Run Key có thể bị chỉnh sửa để persistence",
+      "timestamp": "2026-09-13T16:01:13.802655",
+      "description": "Registry Run Key c\u00f3 th\u1ec3 b\u1ecb ch\u1ec9nh s\u1eeda \u0111\u1ec3 persistence",
       "evidence": [
         "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
         "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
       ],
-      "recommendation": "Kiểm tra registry run keys, xóa entries lạ",
-      "impact": "Tự động khởi động malware",
-      "status": "DETECTED"
+      "recommendation": "Ki\u1ec3m tra registry run keys, x\u00f3a entries l\u1ea1",
+      "impact": "T\u1ef1 \u0111\u1ed9ng kh\u1edfi \u0111\u1ed9ng malware",
+      "status": "DETECTED",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "Startup Folder Persistence",
       "severity": "HIGH",
-      "timestamp": "2026-09-13T15:51:15.898524",
-      "description": "Thư mục Startup có chứa files lạ",
+      "timestamp": "2026-09-13T16:01:13.802655",
+      "description": "Th\u01b0 m\u1ee5c Startup c\u00f3 ch\u1ee9a files l\u1ea1",
       "evidence": [
         "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
         "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp"
       ],
-      "recommendation": "Kiểm tra Startup folders, xóa files lạ",
-      "impact": "Tự động khởi động malware",
-      "status": "POTENTIAL"
+      "recommendation": "Ki\u1ec3m tra Startup folders, x\u00f3a files l\u1ea1",
+      "impact": "T\u1ef1 \u0111\u1ed9ng kh\u1edfi \u0111\u1ed9ng malware",
+      "status": "POTENTIAL",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "Scheduled Task Persistence",
       "severity": "MEDIUM",
-      "timestamp": "2026-09-13T15:51:15.898524",
-      "description": "Scheduled task có thể dùng cho persistence",
+      "timestamp": "2026-09-13T16:01:13.802655",
+      "description": "Scheduled task c\u00f3 th\u1ec3 d\u00f9ng cho persistence",
       "evidence": [
         "C:\\Windows\\System32\\Tasks\\",
         "C:\\Windows\\SysWOW64\\Tasks\\"
       ],
-      "recommendation": "Audit scheduled tasks, xóa các tasks lạ/lạ",
-      "impact": "Thực thi code theo lịch",
-      "status": "REQUIRES_AUDIT"
+      "recommendation": "Audit scheduled tasks, x\u00f3a c\u00e1c tasks l\u1ea1/l\u1ea1",
+      "impact": "Th\u1ef1c thi code theo l\u1ecbch",
+      "status": "REQUIRES_AUDIT",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "Malicious Service",
       "severity": "HIGH",
-      "timestamp": "2026-09-13T15:51:15.898524",
-      "description": "Service mới được cài đặt - kiểm tra xem có phải malware",
+      "timestamp": "2026-09-13T16:01:13.802655",
+      "description": "Service m\u1edbi \u0111\u01b0\u1ee3c c\u00e0i \u0111\u1eb7t - ki\u1ec3m tra xem c\u00f3 ph\u1ea3i malware",
       "evidence": [
         "HKLM\\System\\CurrentControlSet\\Services\\",
         "registry services entries"
       ],
-      "recommendation": "Kiểm tra services mới, xóa nếu lạ",
-      "impact": "Tự động chạy malware service",
-      "status": "REQUIRES_VERIFICATION"
+      "recommendation": "Ki\u1ec3m tra services m\u1edbi, x\u00f3a n\u1ebfu l\u1ea1",
+      "impact": "T\u1ef1 \u0111\u1ed9ng ch\u1ea1y malware service",
+      "status": "REQUIRES_VERIFICATION",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "WMI Event Consumer Subscription",
       "severity": "CRITICAL",
-      "timestamp": "2026-09-13T15:51:15.898524",
-      "description": "WMI có thể bị dùng cho persistence",
+      "timestamp": "2026-09-13T16:01:13.802655",
+      "description": "WMI c\u00f3 th\u1ec3 b\u1ecb d\u00f9ng cho persistence",
       "evidence": [
         "WMI Event Consumers",
         "WMI Event Filters",
         "Filter to Consumer Binding"
       ],
-      "recommendation": "Kiểm tra WMI event subscribers, xóa các subscriptions lạ",
-      "impact": "Execution hook vào WMI events",
-      "status": "REQUIRES_FORENSICS"
+      "recommendation": "Ki\u1ec3m tra WMI event subscribers, x\u00f3a c\u00e1c subscriptions l\u1ea1",
+      "impact": "Execution hook v\u00e0o WMI events",
+      "status": "REQUIRES_FORENSICS",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     }
   ]
 }

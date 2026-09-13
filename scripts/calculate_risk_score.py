@@ -144,6 +144,7 @@ class RiskScoreCalculator:
         score = 100
         crit_total, high_total = 0, 0
         parts = []
+        simulated_sources = []
 
         for filename in HUNTING_FILES:
             data = self.load_state(filename)
@@ -160,12 +161,31 @@ class RiskScoreCalculator:
             score -= high * penalty['HIGH']
             crit_total += crit
             high_total += high
-            parts.append('{}: {}C/{}H'.format(
-                filename.replace('hunting_', '').replace('.json', ''), crit, high))
+
+            # Sprint 6.1: nguồn hunting tự khai data_source. Điểm KHÔNG đổi theo
+            # trường này - đổi cách chấm là quyết định chính sách, không phải hệ
+            # quả của việc gắn nhãn - nhưng nhãn phải đi cùng con số tới mọi nơi
+            # đọc nó, nếu không người xem tưởng 25% trọng số này là quan sát thật.
+            simulated = data.get('data_source') == 'SIMULATED'
+            if simulated:
+                simulated_sources.append(filename)
+            parts.append('{}: {}C/{}H{}'.format(
+                filename.replace('hunting_', '').replace('.json', ''),
+                crit, high, ' [MÔ PHỎNG]' if simulated else ''))
 
         score = max(0, score)
         detail = '; '.join(parts) if parts else 'không có IOC CRITICAL/HIGH'
-        return score, detail, {'critical': crit_total, 'high': high_total}
+        if simulated_sources:
+            self.notes.append(
+                'Cảnh báo dữ liệu: {}/{} nguồn hunting mang data_source=SIMULATED '
+                '({}). Chúng đóng góp {}% trọng số rủi ro và {} phát hiện CRITICAL '
+                'kích hoạt severity floor, nhưng KHÔNG phải quan sát từ máy thật.'
+                .format(len(simulated_sources), len(HUNTING_FILES),
+                        ', '.join(s.replace('hunting_', '').replace('.json', '')
+                                  for s in simulated_sources),
+                        int(WEIGHTS['threat_hunting'] * 100), crit_total))
+        return score, detail, {'critical': crit_total, 'high': high_total,
+                               'simulated_sources': simulated_sources}
 
     # ------------------------------------------------------------------
 
