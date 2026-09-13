@@ -199,11 +199,18 @@ class AutoInvestigationPlaybook:
         else:
             started = time.time()
             try:
+                hunt_env = dict(os.environ)
+                hunt_env['PYTHONIOENCODING'] = 'utf-8'
                 proc = subprocess.run(
                     [sys.executable, str(script_path)],
                     cwd=str(self.project_root),
                     capture_output=True,
                     text=True,
+                    # Cùng lý do như trong run_intelligence_pipeline: locale
+                    # cp1252 không giải mã được JSON UTF-8 của script con.
+                    encoding='utf-8',
+                    errors='replace',
+                    env=hunt_env,
                     timeout=HUNT_TIMEOUT,
                 )
                 result['duration'] = round(time.time() - started, 1)

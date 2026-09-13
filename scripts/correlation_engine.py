@@ -533,9 +533,27 @@ class CorrelationEngine:
     # RUN
     # ------------------------------------------------------------------
 
+    def record_coverage_gaps(self):
+        """Nguồn hunting nào đang mù thì nói ra, trước khi rule nào kết luận.
+
+        Một rule im lặng vì "không thấy gì" và một rule im lặng vì "không nhìn
+        được" trông giống hệt nhau trong báo cáo, nhưng ý nghĩa thì ngược nhau.
+        """
+        for filename in SOURCE_FILES:
+            if not filename.startswith('hunting_'):
+                continue
+            data = self.state.get(filename) or {}
+            coverage = data.get('coverage') or {}
+            if coverage and not coverage.get('observable', True):
+                self.add_gap(
+                    'SOURCE', 'NOT_OBSERVABLE',
+                    '{}: {}'.format(filename, coverage.get('reason') or
+                                    'nguồn dữ liệu không đọc được'))
+
     def run(self):
         self.load_sources()
 
+        self.record_coverage_gaps()
         self.rule_compromised_shadow()
         self.rule_lateral_movement_probe()
         self.rule_high_risk_cluster()

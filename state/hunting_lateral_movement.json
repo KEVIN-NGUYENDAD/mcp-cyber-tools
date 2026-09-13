@@ -1,6 +1,14 @@
 {
-  "timestamp": "2026-09-13T16:01:14.214827",
-  "data_source": "SIMULATED",
+  "timestamp": "2026-09-13T16:15:20.938115",
+  "hunting_type": "Lateral Movement",
+  "hunt_version": "2.0.0",
+  "data_source": "LIVE_OBSERVED",
+  "coverage": {
+    "observable": false,
+    "status": "NOT_OBSERVABLE",
+    "source": "Security event log (4624/4625/4648/4768/4769/4778/4779)",
+    "reason": "Security event log kh\u00f4ng \u0111\u1ecdc \u0111\u01b0\u1ee3c. Kh\u00f4ng th\u1ec3 k\u1ebft lu\u1eadn g\u00ec v\u1ec1 di chuy\u1ec3n ngang: 0 ph\u00e1t hi\u1ec7n \u1edf \u0111\u00e2y l\u00e0 do KH\u00d4NG NH\u00ccN \u0110\u01af\u1ee2C, kh\u00f4ng ph\u1ea3i do s\u1ea1ch."
+  },
   "hunt_scope": {
     "inventory_ips": [
       "192.168.0.1",
@@ -21,156 +29,47 @@
       "192.168.0.233"
     ],
     "in_inventory_and_live": [
-      "192.168.0.1",
-      "192.168.0.21",
-      "192.168.0.233"
+      "192.168.0.51"
     ],
     "resolved_at_layer2": true,
-    "method": "assets.json + arp -a"
+    "method": "assets.json + arp -a",
+    "local_host": {
+      "hostname": "kevin",
+      "ips": [
+        "192.168.0.51"
+      ]
+    },
+    "coverage": "NOT_OBSERVABLE",
+    "coverage_reason": "Security event log kh\u00f4ng \u0111\u1ecdc \u0111\u01b0\u1ee3c. Kh\u00f4ng th\u1ec3 k\u1ebft lu\u1eadn g\u00ec v\u1ec1 di chuy\u1ec3n ngang: 0 ph\u00e1t hi\u1ec7n \u1edf \u0111\u00e2y l\u00e0 do KH\u00d4NG NH\u00ccN \u0110\u01af\u1ee2C, kh\u00f4ng ph\u1ea3i do s\u1ea1ch.",
+    "source_detail": "huntLateralMovement + huntRemoteDesktop"
   },
-  "attribution_note": "5 ch\u1ec9 b\u00e1o l\u00e0 d\u1eef li\u1ec7u M\u00d4 PH\u1eceNG hardcode trong script, kh\u00f4ng ph\u1ea3i quan s\u00e1t t\u1eeb m\u00e1y th\u1eadt. Kh\u00f4ng quy k\u1ebft thi\u1ebft b\u1ecb. Mu\u1ed1n quy k\u1ebft th\u1eadt, hunting ph\u1ea3i g\u1ecdi MCP tool t\u01b0\u01a1ng \u1ee9ng.",
-  "hunting_type": "Lateral Movement",
-  "question": "C\u00f3 ch\u1ec9 b\u00e1o di chuy\u1ec3n ngang trong h\u1ec7 th\u1ed1ng kh\u00f4ng?",
-  "total_indicators": 5,
-  "blast_radius": "ORGANIZATION-WIDE: Kerberos/PsExec abuse - c\u00f3 th\u1ec3 l\u00e2y lan to\u00e0n h\u1ec7",
-  "by_severity": {
-    "HIGH": 3,
-    "CRITICAL": 2
-  },
-  "indicators": [
+  "tools_used": [
     {
-      "type": "SMB Lateral Movement",
-      "severity": "HIGH",
-      "timestamp": "2026-09-13T16:01:14.186974",
-      "description": "Ph\u00e1t hi\u1ec7n k\u1ebft n\u1ed1i SMB b\u1ea5t th\u01b0\u1eddng gi\u1eefa c\u00e1c m\u00e1y",
-      "evidence": [
-        "Port 445 (SMB) connections",
-        "Multiple failed SMB authentications",
-        "Unusual SMB client behavior"
-      ],
-      "recommendation": "Ki\u1ec3m tra SMB logs, x\u00e1c minh k\u1ebft n\u1ed1i",
-      "impact": "Truy\u1ec1n lan malware qua share",
-      "status": "REQUIRES_VERIFICATION",
-      "affected_assets": [],
-      "data_source": "SIMULATED",
-      "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
-      },
-      "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
-      ]
+      "tool": "securityLogs (probe)",
+      "ok": false,
+      "records": 0,
+      "duration": 0.37,
+      "error": "ERROR: Command failed: powershell -NoProfile -NonInteractive -EncodedCommand RwBlAHQALQBXAGkAbgBFAHYAZQBuAHQAIAAtAEwAbwBnAE4AYQBtAGUAIAAnAFMAZQBjAHUAcgBpAHQAeQAnACAALQBNAGEAeABFAHYAZQBuAHQAcwAgADUAIAAtAEUAcgByAG8AcgBBAGMAdABpAG8AbgAgAFMAaQBsAGUAbgB0AGwAeQBDAG8AbgB0AGkAbgB1AGUAIAB8ACAAUwBlAGwAZQBjAHQALQBPAGIAagBlAGMAdAAgAFQAaQBtAGUAQwByAGUAYQB0AGUAZAAsACAASQBkACwAIABMAGUAdgBlAGwARABpAHMAcABsAGEAeQB"
     },
     {
-      "type": "PsExec/Remote Execution",
-      "severity": "CRITICAL",
-      "timestamp": "2026-09-13T16:01:14.186974",
-      "description": "Ph\u00e1t hi\u1ec7n d\u1ea5u hi\u1ec7u PsExec ho\u1eb7c remote command execution",
-      "evidence": [
-        "PSEXESVC service installation",
-        "Remote service creation",
-        "Admin share access (IPC$, ADMIN$)",
-        "Service pipe access"
-      ],
-      "recommendation": "\u0110i\u1ec1u tra to\u00e0n b\u1ed9 assets, ki\u1ec3m tra audit logs",
-      "impact": "Th\u1ef1c thi code remote v\u1edbi quy\u1ec1n admin",
-      "status": "CRITICAL",
-      "affected_assets": [],
-      "data_source": "SIMULATED",
-      "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Ch\u1ec9 b\u00e1o m\u00f4 ph\u1ecfng: quy k\u1ebft thi\u1ebft b\u1ecb \u0111\u00e3 b\u1ecb lo\u1ea1i b\u1ecf \u0111\u1ec3 tr\u00e1nh t\u1ea1o b\u1eb1ng ch\u1ee9ng gi\u1ea3"
-      },
-      "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
-      ]
+      "tool": "huntLateralMovement",
+      "ok": true,
+      "records": 0,
+      "duration": 0.3,
+      "error": null
     },
     {
-      "type": "WinRM Remote Management",
-      "severity": "HIGH",
-      "timestamp": "2026-09-13T16:01:14.186974",
-      "description": "Ph\u00e1t hi\u1ec7n WinRM \u0111\u01b0\u1ee3c d\u00f9ng cho remote execution",
-      "evidence": [
-        "Port 5985/5986 (WinRM)",
-        "Kerberos/NTLM auth from unusual sources",
-        "PSRemoting connection attempts",
-        "WinRM service abuse"
-      ],
-      "recommendation": "Ki\u1ec3m tra WinRM logs, audit remote sessions",
-      "impact": "Remote PowerShell execution",
-      "status": "REQUIRES_VERIFICATION",
-      "affected_assets": [],
-      "data_source": "SIMULATED",
-      "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
-      },
-      "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
-      ]
-    },
-    {
-      "type": "Remote Desktop Protocol Abuse",
-      "severity": "HIGH",
-      "timestamp": "2026-09-13T16:01:14.186974",
-      "description": "Ph\u00e1t hi\u1ec7n RDP \u0111\u01b0\u1ee3c d\u00f9ng b\u1ea5t th\u01b0\u1eddng",
-      "evidence": [
-        "Multiple RDP login attempts",
-        "RDP from non-standard hours",
-        "RDP from unusual geolocation",
-        "RDP to sensitive systems"
-      ],
-      "recommendation": "Ki\u1ec3m tra RDP event logs, x\u00e1c minh logins",
-      "impact": "Remote interactive access",
-      "status": "REQUIRES_VERIFICATION",
-      "affected_assets": [],
-      "data_source": "SIMULATED",
-      "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
-      },
-      "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
-      ]
-    },
-    {
-      "type": "Kerberos Delegation Abuse",
-      "severity": "CRITICAL",
-      "timestamp": "2026-09-13T16:01:14.186974",
-      "description": "Ph\u00e1t hi\u1ec7n khai th\u00e1c Kerberos delegation (S4U)",
-      "evidence": [
-        "Unconstrained delegation usage",
-        "Constrained delegation abuse",
-        "Service for User (S4U) activity",
-        "Ticket granting anomalies"
-      ],
-      "recommendation": "Ki\u1ec3m tra Kerberos delegation settings, audit ticket generation",
-      "impact": "Privilege escalation v\u00e0 lateral movement",
-      "status": "CRITICAL",
-      "affected_assets": [],
-      "data_source": "SIMULATED",
-      "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
-      },
-      "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
-      ]
+      "tool": "huntRemoteDesktop",
+      "ok": true,
+      "records": 0,
+      "duration": 0.32,
+      "error": null
     }
-  ]
+  ],
+  "errors": [],
+  "question": "C\u00f3 ch\u1ec9 b\u00e1o di chuy\u1ec3n ngang trong h\u1ec7 th\u1ed1ng kh\u00f4ng?",
+  "total_indicators": 0,
+  "blast_radius": "UNKNOWN: ch\u01b0a \u0111\u1ecdc \u0111\u01b0\u1ee3c Security log, kh\u00f4ng \u0111\u00e1nh gi\u00e1 \u0111\u01b0\u1ee3c ph\u1ea1m vi l\u00e2y lan",
+  "by_severity": {},
+  "indicators": []
 }

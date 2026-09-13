@@ -25,9 +25,14 @@ import subprocess
 from pathlib import Path
 
 # Nguồn gốc dữ liệu của một chỉ báo
-SOURCE_SIMULATED = 'SIMULATED'   # nội dung hardcode trong script, không quan sát được
-SOURCE_DERIVED = 'DERIVED'       # suy ra từ state file có thật
-SOURCE_OBSERVED = 'OBSERVED'     # đọc trực tiếp từ telemetry của máy
+SOURCE_SIMULATED = 'SIMULATED'       # nội dung hardcode trong script, không quan sát được
+SOURCE_DERIVED = 'DERIVED'           # suy ra từ state file có thật
+SOURCE_OBSERVED = 'OBSERVED'         # đọc trực tiếp từ telemetry của máy
+SOURCE_LIVE = 'LIVE_OBSERVED'        # thu qua MCP tool, chạy trên máy thật, ngay lúc này
+
+# Một cuộc săn không quan sát được KHÁC với một cuộc săn không thấy gì.
+COVERAGE_OBSERVED = 'OBSERVED'           # đã đọc được nguồn, kết quả đáng tin
+COVERAGE_NOT_OBSERVABLE = 'NOT_OBSERVABLE'   # không đọc được nguồn - chưa kết luận được gì
 
 STATE_DIR = Path(__file__).parent.parent / 'state'
 
@@ -157,3 +162,55 @@ def coverage_note(data_source, count):
                 'quan sát từ máy thật. Không quy kết thiết bị. Muốn quy kết thật, '
                 'hunting phải gọi MCP tool tương ứng.'.format(count))
     return '{} chỉ báo suy ra từ state file có thật.'.format(count)
+
+
+def local_host_identity():
+    """Danh tính máy đang chạy cuộc săn.
+
+    Các cuộc săn host-level (persistence, process, credential) quan sát CHÍNH
+    máy này, nên quy kết về nó là sự thật kiểm chứng được - khác hẳn việc gán
+    IOC cho một IP nào đó trong mạng.
+    """
+    import socket
+    hostname = 'unknown'
+    try:
+        hostname = socket.gethostname()
+    except Exception:
+        pass
+
+    ips = []
+    try:
+        # Không dùng gethostbyname(hostname): trên Windows nó hay trả 127.0.0.1.
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            sock.connect(('8.8.8.8', 80))   # không gửi gói nào, chỉ để lấy route
+            ips.append(sock.getsockname()[0])
+        finally:
+            sock.close()
+    except Exception:
+        pass
+
+    return {'hostname': hostname, 'ips': ips}
+
+
+def live_scope(coverage=COVERAGE_OBSERVED, source_detail=None, reason=None):
+    """Phạm vi của một cuộc săn LIVE trên máy cục bộ."""
+    identity = local_host_identity()
+    scope = resolve_hunt_scope()
+    scope['local_host'] = identity
+    scope['in_inventory_and_live'] = identity['ips'] or scope['in_inventory_and_live']
+    scope['coverage'] = coverage
+    scope['coverage_reason'] = reason
+    scope['source_detail'] = source_detail
+    return scope
+
+
+def coverage_block(observable, source, reason=None):
+    """Khối coverage gắn ở cấp báo cáo, để hạ nguồn biết im lặng nghĩa là gì."""
+    return {
+        'observable': bool(observable),
+        'status': COVERAGE_OBSERVED if observable else COVERAGE_NOT_OBSERVABLE,
+        'source': source,
+        'reason': reason or ('Đã đọc được nguồn' if observable else
+                             'Không đọc được nguồn - 0 phát hiện KHÔNG có nghĩa là sạch'),
+    }

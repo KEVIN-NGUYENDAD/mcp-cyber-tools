@@ -1,6 +1,14 @@
 {
-  "timestamp": "2026-09-13T16:01:13.829716",
-  "data_source": "SIMULATED",
+  "timestamp": "2026-09-13T16:15:16.585804",
+  "hunting_type": "Persistence Indicators",
+  "hunt_version": "2.0.0",
+  "data_source": "LIVE_OBSERVED",
+  "coverage": {
+    "observable": true,
+    "status": "OBSERVED",
+    "source": "Scheduled Tasks + Registry Run keys",
+    "reason": "\u0110\u00e3 \u0111\u1ecdc \u0111\u01b0\u1ee3c ngu\u1ed3n"
+  },
   "hunt_scope": {
     "inventory_ips": [
       "192.168.0.1",
@@ -21,154 +29,3116 @@
       "192.168.0.233"
     ],
     "in_inventory_and_live": [
-      "192.168.0.1",
-      "192.168.0.21",
-      "192.168.0.233"
+      "192.168.0.51"
     ],
     "resolved_at_layer2": true,
-    "method": "assets.json + arp -a"
+    "method": "assets.json + arp -a",
+    "local_host": {
+      "hostname": "kevin",
+      "ips": [
+        "192.168.0.51"
+      ]
+    },
+    "coverage": "OBSERVED",
+    "coverage_reason": null,
+    "source_detail": "huntPersistence + huntSuspiciousTasks"
   },
-  "attribution_note": "5 ch\u1ec9 b\u00e1o l\u00e0 d\u1eef li\u1ec7u M\u00d4 PH\u1eceNG hardcode trong script, kh\u00f4ng ph\u1ea3i quan s\u00e1t t\u1eeb m\u00e1y th\u1eadt. Kh\u00f4ng quy k\u1ebft thi\u1ebft b\u1ecb. Mu\u1ed1n quy k\u1ebft th\u1eadt, hunting ph\u1ea3i g\u1ecdi MCP tool t\u01b0\u01a1ng \u1ee9ng.",
-  "hunting_type": "Persistence Indicators",
+  "tools_used": [
+    {
+      "tool": "huntPersistence",
+      "ok": true,
+      "records": 56,
+      "duration": 1.84,
+      "error": null
+    },
+    {
+      "tool": "huntSuspiciousTasks",
+      "ok": true,
+      "records": 40,
+      "duration": 1.74,
+      "error": null
+    }
+  ],
+  "errors": [],
   "question": "C\u00f3 ch\u1ec9 b\u00e1o persistence n\u00e0o trong h\u1ec7 th\u1ed1ng kh\u00f4ng?",
-  "total_indicators": 5,
+  "total_indicators": 96,
   "by_severity": {
-    "HIGH": 3,
-    "MEDIUM": 1,
-    "CRITICAL": 1
+    "INFO": 96
   },
   "by_status": {
-    "DETECTED": 1,
-    "POTENTIAL": 1,
-    "REQUIRES_AUDIT": 1,
-    "REQUIRES_VERIFICATION": 1,
-    "REQUIRES_FORENSICS": 1
+    "DETECTED": 96
   },
   "indicators": [
     {
-      "type": "Registry Run Key Modification",
-      "severity": "HIGH",
-      "timestamp": "2026-09-13T16:01:13.802655",
-      "description": "Registry Run Key c\u00f3 th\u1ec3 b\u1ecb ch\u1ec9nh s\u1eeda \u0111\u1ec3 persistence",
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "Adobe Acrobat Update Task",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"Adobe Acrobat Update Task\" t\u1ea1i \\",
       "evidence": [
-        "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-        "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+        "Kind=ScheduledTask",
+        "Name=Adobe Acrobat Update Task",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
       ],
-      "recommendation": "Ki\u1ec3m tra registry run keys, x\u00f3a entries l\u1ea1",
-      "impact": "T\u1ef1 \u0111\u1ed9ng kh\u1edfi \u0111\u1ed9ng malware",
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
       "status": "DETECTED",
-      "data_source": "SIMULATED",
-      "affected_systems": [],
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
       "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
       },
       "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
+        "192.168.0.51"
       ]
     },
     {
-      "type": "Startup Folder Persistence",
-      "severity": "HIGH",
-      "timestamp": "2026-09-13T16:01:13.802655",
-      "description": "Th\u01b0 m\u1ee5c Startup c\u00f3 ch\u1ee9a files l\u1ea1",
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "Duet Updater",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"Duet Updater\" t\u1ea1i \\",
       "evidence": [
-        "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
-        "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp"
+        "Kind=ScheduledTask",
+        "Name=Duet Updater",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
       ],
-      "recommendation": "Ki\u1ec3m tra Startup folders, x\u00f3a files l\u1ea1",
-      "impact": "T\u1ef1 \u0111\u1ed9ng kh\u1edfi \u0111\u1ed9ng malware",
-      "status": "POTENTIAL",
-      "data_source": "SIMULATED",
-      "affected_systems": [],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
       "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
       },
       "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
+        "192.168.0.51"
       ]
     },
     {
-      "type": "Scheduled Task Persistence",
-      "severity": "MEDIUM",
-      "timestamp": "2026-09-13T16:01:13.802655",
-      "description": "Scheduled task c\u00f3 th\u1ec3 d\u00f9ng cho persistence",
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "HOME-SOC-MCP-Server",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"HOME-SOC-MCP-Server\" t\u1ea1i \\",
       "evidence": [
-        "C:\\Windows\\System32\\Tasks\\",
-        "C:\\Windows\\SysWOW64\\Tasks\\"
+        "Kind=ScheduledTask",
+        "Name=HOME-SOC-MCP-Server",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
       ],
-      "recommendation": "Audit scheduled tasks, x\u00f3a c\u00e1c tasks l\u1ea1/l\u1ea1",
-      "impact": "Th\u1ef1c thi code theo l\u1ecbch",
-      "status": "REQUIRES_AUDIT",
-      "data_source": "SIMULATED",
-      "affected_systems": [],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
       "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
       },
       "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
+        "192.168.0.51"
       ]
     },
     {
-      "type": "Malicious Service",
-      "severity": "HIGH",
-      "timestamp": "2026-09-13T16:01:13.802655",
-      "description": "Service m\u1edbi \u0111\u01b0\u1ee3c c\u00e0i \u0111\u1eb7t - ki\u1ec3m tra xem c\u00f3 ph\u1ea3i malware",
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "HOME-SOC-Scan-And-Export",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"HOME-SOC-Scan-And-Export\" t\u1ea1i \\",
       "evidence": [
-        "HKLM\\System\\CurrentControlSet\\Services\\",
-        "registry services entries"
+        "Kind=ScheduledTask",
+        "Name=HOME-SOC-Scan-And-Export",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
       ],
-      "recommendation": "Ki\u1ec3m tra services m\u1edbi, x\u00f3a n\u1ebfu l\u1ea1",
-      "impact": "T\u1ef1 \u0111\u1ed9ng ch\u1ea1y malware service",
-      "status": "REQUIRES_VERIFICATION",
-      "data_source": "SIMULATED",
-      "affected_systems": [],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
       "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
       },
       "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
+        "192.168.0.51"
       ]
     },
     {
-      "type": "WMI Event Consumer Subscription",
-      "severity": "CRITICAL",
-      "timestamp": "2026-09-13T16:01:13.802655",
-      "description": "WMI c\u00f3 th\u1ec3 b\u1ecb d\u00f9ng cho persistence",
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "McUpdaterModuleTask",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"McUpdaterModuleTask\" t\u1ea1i \\",
       "evidence": [
-        "WMI Event Consumers",
-        "WMI Event Filters",
-        "Filter to Consumer Binding"
+        "Kind=ScheduledTask",
+        "Name=McUpdaterModuleTask",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
       ],
-      "recommendation": "Ki\u1ec3m tra WMI event subscribers, x\u00f3a c\u00e1c subscriptions l\u1ea1",
-      "impact": "Execution hook v\u00e0o WMI events",
-      "status": "REQUIRES_FORENSICS",
-      "data_source": "SIMULATED",
-      "affected_systems": [],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
       "attribution": {
-        "method": "none",
-        "confidence": "NONE",
-        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
       },
       "hunt_scope": [
-        "192.168.0.1",
-        "192.168.0.21",
-        "192.168.0.233"
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NvDriverUpdateCheckDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvDriverUpdateCheckDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvDriverUpdateCheckDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NVIDIA GeForce Experience SelfUpdate_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NVIDIA GeForce Experience SelfUpdate_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NVIDIA GeForce Experience SelfUpdate_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NvNodeLauncher_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvNodeLauncher_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvNodeLauncher_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NvProfileUpdaterDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvProfileUpdaterDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvProfileUpdaterDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NvProfileUpdaterOnLogon_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvProfileUpdaterOnLogon_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvProfileUpdaterOnLogon_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NvTmRep_CrashReport1_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvTmRep_CrashReport1_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvTmRep_CrashReport1_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NvTmRep_CrashReport2_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvTmRep_CrashReport2_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvTmRep_CrashReport2_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NvTmRep_CrashReport3_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvTmRep_CrashReport3_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvTmRep_CrashReport3_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "NvTmRep_CrashReport4_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvTmRep_CrashReport4_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvTmRep_CrashReport4_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OmenInstallMonitor",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenInstallMonitor\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenInstallMonitor",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OmenInstallMonitor-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenInstallMonitor-sid-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenInstallMonitor-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OmenInstallMonitorCustomEvent",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenInstallMonitorCustomEvent\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenInstallMonitorCustomEvent",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OmenInstallMonitorCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenInstallMonitorCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenInstallMonitorCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OmenOverlay",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenOverlay\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenOverlay",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OmenOverlay-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenOverlay-sid-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenOverlay-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OmenOverlayCustomEvent",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenOverlayCustomEvent\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenOverlayCustomEvent",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OmenOverlayCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenOverlayCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenOverlayCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OneDrive Per-Machine Standalone Update Task",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OneDrive Per-Machine Standalone Update Task\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OneDrive Per-Machine Standalone Update Task",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OneDrive Reporting Task-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OneDrive Reporting Task-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OneDrive Reporting Task-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OneDrive Startup Task-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OneDrive Startup Task-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OneDrive Startup Task-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "RtkAudUService64_BG",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"RtkAudUService64_BG\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=RtkAudUService64_BG",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "SecurityScannerScheduler",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"SecurityScannerScheduler\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SecurityScannerScheduler",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "SentinelOps-Collectors",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"SentinelOps-Collectors\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SentinelOps-Collectors",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "SentinelOps-DailyBrief",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"SentinelOps-DailyBrief\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SentinelOps-DailyBrief",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "RunPlatformExperienceHelperOnUnlock",
+      "location": "\\GoogleUserPEH\\",
+      "command": "",
+      "description": "ScheduledTask \"RunPlatformExperienceHelperOnUnlock\" t\u1ea1i \\GoogleUserPEH\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=RunPlatformExperienceHelperOnUnlock",
+        "Location=\\GoogleUserPEH\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "RunPlatformExperienceHelper_Daily",
+      "location": "\\GoogleUserPEH\\",
+      "command": "",
+      "description": "ScheduledTask \"RunPlatformExperienceHelper_Daily\" t\u1ea1i \\GoogleUserPEH\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=RunPlatformExperienceHelper_Daily",
+        "Location=\\GoogleUserPEH\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "RunPlatformExperienceHelper_Metrics",
+      "location": "\\GoogleUserPEH\\",
+      "command": "",
+      "description": "ScheduledTask \"RunPlatformExperienceHelper_Metrics\" t\u1ea1i \\GoogleUserPEH\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=RunPlatformExperienceHelper_Metrics",
+        "Location=\\GoogleUserPEH\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "HP Support Assistant Update Notice",
+      "location": "\\Hewlett-Packard\\HP Support Assistant\\",
+      "command": "",
+      "description": "ScheduledTask \"HP Support Assistant Update Notice\" t\u1ea1i \\Hewlett-Packard\\HP Support Assistant\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=HP Support Assistant Update Notice",
+        "Location=\\Hewlett-Packard\\HP Support Assistant\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "WarrantyChecker",
+      "location": "\\Hewlett-Packard\\HP Support Assistant\\",
+      "command": "",
+      "description": "ScheduledTask \"WarrantyChecker\" t\u1ea1i \\Hewlett-Packard\\HP Support Assistant\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=WarrantyChecker",
+        "Location=\\Hewlett-Packard\\HP Support Assistant\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "WarrantyChecker_DeviceScan",
+      "location": "\\Hewlett-Packard\\HP Support Assistant\\",
+      "command": "",
+      "description": "ScheduledTask \"WarrantyChecker_DeviceScan\" t\u1ea1i \\Hewlett-Packard\\HP Support Assistant\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=WarrantyChecker_DeviceScan",
+        "Location=\\Hewlett-Packard\\HP Support Assistant\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "Printer Health Monitor",
+      "location": "\\HP\\HP Print Scan Doctor\\",
+      "command": "",
+      "description": "ScheduledTask \"Printer Health Monitor\" t\u1ea1i \\HP\\HP Print Scan Doctor\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=Printer Health Monitor",
+        "Location=\\HP\\HP Print Scan Doctor\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "Printer Health Monitor Logon",
+      "location": "\\HP\\HP Print Scan Doctor\\",
+      "command": "",
+      "description": "ScheduledTask \"Printer Health Monitor Logon\" t\u1ea1i \\HP\\HP Print Scan Doctor\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=Printer Health Monitor Logon",
+        "Location=\\HP\\HP Print Scan Doctor\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "McAfee Windows Notification Token",
+      "location": "\\McAfee\\WPS\\",
+      "command": "",
+      "description": "ScheduledTask \"McAfee Windows Notification Token\" t\u1ea1i \\McAfee\\WPS\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=McAfee Windows Notification Token",
+        "Location=\\McAfee\\WPS\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "SoftLandingCreativeManagementTask",
+      "location": "\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+      "command": "",
+      "description": "ScheduledTask \"SoftLandingCreativeManagementTask\" t\u1ea1i \\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SoftLandingCreativeManagementTask",
+        "Location=\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "SoftLandingDeferralTask-{3b809d98-dacc-49a7-81ce-d33e93812f45}",
+      "location": "\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+      "command": "",
+      "description": "ScheduledTask \"SoftLandingDeferralTask-{3b809d98-dacc-49a7-81ce-d33e93812f45}\" t\u1ea1i \\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SoftLandingDeferralTask-{3b809d98-dacc-49a7-81ce-d33e93812f45}",
+        "Location=\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "SecurityHealth",
+      "location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "C:\\WINDOWS\\system32\\SecurityHealthSystray.exe",
+      "description": "RunKey \"SecurityHealth\" t\u1ea1i HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=SecurityHealth",
+        "Location=HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=C:\\WINDOWS\\system32\\SecurityHealthSystray.exe",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OfficeSuite",
+      "location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "C:\\Program Files\\MobiSystems\\OfficeSuite\\MobiSystemsUpdate.exe",
+      "description": "RunKey \"OfficeSuite\" t\u1ea1i HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=OfficeSuite",
+        "Location=HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=C:\\Program Files\\MobiSystems\\OfficeSuite\\MobiSystemsUpdate.exe",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "HPSEU_Host_Launcher",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "C:\\Program Files\\HP\\HP System Event Utility\\Host Launcher\\HpseuHostLauncher.exe",
+      "description": "RunKey \"HPSEU_Host_Launcher\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=HPSEU_Host_Launcher",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=C:\\Program Files\\HP\\HP System Event Utility\\Host Launcher\\HpseuHostLauncher.exe",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.557622",
+      "name": "OneDrive",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe\" /background",
+      "description": "RunKey \"OneDrive\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=OneDrive",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe\" /background",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "CiscoMeetingDaemon",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Users\\tamng\\AppData\\Local\\WebEx\\WebexHost.exe\" /daemon /runFrom=autorun",
+      "description": "RunKey \"CiscoMeetingDaemon\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=CiscoMeetingDaemon",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Users\\tamng\\AppData\\Local\\WebEx\\WebexHost.exe\" /daemon /runFrom=autorun",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "Zalo",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Users\\tamng\\AppData\\Local\\Programs\\Zalo\\Zalo.exe\"",
+      "description": "RunKey \"Zalo\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=Zalo",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Users\\tamng\\AppData\\Local\\Programs\\Zalo\\Zalo.exe\"",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "GoogleDriveFS",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe\" --startup_mode",
+      "description": "RunKey \"GoogleDriveFS\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=GoogleDriveFS",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe\" --startup_mode",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "Microsoft.Lists",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "C:\\Program Files\\Microsoft OneDrive\\26.158.0816.0003\\OneDrive.Sync.Service.exe",
+      "description": "RunKey \"Microsoft.Lists\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=Microsoft.Lists",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=C:\\Program Files\\Microsoft OneDrive\\26.158.0816.0003\\OneDrive.Sync.Service.exe",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "CanvaAutoLaunchAvailabilityCheckAgent",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Users\\tamng\\AppData\\Local\\Programs\\Canva\\Canva.exe\" --start-availability-check-agent",
+      "description": "RunKey \"CanvaAutoLaunchAvailabilityCheckAgent\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=CanvaAutoLaunchAvailabilityCheckAgent",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Users\\tamng\\AppData\\Local\\Programs\\Canva\\Canva.exe\" --start-availability-check-agent",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "com.reolink.app",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "C:\\Users\\tamng\\AppData\\Local\\Programs\\Reolink\\Reolink.exe",
+      "description": "RunKey \"com.reolink.app\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=com.reolink.app",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=C:\\Users\\tamng\\AppData\\Local\\Programs\\Reolink\\Reolink.exe",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "Teams",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Users\\tamng\\AppData\\Local\\Microsoft\\WindowsApps\\MSTeams_8wekyb3d8bbwe\\ms-teams.exe\" msteams:system-initiated",
+      "description": "RunKey \"Teams\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=Teams",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Users\\tamng\\AppData\\Local\\Microsoft\\WindowsApps\\MSTeams_8wekyb3d8bbwe\\ms-teams.exe\" msteams:system-initiated",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "CocCocBrowserAutoLaunch_2EB4E61B4934250225A4EF7A9E338DF8",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe\" --startup-foreground-launch",
+      "description": "RunKey \"CocCocBrowserAutoLaunch_2EB4E61B4934250225A4EF7A9E338DF8\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=CocCocBrowserAutoLaunch_2EB4E61B4934250225A4EF7A9E338DF8",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe\" --startup-foreground-launch",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "Adobe Acrobat Synchronizer",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\AdobeCollabSync.exe\"",
+      "description": "RunKey \"Adobe Acrobat Synchronizer\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=Adobe Acrobat Synchronizer",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\AdobeCollabSync.exe\"",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "GoogleChromeAutoLaunch_2BF8234FA344A63A9A22F0EEE26CD9A5",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --no-startup-window /prefetch:5",
+      "description": "RunKey \"GoogleChromeAutoLaunch_2BF8234FA344A63A9A22F0EEE26CD9A5\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=GoogleChromeAutoLaunch_2BF8234FA344A63A9A22F0EEE26CD9A5",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --no-startup-window /prefetch:5",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "MicrosoftCopilotAutoLaunch_9363C8F78DD8A7FC1496ECDBAE0320EA",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Program Files (x86)\\Microsoft\\Copilot\\Application\\mscopilot.exe\" --no-startup-window --win-session-start",
+      "description": "RunKey \"MicrosoftCopilotAutoLaunch_9363C8F78DD8A7FC1496ECDBAE0320EA\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=MicrosoftCopilotAutoLaunch_9363C8F78DD8A7FC1496ECDBAE0320EA",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Program Files (x86)\\Microsoft\\Copilot\\Application\\mscopilot.exe\" --no-startup-window --win-session-start",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: RunKey",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "MicrosoftEdgeAutoLaunch_6070D1264E363D1A2FC9A988E51739C9",
+      "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "command": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --no-startup-window --win-session-start",
+      "description": "RunKey \"MicrosoftEdgeAutoLaunch_6070D1264E363D1A2FC9A988E51739C9\" t\u1ea1i HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+      "evidence": [
+        "Kind=RunKey",
+        "Name=MicrosoftEdgeAutoLaunch_6070D1264E363D1A2FC9A988E51739C9",
+        "Location=HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+        "Command=\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --no-startup-window --win-session-start",
+        "Ngu\u1ed3n MCP: huntPersistence"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "Adobe Acrobat Update Task",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"Adobe Acrobat Update Task\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=Adobe Acrobat Update Task",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "Duet Updater",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"Duet Updater\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=Duet Updater",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "HOME-SOC-MCP-Server",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"HOME-SOC-MCP-Server\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=HOME-SOC-MCP-Server",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "HOME-SOC-Scan-And-Export",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"HOME-SOC-Scan-And-Export\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=HOME-SOC-Scan-And-Export",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "McUpdaterModuleTask",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"McUpdaterModuleTask\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=McUpdaterModuleTask",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NvDriverUpdateCheckDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvDriverUpdateCheckDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvDriverUpdateCheckDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NVIDIA GeForce Experience SelfUpdate_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NVIDIA GeForce Experience SelfUpdate_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NVIDIA GeForce Experience SelfUpdate_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NvNodeLauncher_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvNodeLauncher_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvNodeLauncher_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NvProfileUpdaterDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvProfileUpdaterDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvProfileUpdaterDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NvProfileUpdaterOnLogon_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvProfileUpdaterOnLogon_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvProfileUpdaterOnLogon_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NvTmRep_CrashReport1_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvTmRep_CrashReport1_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvTmRep_CrashReport1_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NvTmRep_CrashReport2_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvTmRep_CrashReport2_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvTmRep_CrashReport2_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NvTmRep_CrashReport3_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvTmRep_CrashReport3_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvTmRep_CrashReport3_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "NvTmRep_CrashReport4_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"NvTmRep_CrashReport4_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=NvTmRep_CrashReport4_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OmenInstallMonitor",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenInstallMonitor\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenInstallMonitor",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OmenInstallMonitor-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenInstallMonitor-sid-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenInstallMonitor-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OmenInstallMonitorCustomEvent",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenInstallMonitorCustomEvent\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenInstallMonitorCustomEvent",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OmenInstallMonitorCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenInstallMonitorCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenInstallMonitorCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OmenOverlay",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenOverlay\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenOverlay",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OmenOverlay-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenOverlay-sid-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenOverlay-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OmenOverlayCustomEvent",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenOverlayCustomEvent\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenOverlayCustomEvent",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OmenOverlayCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OmenOverlayCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OmenOverlayCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OneDrive Per-Machine Standalone Update Task",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OneDrive Per-Machine Standalone Update Task\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OneDrive Per-Machine Standalone Update Task",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OneDrive Reporting Task-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OneDrive Reporting Task-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OneDrive Reporting Task-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "OneDrive Startup Task-S-1-5-21-2427165457-1881523816-796667683-1001",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"OneDrive Startup Task-S-1-5-21-2427165457-1881523816-796667683-1001\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=OneDrive Startup Task-S-1-5-21-2427165457-1881523816-796667683-1001",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "RtkAudUService64_BG",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"RtkAudUService64_BG\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=RtkAudUService64_BG",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "SecurityScannerScheduler",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"SecurityScannerScheduler\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SecurityScannerScheduler",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "SentinelOps-Collectors",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"SentinelOps-Collectors\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SentinelOps-Collectors",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "SentinelOps-DailyBrief",
+      "location": "\\",
+      "command": "",
+      "description": "ScheduledTask \"SentinelOps-DailyBrief\" t\u1ea1i \\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SentinelOps-DailyBrief",
+        "Location=\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "RunPlatformExperienceHelperOnUnlock",
+      "location": "\\GoogleUserPEH\\",
+      "command": "",
+      "description": "ScheduledTask \"RunPlatformExperienceHelperOnUnlock\" t\u1ea1i \\GoogleUserPEH\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=RunPlatformExperienceHelperOnUnlock",
+        "Location=\\GoogleUserPEH\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "RunPlatformExperienceHelper_Daily",
+      "location": "\\GoogleUserPEH\\",
+      "command": "",
+      "description": "ScheduledTask \"RunPlatformExperienceHelper_Daily\" t\u1ea1i \\GoogleUserPEH\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=RunPlatformExperienceHelper_Daily",
+        "Location=\\GoogleUserPEH\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "RunPlatformExperienceHelper_Metrics",
+      "location": "\\GoogleUserPEH\\",
+      "command": "",
+      "description": "ScheduledTask \"RunPlatformExperienceHelper_Metrics\" t\u1ea1i \\GoogleUserPEH\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=RunPlatformExperienceHelper_Metrics",
+        "Location=\\GoogleUserPEH\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "HP Support Assistant Update Notice",
+      "location": "\\Hewlett-Packard\\HP Support Assistant\\",
+      "command": "",
+      "description": "ScheduledTask \"HP Support Assistant Update Notice\" t\u1ea1i \\Hewlett-Packard\\HP Support Assistant\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=HP Support Assistant Update Notice",
+        "Location=\\Hewlett-Packard\\HP Support Assistant\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "WarrantyChecker",
+      "location": "\\Hewlett-Packard\\HP Support Assistant\\",
+      "command": "",
+      "description": "ScheduledTask \"WarrantyChecker\" t\u1ea1i \\Hewlett-Packard\\HP Support Assistant\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=WarrantyChecker",
+        "Location=\\Hewlett-Packard\\HP Support Assistant\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "WarrantyChecker_DeviceScan",
+      "location": "\\Hewlett-Packard\\HP Support Assistant\\",
+      "command": "",
+      "description": "ScheduledTask \"WarrantyChecker_DeviceScan\" t\u1ea1i \\Hewlett-Packard\\HP Support Assistant\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=WarrantyChecker_DeviceScan",
+        "Location=\\Hewlett-Packard\\HP Support Assistant\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "Printer Health Monitor",
+      "location": "\\HP\\HP Print Scan Doctor\\",
+      "command": "",
+      "description": "ScheduledTask \"Printer Health Monitor\" t\u1ea1i \\HP\\HP Print Scan Doctor\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=Printer Health Monitor",
+        "Location=\\HP\\HP Print Scan Doctor\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "Printer Health Monitor Logon",
+      "location": "\\HP\\HP Print Scan Doctor\\",
+      "command": "",
+      "description": "ScheduledTask \"Printer Health Monitor Logon\" t\u1ea1i \\HP\\HP Print Scan Doctor\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=Printer Health Monitor Logon",
+        "Location=\\HP\\HP Print Scan Doctor\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "McAfee Windows Notification Token",
+      "location": "\\McAfee\\WPS\\",
+      "command": "",
+      "description": "ScheduledTask \"McAfee Windows Notification Token\" t\u1ea1i \\McAfee\\WPS\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=McAfee Windows Notification Token",
+        "Location=\\McAfee\\WPS\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "SoftLandingCreativeManagementTask",
+      "location": "\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+      "command": "",
+      "description": "ScheduledTask \"SoftLandingCreativeManagementTask\" t\u1ea1i \\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SoftLandingCreativeManagementTask",
+        "Location=\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Persistence: ScheduledTask",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T16:15:16.558925",
+      "name": "SoftLandingDeferralTask-{3b809d98-dacc-49a7-81ce-d33e93812f45}",
+      "location": "\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+      "command": "",
+      "description": "ScheduledTask \"SoftLandingDeferralTask-{3b809d98-dacc-49a7-81ce-d33e93812f45}\" t\u1ea1i \\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+      "evidence": [
+        "Kind=ScheduledTask",
+        "Name=SoftLandingDeferralTask-{3b809d98-dacc-49a7-81ce-d33e93812f45}",
+        "Location=\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
+        "Command=n/a",
+        "Ngu\u1ed3n MCP: huntSuspiciousTasks"
+      ],
+      "assessment": "m\u1ee5c t\u1ef1 kh\u1edfi \u0111\u1ed9ng \u1edf v\u1ecb tr\u00ed th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng, ghi nh\u1eadn \u0111\u1ec3 \u0111\u1ed1i chi\u1ebfu",
+      "status": "DETECTED",
+      "detection_method": "MCP huntPersistence / huntSuspiciousTasks",
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
       ]
     }
   ]

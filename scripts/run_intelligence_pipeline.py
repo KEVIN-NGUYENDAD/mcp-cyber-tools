@@ -62,11 +62,22 @@ class IntelligencePipeline:
         stage_start = time.time()
 
         try:
+            child_env = dict(os.environ)
+            child_env['PYTHONIOENCODING'] = 'utf-8'
+
             result = subprocess.run(
                 [sys.executable, str(script_path)],
                 cwd=str(self.project_root),
+                env=child_env,
                 capture_output=True,
                 text=True,
+                # encoding/errors là bắt buộc: text=True dùng codec của locale
+                # (cp1252 trên máy này), còn script con in JSON UTF-8 có tiếng
+                # Việt. Khi giải mã hỏng, Python 3.7 không báo UnicodeDecodeError
+                # mà ném "IndexError: list index out of range" từ luồng đọc - một
+                # thông báo không liên quan gì tới nguyên nhân thật.
+                encoding='utf-8',
+                errors='replace',
                 timeout=300
             )
 
@@ -157,21 +168,28 @@ class IntelligencePipeline:
 
         waap_score_val = waap_score.get('score', 0) if isinstance(waap_score, dict) else 0
 
-        # Determine risk level
-        avg_score = (crypto_score + waap_score_val) / 2 if crypto_score or waap_score_val else 50
-        if avg_score >= 80:
-            risk_level = 'LOW'
-        elif avg_score >= 60:
-            risk_level = 'MEDIUM'
+        # Risk level đọc từ engine chuẩn, không tự tính lại.
+        #
+        # Trước đây dòng này lấy trung bình crypto + WAAP rồi tự xếp hạng - một
+        # engine rủi ro thứ tư, sống sót qua cả Sprint 6 (vốn đã xoá risk_engine.py
+        # và bộ chấm điểm riêng của Daily Brief). Nó in ra HIGH trong khi
+        # state/risk_score.json ghi MEDIUM, và đây là dòng con người thực sự đọc
+        # ở cuối mỗi lần chạy.
+        risk_state = self.load_state_file('risk_score.json')
+        if isinstance(risk_state, dict) and risk_state.get('risk_level'):
+            risk_level = risk_state['risk_level']
+            risk_score_val = risk_state.get('overall_score')
         else:
-            risk_level = 'HIGH'
+            risk_level = 'UNKNOWN'
+            risk_score_val = None
 
         # Display summary
         self.log(f'Assets:       {asset_count}')
         self.log(f'Services:     {service_count}')
         self.log(f'Crypto Score: {crypto_score}')
         self.log(f'WAAP Score:   {waap_score_val}')
-        self.log(f'Risk Level:   {risk_level}')
+        self.log(f'Risk Level:   {risk_level}' +
+                 (f' (score {risk_score_val}/100)' if risk_score_val is not None else ''))
         self.log('=' * 50)
 
         # Save summary
