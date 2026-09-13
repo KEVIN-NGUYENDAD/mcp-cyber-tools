@@ -21,6 +21,9 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 def run_intelligence_extractor(script_name, script_path):
     """Run an intelligence extractor script and return results"""
     try:
@@ -125,8 +128,7 @@ def save_intelligence_report(report):
     report_file = state_dir / 'soc_intelligence.json'
 
     try:
-        with open(report_file, 'w') as f:
-            json.dump(report, f, indent=2)
+        write_state_atomic(report_file, report, indent=2)
         return True
     except Exception:
         return False

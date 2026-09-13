@@ -19,6 +19,9 @@ from datetime import datetime
 from pathlib import Path
 from collections import defaultdict
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 try:
     import requests
     import urllib3
@@ -174,8 +177,7 @@ class CryptoInventory:
                 'total_findings': len(analysis['findings']),
                 'findings': analysis['findings'][:50]  # Top 50 findings
             }
-            with open(self.crypto_file, 'w') as f:
-                json.dump(output, f, indent=2)
+            write_state_atomic(self.crypto_file, output, indent=2)
             return True
         except Exception:
             return False
