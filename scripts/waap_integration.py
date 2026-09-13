@@ -16,6 +16,9 @@ import os
 from pathlib import Path
 from datetime import datetime
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 try:
     from daily_brief_store import add_change, add_recommendation
 except ImportError:
@@ -54,8 +57,7 @@ class WAAPIntegration:
     def save_baseline(self, score_data):
         """Save current score as new baseline"""
         try:
-            with open(self.baseline_file, 'w') as f:
-                json.dump(score_data, f, indent=2)
+            write_state_atomic(self.baseline_file, score_data, indent=2)
             return True
         except:
             return False
