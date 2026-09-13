@@ -304,33 +304,13 @@ class IntelligencePipeline:
 
         self.log('')
 
-        # Stage 4: Reporting
-        self.log('📝 PHASE 4: REPORT GENERATION')
-        self.log('-' * 50)
+        # Stage 4 (Report Generation) moved to Phase 11 in Sprint 6: the Daily
+        # Brief now reports the canonical risk score instead of computing its
+        # own, so it has to run after Risk Assessment.
 
-        # 12. Daily brief generation
-        ok, _ = self.run_stage(
-            'Daily Brief',
-            self.scripts_dir / 'generate_daily_brief.py',
-            'Generating daily intelligence brief'
-        )
-        success = success and ok
-
-        self.log('')
-
-        # Stage 5: Risk Assessment
-        self.log('🎯 PHASE 5: RISK ASSESSMENT')
-        self.log('-' * 50)
-
-        # 13. Calculate overall risk score (with MCP data)
-        ok, _ = self.run_stage(
-            'Risk Score',
-            self.scripts_dir / 'calculate_risk_score.py',
-            'Calculating overall risk score (with MCP telemetry)'
-        )
-        success = success and ok
-
-        self.log('')
+        # Stage 5 (Risk Assessment) moved to Phase 9B in Sprint 6: the canonical
+        # engine now weights incident severity at 25%, so it has to run after the
+        # Incident Engine or it would always score the previous cycle's incidents.
 
         # Stage 6: Decision Engine
         self.log('💡 PHASE 6: DECISION ENGINE')
@@ -426,6 +406,20 @@ class IntelligencePipeline:
 
         self.log('')
 
+        # Stage 9B: Risk Assessment (moved here from Phase 5 in Sprint 6)
+        self.log('🎯 PHASE 9B: RISK ASSESSMENT')
+        self.log('-' * 50)
+
+        # 17B. Canonical risk engine - the only writer of state/risk_score.json
+        ok, _ = self.run_stage(
+            'Risk Score',
+            self.scripts_dir / 'calculate_risk_score.py',
+            'Calculating overall risk score (assets + incidents + hunting + telemetry)'
+        )
+        success = success and ok
+
+        self.log('')
+
         # Stage 10: Executive Correlation (Sprint 5)
         self.log('🔗 PHASE 10: EXECUTIVE CORRELATION')
         self.log('-' * 50)
@@ -435,6 +429,20 @@ class IntelligencePipeline:
             'Correlation Engine',
             self.scripts_dir / 'correlation_engine.py',
             'Correlating multi-source signals into executive findings'
+        )
+        success = success and ok
+
+        self.log('')
+
+        # Stage 11: Reporting (moved here from Phase 4 in Sprint 6)
+        self.log('📝 PHASE 11: REPORT GENERATION')
+        self.log('-' * 50)
+
+        # 19. Daily brief - reports the canonical risk score, so it runs last
+        ok, _ = self.run_stage(
+            'Daily Brief',
+            self.scripts_dir / 'generate_daily_brief.py',
+            'Generating daily intelligence brief'
         )
         success = success and ok
 

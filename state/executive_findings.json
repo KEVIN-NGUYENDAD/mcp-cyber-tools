@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T15:43:13.610687",
+  "timestamp": "2026-09-13T15:51:17.182688",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
@@ -15,7 +15,7 @@
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-13T15:43:09.621635"
+      "timestamp": "2026-09-13T15:51:13.367805"
     },
     "shadow_assets.json": {
       "present": true,
@@ -24,38 +24,38 @@
     },
     "incidents.json": {
       "present": true,
-      "records": 18,
-      "timestamp": "2026-09-13T15:43:13.374891"
+      "records": 19,
+      "timestamp": "2026-09-13T15:51:16.752673"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T15:43:08.889387"
+      "timestamp": "2026-09-13T15:51:12.667829"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T15:43:09.206753"
+      "timestamp": "2026-09-13T15:51:12.963250"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 5,
-      "timestamp": "2026-09-13T15:43:12.427149"
+      "timestamp": "2026-09-13T15:51:15.898524"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 5,
-      "timestamp": "2026-09-13T15:43:12.935815"
+      "timestamp": "2026-09-13T15:51:16.348459"
     },
     "hunting_lateral_movement.json": {
       "present": true,
       "records": 5,
-      "timestamp": "2026-09-13T15:43:12.780092"
+      "timestamp": "2026-09-13T15:51:16.196213"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
       "records": 6,
-      "timestamp": "2026-09-13T15:43:12.601008"
+      "timestamp": "2026-09-13T15:51:16.047244"
     }
   },
   "coverage_gaps": [
@@ -96,7 +96,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T15:43:13.610687"
+      "detected_at": "2026-09-13T15:51:17.182688"
     },
     {
       "finding_id": "EF-0002",
@@ -123,7 +123,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T15:43:13.610687"
+      "detected_at": "2026-09-13T15:51:17.182688"
     }
   ]
 }

@@ -56,14 +56,33 @@ class NessusPipeline:
             return False
 
     def run_risk_calculation(self) -> bool:
-        """Step 2: Calculate risk scores"""
+        """Step 2: Calculate risk scores
+
+        Delegates to the canonical engine. This pipeline used to call
+        risk_engine.py directly, which made it a second writer of
+        state/risk_score.json with an incompatible schema and an inverted
+        scale - whichever pipeline ran last won the file. risk_engine.py was
+        removed in Sprint 6; scripts/calculate_risk_score.py is now the only
+        writer. See docs/project/RISK_SCORING_MODEL.md.
+        """
         try:
             self.log('Step 2: Calculating risk scores...')
-            from risk_engine import RiskEngine
-            engine = RiskEngine(os.path.join(self.state_dir, 'assets.json'))
-            risks = engine.calculate_risks()
-            engine.save(os.path.join(self.state_dir, 'risk_score.json'))
-            self.log(f'[OK] Risk score: {risks["overall_score"]} ({risks["threat_level"]})', 'SUCCESS')
+            script = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                  'scripts', 'calculate_risk_score.py')
+            result = subprocess.run(
+                [sys.executable, script],
+                cwd=os.getcwd(),
+                capture_output=True,
+                text=True,
+                timeout=120
+            )
+
+            if result.returncode != 0:
+                self.log(f'[FAIL] Risk calculation failed: {result.stderr.strip()}', 'ERROR')
+                return False
+
+            payload = json.loads(result.stdout)
+            self.log(f'[OK] Risk score: {payload["overall_score"]} ({payload["risk_level"]})', 'SUCCESS')
             return True
         except Exception as e:
             self.log(f'[FAIL] Risk calculation failed: {e}', 'ERROR')
@@ -127,7 +146,10 @@ class NessusPipeline:
                 with open(risk_file, 'r') as f:
                     risk = json.load(f)
                     summary['risk_score'] = risk.get('overall_score', 0)
-                    summary['threat_level'] = risk.get('threat_level', 'UNKNOWN')
+                    summary['risk_level'] = risk.get('risk_level', 'UNKNOWN')
+                    # threat_level kept as an alias so older readers of
+                    # pipeline_summary.json do not break.
+                    summary['threat_level'] = summary['risk_level']
 
             # Save summary
             summary_file = os.path.join(self.state_dir, 'pipeline_summary.json')
