@@ -53,7 +53,7 @@ async function loadAllData() {
 
     const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses] = await Promise.allSettled([
       fetch(`${baseUrl}/assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
-      fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
+      fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ shadows: [] })),
       fetch(`${baseUrl}/incidents.json`).then(r => r.json()).catch(() => ({ incidents: [] })),
       fetch(`${baseUrl}/risk_score.json`).then(r => r.json()).catch(() => ({ overall_score: 0 })),
       fetch(`${baseUrl}/system_health.json`).then(r => r.json()).catch(() => ({})),
@@ -69,7 +69,7 @@ async function loadAllData() {
     ]);
 
     stateData.assets = assets.value || { assets: [] };
-    stateData.shadowAssets = shadowAssets.value || { assets: [] };
+    stateData.shadowAssets = shadowAssets.value || { shadows: [] };
     stateData.incidents = incidents.value || { incidents: [] };
     stateData.risk = risk.value || { overall_score: 0 };
     stateData.health = health.value || {};
@@ -1138,7 +1138,7 @@ function startAutoRefresh() {
 function renderAssetCommandCenter() {
   try {
     const assets = stateData.assets?.assets || stateData.assets?.all_assets || [];
-    const shadowAssets = stateData.shadowAssets?.assets || [];
+    const shadowAssets = stateData.shadowAssets?.shadows || [];
     const risk = stateData.risk || {};
 
     // Calculate metrics
