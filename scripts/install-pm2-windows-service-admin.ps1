@@ -81,7 +81,7 @@ Write-Host ""
 
 # The pm2-windows-service module should handle the installation
 $pm2ModulePath = "$env:USERPROFILE\.pm2\modules\pm2-windows-service"
-$installerPath = "$pm2ModulePath\node_modules\pm2-windows-service\bin\pm2-service-install.cmd"
+$installerPath = "$pm2ModulePath\node_modules\.bin\pm2-service-install.cmd"
 
 if (Test-Path $installerPath) {
     Write-Host "Running installer from module..." -ForegroundColor Cyan
@@ -90,14 +90,20 @@ if (Test-Path $installerPath) {
 }
 else {
     Write-Host "Module installer not found at: $installerPath" -ForegroundColor Yellow
-    Write-Host "Attempting alternative method with pm2 startup..." -ForegroundColor Cyan
-    try {
-        & pm2 startup
-        & pm2 save
+    Write-Host "Checking PowerShell version..." -ForegroundColor Cyan
+
+    # Try PowerShell version
+    $psInstallerPath = "$pm2ModulePath\node_modules\.bin\pm2-service-install.ps1"
+    if (Test-Path $psInstallerPath) {
+        Write-Host "Found PowerShell installer, running..." -ForegroundColor Green
+        & $psInstallerPath
     }
-    catch {
-        Write-Host "ERROR: Failed to run pm2 startup" -ForegroundColor Red
-        Write-Host "Note: Make sure PM2 is installed globally" -ForegroundColor Yellow
+    else {
+        Write-Host "ERROR: Could not find pm2-service-install installer" -ForegroundColor Red
+        Write-Host "Tried:" -ForegroundColor Yellow
+        Write-Host "  1. $installerPath" -ForegroundColor Gray
+        Write-Host "  2. $psInstallerPath" -ForegroundColor Gray
+        exit 1
     }
 }
 
