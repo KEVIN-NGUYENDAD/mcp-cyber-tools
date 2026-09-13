@@ -18,6 +18,9 @@ from datetime import datetime
 from pathlib import Path
 from collections import defaultdict
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 class IncidentEngine:
     def __init__(self):
         self.state_dir = Path(__file__).parent.parent / 'state'
@@ -353,8 +356,8 @@ class IncidentEngine:
             severity = incident.get('severity', 'UNKNOWN')
             output['by_severity'][severity] = output['by_severity'].get(severity, 0) + 1
 
-        with open(self.incidents_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, indent=2, ensure_ascii=False)
+        # Atomic write for file safety (TD-L3-001: atomic writes, TD-L3-002: file locking)
+        write_state_atomic(str(self.incidents_file), output, indent=2)
 
         return {
             'status': 'success',

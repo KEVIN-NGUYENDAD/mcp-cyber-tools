@@ -16,6 +16,9 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 try:
     import dns.resolver
     import dns.rdatatype
@@ -187,8 +190,7 @@ class DomainCollector:
     def save(self, data):
         """Save snapshot to state/domain_status.json"""
         try:
-            with open(self.output_file, 'w') as f:
-                json.dump(data, f, indent=2)
+            write_state_atomic(self.output_file, data, indent=2)
             return True
         except:
             return False
