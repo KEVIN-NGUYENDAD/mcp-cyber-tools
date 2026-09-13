@@ -632,6 +632,7 @@
         <li class="nav-item" onclick="switchPage('network')">🌐 Network Map</li>
         <li class="nav-item" onclick="switchPage('incidents')">🚨 Incidents</li>
         <li class="nav-item" onclick="switchPage('analytics')">📊 Analytics</li>
+        <li class="nav-item" onclick="switchPage('ioc')">🔍 IOC Intel</li>
         <li class="nav-item" onclick="switchPage('scorecard')">📈 Executive</li>
         <li class="nav-item" onclick="switchPage('history')">📜 History</li>
         <li class="nav-item" onclick="switchPage('settings')">⚙️ Settings</li>
@@ -1157,6 +1158,14 @@
             <div id="exec-recommendations" style="display: grid; grid-template-columns: 1fr; gap: 10px;"></div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- PAGE: IOC INTELLIGENCE -->
+    <div id="ioc" class="page">
+      <div class="card">
+        <div class="card-title">━ IOC Intelligence & Threat Hunting ━</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 20px;" id="ioc-container"></div>
       </div>
     </div>
 

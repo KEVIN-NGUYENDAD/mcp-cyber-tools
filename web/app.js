@@ -46,7 +46,7 @@ async function loadAllData() {
     // Load from public API endpoint or local JSON
     const baseUrl = '/api/state';
 
-    const [assets, incidents, risk, health, defender, firewall, alerts, waap, domain] = await Promise.allSettled([
+    const [assets, incidents, risk, health, defender, firewall, alerts, waap, domain, huntingCred, huntingLateral, huntingPersist, huntingSuspicious] = await Promise.allSettled([
       fetch(`${baseUrl}/assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
       fetch(`${baseUrl}/incidents.json`).then(r => r.json()).catch(() => ({ incidents: [] })),
       fetch(`${baseUrl}/risk_score.json`).then(r => r.json()).catch(() => ({ overall_score: 0 })),
@@ -55,7 +55,11 @@ async function loadAllData() {
       fetch(`${baseUrl}/firewall_status.json`).then(r => r.json()).catch(() => ({})),
       fetch(`${baseUrl}/notification_history.json`).then(r => r.json()).catch(() => ({ sent_alerts: [] })),
       fetch(`${baseUrl}/waap_status.json`).then(r => r.json()).catch(() => ({})),
-      fetch(`${baseUrl}/domain_status.json`).then(r => r.json()).catch(() => ({}))
+      fetch(`${baseUrl}/domain_status.json`).then(r => r.json()).catch(() => ({})),
+      fetch(`${baseUrl}/hunting_credential_dumping.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
+      fetch(`${baseUrl}/hunting_lateral_movement.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
+      fetch(`${baseUrl}/hunting_persistence.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
+      fetch(`${baseUrl}/hunting_suspicious_processes.json`).then(r => r.json()).catch(() => ({ indicators: [] }))
     ]);
 
     stateData.assets = assets.value || { assets: [] };
@@ -67,6 +71,12 @@ async function loadAllData() {
     stateData.alerts = alerts.value || { sent_alerts: [] };
     stateData.waap = waap.value || {};
     stateData.domain = domain.value || {};
+    stateData.hunting = {
+      credential_dumping: huntingCred.value || { indicators: [] },
+      lateral_movement: huntingLateral.value || { indicators: [] },
+      persistence: huntingPersist.value || { indicators: [] },
+      suspicious_processes: huntingSuspicious.value || { indicators: [] }
+    };
     stateData.mcp = { status: 'ONLINE', tool_count: '90+', threat_hunting_active: true, dfir_active: true, event_hub_active: true, last_sync: '2 min ago' };
 
     updateLastUpdate();
@@ -124,6 +134,9 @@ function switchPage(pageName) {
         break;
       case 'analytics':
         if (typeof renderAnalytics === 'function') renderAnalytics();
+        break;
+      case 'ioc':
+        if (typeof renderIOCIntelligence === 'function') renderIOCIntelligence();
         break;
       case 'scorecard':
         if (typeof renderExecutiveScorecard === 'function') renderExecutiveScorecard();
@@ -889,6 +902,103 @@ function renderAnalytics() {
     if (gaugeDnsBar) gaugeDnsBar.style.width = dnsScore + '%';
   } catch (error) {
     console.error('[ERROR] renderAnalytics:', error);
+  }
+}
+
+// ============================================================================
+// IOC INTELLIGENCE PAGE
+// ============================================================================
+
+function renderIOCIntelligence() {
+  try {
+    const hunting = stateData.hunting || {};
+    const credDumping = hunting.credential_dumping || { indicators: [] };
+    const lateral = hunting.lateral_movement || { indicators: [] };
+    const persistence = hunting.persistence || { indicators: [] };
+    const suspicious = hunting.suspicious_processes || { indicators: [] };
+
+    const iocCards = [
+      {
+        title: '🔴 Credential Dumping',
+        icon: '🔑',
+        data: credDumping,
+        color: '#FF3B5C'
+      },
+      {
+        title: '🟠 Persistence Threats',
+        icon: '🔗',
+        data: persistence,
+        color: '#FFB347'
+      },
+      {
+        title: '↔️ Lateral Movement',
+        icon: '↔️',
+        data: lateral,
+        color: '#00D4FF'
+      },
+      {
+        title: '⚙️ Suspicious Processes',
+        icon: '⚙️',
+        data: suspicious,
+        color: '#FFD93D'
+      }
+    ];
+
+    const html = iocCards.map(card => {
+      const indicators = card.data.indicators || [];
+      const bySeverity = {
+        CRITICAL: indicators.filter(i => i?.severity === 'CRITICAL').length,
+        HIGH: indicators.filter(i => i?.severity === 'HIGH').length,
+        MEDIUM: indicators.filter(i => i?.severity === 'MEDIUM').length,
+        LOW: indicators.filter(i => i?.severity === 'LOW').length
+      };
+      const riskLevel = card.data.credential_risk_level || card.data.risk_level || 'ACTIVE';
+
+      return `
+        <div style="background: rgba(18, 23, 47, 0.7); border: 2px solid ${card.color}22; border-radius: 10px; padding: 25px;">
+          <div style="color: ${card.color}; font-size: 1.1em; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">
+            ${card.title}
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; font-size: 0.9em;">
+            <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
+              <div style="color: var(--color-text-dim); font-size: 0.85em;">Total</div>
+              <div style="color: var(--color-accent); font-weight: bold; font-size: 1.2em;">${indicators.length}</div>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">
+              <div style="color: var(--color-text-dim); font-size: 0.85em;">CRITICAL</div>
+              <div style="color: ${bySeverity.CRITICAL > 0 ? '#FF3B5C' : '#888'}; font-weight: bold; font-size: 1.2em;">${bySeverity.CRITICAL}</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.9em;">
+            <div style="color: var(--color-text-dim); font-size: 0.85em;">Risk Level</div>
+            <div style="color: ${card.color}; font-weight: bold;">${riskLevel}</div>
+          </div>
+
+          ${indicators.length > 0 ? `
+            <div style="border-top: 1px solid ${card.color}33; padding-top: 12px;">
+              <div style="color: var(--color-text-dim); font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase;">Indicators:</div>
+              <ul style="margin: 0 0 0 15px; font-size: 0.9em; color: var(--color-text);">
+                ${indicators.slice(0, 4).map(ind => {
+                  const sevClass = ind?.severity === 'CRITICAL' ? '#FF3B5C' : ind?.severity === 'HIGH' ? '#FFB347' : '#FFD93D';
+                  return `<li style="margin: 5px 0; color: ${sevClass};"><strong>[${ind?.severity || 'N/A'}]</strong> ${ind?.type || 'Unknown'}</li>`;
+                }).join('')}
+                ${indicators.length > 4 ? `<li style="margin: 5px 0; color: #888;">... +${indicators.length - 4} more</li>` : ''}
+              </ul>
+            </div>
+          ` : `
+            <div style="color: #888; font-size: 0.9em; font-style: italic;">No indicators detected</div>
+          `}
+        </div>
+      `;
+    }).join('');
+
+    const container = document.getElementById('ioc-container');
+    if (container) container.innerHTML = html;
+    console.log('[RENDER] renderIOCIntelligence complete');
+  } catch (error) {
+    console.error('[ERROR] renderIOCIntelligence:', error);
   }
 }
 
