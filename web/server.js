@@ -185,7 +185,9 @@ app.get('/api/status', (req, res) => {
         assets_monitored: assets.total_assets || 0,
         open_incidents: incidents.total_incidents || 0,
         overall_risk: risk.overall_score || 0,
-        threat_level: getThreatLevel(risk.overall_score || 0)
+        risk_level: risk.risk_level || getThreatLevel(risk.overall_score || 0),
+        // threat_level kept as an alias for older clients
+        threat_level: risk.risk_level || getThreatLevel(risk.overall_score || 0)
       }
     });
   } catch (error) {
@@ -283,6 +285,8 @@ app.get('*', (req, res) => {
 // UTILITY FUNCTIONS
 // ============================================================================
 
+// Fallback only - risk_score.json is risk-ascending and publishes risk_level
+// directly (including the severity floor), so prefer that field when present.
 function getThreatLevel(score) {
   if (score >= 80) return 'CRITICAL';
   if (score >= 60) return 'HIGH';

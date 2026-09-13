@@ -1,0 +1,170 @@
+{
+  "timestamp": "2026-09-13T15:51:17.371908",
+  "date": "2026-09-13",
+  "incident_summary": {
+    "total_open": 19,
+    "critical": 7,
+    "high": 12,
+    "medium": 0,
+    "low": 0,
+    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 7 CRITICAL, 12 HIGH"
+  },
+  "priority_summary": {
+    "top_5": [
+      {
+        "rank": 1,
+        "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
+        "priority": "HIGH",
+        "time_estimate": "N/A",
+        "reason": "threat_hunting component weak"
+      },
+      {
+        "rank": 2,
+        "title": "C\u1ea3i thi\u1ec7n Incidents",
+        "priority": "HIGH",
+        "time_estimate": "N/A",
+        "reason": "incidents component weak"
+      },
+      {
+        "rank": 3,
+        "title": "C\u1ea3i thi\u1ec7n Waap",
+        "priority": "MEDIUM",
+        "time_estimate": "N/A",
+        "reason": "waap component weak"
+      },
+      {
+        "rank": 4,
+        "title": "Patch 192.168.0.1 (Router)",
+        "priority": "HIGH",
+        "time_estimate": "4-8 hours",
+        "reason": "High vulnerability count"
+      },
+      {
+        "rank": 5,
+        "title": "Patch 192.168.0.10 (Server)",
+        "priority": "HIGH",
+        "time_estimate": "4-8 hours",
+        "reason": "High vulnerability count"
+      }
+    ],
+    "critical_count": 0,
+    "high_count": 4,
+    "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 4 HIGH"
+  },
+  "change_summary": {
+    "total_changes": 0,
+    "changes_by_category": {},
+    "changes_by_severity": {},
+    "critical_incidents": [],
+    "summary_text": "Kh\u00f4ng c\u00f3 thay \u0111\u1ed5i"
+  },
+  "vulnerability_summary": {
+    "scan_name": "Home Network Discovery",
+    "scan_age_hours": 141.3,
+    "total_findings": 64,
+    "critical": 0,
+    "high": 0,
+    "medium": 3,
+    "low": 2,
+    "info": 59,
+    "scanner_status": "running"
+  },
+  "domain_summary": {
+    "domain": "sentinelops.fyi",
+    "dns_health": {
+      "spf": true,
+      "dmarc": true,
+      "nameservers": true,
+      "a_records": true,
+      "mx_records": true
+    },
+    "nameserver_count": 4,
+    "a_record_count": 2,
+    "mx_record_count": 2
+  },
+  "waap_summary": {
+    "domain": "sentinelops.fyi",
+    "ssl_status": "valid",
+    "days_until_expiry": 79,
+    "health_score": 80,
+    "grade": "B",
+    "status": "healthy",
+    "recommendation_count": 2
+  },
+  "asset_summary": {
+    "total_assets": 11,
+    "known_devices": 11,
+    "unknown_devices": 0,
+    "new_assets": 0,
+    "removed_assets": 0,
+    "top_vulnerable_devices": [
+      {
+        "ip": "192.168.0.51",
+        "hostname": "192.168.0.51",
+        "vulnerability_count": 215,
+        "severity_critical": 0,
+        "severity_high": 0
+      },
+      {
+        "ip": "192.168.0.21",
+        "hostname": "192.168.0.21",
+        "vulnerability_count": 48,
+        "severity_critical": 0,
+        "severity_high": 0
+      },
+      {
+        "ip": "192.168.0.1",
+        "hostname": "192.168.0.1",
+        "vulnerability_count": 39,
+        "severity_critical": 0,
+        "severity_high": 0
+      },
+      {
+        "ip": "192.168.0.10",
+        "hostname": "192.168.0.10",
+        "vulnerability_count": 14,
+        "severity_critical": 0,
+        "severity_high": 0
+      },
+      {
+        "ip": "192.168.0.11",
+        "hostname": "192.168.0.11",
+        "vulnerability_count": 14,
+        "severity_critical": 0,
+        "severity_high": 0
+      }
+    ]
+  },
+  "service_summary": {
+    "total_services": 0,
+    "service_types": 0,
+    "new_services": 0,
+    "closed_services": 0,
+    "top_services": []
+  },
+  "crypto_summary": {
+    "health_score": 0,
+    "certificate_count": 0,
+    "cipher_suite_count": 0,
+    "weak_cipher_count": 0,
+    "newly_expired_certs": 0,
+    "new_weak_ciphers": 0
+  },
+  "risk_assessment": {
+    "risk_level": "HIGH",
+    "risk_score": 56,
+    "risk_factors": [
+      "threat_hunting: persistence: 1C/3H; suspicious_processes: 0C/4H; lateral_movement: 2C/3H; credential_dumping: 4C/1H (+25.0 \u0111i\u1ec3m r\u1ee7i ro)",
+      "incidents: 7 s\u1ef1 c\u1ed1 CRITICAL, 12 HIGH \u0111ang m\u1edf (+25.0 \u0111i\u1ec3m r\u1ee7i ro)",
+      "waap: WAAP score 50 (+5.0 \u0111i\u1ec3m r\u1ee7i ro)",
+      "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.52 \u0111i\u1ec3m r\u1ee7i ro)",
+      "firewall: Firewall b\u1eadt (+0.4 \u0111i\u1ec3m r\u1ee7i ro)",
+      "Severity floor \u00e1p d\u1ee5ng: 14 ph\u00e1t hi\u1ec7n CRITICAL n\u00e2ng risk_level t\u1eeb MEDIUM l\u00ean HIGH"
+    ],
+    "critical_count": 14,
+    "high_count": 23,
+    "scale": "risk_ascending",
+    "source": "state/risk_score.json",
+    "generated_at": "2026-09-13T15:51:16.969364"
+  }
+}
