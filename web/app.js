@@ -7,6 +7,7 @@ console.log('[APP.JS] Script loaded at:', new Date().toISOString());
 
 let stateData = {
   assets: null,
+  shadowAssets: null,
   incidents: null,
   risk: null,
   health: null,
@@ -14,7 +15,11 @@ let stateData = {
   firewall: null,
   alerts: null,
   waap: null,
-  domain: null
+  domain: null,
+  threatPersistence: null,
+  threatLateral: null,
+  threatCredential: null,
+  threatProcesses: null
 };
 
 let currentTopology = 'physical';
@@ -46,8 +51,9 @@ async function loadAllData() {
     // Load from public API endpoint or local JSON
     const baseUrl = '/api/state';
 
-    const [assets, incidents, risk, health, defender, firewall, alerts, waap, domain] = await Promise.allSettled([
+    const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses] = await Promise.allSettled([
       fetch(`${baseUrl}/assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
+      fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
       fetch(`${baseUrl}/incidents.json`).then(r => r.json()).catch(() => ({ incidents: [] })),
       fetch(`${baseUrl}/risk_score.json`).then(r => r.json()).catch(() => ({ overall_score: 0 })),
       fetch(`${baseUrl}/system_health.json`).then(r => r.json()).catch(() => ({})),
@@ -55,10 +61,15 @@ async function loadAllData() {
       fetch(`${baseUrl}/firewall_status.json`).then(r => r.json()).catch(() => ({})),
       fetch(`${baseUrl}/notification_history.json`).then(r => r.json()).catch(() => ({ sent_alerts: [] })),
       fetch(`${baseUrl}/waap_status.json`).then(r => r.json()).catch(() => ({})),
-      fetch(`${baseUrl}/domain_status.json`).then(r => r.json()).catch(() => ({}))
+      fetch(`${baseUrl}/domain_status.json`).then(r => r.json()).catch(() => ({})),
+      fetch(`${baseUrl}/hunting_persistence.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
+      fetch(`${baseUrl}/hunting_lateral_movement.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
+      fetch(`${baseUrl}/hunting_credential_dumping.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
+      fetch(`${baseUrl}/hunting_suspicious_processes.json`).then(r => r.json()).catch(() => ({ indicators: [] }))
     ]);
 
     stateData.assets = assets.value || { assets: [] };
+    stateData.shadowAssets = shadowAssets.value || { assets: [] };
     stateData.incidents = incidents.value || { incidents: [] };
     stateData.risk = risk.value || { overall_score: 0 };
     stateData.health = health.value || {};
@@ -67,6 +78,10 @@ async function loadAllData() {
     stateData.alerts = alerts.value || { sent_alerts: [] };
     stateData.waap = waap.value || {};
     stateData.domain = domain.value || {};
+    stateData.threatPersistence = threatPersistence.value || { indicators: [] };
+    stateData.threatLateral = threatLateral.value || { indicators: [] };
+    stateData.threatCredential = threatCredential.value || { indicators: [] };
+    stateData.threatProcesses = threatProcesses.value || { indicators: [] };
     stateData.mcp = { status: 'ONLINE', tool_count: '90+', threat_hunting_active: true, dfir_active: true, event_hub_active: true, last_sync: '2 min ago' };
 
     updateLastUpdate();
@@ -115,6 +130,15 @@ function switchPage(pageName) {
     switch (pageName) {
       case 'overview':
         renderOverviewPage();
+        break;
+      case 'assets':
+        renderAssetCommandCenter();
+        break;
+      case 'threats':
+        renderThreatIntelligence();
+        break;
+      case 'brief':
+        renderDailyBriefArchive();
         break;
       case 'network':
         setTimeout(() => renderNetworkTopology(), 100);
@@ -1105,6 +1129,169 @@ function startAutoRefresh() {
       console.error('[ERROR] Auto-refresh update:', error);
     }
   }, refreshInterval);
+}
+
+// ============================================================================
+// ASSET COMMAND CENTER
+// ============================================================================
+
+function renderAssetCommandCenter() {
+  try {
+    const assets = stateData.assets?.assets || stateData.assets?.all_assets || [];
+    const shadowAssets = stateData.shadowAssets?.assets || [];
+    const risk = stateData.risk || {};
+
+    // Calculate metrics
+    const trustScores = assets.map(a => a?.trust_score || 0);
+    const avgTrust = trustScores.length > 0 ? Math.round(trustScores.reduce((a, b) => a + b) / trustScores.length) : 0;
+    const onlineAssets = assets.filter(a => a?.status === 'ONLINE').length;
+
+    // Update KPIs
+    const els = {
+      'assets-total': assets.length,
+      'assets-online': `${onlineAssets} online`,
+      'assets-trust': avgTrust,
+      'assets-risk': risk.overall_score || 0,
+      'assets-risk-level': getRiskLevel(risk.overall_score || 0),
+      'assets-shadow': shadowAssets.length
+    };
+
+    Object.entries(els).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
+
+    // Populate asset table
+    const tbody = document.getElementById('assets-table-body');
+    if (tbody) {
+      const rows = assets.slice(0, 50).map(asset => `
+        <tr style="border-bottom: 1px solid var(--color-border);">
+          <td style="padding: 10px;">${asset?.ip || 'N/A'}</td>
+          <td style="padding: 10px;">${asset?.type || 'Unknown'}</td>
+          <td style="padding: 10px; color: var(--color-accent);">${asset?.trust_score || 0}</td>
+          <td style="padding: 10px;">${asset?.status === 'ONLINE' ? '🟢 Online' : '🔴 Offline'}</td>
+        </tr>
+      `).join('');
+      tbody.innerHTML = rows || '<tr><td colspan="4" style="padding: 10px; text-align: center;">No assets found</td></tr>';
+    }
+  } catch (error) {
+    console.error('[ERROR] renderAssetCommandCenter:', error);
+  }
+}
+
+// ============================================================================
+// THREAT INTELLIGENCE
+// ============================================================================
+
+function renderThreatIntelligence() {
+  try {
+    const persistence = stateData.threatPersistence?.indicators || [];
+    const lateral = stateData.threatLateral?.indicators || [];
+    const credential = stateData.threatCredential?.indicators || [];
+    const processes = stateData.threatProcesses?.indicators || [];
+
+    const allIndicators = [...persistence, ...lateral, ...credential, ...processes];
+    const critical = allIndicators.filter(i => i?.severity === 'CRITICAL').length;
+    const high = allIndicators.filter(i => i?.severity === 'HIGH').length;
+
+    // Update KPIs
+    const els = {
+      'threats-total': allIndicators.length,
+      'threats-critical': critical,
+      'threats-high': high,
+      'threats-categories': new Set([...persistence.map(i => 'Persistence'), ...lateral.map(i => 'Lateral'), ...credential.map(i => 'Credential'), ...processes.map(i => 'Process')]).size
+    };
+
+    Object.entries(els).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
+
+    // Render threat categories
+    const renderThreatList = (indicators, containerId) => {
+      const el = document.getElementById(containerId);
+      if (el) {
+        const html = indicators.slice(0, 10).map(ind => `
+          <div style="padding: 8px; border-bottom: 1px solid var(--color-border); font-size: 0.85em;">
+            <span class="badge badge-${ind?.severity?.toLowerCase() || 'medium'}">${ind?.severity || 'MEDIUM'}</span>
+            <div style="color: var(--color-text-dim); margin-top: 4px;">${ind?.type || ind?.process || ind?.pattern || 'Unknown'}</div>
+          </div>
+        `).join('');
+        el.innerHTML = html || '<div style="padding: 10px; color: var(--color-text-dim);">No indicators detected</div>';
+      }
+    };
+
+    renderThreatList(persistence, 'threats-persistence');
+    renderThreatList(lateral, 'threats-lateral');
+    renderThreatList(credential, 'threats-credential');
+    renderThreatList(processes, 'threats-processes');
+  } catch (error) {
+    console.error('[ERROR] renderThreatIntelligence:', error);
+  }
+}
+
+// ============================================================================
+// DAILY BRIEF ARCHIVE
+// ============================================================================
+
+function renderDailyBriefArchive() {
+  try {
+    const risk = stateData.risk || {};
+    const incidents = stateData.incidents?.incidents || [];
+
+    // Update KPIs
+    const els = {
+      'brief-score': risk.overall_score || 0,
+      'brief-score-date': new Date(risk.timestamp).toLocaleDateString() || '-',
+      'brief-risk': getRiskLevel(risk.overall_score || 0),
+      'brief-count': '1 available',
+      'brief-updated': 'Now'
+    };
+
+    Object.entries(els).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
+
+    // Render recommendations
+    const actionsEl = document.getElementById('brief-actions');
+    if (actionsEl) {
+      const criticalCount = incidents.filter(i => i?.severity === 'CRITICAL').length;
+      const highCount = incidents.filter(i => i?.severity === 'HIGH').length;
+      const recommendations = [];
+
+      if (criticalCount > 0) recommendations.push(`Investigate ${criticalCount} critical incidents`);
+      if (highCount > 0) recommendations.push(`Review ${highCount} high-priority issues`);
+      if ((risk.overall_score || 0) < 50) recommendations.push('Risk score below threshold - take immediate action');
+      if (recommendations.length === 0) recommendations.push('System operating normally');
+
+      const html = recommendations.map((rec, idx) => `
+        <div style="padding: 10px; border-bottom: 1px solid var(--color-border); display: flex; align-items: center;">
+          <span style="color: var(--color-accent); margin-right: 10px;">→</span>
+          <span>${rec}</span>
+        </div>
+      `).join('');
+      actionsEl.innerHTML = html;
+    }
+
+    // Render timeline
+    const timelineEl = document.getElementById('brief-timeline');
+    if (timelineEl) {
+      const recentIncidents = incidents.slice(0, 5);
+      const html = recentIncidents.map(inc => `
+        <div class="timeline-item">
+          <div class="timeline-marker"></div>
+          <div class="timeline-content">
+            <div class="timeline-time">${new Date(inc?.created_at).toLocaleTimeString()}</div>
+            <div class="timeline-event">${inc?.title || 'Incident'} <span class="badge badge-${inc?.severity?.toLowerCase()}">${inc?.severity}</span></div>
+          </div>
+        </div>
+      `).join('');
+      timelineEl.innerHTML = html || '<div style="color: var(--color-text-dim); padding: 10px;">No recent events</div>';
+    }
+  } catch (error) {
+    console.error('[ERROR] renderDailyBriefArchive:', error);
+  }
 }
 
 // ============================================================================
