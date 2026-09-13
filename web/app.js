@@ -53,7 +53,7 @@ async function loadAllData() {
 
     const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses] = await Promise.allSettled([
       fetch(`${baseUrl}/assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
-      fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
+      fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ shadows: [] })),
       fetch(`${baseUrl}/incidents.json`).then(r => r.json()).catch(() => ({ incidents: [] })),
       fetch(`${baseUrl}/risk_score.json`).then(r => r.json()).catch(() => ({ overall_score: 0 })),
       fetch(`${baseUrl}/system_health.json`).then(r => r.json()).catch(() => ({})),
@@ -69,7 +69,7 @@ async function loadAllData() {
     ]);
 
     stateData.assets = assets.value || { assets: [] };
-    stateData.shadowAssets = shadowAssets.value || { assets: [] };
+    stateData.shadowAssets = shadowAssets.value || { shadows: [] };
     stateData.incidents = incidents.value || { incidents: [] };
     stateData.risk = risk.value || { overall_score: 0 };
     stateData.health = health.value || {};
@@ -1138,7 +1138,7 @@ function startAutoRefresh() {
 function renderAssetCommandCenter() {
   try {
     const assets = stateData.assets?.assets || stateData.assets?.all_assets || [];
-    const shadowAssets = stateData.shadowAssets?.assets || [];
+    const shadowAssets = stateData.shadowAssets?.shadows || [];
     const risk = stateData.risk || {};
 
     // Calculate metrics
@@ -1234,6 +1234,33 @@ function renderThreatIntelligence() {
 // DAILY BRIEF ARCHIVE
 // ============================================================================
 
+async function loadBriefArchive() {
+  const countEl = document.getElementById('brief-count');
+  const updatedEl = document.getElementById('brief-updated');
+
+  try {
+    const res = await fetch('/api/daily-brief/list');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    const briefs = data.briefs || [];
+    stateData.briefs = briefs;
+
+    if (countEl) countEl.textContent = `${briefs.length} available`;
+    if (updatedEl) updatedEl.textContent = briefs[0]?.date || '-';
+  } catch (error) {
+    console.error('[ERROR] loadBriefArchive:', error);
+    if (countEl) countEl.textContent = 'unavailable';
+    if (updatedEl) updatedEl.textContent = '-';
+  }
+}
+
+async function fetchBrief(date) {
+  const res = await fetch(`/api/daily-brief/${date}`);
+  if (!res.ok) throw new Error(`Brief ${date} unavailable (HTTP ${res.status})`);
+  return res.json();
+}
+
 function renderDailyBriefArchive() {
   try {
     const risk = stateData.risk || {};
@@ -1243,15 +1270,16 @@ function renderDailyBriefArchive() {
     const els = {
       'brief-score': risk.overall_score || 0,
       'brief-score-date': new Date(risk.timestamp).toLocaleDateString() || '-',
-      'brief-risk': getRiskLevel(risk.overall_score || 0),
-      'brief-count': '1 available',
-      'brief-updated': 'Now'
+      'brief-risk': getRiskLevel(risk.overall_score || 0)
     };
 
     Object.entries(els).forEach(([id, value]) => {
       const el = document.getElementById(id);
       if (el) el.textContent = value;
     });
+
+    // Brief count/latest come from the archive on disk, not a hardcoded value
+    loadBriefArchive();
 
     // Render recommendations
     const actionsEl = document.getElementById('brief-actions');
