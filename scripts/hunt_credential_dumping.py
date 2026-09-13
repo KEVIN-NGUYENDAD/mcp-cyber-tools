@@ -13,6 +13,7 @@ from pathlib import Path
 
 # Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
 from state_manager import write_state_atomic, read_state_safe
+import ioc_attribution
 
 class CredentialDumpingHunter:
     def __init__(self):
@@ -143,8 +144,24 @@ class CredentialDumpingHunter:
 
     def generate_hunting_report(self):
         """Tạo report threat hunting"""
+        # Sprint 6.1: khai báo nguồn gốc trước khi xuất. Các chỉ báo dưới đây là
+        # hardcode trong script (xem chú thích "Simulate" ở detect_*), nên chúng
+        # KHÔNG được quy kết cho thiết bị thật — ioc_attribution cưỡng chế điều đó.
+        hunt_scope = ioc_attribution.resolve_hunt_scope()
+        ioc_attribution.apply_to_indicators(
+            self.indicators,
+            ioc_attribution.SOURCE_SIMULATED,
+            hunt_scope,
+            affected_key='affected_systems'
+        )
+
         output = {
             'timestamp': datetime.now().isoformat(),
+            'data_source': ioc_attribution.SOURCE_SIMULATED,
+            'hunt_scope': hunt_scope,
+            'attribution_note': ioc_attribution.coverage_note(
+                ioc_attribution.SOURCE_SIMULATED, len(self.indicators)
+            ),
             'hunting_type': 'Credential Dumping',
             'question': 'Có chỉ báo đánh cắp credentials nào không?',
             'total_indicators': len(self.indicators),
@@ -158,8 +175,7 @@ class CredentialDumpingHunter:
             severity = indicator.get('severity', 'UNKNOWN')
             output['by_severity'][severity] = output['by_severity'].get(severity, 0) + 1
 
-        with open(self.hunting_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, indent=2, ensure_ascii=False)
+        write_state_atomic(self.hunting_file, output, indent=2)
 
         return output
 

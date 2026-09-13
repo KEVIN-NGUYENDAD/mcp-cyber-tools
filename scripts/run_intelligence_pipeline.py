@@ -272,6 +272,18 @@ class IntelligencePipeline:
         )
         success = success and ok
 
+        # 8B. Shadow asset detection (Sprint 6.1)
+        # Chạy ngay sau asset extraction vì nó đối chiếu kho tài sản vừa dựng với
+        # bảng ARP thật; kết quả là đầu vào của correlation Rule 1 ở Phase 10.
+        # Trước Sprint 6.1 script này không nằm trong pipeline, nên
+        # state/shadow_assets.json đứng yên từ 2026-09-09.
+        ok, _ = self.run_stage(
+            'Shadow Asset Detection',
+            self.scripts_dir / 'shadow_asset_detector.py',
+            'Detecting unknown devices (ARP vs asset inventory)'
+        )
+        success = success and ok
+
         # 9. Service extraction
         ok, _ = self.run_stage(
             'Service Intelligence',

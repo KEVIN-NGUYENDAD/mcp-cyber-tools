@@ -1,68 +1,71 @@
 {
-  "timestamp": "2026-09-13T15:51:17.182688",
+  "timestamp": "2026-09-13T16:01:15.155407",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
   "rules_evaluated": 3,
-  "total_findings": 2,
+  "total_findings": 1,
   "by_severity": {
-    "HIGH": 2
+    "INFO": 1
   },
   "by_rule": {
-    "RULE-2": 2
+    "RULE-2": 1
+  },
+  "by_evidence_quality": {
+    "SIMULATED": 1
   },
   "sources": {
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-13T15:51:13.367805"
+      "timestamp": "2026-09-13T16:01:10.859928"
     },
     "shadow_assets.json": {
       "present": true,
-      "records": 2,
+      "records": 0,
       "timestamp": null
     },
     "incidents.json": {
       "present": true,
       "records": 19,
-      "timestamp": "2026-09-13T15:51:16.752673"
+      "timestamp": "2026-09-13T16:01:14.788898"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T15:51:12.667829"
+      "timestamp": "2026-09-13T16:01:10.129585"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T15:51:12.963250"
+      "timestamp": "2026-09-13T16:01:10.433572"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 5,
-      "timestamp": "2026-09-13T15:51:15.898524"
+      "timestamp": "2026-09-13T16:01:13.829716"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 5,
-      "timestamp": "2026-09-13T15:51:16.348459"
+      "timestamp": "2026-09-13T16:01:14.404685"
     },
     "hunting_lateral_movement.json": {
       "present": true,
       "records": 5,
-      "timestamp": "2026-09-13T15:51:16.196213"
+      "timestamp": "2026-09-13T16:01:14.214827"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
       "records": 6,
-      "timestamp": "2026-09-13T15:51:16.047244"
+      "timestamp": "2026-09-13T16:01:14.031458"
     }
   },
   "coverage_gaps": [
     {
       "rule_id": "RULE-1",
-      "reason": "IOC_NOT_IP_ATTRIBUTED",
-      "detail": "10 IOC credential-dumping/persistence kh\u00f4ng mang IP n\u00e0o (affected_systems r\u1ed7ng), n\u00ean kh\u00f4ng th\u1ec3 gh\u00e9p v\u1edbi 2 shadow asset."
+      "reason": "NO_SHADOW_ASSETS",
+      "detail": "state/shadow_assets.json kh\u00f4ng c\u00f3 m\u1ee5c shadows n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan."
     },
     {
       "rule_id": "RULE-3",
@@ -75,55 +78,37 @@
       "finding_id": "EF-0001",
       "rule_id": "RULE-2",
       "rule_name": "Lateral Movement Probe",
-      "severity": "HIGH",
-      "title": "D\u00f2 qu\u00e9t di chuy\u1ec3n ngang nh\u1eafm v\u00e0o 192.168.0.1",
-      "summary": "1 k\u1ef9 thu\u1eadt lateral movement (SMB Lateral Movement) quy k\u1ebft v\u1ec1 192.168.0.1 tr\u00f9ng th\u1eddi \u0111i\u1ec3m v\u1edbi 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i trong last_24_hours. \u0110\u00e2y l\u00e0 m\u1eabu d\u00f2 credential \u0111\u1ec3 m\u1edf r\u1ed9ng ch\u1ed7 \u0111\u1ee9ng.",
+      "severity": "INFO",
+      "title": "Lateral movement: ch\u1ec9 c\u00f3 b\u1eb1ng ch\u1ee9ng M\u00d4 PH\u1eceNG, kh\u00f4ng k\u1ebft lu\u1eadn \u0111\u01b0\u1ee3c",
+      "summary": "5 k\u1ef9 thu\u1eadt lateral movement (Kerberos Delegation Abuse, PsExec/Remote Execution, Remote Desktop Protocol Abuse, SMB Lateral Movement, WinRM Remote Management) \u0111\u1ec1u mang data_source=SIMULATED - ch\u00fang l\u00e0 d\u1eef li\u1ec7u hardcode trong hunt_lateral_movement.py, kh\u00f4ng ph\u1ea3i quan s\u00e1t t\u1eeb m\u1ea1ng th\u1eadt. 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i trong last_24_hours l\u00e0 s\u1ed1 li\u1ec7u th\u1eadt, nh\u01b0ng m\u1ed9t m\u00ecnh n\u00f3 ch\u01b0a \u0111\u1ee7 \u0111\u1ec3 k\u1ebft lu\u1eadn.",
       "entities": {
-        "ip": "192.168.0.1",
-        "is_known_asset": true,
+        "ip": null,
         "techniques": [
-          "SMB Lateral Movement"
+          "Kerberos Delegation Abuse",
+          "PsExec/Remote Execution",
+          "Remote Desktop Protocol Abuse",
+          "SMB Lateral Movement",
+          "WinRM Remote Management"
         ],
-        "failed_logons": 3
+        "failed_logons": 3,
+        "simulated_indicators": 5
       },
       "evidence": [
         "[Lateral] SMB Lateral Movement: Ph\u00e1t hi\u1ec7n k\u1ebft n\u1ed1i SMB b\u1ea5t th\u01b0\u1eddng gi\u1eefa c\u00e1c m\u00e1y",
+        "[Lateral] PsExec/Remote Execution: Ph\u00e1t hi\u1ec7n d\u1ea5u hi\u1ec7u PsExec ho\u1eb7c remote command execution",
+        "[Lateral] WinRM Remote Management: Ph\u00e1t hi\u1ec7n WinRM \u0111\u01b0\u1ee3c d\u00f9ng cho remote execution",
+        "[Lateral] Remote Desktop Protocol Abuse: Ph\u00e1t hi\u1ec7n RDP \u0111\u01b0\u1ee3c d\u00f9ng b\u1ea5t th\u01b0\u1eddng",
+        "[Lateral] Kerberos Delegation Abuse: Ph\u00e1t hi\u1ec7n khai th\u00e1c Kerberos delegation (S4U)",
         "[Security Events] failed_logons=3 trong last_24_hours"
       ],
-      "recommended_action": "1. Ki\u1ec3m tra Event ID 4625/4768 cho 192.168.0.1 | 2. Ch\u1eb7n SMB/WinRM/RDP t\u1eeb ngu\u1ed3n l\u1ea1 | 3. Reset m\u1eadt kh\u1ea9u c\u00e1c t\u00e0i kho\u1ea3n b\u1ecb d\u00f2",
-      "confidence": "HIGH",
+      "recommended_action": "1. N\u1ed1i hunt_lateral_movement v\u1edbi MCP huntLateralMovement \u0111\u1ec3 c\u00f3 IOC th\u1eadt | 2. R\u00e0 Event ID 4625 th\u1ee7 c\u00f4ng cho 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i | 3. Kh\u00f4ng c\u00f4 l\u1eadp thi\u1ebft b\u1ecb n\u00e0o d\u1ef1a tr\u00ean ph\u00e1t hi\u1ec7n n\u00e0y",
+      "confidence": "LOW",
+      "evidence_quality": "SIMULATED",
       "sources": [
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T15:51:17.182688"
-    },
-    {
-      "finding_id": "EF-0002",
-      "rule_id": "RULE-2",
-      "rule_name": "Lateral Movement Probe",
-      "severity": "HIGH",
-      "title": "D\u00f2 qu\u00e9t di chuy\u1ec3n ngang nh\u1eafm v\u00e0o 192.168.0.10",
-      "summary": "1 k\u1ef9 thu\u1eadt lateral movement (SMB Lateral Movement) quy k\u1ebft v\u1ec1 192.168.0.10 tr\u00f9ng th\u1eddi \u0111i\u1ec3m v\u1edbi 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i trong last_24_hours. \u0110\u00e2y l\u00e0 m\u1eabu d\u00f2 credential \u0111\u1ec3 m\u1edf r\u1ed9ng ch\u1ed7 \u0111\u1ee9ng.",
-      "entities": {
-        "ip": "192.168.0.10",
-        "is_known_asset": true,
-        "techniques": [
-          "SMB Lateral Movement"
-        ],
-        "failed_logons": 3
-      },
-      "evidence": [
-        "[Lateral] SMB Lateral Movement: Ph\u00e1t hi\u1ec7n k\u1ebft n\u1ed1i SMB b\u1ea5t th\u01b0\u1eddng gi\u1eefa c\u00e1c m\u00e1y",
-        "[Security Events] failed_logons=3 trong last_24_hours"
-      ],
-      "recommended_action": "1. Ki\u1ec3m tra Event ID 4625/4768 cho 192.168.0.10 | 2. Ch\u1eb7n SMB/WinRM/RDP t\u1eeb ngu\u1ed3n l\u1ea1 | 3. Reset m\u1eadt kh\u1ea9u c\u00e1c t\u00e0i kho\u1ea3n b\u1ecb d\u00f2",
-      "confidence": "HIGH",
-      "sources": [
-        "hunting_lateral_movement.json",
-        "security_events.json"
-      ],
-      "detected_at": "2026-09-13T15:51:17.182688"
+      "detected_at": "2026-09-13T16:01:15.155407"
     }
   ]
 }
