@@ -134,8 +134,8 @@ class RiskScoreCalculator:
             }
         }
 
-        with open(self.state_dir / 'risk_score.json', 'w') as f:
-            json.dump(output, f, indent=2)
+        # Atomic write for file safety (TD-L3-001: atomic writes, TD-L3-002: file locking)
+        write_state_atomic(str(self.state_dir / 'risk_score.json'), output, indent=2)
 
         return {'status': 'success', 'overall_score': overall, 'risk_level': risk_level}
 
