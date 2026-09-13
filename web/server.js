@@ -207,6 +207,52 @@ app.get('*', (req, res) => {
 });
 
 // ============================================================================
+// DAILY BRIEF ENDPOINTS
+// ============================================================================
+
+app.get('/api/daily-brief/list', (req, res) => {
+  try {
+    const briefDir = path.join(__dirname, '..', 'daily_brief');
+    console.log('[ROUTE] /api/daily-brief/list - directory:', briefDir);
+
+    if (!fs.existsSync(briefDir)) {
+      console.warn('[WARN] daily_brief directory does not exist');
+      return res.json({ dates: [] });
+    }
+
+    const files = fs.readdirSync(briefDir)
+      .filter(f => f.endsWith('.json'))
+      .map(f => f.replace('.json', ''))
+      .sort()
+      .reverse();
+
+    res.json({ dates: files });
+  } catch (error) {
+    console.error('[ERROR] /api/daily-brief/list:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/daily-brief/:date', (req, res) => {
+  try {
+    const briefFile = path.join(__dirname, '..', 'daily_brief', `${req.params.date}.json`);
+    console.log('[ROUTE] /api/daily-brief/:date -', req.params.date);
+
+    if (!fs.existsSync(briefFile)) {
+      console.warn('[WARN] Brief not found:', briefFile);
+      return res.status(404).json({ error: 'Brief not found for this date' });
+    }
+
+    const data = JSON.parse(fs.readFileSync(briefFile, 'utf8'));
+    data._fetched_at = new Date().toISOString();
+    res.json(data);
+  } catch (error) {
+    console.error('[ERROR] /api/daily-brief/:date:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 

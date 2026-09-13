@@ -1124,6 +1124,8 @@ function renderTimeline() {
     const incidents = stateData.incidents?.incidents || [];
     console.log('[RENDER] renderTimeline - incidents:', incidents.length, 'alerts:', alerts.length);
 
+    loadDailyBriefList();
+
     const events = [
       ...alerts.map(a => ({
         timestamp: a?.sent_at,
@@ -1156,6 +1158,94 @@ function renderTimeline() {
     }
   } catch (error) {
     console.error('[ERROR] renderTimeline:', error);
+  }
+}
+
+// ============================================================================
+// DAILY BRIEF FUNCTIONS
+// ============================================================================
+
+async function loadDailyBriefList() {
+  try {
+    const response = await fetch('/api/daily-brief/list');
+    const data = await response.json();
+    const dates = data.dates || [];
+    console.log('[DAILY-BRIEF] Loaded', dates.length, 'dates');
+
+    const select = document.getElementById('brief-date-select');
+    if (select) {
+      select.innerHTML = `<option value="">Select a date...</option>` +
+        dates.map(date => `<option value="${date}">${date}</option>`).join('');
+
+      // Auto-select the most recent date
+      if (dates.length > 0) {
+        select.value = dates[0];
+        loadDailyBrief(dates[0]);
+      }
+    }
+  } catch (error) {
+    console.error('[ERROR] loadDailyBriefList:', error);
+  }
+}
+
+async function loadDailyBrief(date) {
+  if (!date) {
+    const content = document.getElementById('brief-content');
+    if (content) content.style.display = 'none';
+    return;
+  }
+
+  try {
+    console.log('[DAILY-BRIEF] Loading brief for:', date);
+    const response = await fetch(`/api/daily-brief/${date}`);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const brief = await response.json();
+
+    const content = document.getElementById('brief-content');
+    if (content) content.style.display = 'block';
+
+    // Update date
+    const dateEl = document.getElementById('brief-date');
+    if (dateEl) dateEl.textContent = brief.date || date;
+
+    // Update security score
+    const scoreEl = document.getElementById('brief-score');
+    if (scoreEl) {
+      scoreEl.textContent = brief.security_score !== null && brief.security_score !== undefined
+        ? `${brief.security_score}/100`
+        : 'N/A';
+    }
+
+    // Update current risk
+    const riskEl = document.getElementById('brief-risk');
+    if (riskEl) {
+      const riskText = brief.current_risk || 'Unknown';
+      const riskColor = riskText === 'high' ? '#FF3B5C' :
+                       riskText === 'medium' ? '#FFD93D' : '#22ff22';
+      riskEl.textContent = riskText.toUpperCase();
+      riskEl.style.color = riskColor;
+    }
+
+    // Update recommended actions
+    const actionsEl = document.getElementById('brief-actions');
+    if (actionsEl) {
+      const actions = brief.recommended_actions || [];
+      if (actions.length > 0) {
+        actionsEl.innerHTML = actions
+          .map(action => `<div style="margin-bottom: 8px;">✓ ${action}</div>`)
+          .join('');
+      } else {
+        actionsEl.innerHTML = '<div style="color: #888; font-style: italic;">No actions for this date</div>';
+      }
+    }
+
+    console.log('[DAILY-BRIEF] Loaded successfully:', brief.date);
+  } catch (error) {
+    console.error('[ERROR] loadDailyBrief:', error);
+    const actionsEl = document.getElementById('brief-actions');
+    if (actionsEl) {
+      actionsEl.innerHTML = '<div style="color: #FF3B5C;">Error loading brief</div>';
+    }
   }
 }
 
