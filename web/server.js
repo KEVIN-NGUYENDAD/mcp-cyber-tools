@@ -196,6 +196,72 @@ app.get('/api/status', (req, res) => {
 
 
 // ============================================================================
+// DAILY BRIEF ROUTES
+// ============================================================================
+
+const BRIEF_DIR = path.join(__dirname, '..', 'daily_brief');
+const BRIEF_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// List available briefs - one entry per date, newest first
+app.get('/api/daily-brief/list', (req, res) => {
+  try {
+    if (!fs.existsSync(BRIEF_DIR)) {
+      return res.json({ total: 0, briefs: [] });
+    }
+
+    const byDate = new Map();
+    for (const file of fs.readdirSync(BRIEF_DIR)) {
+      const match = file.match(/^(\d{4}-\d{2}-\d{2})\.(json|html)$/);
+      if (!match) continue; // skips latest.html and anything unexpected
+
+      const [, date, ext] = match;
+      const entry = byDate.get(date) || { date, has_json: false, has_html: false, modified: null };
+      entry[ext === 'json' ? 'has_json' : 'has_html'] = true;
+
+      const mtime = fs.statSync(path.join(BRIEF_DIR, file)).mtime.toISOString();
+      if (!entry.modified || mtime > entry.modified) entry.modified = mtime;
+
+      byDate.set(date, entry);
+    }
+
+    const briefs = [...byDate.values()].sort((a, b) => b.date.localeCompare(a.date));
+    res.json({ total: briefs.length, briefs, latest: briefs[0]?.date || null });
+  } catch (error) {
+    console.error('[ERROR] Listing briefs:', error.message);
+    res.status(500).json({ error: 'Failed to list briefs', details: error.message });
+  }
+});
+
+// Fetch one brief by date - JSON by default, ?format=html for the rendered page
+app.get('/api/daily-brief/:date', (req, res) => {
+  const { date } = req.params;
+
+  if (!BRIEF_DATE_RE.test(date)) {
+    return res.status(400).json({ error: 'Invalid date format, expected YYYY-MM-DD', date });
+  }
+
+  const wantsHtml = req.query.format === 'html';
+  const filepath = path.join(BRIEF_DIR, `${date}.${wantsHtml ? 'html' : 'json'}`);
+
+  try {
+    if (!fs.existsSync(filepath)) {
+      return res.status(404).json({ error: 'Brief not found', date, format: wantsHtml ? 'html' : 'json' });
+    }
+
+    if (wantsHtml) {
+      return res.type('html').send(fs.readFileSync(filepath, 'utf8'));
+    }
+
+    const data = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+    data._source_timestamp = fs.statSync(filepath).mtime.toISOString();
+    res.json(data);
+  } catch (error) {
+    console.error(`[ERROR] Reading brief ${date}:`, error.message);
+    res.status(500).json({ error: 'Failed to read brief', details: error.message });
+  }
+});
+
+// ============================================================================
 // STATIC ROUTES
 // ============================================================================
 
