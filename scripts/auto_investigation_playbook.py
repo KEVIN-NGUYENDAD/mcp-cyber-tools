@@ -226,6 +226,10 @@ class AutoInvestigationPlaybook:
 
         result['findings'] = len(items)
         result['data_timestamp'] = data.get('timestamp')
+        # Sprint 6.1: hồ sơ điều tra phải nói rõ bằng chứng đến từ đâu. Một case
+        # ghi "Mimikatz Activity" kèm lệnh "Ngắt mạng" mà không nói đó là dữ liệu
+        # mô phỏng sẽ đẩy người trực ca đi cô lập một máy bình thường.
+        result['data_source'] = data.get('data_source', 'UNKNOWN')
 
         by_severity = {}
         for item in items:
@@ -266,8 +270,9 @@ class AutoInvestigationPlaybook:
                 '{} {}'.format(count, sev)
                 for sev, count in sorted(result['by_severity'].items()))
             top = result['details'][0]['type'] if result['details'] else None
-            line = '{}: {} phát hiện ({})'.format(
-                result['tool'], result['findings'], severities)
+            label = ' [MÔ PHỎNG]' if result.get('data_source') == 'SIMULATED' else ''
+            line = '{}: {} phát hiện ({}){}'.format(
+                result['tool'], result['findings'], severities, label)
             if top:
                 line += ' - nổi bật: {}'.format(top)
             lines.append(line)
@@ -280,17 +285,40 @@ class AutoInvestigationPlaybook:
             return ', '.join(str(a) for a in assets)
         return 'Chưa quy kết được (IOC không mang IP/hostname)'
 
+    def evidence_quality(self, hunt_results):
+        """REAL / SIMULATED / MIXED cho cả chuỗi hunt của một case."""
+        sources = set(r.get('data_source', 'UNKNOWN')
+                      for r in hunt_results if r['findings'])
+        if not sources:
+            return 'NONE'
+        if sources == set(['SIMULATED']):
+            return 'SIMULATED'
+        if 'SIMULATED' in sources:
+            return 'MIXED'
+        return 'REAL'
+
     def build_telegram_message(self, incident, hunt_results):
         hunting_lines = self.summarize_hunting(hunt_results)
+        quality = self.evidence_quality(hunt_results)
+
+        # Giữ nguyên bố cục bốn dòng theo đặc tả Sprint 5; chỉ chèn thêm một dòng
+        # cảnh báo khi bằng chứng không phải quan sát thật.
+        warning = ''
+        if quality in ('SIMULATED', 'MIXED'):
+            warning = ('\n⚠️ BẰNG CHỨNG {}: chuỗi hunt trả về dữ liệu hardcode '
+                       'trong script, chưa nối với MCP hunting tool. '
+                       'KHÔNG cô lập thiết bị dựa trên case này.').format(quality)
+
         return (
             '🚨 TỰ ĐỘNG ĐIỀU TRA SỰ CỐ {}\n'
             '• Thiết bị: {}\n'
             '• Phát hiện từ Hunting: {}\n'
-            '• Kịch bản cô lập đề xuất: 1. Ngắt mạng | 2. Quét Defender | 3. Khôi phục'
+            '• Kịch bản cô lập đề xuất: 1. Ngắt mạng | 2. Quét Defender | 3. Khôi phục{}'
         ).format(
             incident.get('incident_id', 'UNKNOWN'),
             self.resolve_target(incident),
             '; '.join(hunting_lines),
+            warning,
         )
 
     def build_case_report(self, incident, hunt_results, telegram_result, message):
@@ -318,6 +346,7 @@ class AutoInvestigationPlaybook:
             },
             'mode': 'dry-run' if self.dry_run else 'live',
             'hunt_chain': hunt_results,
+            'evidence_quality': self.evidence_quality(hunt_results),
             'summary': {
                 'tools_run': len(hunt_results),
                 'tools_succeeded': sum(
