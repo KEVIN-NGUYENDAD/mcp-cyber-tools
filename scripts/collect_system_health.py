@@ -4,6 +4,9 @@ import json, sys
 from datetime import datetime
 from pathlib import Path
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 class SystemHealthCollector:
     def __init__(self):
         self.state_dir = Path(__file__).parent.parent / 'state'
@@ -17,8 +20,7 @@ class SystemHealthCollector:
             'uptime_days': 23,
             'health_status': 'GOOD'
         }
-        with open(self.state_dir / 'system_health.json', 'w') as f:
-            json.dump(output, f, indent=2)
+        write_state_atomic(self.state_dir / 'system_health.json', output, indent=2)
         return {'status': 'success', 'cpu': 45, 'ram': 62, 'disk': 78}
 
 if __name__ == '__main__':

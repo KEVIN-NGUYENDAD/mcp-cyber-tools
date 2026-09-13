@@ -17,6 +17,9 @@ from pathlib import Path
 from datetime import datetime
 from collections import defaultdict
 
+# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
+from state_manager import write_state_atomic, read_state_safe
+
 
 class ShadowAssetDetector:
     """Detect and flag shadow assets (unknown/suspicious devices)"""
