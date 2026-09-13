@@ -31,6 +31,7 @@ let config = {
     logsDir: './logs'
   },
   network: {
+    gatewayIP: '192.168.0.1',
     cameraIPs: ['192.168.1.100', '192.168.1.101', '192.168.1.102'],
     fastScanEnabled: false
   },
@@ -134,6 +135,38 @@ class NetworkCollector {
     }
 
     return devices;
+  }
+
+  extractSubnet(gatewayIP) {
+    if (!gatewayIP) return null;
+    const parts = gatewayIP.split('.');
+    if (parts.length !== 4) return null;
+    return `${parts[0]}.${parts[1]}.${parts[2]}`;
+  }
+
+  pingSubnet(subnet) {
+    if (!subnet) return [];
+    const isWindows = process.platform === 'win32';
+    const respondingIPs = [];
+
+    console.log(`🌐 Ping sweep: ${subnet}.1-254...`);
+
+    for (let i = 1; i <= 254; i++) {
+      const ip = `${subnet}.${i}`;
+      try {
+        if (isWindows) {
+          execSync(`ping -n 1 -w 500 ${ip}`, { stdio: 'ignore' });
+        } else {
+          execSync(`ping -c 1 -W 1 ${ip}`, { stdio: 'ignore' });
+        }
+        respondingIPs.push(ip);
+      } catch {
+        // Device didn't respond, skip
+      }
+    }
+
+    console.log(`   Responding IPs: ${respondingIPs.length}`);
+    return respondingIPs;
   }
 
   checkCameraPresence() {
@@ -363,16 +396,22 @@ class NetworkCollector {
     console.log(`${modeLabel} Network Collector - ${scanMode === 'fast' ? 'Fast Scan' : 'Normal Collection'}`);
     console.log('=============================================\n');
 
-    // 1. Get current ARP table
+    // 1. Ping subnet to populate ARP cache
+    const subnet = this.extractSubnet(config.network.gatewayIP);
+    if (subnet) {
+      this.pingSubnet(subnet);
+    }
+
+    // 2. Get current ARP table
     console.log('📋 Reading ARP table...');
     const currentDevices = this.getARPTable();
     console.log(`   Found: ${currentDevices.length} devices`);
 
-    // 2. Load previous history
+    // 3. Load previous history
     const previousHistory = this.loadDeviceHistory();
     console.log(`   Previous: ${previousHistory.devices?.length || 0} devices`);
 
-    // 3. Detect changes
+    // 4. Detect changes
     const changes = this.detectChanges(currentDevices, previousHistory);
     if (changes.length > 0) {
       console.log(`   ⚠️  Changes detected: ${changes.length}`);
@@ -401,13 +440,13 @@ class NetworkCollector {
       });
     }
 
-    // 4. Check camera presence
+    // 5. Check camera presence
     console.log('\n📹 Checking camera presence...');
     const cameras = this.checkCameraPresence();
     const onlineCameras = cameras.filter(c => c.status === 'online').length;
     console.log(`   Online: ${onlineCameras}/${cameras.length}`);
 
-    // 5. Measure performance metrics (gateway must be measured before saving history)
+    // 6. Measure performance metrics (gateway must be measured before saving history)
     console.log('\n📊 Measuring metrics...');
     const gatewayLatency = this.measurePingLatency(config.network.gatewayIP);
     const metrics = {
@@ -422,7 +461,7 @@ class NetworkCollector {
     }
     console.log(`   Gateway latency: ${metrics.gatewayLatency}ms`);
 
-    // 6. Update device history (includes gateway status, read by the gatewayStatus MCP tool)
+    // 7. Update device history (includes gateway status, read by the gatewayStatus MCP tool)
     const newHistory = {
       devices: currentDevices,
       cameraStatus: cameras,
@@ -443,15 +482,15 @@ class NetworkCollector {
     };
     this.saveDeviceHistory(newHistory);
 
-    // 7. Update changes log
+    // 8. Update changes log
     if (changes.length > 0) {
       this.updateChangesLog(changes);
     }
 
-    // 8. Update network history with metrics
+    // 9. Update network history with metrics
     this.updateNetworkHistory(currentDevices, metrics);
 
-    // 9. Run baseline analysis
+    // 10. Run baseline analysis
     console.log('\n📈 Updating baseline...');
     try {
       const { BaselineAnalyzer } = await import('./baseline-analyzer.js');
