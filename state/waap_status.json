@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-09-05T23:13:13.965203",
+  "timestamp": "2026-09-13T15:51:12.059659",
   "domain": "sentinelops.fyi",
   "ssl_status": "valid",
   "expiration_date": "2026-12-02T19:50:51+00:00",
-  "days_until_expiry": 87,
+  "days_until_expiry": 79,
   "issuer": "CN=WE1,O=Google Trust Services,C=US",
   "waf_enabled": false,
   "waf_mode": "unknown",

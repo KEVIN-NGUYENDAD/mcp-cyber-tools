@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "sentinel-dev",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["C:\\Users\\tamng\\Projects\\mcp-cyber-tools\\web\\server.js"],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "port": 3000
     }
   ]

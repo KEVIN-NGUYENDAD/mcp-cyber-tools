@@ -122,8 +122,11 @@ All incidents with details
       }
 
       const score = riskScore.overall_score || 0;
-      const riskLevel = score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW';
-      const riskColor = score >= 80 ? '🔴' : score >= 60 ? '🟠' : score >= 40 ? '🟡' : '🟢';
+      // risk_score.json is risk-ascending and ships its own risk_level (which
+      // carries the severity floor); the bands are only a fallback.
+      const riskLevel = riskScore.risk_level ||
+        (score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW');
+      const riskColor = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢' }[riskLevel] || '⚪';
 
       const statusMsg = `*━━━━━ SECURITY STATUS ━━━━━*
 
@@ -273,8 +276,10 @@ Score: *${score}/100*
       });
 
       const score = risk.overall_score || 0;
-      const scoreEmoji = score >= 80 ? '🔴' : score >= 60 ? '🟠' : score >= 40 ? '🟡' : '🟢';
-      const scoreLevel = score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW';
+      // Prefer the engine's own risk_level - see /status above.
+      const scoreLevel = risk.risk_level ||
+        (score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW');
+      const scoreEmoji = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢' }[scoreLevel] || '⚪';
 
       const waapEmoji = waap.health_score >= 80 ? '✅' : waap.health_score >= 60 ? '⚠️' : '🔴';
       const dnsEmoji = dnsHealthPercent >= 90 ? '✅' : dnsHealthPercent >= 60 ? '⚠️' : '🔴';

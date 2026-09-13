@@ -29,7 +29,9 @@ class DailyBriefGenerator:
         filepath = self.state_dir / filename
         if filepath.exists():
             try:
-                with open(filepath, 'r') as f:
+                # encoding is required: most state files carry Vietnamese text,
+                # and the Windows default (cp1252) turns that into a silent None.
+                with open(filepath, 'r', encoding='utf-8') as f:
                     return json.load(f)
             except Exception:
                 return None
@@ -288,57 +290,47 @@ class DailyBriefGenerator:
         }
 
     def generate_risk_assessment(self):
-        """Generate overall risk assessment"""
-        nessus = self.generate_vulnerability_summary() or {}
-        waap = self.generate_waap_summary() or {}
-        assets = self.generate_asset_summary() or {}
-        services = self.generate_service_summary() or {}
-        crypto = self.generate_crypto_summary() or {}
+        """Read the overall risk assessment from the canonical engine.
 
-        # Calculate risk level
-        risk_score = 0
+        This used to compute its own score by stacking penalties, which made the
+        Daily Brief a third, silent risk scorer: it reported LOW/0 on the same
+        data where state/risk_score.json said HIGH/56. Sprint 6 made
+        scripts/calculate_risk_score.py the single source of truth, so the brief
+        now reports that number instead of inventing one.
+        See docs/project/RISK_SCORING_MODEL.md.
+        """
+        risk = self.load_json('risk_score.json') or {}
+
+        if not risk:
+            return {
+                'risk_level': 'UNKNOWN',
+                'risk_score': 0,
+                'risk_factors': ['state/risk_score.json chưa được sinh'],
+                'source': 'unavailable'
+            }
+
+        # factors[] mang health/weight/detail - rút thành câu đọc được, chỉ giữ
+        # các thành phần thực sự góp rủi ro.
         risk_factors = []
+        for factor in risk.get('factors', []):
+            if factor.get('risk_contribution', 0) <= 0:
+                continue
+            risk_factors.append('{}: {} (+{} điểm rủi ro)'.format(
+                factor.get('name', 'unknown'),
+                factor.get('detail', ''),
+                factor.get('risk_contribution')))
 
-        # Vulnerability risk
-        critical = nessus.get('critical', 0)
-        high = nessus.get('high', 0)
-        if critical > 0:
-            risk_score += 40
-            risk_factors.append(f'{critical} critical vulnerabilities detected')
-        if high > 0:
-            risk_score += 20
-            risk_factors.append(f'{high} high-severity vulnerabilities')
-
-        # Cryptographic risk
-        if crypto.get('weak_cipher_count', 0) > 0:
-            risk_score += 15
-            risk_factors.append(f'{crypto["weak_cipher_count"]} weak ciphers in use')
-
-        # WAAP/SSL risk
-        if waap.get('ssl_status') != 'valid':
-            risk_score += 10
-            risk_factors.append('SSL certificate invalid or missing')
-        if waap.get('days_until_expiry', 999) < 7:
-            risk_score += 5
-            risk_factors.append('SSL certificate expiring soon')
-
-        # Unknown devices
-        if assets.get('unknown_devices', 0) > 0:
-            risk_score += 10
-            risk_factors.append(f'{assets["unknown_devices"]} unknown devices on network')
-
-        risk_level = 'LOW'
-        if risk_score >= 70:
-            risk_level = 'CRITICAL'
-        elif risk_score >= 50:
-            risk_level = 'HIGH'
-        elif risk_score >= 30:
-            risk_level = 'MEDIUM'
+        risk_factors.extend(risk.get('notes', []))
 
         return {
-            'risk_level': risk_level,
-            'risk_score': min(100, risk_score),
-            'risk_factors': risk_factors
+            'risk_level': risk.get('risk_level', 'UNKNOWN'),
+            'risk_score': risk.get('overall_score', 0),
+            'risk_factors': risk_factors,
+            'critical_count': risk.get('critical_count', 0),
+            'high_count': risk.get('high_count', 0),
+            'scale': risk.get('scale', 'risk_ascending'),
+            'source': 'state/risk_score.json',
+            'generated_at': risk.get('generated_at')
         }
 
     def generate_brief(self):

@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-09-05T23:13:13.199052",
+  "timestamp": "2026-09-13T15:51:11.367439",
   "domain": "sentinelops.fyi",
   "nameservers": [
+    "curitiba.ns.porkbun.com.",
     "fortaleza.ns.porkbun.com.",
     "maceio.ns.porkbun.com.",
-    "salvador.ns.porkbun.com.",
-    "curitiba.ns.porkbun.com."
+    "salvador.ns.porkbun.com."
   ],
   "a_records": [
     "216.24.57.15",
@@ -16,7 +16,7 @@
     "10 fwd1.porkbun.com."
   ],
   "spf": "v=spf1 include:_spf.porkbun.com ~all",
-  "dmarc": "CNAME pixie.porkbun.com.",
+  "dmarc": "v=DMARC1; p=quarantine; rua=mailto:tha2171264@maricopa.edu",
   "expiration_date": null,
   "registration_date": null,
   "dns_complete": {

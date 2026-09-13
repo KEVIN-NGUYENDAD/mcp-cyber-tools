@@ -1,168 +1,94 @@
 {
-  "timestamp": "2026-09-07T17:23:24.071669",
-  "overall_score": 1,
-  "threat_level": "LOW",
-  "risk_summary": {
-    "critical_count": 0,
-    "high_count": 0,
-    "medium_count": 4,
-    "low_count": 16,
-    "total_vulnerabilities": 20
-  },
-  "top_risk_hosts": [
+  "overall_score": 56,
+  "risk_level": "HIGH",
+  "critical_count": 14,
+  "high_count": 23,
+  "factors": [
     {
-      "id": 20,
-      "hostname": "192.168.0.21",
-      "ip": "192.168.0.21",
-      "type": "Unknown",
-      "os": "Unknown",
-      "vendor": "Unknown",
-      "mac": "Unknown",
-      "last_scan": "Home Network Discovery",
-      "vulnerabilities": {
-        "critical": 0,
-        "high": 0,
-        "medium": 2,
-        "low": 1,
-        "info": {
-          "host-ip": "192.168.0.21",
-          "host_start": "Mon Sep  7 16:48:17 2026"
-        }
-      },
-      "risk_score": 7,
-      "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:21.669944"
+      "name": "threat_hunting",
+      "health": 0,
+      "weight": 0.25,
+      "risk_contribution": 25.0,
+      "detail": "persistence: 1C/3H; suspicious_processes: 0C/4H; lateral_movement: 2C/3H; credential_dumping: 4C/1H"
     },
     {
-      "id": 18,
-      "hostname": "192.168.0.1",
-      "ip": "192.168.0.1",
-      "type": "Linux",
-      "os": "Linux Kernel 2.6",
-      "vendor": "Unknown",
-      "mac": "48:BD:CE:0E:1E:3C",
-      "last_scan": "Home Network Scan",
-      "vulnerabilities": {
-        "critical": 0,
-        "high": 0,
-        "medium": 1,
-        "low": 2,
-        "info": {
-          "host_start": "Mon Sep  7 17:02:36 2026",
-          "mac-address": "48:BD:CE:0E:1E:3C",
-          "host_end": "Mon Sep  7 17:16:58 2026",
-          "operating-system": "Linux Kernel 2.6",
-          "credentialed_scan": "false",
-          "host-ip": "192.168.0.1"
-        }
-      },
-      "risk_score": 5,
-      "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.921789"
+      "name": "incidents",
+      "health": 0,
+      "weight": 0.25,
+      "risk_contribution": 25.0,
+      "detail": "7 s\u1ef1 c\u1ed1 CRITICAL, 12 HIGH \u0111ang m\u1edf"
     },
     {
-      "id": 17,
-      "hostname": "192.168.0.51",
-      "ip": "192.168.0.51",
-      "type": "Windows",
-      "os": "Windows 11",
-      "vendor": "Unknown",
-      "mac": "Unknown",
-      "last_scan": "Home Network Scan",
-      "vulnerabilities": {
-        "critical": 0,
-        "high": 0,
-        "medium": 1,
-        "low": 0,
-        "info": {
-          "host_start": "Mon Sep  7 17:02:33 2026",
-          "host_end": "Mon Sep  7 17:16:47 2026",
-          "operating-system": "Windows 11",
-          "netbios-name": "KEVIN",
-          "credentialed_scan": "false",
-          "host-ip": "192.168.0.51"
-        }
-      },
-      "risk_score": 3,
-      "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.871425"
+      "name": "waap",
+      "health": 50,
+      "weight": 0.1,
+      "risk_contribution": 5.0,
+      "detail": "WAAP score 50"
     },
     {
-      "id": 2,
-      "hostname": "192.168.0.15",
-      "ip": "192.168.0.15",
-      "type": "Camera",
-      "os": "Reolink LIVING ROOM",
-      "vendor": "Unknown",
-      "mac": "EC:71:DB:42:0F:A8",
-      "last_scan": "Home Network Scan",
-      "vulnerabilities": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 1,
-        "info": {
-          "host_start": "Mon Sep  7 16:52:04 2026",
-          "mac-address": "EC:71:DB:42:0F:A8",
-          "host_end": "Mon Sep  7 16:57:46 2026",
-          "operating-system": "Reolink LIVING ROOM",
-          "credentialed_scan": "false",
-          "host-ip": "192.168.0.15"
-        }
-      },
-      "risk_score": 1,
-      "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.072387"
+      "name": "security_events",
+      "health": 87,
+      "weight": 0.04,
+      "risk_contribution": 0.52,
+      "detail": "3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o"
     },
     {
-      "id": 3,
-      "hostname": "192.168.0.17",
-      "ip": "192.168.0.17",
-      "type": "Camera",
-      "os": "Reolink TOY ROOM",
-      "vendor": "Unknown",
-      "mac": "EC:71:DB:37:A2:94",
-      "last_scan": "Home Network Scan",
-      "vulnerabilities": {
-        "critical": 0,
-        "high": 0,
-        "medium": 0,
-        "low": 1,
-        "info": {
-          "host_start": "Mon Sep  7 16:52:04 2026",
-          "mac-address": "EC:71:DB:37:A2:94",
-          "host_end": "Mon Sep  7 16:57:28 2026",
-          "operating-system": "Reolink TOY ROOM",
-          "credentialed_scan": "false",
-          "host-ip": "192.168.0.17"
-        }
-      },
-      "risk_score": 1,
-      "status": "ONLINE",
-      "last_updated": "2026-09-07T17:23:20.121952"
+      "name": "firewall",
+      "health": 90,
+      "weight": 0.04,
+      "risk_contribution": 0.4,
+      "detail": "Firewall b\u1eadt"
+    },
+    {
+      "name": "asset",
+      "health": 100,
+      "weight": 0.2,
+      "risk_contribution": 0.0,
+      "detail": "0 l\u1ed7 h\u1ed5ng CRITICAL, 0 HIGH tr\u00ean 11 t\u00e0i s\u1ea3n"
+    },
+    {
+      "name": "crypto",
+      "health": 100,
+      "weight": 0.06,
+      "risk_contribution": 0.0,
+      "detail": "crypto inventory score 100"
+    },
+    {
+      "name": "defender",
+      "health": 100,
+      "weight": 0.06,
+      "risk_contribution": 0.0,
+      "detail": "Defender b\u1eadt, 0 threat"
     }
   ],
-  "risk_by_type": {
-    "Unknown": {
-      "count": 9,
-      "total_risk": 7,
-      "avg_risk": 0
-    },
-    "Camera": {
-      "count": 13,
-      "total_risk": 13,
-      "avg_risk": 1
-    },
-    "Windows": {
-      "count": 1,
-      "total_risk": 3,
-      "avg_risk": 3
-    },
-    "Linux": {
-      "count": 1,
-      "total_risk": 5,
-      "avg_risk": 5
-    }
+  "generated_at": "2026-09-13T15:51:16.969364",
+  "engine": "calculate_risk_score",
+  "engine_version": "2.0.0",
+  "scale": "risk_ascending",
+  "scale_description": "overall_score cao = r\u1ee7i ro cao (0 an to\u00e0n nh\u1ea5t, 100 nguy hi\u1ec3m nh\u1ea5t)",
+  "notes": [
+    "Severity floor \u00e1p d\u1ee5ng: 14 ph\u00e1t hi\u1ec7n CRITICAL n\u00e2ng risk_level t\u1eeb MEDIUM l\u00ean HIGH"
+  ],
+  "timestamp": "2026-09-13T15:51:16.969364",
+  "threat_level": "HIGH",
+  "component_scores": {
+    "threat_hunting": 0,
+    "incidents": 0,
+    "asset": 100,
+    "waap": 50,
+    "crypto": 100,
+    "defender": 100,
+    "firewall": 90,
+    "security_events": 87
   },
-  "trend": "stable"
+  "weights": {
+    "threat_hunting": 0.25,
+    "incidents": 0.25,
+    "asset": 0.2,
+    "waap": 0.1,
+    "crypto": 0.06,
+    "defender": 0.06,
+    "firewall": 0.04,
+    "security_events": 0.04
+  }
 }
