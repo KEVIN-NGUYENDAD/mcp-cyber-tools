@@ -20,6 +20,7 @@ from collections import defaultdict
 
 # Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
 from state_manager import write_state_atomic, read_state_safe
+import ioc_attribution
 
 class IncidentEngine:
     def __init__(self):
@@ -53,13 +54,26 @@ class IncidentEngine:
         incident_id = f"INC-{self.incident_counter:04d}"
         self.incident_counter += 1
 
+        resolved = assets if isinstance(assets, list) else [assets] if assets else []
+        scope = 'ATTRIBUTED'
+        if not resolved:
+            # Sprint 11.1 mở rộng xuống incident: Defender bị tắt, đĩa đầy, CPU
+            # cao, risk level tăng — tất cả đều là sự cố CỦA MÁY NÀY. Để assets
+            # rỗng thì hạ nguồn hiển thị một sự cố không thuộc về ai, và mọi
+            # tương quan theo IP bỏ qua nó hoàn toàn.
+            #
+            # Máy cục bộ là quy kết kiểm chứng được, không phải phỏng đoán.
+            resolved = list(ioc_attribution.local_host_identity()['ips'] or [])
+            scope = 'LOCAL_HOST' if resolved else 'UNATTRIBUTED'
+
         incident = {
             'incident_id': incident_id,
             'severity': severity,
             'status': 'OPEN',
             'title': title,
             'description': reason,
-            'assets': assets if isinstance(assets, list) else [assets] if assets else [],
+            'assets': resolved,
+            'asset_scope': scope,
             'evidence': evidence if isinstance(evidence, list) else [evidence] if evidence else [],
             'recommended_action': recommended_action,
             'created_at': datetime.now().isoformat()

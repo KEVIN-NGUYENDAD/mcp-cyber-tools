@@ -2,14 +2,14 @@
   "overall_score": 28,
   "risk_level": "LOW",
   "critical_count": 0,
-  "high_count": 8,
+  "high_count": 9,
   "factors": [
     {
       "name": "threat_hunting",
-      "health": 16,
+      "health": 28,
       "weight": 0.25,
-      "risk_contribution": 21.0,
-      "detail": "lateral_movement: 0C/7H"
+      "risk_contribution": 18.0,
+      "detail": "lateral_movement: 0C/6H"
     },
     {
       "name": "waap",
@@ -20,10 +20,10 @@
     },
     {
       "name": "incidents",
-      "health": 94,
+      "health": 82,
       "weight": 0.25,
-      "risk_contribution": 1.5,
-      "detail": "0 s\u1ef1 c\u1ed1 CRITICAL, 1 HIGH \u0111ang m\u1edf"
+      "risk_contribution": 4.5,
+      "detail": "0 s\u1ef1 c\u1ed1 CRITICAL, 3 HIGH \u0111ang m\u1edf"
     },
     {
       "name": "security_events",
@@ -61,17 +61,17 @@
       "detail": "Defender b\u1eadt, 0 threat"
     }
   ],
-  "generated_at": "2026-09-13T21:57:25.437500",
+  "generated_at": "2026-09-13T23:01:04.499022",
   "engine": "calculate_risk_score",
   "engine_version": "2.0.0",
   "scale": "risk_ascending",
   "scale_description": "overall_score cao = r\u1ee7i ro cao (0 an to\u00e0n nh\u1ea5t, 100 nguy hi\u1ec3m nh\u1ea5t)",
   "notes": [],
-  "timestamp": "2026-09-13T21:57:25.437500",
+  "timestamp": "2026-09-13T23:01:04.499022",
   "threat_level": "LOW",
   "component_scores": {
-    "threat_hunting": 16,
-    "incidents": 94,
+    "threat_hunting": 28,
+    "incidents": 82,
     "asset": 100,
     "waap": 50,
     "crypto": 100,

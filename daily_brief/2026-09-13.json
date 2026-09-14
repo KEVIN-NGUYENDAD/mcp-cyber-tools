@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T22:44:42.642250",
+  "timestamp": "2026-09-13T23:01:54.242507",
   "date": "2026-09-13",
   "incident_summary": {
     "total_open": 1,
@@ -27,10 +27,10 @@
       },
       {
         "rank": 3,
-        "title": "C\u1ea3i thi\u1ec7n Security Events",
+        "title": "C\u1ea3i thi\u1ec7n Incidents",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
-        "reason": "security_events component weak"
+        "reason": "incidents component weak"
       },
       {
         "rank": 4,
@@ -52,15 +52,19 @@
     "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 3 HIGH"
   },
   "change_summary": {
-    "total_changes": 0,
-    "changes_by_category": {},
-    "changes_by_severity": {},
+    "total_changes": 1,
+    "changes_by_category": {
+      "Risk": 1
+    },
+    "changes_by_severity": {
+      "LOW": 1
+    },
     "critical_incidents": [],
-    "summary_text": "Kh\u00f4ng c\u00f3 thay \u0111\u1ed5i"
+    "summary_text": "1 thay \u0111\u1ed5i b\u00ecnh th\u01b0\u1eddng"
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 148.1,
+    "scan_age_hours": 148.4,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -152,18 +156,18 @@
   },
   "risk_assessment": {
     "risk_level": "LOW",
-    "risk_score": 28,
+    "risk_score": 25,
     "risk_factors": [
-      "threat_hunting: lateral_movement: 0C/7H (+21.0 \u0111i\u1ec3m r\u1ee7i ro)",
+      "threat_hunting: lateral_movement: 0C/6H (+18.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "waap: WAAP score 50 (+5.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 1 HIGH \u0111ang m\u1edf (+1.5 \u0111i\u1ec3m r\u1ee7i ro)",
       "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.52 \u0111i\u1ec3m r\u1ee7i ro)",
       "firewall: Firewall b\u1eadt (+0.4 \u0111i\u1ec3m r\u1ee7i ro)"
     ],
     "critical_count": 0,
-    "high_count": 8,
+    "high_count": 7,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-13T22:44:42.287523"
+    "generated_at": "2026-09-13T23:01:53.881734"
   }
 }
