@@ -115,7 +115,31 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 50 }) => {
-      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4625,4778,4779} -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`);
+      // Log Security doi quyen nang cao va thuong dong. Log
+      // TerminalServices-LocalSessionManager ghi chinh cac phien RDP va doc
+      // duoc khong can nang quyen — nen tool nay hoi ca hai, danh dau nguon.
+      // Rong o day chi con nghia "khong co phien RDP nao", chu khong phai
+      // "khong nhin duoc".
+      const result = runPowerShell(`
+        $ErrorActionPreference = 'SilentlyContinue'
+        $rows = @(
+          Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4625,4778,4779} -MaxEvents ${count} -ErrorAction SilentlyContinue |
+          ForEach-Object { [PSCustomObject]@{ TimeCreated = $_.TimeCreated; Id = $_.Id; Source = 'Security'; Fallback = $false; Message = ([string]$_.Message) } }
+        ) + @(
+          Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-TerminalServices-LocalSessionManager/Operational'; Id=21,22,23,24,25,39,40} -MaxEvents ${count} -ErrorAction SilentlyContinue |
+          ForEach-Object {
+            $msg = [string]$_.Message
+            # 'Source Network Address: LOCAL' nghia la dang nhap tai may, khong
+            # phai RDP tu xa. Keo ra thanh truong rieng de hai thu do khong con
+            # doc giong nhau trong bang tong hop.
+            $addr = if ($msg -match 'Source Network Address:\\s*(\\S+)') { $Matches[1] } else { $null }
+            [PSCustomObject]@{ TimeCreated = $_.TimeCreated; Id = $_.Id; Source = 'TerminalServices'; Fallback = $true; RemoteAddress = $addr; IsRemote = ($addr -ne $null -and $addr -ne 'LOCAL'); Message = $msg }
+          }
+        )
+        $rows = @($rows | Sort-Object TimeCreated -Descending | Select-Object -First ${count})
+        if ($rows.Count -eq 0) { Write-Output '[]' } else { Write-Output ($rows | ConvertTo-Json -Depth 5 -Compress) }
+        exit 0
+      `);
       return formatResponse(result.success, result.data, result.error);
     }
   );
