@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T21:50:29.638092",
+  "generated_at": "2026-09-13T21:56:56.732596",
   "version": "2.0.0",
   "defender": "covered",
   "firewall": "covered",
@@ -50,11 +50,11 @@
       "label": "Security Event Log",
       "status": "covered",
       "tools": 9,
-      "pass": 5,
-      "empty": 4,
+      "pass": 7,
+      "empty": 2,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 648,
+      "evidence_records": 1858,
       "probes_dead": [],
       "reason": null
     },
@@ -66,7 +66,7 @@
       "empty": 1,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 453,
+      "evidence_records": 459,
       "probes_dead": [],
       "reason": null
     },
@@ -90,7 +90,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 1110,
+      "evidence_records": 1116,
       "probes_dead": [],
       "reason": null
     },
@@ -102,7 +102,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 992,
+      "evidence_records": 699,
       "probes_dead": [],
       "reason": null
     },
@@ -110,11 +110,11 @@
       "label": "IOC / Filesystem",
       "status": "covered",
       "tools": 11,
-      "pass": 8,
-      "empty": 3,
+      "pass": 9,
+      "empty": 2,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 2462,
+      "evidence_records": 2464,
       "probes_dead": [],
       "reason": null
     }
@@ -122,15 +122,15 @@
   "tool_summary": {
     "status": "VERIFIED",
     "tool_count": 99,
-    "pass": 88,
-    "empty": 11,
+    "pass": 93,
+    "empty": 6,
     "blind": 0,
     "fail": 0,
-    "evidence_records": 7107,
+    "evidence_records": 8073,
     "threat_hunting_active": true,
     "dfir_active": true,
     "event_hub_active": true,
-    "last_sync": "2026-09-13T21:50:29.638092"
+    "last_sync": "2026-09-13T21:56:56.732596"
   },
   "access_diagnosis": {
     "can_fix": true,
@@ -176,7 +176,7 @@
       "probe": "event_log_ps_operational",
       "log": "Microsoft-Windows-PowerShell/Operational",
       "readable": true,
-      "records": "523",
+      "records": "596",
       "covers": "Script block logging (4104): n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y \u2014 che \u0111\u01b0\u1ee3c ph\u1ea7n PowerShell c\u1ee7a v\u00f9ng m\u00f9 4688, kh\u00f4ng che ph\u1ea7n c\u00f2n l\u1ea1i",
       "used_by": [
         "huntEncodedPowerShell"
@@ -189,7 +189,7 @@
       "label": "Security Log",
       "detail": "Log Security th\u00f4 \u2014 n\u1ec1n c\u1ee7a m\u1ecdi th\u1ee9 d\u01b0\u1edbi \u0111\u00e2y",
       "status": "covered",
-      "reason": "Log Security m\u1edf \u0111\u01b0\u1ee3c, 17445 b\u1ea3n ghi."
+      "reason": "Log Security m\u1edf \u0111\u01b0\u1ee3c, 16227 b\u1ea3n ghi."
     },
     {
       "key": "process_creation",
@@ -203,7 +203,7 @@
       "label": "Script Block Logging",
       "detail": "Event ID 4104 \u2014 n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y",
       "status": "covered",
-      "reason": "Ch\u00ednh s\u00e1ch Script Block Logging \u0111ang B\u1eacT \u2014 m\u1ecdi kh\u1ed1i l\u1ec7nh PowerShell \u0111\u1ec1u \u0111\u01b0\u1ee3c ghi (523 b\u1ea3n ghi trong log).",
+      "reason": "Ch\u00ednh s\u00e1ch Script Block Logging \u0111ang B\u1eacT \u2014 m\u1ecdi kh\u1ed1i l\u1ec7nh PowerShell \u0111\u1ec1u \u0111\u01b0\u1ee3c ghi (596 b\u1ea3n ghi trong log).",
       "module_logging": false
     }
   ],
