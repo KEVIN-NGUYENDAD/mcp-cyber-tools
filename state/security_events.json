@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T13:52:05.927286",
+  "timestamp": "2026-09-14T13:53:29.202435",
   "period": "last_24_hours",
   "failed_logons": 3,
   "critical_events": 0,
@@ -7,6 +7,6 @@
   "info_events": 127,
   "suspicious_activity": false,
   "summary": "Normal activity",
-  "run_id": "RUN-20260914T135203-b9c580",
+  "run_id": "RUN-20260914T135326-48c449",
   "run_scope": "PIPELINE"
 }

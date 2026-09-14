@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T13:52:34.526779
+Cập nhật: 2026-09-14T13:56:28.522722
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `1f439bd` |
+| Commit lúc chạy | `09000ba` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | fix(truth): make HANDOFF carry the gate's verdict, and let blind capabilities reach Risk |
+| Tiêu đề | fix(risk): stop scoring noise that was already classified as noise |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
@@ -30,7 +30,7 @@ cổng chạy trước khi commit — không phải một con số trễ.
 | BLIND | 0 |
 | FAIL | 0 |
 | Pipeline | 28 stage, 0 thất bại |
-| Toàn vẹn bằng chứng | 0 vi phạm / 573 chỉ báo _(vừa đo)_ |
+| Toàn vẹn bằng chứng | 0 vi phạm / 570 chỉ báo _(vừa đo)_ |
 
 ## Trạng thái thật (đọc từ state/)
 
@@ -78,7 +78,7 @@ bù được cho bảng kia đỏ.
 > *Scheduled Task Execution* thì không được ghi ở đâu cả. Điểm rủi ro
 > đã rút trọng số tương ứng và không được phép xuống `LOW`.
 
-_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (0.1 giờ trước)._
+_Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
 
 ## Việc tiếp theo
 

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T13:52:16.615503",
+  "timestamp": "2026-09-14T13:53:39.900466",
   "hunting_type": "Suspicious Processes",
   "hunt_version": "2.0.0",
   "data_source": "LIVE_OBSERVED",
@@ -48,45 +48,45 @@
       "tool": "huntLivingOffTheLand",
       "ok": true,
       "records": 15,
-      "duration": 0.39,
+      "duration": 0.38,
       "error": null
     },
     {
       "tool": "huntNetworkBeacons",
       "ok": true,
-      "records": 68,
-      "duration": 1.86,
+      "records": 67,
+      "duration": 1.79,
       "error": null
     },
     {
       "tool": "huntIndicators",
       "ok": true,
       "records": 0,
-      "duration": 0.78,
+      "duration": 0.8,
       "error": null
     }
   ],
   "errors": [],
   "question": "Có quy trình bất thường nào đang chạy không?",
-  "total_detections": 50,
-  "total_indicators": 50,
+  "total_detections": 46,
+  "total_indicators": 46,
   "self_observation": {
     "self_observed_excluded": 0,
     "self_observation_note": null,
     "self_observed_samples": []
   },
   "by_severity": {
-    "INFO": 50
+    "INFO": 46
   },
   "by_category": {
     "Living Off The Land Binary": 4,
-    "Network Connection": 46
+    "Network Connection": 42
   },
   "indicators": [
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.848536",
       "process": "cmd",
       "category": "Living Off The Land Binary",
       "description": "Tiến trình cmd (PID 17592) đang chạy",
@@ -181,7 +181,7 @@
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.848536",
       "process": "cmd",
       "category": "Living Off The Land Binary",
       "description": "Tiến trình cmd (PID 35380) đang chạy",
@@ -276,7 +276,7 @@
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.848536",
       "process": "powershell",
       "category": "Living Off The Land Binary",
       "description": "Tiến trình powershell (PID 8368) đang chạy",
@@ -373,21 +373,21 @@
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.848536",
       "process": "powershell",
       "category": "Living Off The Land Binary",
-      "description": "Tiến trình powershell (PID 22516) đang chạy",
+      "description": "Tiến trình powershell (PID 15280) đang chạy",
       "evidence": [
         "Path=C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-        "PID=22516",
-        "StartTime=2026-09-14T13:52:13.5328621-07:00"
+        "PID=15280",
+        "StartTime=2026-09-14T13:53:36.8822799-07:00"
       ],
       "assessment": "LOLBin thông dụng, chạy từ vị trí hệ thống",
       "recommendation": "Không cần hành động",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
       "command_line": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-      "pid": 22516,
+      "pid": 15280,
       "matched_text": "powershell",
       "occurrences": 4,
       "data_source": "LIVE_OBSERVED",
@@ -468,7 +468,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.848536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 2001:578:3f::30:443",
@@ -565,7 +565,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.848536",
       "process": "claude",
       "category": "Network Connection",
       "description": "claude kết nối tới 2607:6bc0::10:443",
@@ -583,7 +583,7 @@
       "remote_port": 443,
       "pid": 20112,
       "matched_text": "claude",
-      "occurrences": 13,
+      "occurrences": 15,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
         "192.168.0.51"
@@ -662,7 +662,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.848536",
       "process": "GoogleDriveFS",
       "category": "Network Connection",
       "description": "GoogleDriveFS kết nối tới 2001:4860:4844:400:::443",
@@ -759,7 +759,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "GoogleDriveFS",
       "category": "Network Connection",
       "description": "GoogleDriveFS kết nối tới 2001:4860:4846:400:::443",
@@ -856,201 +856,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser kết nối tới 2001:4998:28:800::4000:443",
-      "evidence": [
-        "RemoteAddress=2001:4998:28:800::4000",
-        "RemotePort=443",
-        "LocalPort=58214",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2001:4998:28:800::4000",
-      "remote_port": 443,
-      "pid": 23940,
-      "matched_text": "browser",
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan sát trực tiếp trên máy kevin",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
-      "evidence_class": "PROCESS_TABLE",
-      "evidence_quality": "COMPLETE",
-      "attribution_quality": "FULL",
-      "confidence_score": 100,
-      "confidence": "HIGH",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 40.0,
-            "max": 40,
-            "note": "3/3 trường của lớp PROCESS_TABLE"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 100,
-        "evidence_class": "PROCESS_TABLE",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "timestamp"
-        ],
-        "missing_fields": [],
-        "source_log_derived": true,
-        "matched_text_derived": true
-      },
-      "suppressed": false
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
-      "process": "claude",
-      "category": "Network Connection",
-      "description": "claude kết nối tới 2600:1901:0:9e23:::443",
-      "evidence": [
-        "RemoteAddress=2600:1901:0:9e23::",
-        "RemotePort=443",
-        "LocalPort=57466",
-        "Path=C:\\Users\\tamng\\AppData\\Roaming\\Claude\\claude-code\\2.1.270\\claude.exe"
-      ],
-      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2600:1901:0:9e23::",
-      "remote_port": 443,
-      "pid": 39856,
-      "matched_text": "claude",
-      "occurrences": 2,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan sát trực tiếp trên máy kevin",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
-      "evidence_class": "PROCESS_TABLE",
-      "evidence_quality": "COMPLETE",
-      "attribution_quality": "FULL",
-      "confidence_score": 100,
-      "confidence": "HIGH",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 40.0,
-            "max": 40,
-            "note": "3/3 trường của lớp PROCESS_TABLE"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 100,
-        "evidence_class": "PROCESS_TABLE",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "timestamp"
-        ],
-        "missing_fields": [],
-        "source_log_derived": true,
-        "matched_text_derived": true
-      },
-      "suppressed": false
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "StartMenuExperienceHost",
       "category": "Network Connection",
       "description": "StartMenuExperienceHost kết nối tới 2603:1063:2001:2b02::365:ff1:443",
@@ -1147,7 +953,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "StartMenuExperienceHost",
       "category": "Network Connection",
       "description": "StartMenuExperienceHost kết nối tới 2603:1063:2001:2b14:::443",
@@ -1244,7 +1050,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "claude",
       "category": "Network Connection",
       "description": "claude kết nối tới 2600:1901:0:5ae7:::443",
@@ -1343,7 +1149,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "node",
       "category": "Network Connection",
       "description": "node kết nối tới 2001:67c:4e8:f004::9:443",
@@ -1442,7 +1248,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "explorer",
       "category": "Network Connection",
       "description": "explorer kết nối tới 2603:1063:2001:2b25::365:ff1:443",
@@ -1541,7 +1347,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "chrome",
       "category": "Network Connection",
       "description": "chrome kết nối tới 2600:1405:8400:13::17de:3e3:443",
@@ -1638,7 +1444,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "svchost",
       "category": "Network Connection",
       "description": "svchost kết nối tới 2603:1030:40c:e::2:443",
@@ -1737,7 +1543,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "msedgewebview2",
       "category": "Network Connection",
       "description": "msedgewebview2 kết nối tới 2603:1030:803:8::dc:443",
@@ -1834,25 +1640,25 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
-      "description": "browser kết nối tới 2001:67c:4e8:f004::9:443",
+      "description": "browser kết nối tới 2001:4998:28:800::4000:443",
       "evidence": [
-        "RemoteAddress=2001:67c:4e8:f004::9",
+        "RemoteAddress=2001:4998:28:800::4000",
         "RemotePort=443",
-        "LocalPort=40378",
+        "LocalPort=43321",
         "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
       ],
       "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
       "recommendation": "Không cần hành động",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2001:67c:4e8:f004::9",
+      "remote_address": "2001:4998:28:800::4000",
       "remote_port": 443,
       "pid": 23940,
       "matched_text": "browser",
-      "occurrences": 2,
+      "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
         "192.168.0.51"
@@ -1931,7 +1737,104 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
+      "process": "browser",
+      "category": "Network Connection",
+      "description": "browser kết nối tới 2001:67c:4e8:f004::9:443",
+      "evidence": [
+        "RemoteAddress=2001:67c:4e8:f004::9",
+        "RemotePort=443",
+        "LocalPort=40378",
+        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+      ],
+      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
+      "recommendation": "Không cần hành động",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2001:67c:4e8:f004::9",
+      "remote_port": 443,
+      "pid": 23940,
+      "matched_text": "browser",
+      "occurrences": 3,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan sát trực tiếp trên máy kevin",
+        "scope": [
+          "LOCAL_HOST"
+        ],
+        "systems": [
+          {
+            "ip": "192.168.0.51",
+            "scope": "LOCAL_HOST",
+            "in_inventory": true,
+            "basis": "sự kiện được quan sát trên chính máy này",
+            "asset_id": "ASSET-7F083307",
+            "hostname": "kevin",
+            "hostname_resolved": true,
+            "hostname_source": "local host",
+            "identified": true,
+            "missing_identity": []
+          }
+        ]
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ],
+      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
+      "evidence_class": "PROCESS_TABLE",
+      "evidence_quality": "COMPLETE",
+      "attribution_quality": "FULL",
+      "confidence_score": 100,
+      "confidence": "HIGH",
+      "confidence_basis": {
+        "components": [
+          {
+            "name": "evidence_fields",
+            "earned": 40.0,
+            "max": 40,
+            "note": "3/3 trường của lớp PROCESS_TABLE"
+          },
+          {
+            "name": "evidence_integrity",
+            "earned": 20,
+            "max": 20,
+            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
+          },
+          {
+            "name": "attribution",
+            "earned": 25,
+            "max": 25,
+            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
+          },
+          {
+            "name": "source_trust",
+            "earned": 15,
+            "max": 15,
+            "note": "data_source = LIVE_OBSERVED"
+          }
+        ],
+        "raw_score": 100,
+        "evidence_class": "PROCESS_TABLE",
+        "required_fields": [
+          "matched_text",
+          "source_log",
+          "timestamp"
+        ],
+        "missing_fields": [],
+        "source_log_derived": true,
+        "matched_text_derived": true
+      },
+      "suppressed": false
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "hp-one-agent-service",
       "category": "Network Connection",
       "description": "hp-one-agent-service kết nối tới 2406:da00:ff00::36d2:4388:443",
@@ -2030,7 +1933,201 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
+      "process": "claude",
+      "category": "Network Connection",
+      "description": "claude kết nối tới 2600:1901:0:9e23:::443",
+      "evidence": [
+        "RemoteAddress=2600:1901:0:9e23::",
+        "RemotePort=443",
+        "LocalPort=34404",
+        "Path=C:\\Users\\tamng\\AppData\\Roaming\\Claude\\claude-code\\2.1.270\\claude.exe"
+      ],
+      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
+      "recommendation": "Không cần hành động",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2600:1901:0:9e23::",
+      "remote_port": 443,
+      "pid": 20112,
+      "matched_text": "claude",
+      "occurrences": 2,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan sát trực tiếp trên máy kevin",
+        "scope": [
+          "LOCAL_HOST"
+        ],
+        "systems": [
+          {
+            "ip": "192.168.0.51",
+            "scope": "LOCAL_HOST",
+            "in_inventory": true,
+            "basis": "sự kiện được quan sát trên chính máy này",
+            "asset_id": "ASSET-7F083307",
+            "hostname": "kevin",
+            "hostname_resolved": true,
+            "hostname_source": "local host",
+            "identified": true,
+            "missing_identity": []
+          }
+        ]
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ],
+      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
+      "evidence_class": "PROCESS_TABLE",
+      "evidence_quality": "COMPLETE",
+      "attribution_quality": "FULL",
+      "confidence_score": 100,
+      "confidence": "HIGH",
+      "confidence_basis": {
+        "components": [
+          {
+            "name": "evidence_fields",
+            "earned": 40.0,
+            "max": 40,
+            "note": "3/3 trường của lớp PROCESS_TABLE"
+          },
+          {
+            "name": "evidence_integrity",
+            "earned": 20,
+            "max": 20,
+            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
+          },
+          {
+            "name": "attribution",
+            "earned": 25,
+            "max": 25,
+            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
+          },
+          {
+            "name": "source_trust",
+            "earned": 15,
+            "max": 15,
+            "note": "data_source = LIVE_OBSERVED"
+          }
+        ],
+        "raw_score": 100,
+        "evidence_class": "PROCESS_TABLE",
+        "required_fields": [
+          "matched_text",
+          "source_log",
+          "timestamp"
+        ],
+        "missing_fields": [],
+        "source_log_derived": true,
+        "matched_text_derived": true
+      },
+      "suppressed": false
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-14T13:53:39.849536",
+      "process": "browser",
+      "category": "Network Connection",
+      "description": "browser kết nối tới 2607:f8b0:4023:200b::5f:443",
+      "evidence": [
+        "RemoteAddress=2607:f8b0:4023:200b::5f",
+        "RemotePort=443",
+        "LocalPort=32238",
+        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+      ],
+      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
+      "recommendation": "Không cần hành động",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2607:f8b0:4023:200b::5f",
+      "remote_port": 443,
+      "pid": 23940,
+      "matched_text": "browser",
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan sát trực tiếp trên máy kevin",
+        "scope": [
+          "LOCAL_HOST"
+        ],
+        "systems": [
+          {
+            "ip": "192.168.0.51",
+            "scope": "LOCAL_HOST",
+            "in_inventory": true,
+            "basis": "sự kiện được quan sát trên chính máy này",
+            "asset_id": "ASSET-7F083307",
+            "hostname": "kevin",
+            "hostname_resolved": true,
+            "hostname_source": "local host",
+            "identified": true,
+            "missing_identity": []
+          }
+        ]
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ],
+      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
+      "evidence_class": "PROCESS_TABLE",
+      "evidence_quality": "COMPLETE",
+      "attribution_quality": "FULL",
+      "confidence_score": 100,
+      "confidence": "HIGH",
+      "confidence_basis": {
+        "components": [
+          {
+            "name": "evidence_fields",
+            "earned": 40.0,
+            "max": 40,
+            "note": "3/3 trường của lớp PROCESS_TABLE"
+          },
+          {
+            "name": "evidence_integrity",
+            "earned": 20,
+            "max": 20,
+            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
+          },
+          {
+            "name": "attribution",
+            "earned": 25,
+            "max": 25,
+            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
+          },
+          {
+            "name": "source_trust",
+            "earned": 15,
+            "max": 15,
+            "note": "data_source = LIVE_OBSERVED"
+          }
+        ],
+        "raw_score": 100,
+        "evidence_class": "PROCESS_TABLE",
+        "required_fields": [
+          "matched_text",
+          "source_log",
+          "timestamp"
+        ],
+        "missing_fields": [],
+        "source_log_derived": true,
+        "matched_text_derived": true
+      },
+      "suppressed": false
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "OneDrive",
       "category": "Network Connection",
       "description": "OneDrive kết nối tới 2603:1030:40c:e::1:443",
@@ -2127,7 +2224,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 2606:4700::6812:1be:443",
@@ -2224,7 +2321,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "mscopilot",
       "category": "Network Connection",
       "description": "mscopilot kết nối tới 2606:4700::6812:17de:443",
@@ -2321,7 +2418,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 2607:f8b0:4023:2009::bc:443",
@@ -2418,7 +2515,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 2607:6bc0::10:443",
@@ -2515,7 +2612,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "msedgewebview2",
       "category": "Network Connection",
       "description": "msedgewebview2 kết nối tới 2603:1063:24::30f:443",
@@ -2612,7 +2709,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "msedgewebview2",
       "category": "Network Connection",
       "description": "msedgewebview2 kết nối tới 2603:1036:903:49:::443",
@@ -2709,7 +2806,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "GoogleDriveFS",
       "category": "Network Connection",
       "description": "GoogleDriveFS kết nối tới 2001:4860:4847:400:::443",
@@ -2806,7 +2903,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "msedgewebview2",
       "category": "Network Connection",
       "description": "msedgewebview2 kết nối tới 2603:1063:30:114:::443",
@@ -2903,7 +3000,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "msedgewebview2",
       "category": "Network Connection",
       "description": "msedgewebview2 kết nối tới 2603:1061:1600:2b26::365:c0:443",
@@ -3000,104 +3097,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser kết nối tới 2603:1061:14:92::1:443",
-      "evidence": [
-        "RemoteAddress=2603:1061:14:92::1",
-        "RemotePort=443",
-        "LocalPort=5326",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1061:14:92::1",
-      "remote_port": 443,
-      "pid": 23940,
-      "matched_text": "browser",
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan sát trực tiếp trên máy kevin",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
-      "evidence_class": "PROCESS_TABLE",
-      "evidence_quality": "COMPLETE",
-      "attribution_quality": "FULL",
-      "confidence_score": 100,
-      "confidence": "HIGH",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 40.0,
-            "max": 40,
-            "note": "3/3 trường của lớp PROCESS_TABLE"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 100,
-        "evidence_class": "PROCESS_TABLE",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "timestamp"
-        ],
-        "missing_fields": [],
-        "source_log_derived": true,
-        "matched_text_derived": true
-      },
-      "suppressed": false
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "msedge",
       "category": "Network Connection",
       "description": "msedge kết nối tới 2a04:4e42:66::347:443",
@@ -3194,25 +3194,25 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
-      "process": "chrome",
+      "timestamp": "2026-09-14T13:53:39.849536",
+      "process": "MsMpEng",
       "category": "Network Connection",
-      "description": "chrome kết nối tới 185.199.110.133:443",
+      "description": "MsMpEng kết nối tới 172.178.160.20:443",
       "evidence": [
-        "RemoteAddress=185.199.110.133",
+        "RemoteAddress=172.178.160.20",
         "RemotePort=443",
-        "LocalPort=60112",
-        "Path=C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        "LocalPort=62105",
+        "Path=n/a"
       ],
       "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
       "recommendation": "Không cần hành động",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "185.199.110.133",
+      "remote_address": "172.178.160.20",
       "remote_port": 443,
-      "pid": 23676,
-      "matched_text": "chrome",
-      "occurrences": 1,
+      "pid": 6808,
+      "matched_text": null,
+      "occurrences": 2,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
         "192.168.0.51"
@@ -3244,17 +3244,17 @@
       ],
       "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
       "evidence_class": "PROCESS_TABLE",
-      "evidence_quality": "COMPLETE",
+      "evidence_quality": "PARTIAL",
       "attribution_quality": "FULL",
-      "confidence_score": 100,
+      "confidence_score": 87,
       "confidence": "HIGH",
       "confidence_basis": {
         "components": [
           {
             "name": "evidence_fields",
-            "earned": 40.0,
+            "earned": 26.7,
             "max": 40,
-            "note": "3/3 trường của lớp PROCESS_TABLE"
+            "note": "2/3 trường của lớp PROCESS_TABLE; thiếu matched_text"
           },
           {
             "name": "evidence_integrity",
@@ -3275,23 +3275,25 @@
             "note": "data_source = LIVE_OBSERVED"
           }
         ],
-        "raw_score": 100,
+        "raw_score": 87,
         "evidence_class": "PROCESS_TABLE",
         "required_fields": [
           "matched_text",
           "source_log",
           "timestamp"
         ],
-        "missing_fields": [],
+        "missing_fields": [
+          "matched_text"
+        ],
         "source_log_derived": true,
-        "matched_text_derived": true
+        "matched_text_derived": false
       },
       "suppressed": false
     },
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 162.247.243.29:443",
@@ -3388,7 +3390,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 216.24.57.6:443",
@@ -3485,7 +3487,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.565422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "explorer",
       "category": "Network Connection",
       "description": "explorer kết nối tới 52.110.19.134:443",
@@ -3584,7 +3586,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "ms-teams",
       "category": "Network Connection",
       "description": "ms-teams kết nối tới 13.91.58.244:443",
@@ -3681,7 +3683,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "mscopilot",
       "category": "Network Connection",
       "description": "mscopilot kết nối tới 74.179.65.112:443",
@@ -3778,7 +3780,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "claude",
       "category": "Network Connection",
       "description": "claude kết nối tới 160.79.104.10:443",
@@ -3796,7 +3798,7 @@
       "remote_port": 443,
       "pid": 33804,
       "matched_text": "claude",
-      "occurrences": 2,
+      "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
         "192.168.0.51"
@@ -3875,7 +3877,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "Zalo",
       "category": "Network Connection",
       "description": "Zalo kết nối tới 49.213.95.37:443",
@@ -3972,7 +3974,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "hp-one-agent-service",
       "category": "Network Connection",
       "description": "hp-one-agent-service kết nối tới 34.160.89.58:443",
@@ -4071,7 +4073,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 18.97.36.61:443",
@@ -4168,7 +4170,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 162.247.241.14:443",
@@ -4265,7 +4267,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 140.82.112.26:443",
@@ -4362,106 +4364,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
-      "process": "claude",
-      "category": "Network Connection",
-      "description": "claude kết nối tới 52.37.45.68:443",
-      "evidence": [
-        "RemoteAddress=52.37.45.68",
-        "RemotePort=443",
-        "LocalPort=27735",
-        "Path=C:\\Program Files\\WindowsApps\\Claude_1.52386.6.0_x64__pzs8sxrjxfjjc\\app\\Claude.exe"
-      ],
-      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "52.37.45.68",
-      "remote_port": 443,
-      "pid": 60756,
-      "matched_text": null,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan sát trực tiếp trên máy kevin",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
-      "evidence_class": "PROCESS_TABLE",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 87,
-      "confidence": "HIGH",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 26.7,
-            "max": 40,
-            "note": "2/3 trường của lớp PROCESS_TABLE; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 87,
-        "evidence_class": "PROCESS_TABLE",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false
-      },
-      "suppressed": false
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 149.154.174.100:443",
@@ -4558,298 +4461,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
-      "process": "OneDrive",
-      "category": "Network Connection",
-      "description": "OneDrive kết nối tới 4.150.223.109:443",
-      "evidence": [
-        "RemoteAddress=4.150.223.109",
-        "RemotePort=443",
-        "LocalPort=19192",
-        "Path=C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe"
-      ],
-      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "4.150.223.109",
-      "remote_port": 443,
-      "pid": 22224,
-      "matched_text": "OneDrive",
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan sát trực tiếp trên máy kevin",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
-      "evidence_class": "PROCESS_TABLE",
-      "evidence_quality": "COMPLETE",
-      "attribution_quality": "FULL",
-      "confidence_score": 100,
-      "confidence": "HIGH",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 40.0,
-            "max": 40,
-            "note": "3/3 trường của lớp PROCESS_TABLE"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 100,
-        "evidence_class": "PROCESS_TABLE",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "timestamp"
-        ],
-        "missing_fields": [],
-        "source_log_derived": true,
-        "matched_text_derived": true
-      },
-      "suppressed": false
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
-      "process": "OneDrive",
-      "category": "Network Connection",
-      "description": "OneDrive kết nối tới 52.104.12.55:443",
-      "evidence": [
-        "RemoteAddress=52.104.12.55",
-        "RemotePort=443",
-        "LocalPort=11934",
-        "Path=C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe"
-      ],
-      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "52.104.12.55",
-      "remote_port": 443,
-      "pid": 22224,
-      "matched_text": "OneDrive",
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan sát trực tiếp trên máy kevin",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
-      "evidence_class": "PROCESS_TABLE",
-      "evidence_quality": "COMPLETE",
-      "attribution_quality": "FULL",
-      "confidence_score": 100,
-      "confidence": "HIGH",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 40.0,
-            "max": 40,
-            "note": "3/3 trường của lớp PROCESS_TABLE"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 100,
-        "evidence_class": "PROCESS_TABLE",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "timestamp"
-        ],
-        "missing_fields": [],
-        "source_log_derived": true,
-        "matched_text_derived": true
-      },
-      "suppressed": false
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
-      "process": "M365Copilot",
-      "category": "Network Connection",
-      "description": "M365Copilot kết nối tới 51.116.246.104:443",
-      "evidence": [
-        "RemoteAddress=51.116.246.104",
-        "RemotePort=443",
-        "LocalPort=5327",
-        "Path=C:\\Program Files\\WindowsApps\\Microsoft.MicrosoftOfficeHub_19.2609.37021.0_x64__8wekyb3d8bbwe\\M365Copilot.exe"
-      ],
-      "assessment": "Kết nối ra cổng thông dụng từ tiến trình thông thường",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "51.116.246.104",
-      "remote_port": 443,
-      "pid": 41796,
-      "matched_text": "M365Copilot",
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan sát trực tiếp trên máy kevin",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "ProcessTable (Get-CimInstance Win32_Process)",
-      "evidence_class": "PROCESS_TABLE",
-      "evidence_quality": "COMPLETE",
-      "attribution_quality": "FULL",
-      "confidence_score": 100,
-      "confidence": "HIGH",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 40.0,
-            "max": 40,
-            "note": "3/3 trường của lớp PROCESS_TABLE"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 100,
-        "evidence_class": "PROCESS_TABLE",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "timestamp"
-        ],
-        "missing_fields": [],
-        "source_log_derived": true,
-        "matched_text_derived": true
-      },
-      "suppressed": false
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T13:52:16.566422",
+      "timestamp": "2026-09-14T13:53:39.849536",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser kết nối tới 149.154.167.99:443",
@@ -4944,41 +4556,41 @@
       "suppressed": false
     }
   ],
-  "run_id": "RUN-20260914T135203-b9c580",
+  "run_id": "RUN-20260914T135326-48c449",
   "run_scope": "PIPELINE",
   "ioc_quality": {
     "version": "1.0.0",
-    "scored_at": "2026-09-14T13:52:26.099874",
-    "total": 50,
+    "scored_at": "2026-09-14T13:53:49.306295",
+    "total": 46,
     "suppressed": 0,
     "by_noise_class": {},
-    "scored_population": 50,
-    "population_note": "Mọi phân phối và `average_score` tính trên 50 chỉ báo còn lại sau lọc tiếng ồn, KHÔNG trên 50 tổng. Số trên toàn bộ nằm ở `*_all`.",
+    "scored_population": 46,
+    "population_note": "Mọi phân phối và `average_score` tính trên 46 chỉ báo còn lại sau lọc tiếng ồn, KHÔNG trên 46 tổng. Số trên toàn bộ nằm ở `*_all`.",
     "by_confidence": {
-      "HIGH": 50
+      "HIGH": 46
     },
     "by_attribution": {
-      "FULL": 50
+      "FULL": 46
     },
     "by_hostname_source": {
-      "local host": 50
+      "local host": 46
     },
     "attribution_note": "Hau het `FULL` den tu `hostname_source: local host` — may dang chay tu biet ten no, va mot lan quet mang khong bao gio biet ten do ro hon. Day la ngoai le HOP LE va co y, khong phai nhan suy tu `assets.json`: moi he thong o xa khong phan giai duoc ten deu la `PARTIAL`. Doi chieu bang nay voi `by_attribution` — `FULL` ma nguon la `unresolved` moi la nhan bia.",
     "by_evidence": {
-      "COMPLETE": 41,
+      "COMPLETE": 37,
       "PARTIAL": 9
     },
     "by_confidence_all": {
-      "HIGH": 50
+      "HIGH": 46
     },
-    "average_score": 97.7,
-    "average_score_all": 97.7,
-    "score_variance": 24.94,
+    "average_score": 97.5,
+    "average_score_all": 97.5,
+    "score_variance": 26.6,
     "by_class_variance": {
       "PROCESS_TABLE": {
-        "count": 48,
-        "mean": 98.1,
-        "variance": 21.05,
+        "count": 44,
+        "mean": 97.9,
+        "variance": 22.61,
         "discriminating": true
       },
       "SERVICE": {
@@ -4990,7 +4602,7 @@
     }
   },
   "by_severity_including_noise": {
-    "INFO": 50
+    "INFO": 46
   },
-  "by_severity_note": "`by_severity` đếm 50 chỉ báo còn lại sau lọc tiếng ồn. Số trên toàn bộ 50 chỉ báo nằm ở `by_severity_including_noise`. Mọi consumer chấm điểm phải dùng số đã lọc: một chỉ báo mang `suppressed: true` đã được kết luận là không phải phát hiện."
+  "by_severity_note": "`by_severity` đếm 46 chỉ báo còn lại sau lọc tiếng ồn. Số trên toàn bộ 46 chỉ báo nằm ở `by_severity_including_noise`. Mọi consumer chấm điểm phải dùng số đã lọc: một chỉ báo mang `suppressed: true` đã được kết luận là không phải phát hiện."
 }

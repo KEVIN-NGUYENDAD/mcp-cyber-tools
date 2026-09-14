@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-09-14T13:52:26.502303",
-  "run_id": "RUN-20260914T135203-b9c580",
+  "timestamp": "2026-09-14T13:53:49.727542",
+  "run_id": "RUN-20260914T135326-48c449",
   "question": "C\u00f3 s\u1ef1 c\u1ed1 g\u00ec c\u1ea7n x\u1eed l\u00fd?",
   "total_incidents": 1,
   "total_records": 3,
@@ -39,8 +39,8 @@
       "source_state": "hunting_lateral_movement.json",
       "source_key": "Explicit Credential Logon",
       "source_run_id": "RUN-20260914T132454-cb565f",
-      "last_seen_run_id": "RUN-20260914T135203-b9c580",
-      "last_seen_at": "2026-09-14T13:52:26.491777"
+      "last_seen_run_id": "RUN-20260914T135326-48c449",
+      "last_seen_at": "2026-09-14T13:53:49.715812"
     },
     {
       "incident_id": "INC-0002",

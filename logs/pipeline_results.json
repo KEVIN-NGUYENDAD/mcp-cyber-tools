@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-09-14T13:52:03.382772",
-  "run_id": "RUN-20260914T135203-b9c580",
+  "timestamp": "2026-09-14T13:53:26.669674",
+  "run_id": "RUN-20260914T135326-48c449",
   "stages": [
     {
       "name": "Nessus Collector",
       "status": "success",
-      "duration": 0.4581174850463867,
+      "duration": 0.4912118911743164,
       "output": {
-        "timestamp": "2026-09-14T13:52:03.631844",
+        "timestamp": "2026-09-14T13:53:26.913548",
         "nessus_url": "https://localhost:8834",
         "nessus_endpoint": "https://localhost:8834",
         "scanner_status": "running",
@@ -23,26 +23,26 @@
         "total_unit": "distinct_plugins",
         "distinct_plugins": 64,
         "total_instances": 399,
-        "run_id": "RUN-20260914T135203-b9c580",
+        "run_id": "RUN-20260914T135326-48c449",
         "run_scope": "PIPELINE"
       }
     },
     {
       "name": "Domain Collector",
       "status": "success",
-      "duration": 0.8180856704711914,
+      "duration": 0.8217661380767822,
       "output": {
-        "timestamp": "2026-09-14T13:52:04.220805",
+        "timestamp": "2026-09-14T13:53:27.546657",
         "domain": "sentinelops.fyi",
         "nameservers": [
-          "curitiba.ns.porkbun.com.",
           "fortaleza.ns.porkbun.com.",
           "maceio.ns.porkbun.com.",
-          "salvador.ns.porkbun.com."
+          "salvador.ns.porkbun.com.",
+          "curitiba.ns.porkbun.com."
         ],
         "a_records": [
-          "216.24.57.15",
-          "216.24.57.7"
+          "216.24.57.7",
+          "216.24.57.15"
         ],
         "mx_records": [
           "10 fwd1.porkbun.com.",
@@ -59,16 +59,16 @@
           "has_spf": true,
           "has_dmarc": true
         },
-        "run_id": "RUN-20260914T135203-b9c580",
+        "run_id": "RUN-20260914T135326-48c449",
         "run_scope": "PIPELINE"
       }
     },
     {
       "name": "WAAP Collector",
       "status": "success",
-      "duration": 0.6460070610046387,
+      "duration": 0.6158871650695801,
       "output": {
-        "timestamp": "2026-09-14T13:52:04.950409",
+        "timestamp": "2026-09-14T13:53:28.277095",
         "domain": "sentinelops.fyi",
         "ssl_status": "valid",
         "expiration_date": "2026-12-02T19:50:51+00:00",
@@ -95,14 +95,14 @@
           "note": "Do PHAM VI BAO VE (SSL/WAF/CDN/protection). KHONG phai `waap_score.health_score` \u2014 do la mot phep do khac, tren sau thanh phan khac, tu mot tep khac. Hai con so nay khong duoc dung thay nhau."
         },
         "security_summary_note": "Moi truong co ba gia tri: true / false / null. `null` la CHUA DO DUOC \u2014 no khong duoc cong diem lan tru diem. Chua do duoc: protection_active.",
-        "run_id": "RUN-20260914T135203-b9c580",
+        "run_id": "RUN-20260914T135326-48c449",
         "run_scope": "PIPELINE"
       }
     },
     {
       "name": "System Health",
       "status": "success",
-      "duration": 0.16164278984069824,
+      "duration": 0.1533045768737793,
       "output": {
         "status": "success",
         "cpu": 45,
@@ -113,7 +113,7 @@
     {
       "name": "Defender Status",
       "status": "success",
-      "duration": 0.15396380424499512,
+      "duration": 0.15102124214172363,
       "output": {
         "status": "success",
         "defender_enabled": true,
@@ -123,7 +123,7 @@
     {
       "name": "Firewall Status",
       "status": "success",
-      "duration": 0.15638995170593262,
+      "duration": 0.15184521675109863,
       "output": {
         "status": "success",
         "firewall_enabled": true,
@@ -133,7 +133,7 @@
     {
       "name": "Security Events",
       "status": "success",
-      "duration": 0.1531202793121338,
+      "duration": 0.15289807319641113,
       "output": {
         "status": "success",
         "failed_logons": 3,
@@ -143,10 +143,10 @@
     {
       "name": "Asset Intelligence",
       "status": "success",
-      "duration": 0.42006826400756836,
+      "duration": 0.4078214168548584,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-14T13:52:06.344394",
+        "timestamp": "2026-09-14T13:53:29.605322",
         "total_assets": 11,
         "new_assets": 0,
         "removed_assets": 0,
@@ -156,12 +156,12 @@
     {
       "name": "Asset Trust Scoring",
       "status": "success",
-      "duration": 0.2264266014099121
+      "duration": 0.21785306930541992
     },
     {
       "name": "Shadow Asset Detection",
       "status": "success",
-      "duration": 0.19465327262878418,
+      "duration": 0.19102239608764648,
       "output": {
         "status": "success",
         "total_assets": 11,
@@ -174,10 +174,10 @@
     {
       "name": "Service Intelligence",
       "status": "success",
-      "duration": 0.3769371509552002,
+      "duration": 0.41927671432495117,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-14T13:52:07.144458",
+        "timestamp": "2026-09-14T13:53:30.436028",
         "total_services": 10,
         "top_services": [
           {
@@ -226,10 +226,10 @@
     {
       "name": "Crypto Inventory",
       "status": "success",
-      "duration": 0.4225196838378906,
+      "duration": 0.39136672019958496,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-14T13:52:07.566640",
+        "timestamp": "2026-09-14T13:53:30.827084",
         "crypto_score": 90,
         "critical_findings": 0,
         "total_findings": 19
@@ -238,9 +238,9 @@
     {
       "name": "WAAP Score",
       "status": "success",
-      "duration": 0.9825043678283691,
+      "duration": 0.9269611835479736,
       "output": {
-        "timestamp": "2026-09-14T13:52:08.004499",
+        "timestamp": "2026-09-14T13:53:31.267189",
         "domain": "sentinelops.fyi",
         "checks": {
           "ssl_valid": true,
@@ -280,14 +280,14 @@
             "impact": "Improves protection against XSS, clickjacking, and other attacks"
           }
         ],
-        "run_id": "RUN-20260914T135203-b9c580",
+        "run_id": "RUN-20260914T135326-48c449",
         "run_scope": "PIPELINE"
       }
     },
     {
       "name": "Recommended Actions",
       "status": "success",
-      "duration": 0.22894835472106934,
+      "duration": 0.18984127044677734,
       "output": {
         "status": "success",
         "total_actions": 0
@@ -296,7 +296,7 @@
     {
       "name": "Timeline Events",
       "status": "success",
-      "duration": 0.21439719200134277,
+      "duration": 0.25242185592651367,
       "output": {
         "status": "success",
         "total_events": 0,
@@ -307,7 +307,7 @@
     {
       "name": "Persistence Hunting",
       "status": "success",
-      "duration": 4.1587255001068115,
+      "duration": 4.316636085510254,
       "output": {
         "status": "success",
         "hunting_type": "Persistence Indicators",
@@ -322,13 +322,13 @@
     {
       "name": "Suspicious Process Hunting",
       "status": "success",
-      "duration": 3.4590086936950684,
+      "duration": 3.3833439350128174,
       "output": {
         "status": "success",
         "hunting_type": "Suspicious Processes",
         "data_source": "LIVE_OBSERVED",
         "observable": true,
-        "total_indicators": 50,
+        "total_indicators": 46,
         "critical": 0,
         "high": 0,
         "errors": []
@@ -337,7 +337,7 @@
     {
       "name": "Lateral Movement Hunting",
       "status": "success",
-      "duration": 3.2062015533447266,
+      "duration": 3.2992348670959473,
       "output": {
         "status": "success",
         "hunting_type": "Lateral Movement",
@@ -353,7 +353,7 @@
     {
       "name": "Credential Dumping Hunting",
       "status": "success",
-      "duration": 5.932924270629883,
+      "duration": 5.798091650009155,
       "output": {
         "status": "success",
         "hunting_type": "Credential Dumping",
@@ -369,36 +369,36 @@
     {
       "name": "IOC Quality",
       "status": "success",
-      "duration": 0.3470439910888672,
+      "duration": 0.31055665016174316,
       "output": {
         "status": "success",
-        "total": 574,
-        "kept": 372,
+        "total": 570,
+        "kept": 368,
         "suppressed": 202,
         "by_confidence": {
-          "HIGH": 372
+          "HIGH": 368
         },
         "by_attribution": {
-          "FULL": 370,
+          "FULL": 366,
           "PARTIAL": 2
         },
         "by_hostname_source": {
-          "local host": 372,
+          "local host": 368,
           "unresolved": 2
         },
         "attribution_note": "Hau het `FULL` den tu `hostname_source: local host` \u2014 may dang chay tu biet ten no, va mot lan quet mang khong bao gio biet ten do ro hon. Day la ngoai le HOP LE va co y, khong phai nhan suy tu `assets.json`: moi he thong o xa khong phan giai duoc ten deu la `PARTIAL`. Doi chieu bang nay voi `by_attribution` \u2014 `FULL` ma nguon la `unresolved` moi la nhan bia.",
         "by_evidence": {
-          "COMPLETE": 282,
+          "COMPLETE": 278,
           "PARTIAL": 90
         },
-        "average_score": 97.5,
+        "average_score": 97.4,
         "report": "docs\\project\\IOC_QUALITY_REPORT.md"
       }
     },
     {
       "name": "Priority Queue",
       "status": "success",
-      "duration": 0.16650843620300293,
+      "duration": 0.19189882278442383,
       "output": {
         "status": "success",
         "total_analyzed": 6,
@@ -409,7 +409,7 @@
     {
       "name": "Incident Detection",
       "status": "success",
-      "duration": 0.22652101516723633,
+      "duration": 0.22039151191711426,
       "output": {
         "status": "success",
         "total_incidents": 1,
@@ -423,7 +423,7 @@
     {
       "name": "Risk Score",
       "status": "success",
-      "duration": 0.23818039894104004,
+      "duration": 0.21678543090820312,
       "output": {
         "status": "success",
         "overall_score": 5,
@@ -436,7 +436,7 @@
     {
       "name": "Correlation Engine",
       "status": "success",
-      "duration": 0.2102804183959961,
+      "duration": 0.21465086936950684,
       "output": {
         "status": "success",
         "total_findings": 2,
@@ -456,7 +456,7 @@
     {
       "name": "Sensor Coverage Refresh",
       "status": "success",
-      "duration": 4.738483667373657,
+      "duration": 4.5399980545043945,
       "output": {
         "status": "success",
         "coverage": {
@@ -488,7 +488,7 @@
     {
       "name": "Evidence Manifest",
       "status": "success",
-      "duration": 0.2788214683532715,
+      "duration": 0.2771918773651123,
       "output": {
         "status": "success",
         "total": 429,
@@ -502,12 +502,12 @@
     {
       "name": "Detection Quality",
       "status": "success",
-      "duration": 0.16292905807495117
+      "duration": 0.16389203071594238
     },
     {
       "name": "Daily Brief",
       "status": "success",
-      "duration": 0.3196401596069336
+      "duration": 0.34256815910339355
     }
   ],
   "status": "success",
@@ -518,7 +518,7 @@
     "waap_score": 80,
     "risk_level": "MEDIUM"
   },
-  "duration": 29.0840744972229,
-  "end_time": "2026-09-14T13:52:32.469861",
+  "duration": 28.832457065582275,
+  "end_time": "2026-09-14T13:53:55.505644",
   "run_scope": "PIPELINE"
 }

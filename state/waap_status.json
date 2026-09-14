@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T13:52:04.950409",
+  "timestamp": "2026-09-14T13:53:28.277095",
   "domain": "sentinelops.fyi",
   "ssl_status": "valid",
   "expiration_date": "2026-12-02T19:50:51+00:00",
@@ -26,6 +26,6 @@
     "note": "Do PHAM VI BAO VE (SSL/WAF/CDN/protection). KHONG phai `waap_score.health_score` \u2014 do la mot phep do khac, tren sau thanh phan khac, tu mot tep khac. Hai con so nay khong duoc dung thay nhau."
   },
   "security_summary_note": "Moi truong co ba gia tri: true / false / null. `null` la CHUA DO DUOC \u2014 no khong duoc cong diem lan tru diem. Chua do duoc: protection_active.",
-  "run_id": "RUN-20260914T135203-b9c580",
+  "run_id": "RUN-20260914T135326-48c449",
   "run_scope": "PIPELINE"
 }

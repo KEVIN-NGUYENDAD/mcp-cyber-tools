@@ -69,7 +69,7 @@
       "measurable": true
     }
   ],
-  "generated_at": "2026-09-14T13:52:26.739169",
+  "generated_at": "2026-09-14T13:53:49.946442",
   "engine": "calculate_risk_score",
   "engine_version": "2.0.0",
   "scale": "risk_ascending",
@@ -80,7 +80,7 @@
     "N\u0103ng l\u1ef1c \"Scheduled Task Execution\" \u0111ang M\u00d9 n\u00ean th\u00e0nh ph\u1ea7n `threat_hunting` ch\u1ec9 \u0111\u01b0\u1ee3c t\u00ednh tr\u00ean 67% tr\u1ecdng s\u1ed1 c\u1ee7a n\u00f3. scripts\\enable_forensic_logs.ps1 (c\u1ea7n Administrator) S\u1ee9c kho\u1ebb 100 m\u00e0 th\u00e0nh ph\u1ea7n n\u00e0y khai ch\u1ec9 n\u00f3i v\u1ec1 ph\u1ea7n c\u00f2n quan s\u00e1t \u0111\u01b0\u1ee3c.",
     "Capability floor \u00e1p d\u1ee5ng: 2 n\u0103ng l\u1ef1c ph\u00e1t hi\u1ec7n \u0111ang m\u00f9 (Scheduled Task Execution, USB Device Activity), n\u00ean risk_level n\u00e2ng t\u1eeb LOW l\u00ean MEDIUM. overall_score gi\u1eef nguy\u00ean."
   ],
-  "timestamp": "2026-09-14T13:52:26.740168",
+  "timestamp": "2026-09-14T13:53:49.946442",
   "threat_level": "MEDIUM",
   "component_scores": {
     "threat_hunting": 100,
@@ -102,6 +102,6 @@
     "firewall": 0.04,
     "security_events": 0.04
   },
-  "run_id": "RUN-20260914T135203-b9c580",
+  "run_id": "RUN-20260914T135326-48c449",
   "run_scope": "PIPELINE"
 }

@@ -247,6 +247,15 @@ def evaluate(data):
     # AQ-039/AQ-040. Ba vi pham, ba lop loi khac nhau, cung mot goc: khong co
     # duong noi giua mot ket luan va quan sat sinh ra no.
     coherence = data.get('coherence') or []
+    # AQ-043/AQ-044. `UNEVALUABLE` va `UNSTAMPED` la blocker, khong phai canh
+    # bao: ca hai deu co nghia la phep kiem gan ket KHONG chay duoc, va mot bo
+    # audit khong chay duoc ma de merge di qua thi no khong phai mot cong.
+    blind_audit = [f for f in coherence
+                   if f['level'] in ('UNEVALUABLE', 'UNSTAMPED')]
+    for finding in blind_audit:
+        blockers.append('gan ket lan chay [%s] %s'
+                        % (finding['level'], finding['detail']))
+
     mixed = [f for f in coherence if f['level'] == 'MIXED_RUN']
     if mixed:
         blockers.append('state tron nhieu lan chay (%s) — moi ket luan rut ra '
