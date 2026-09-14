@@ -3633,3 +3633,148 @@ vẫn chỉ cần một dòng bất biến.
 ---
 
 *Vòng 13, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
+
+
+---
+---
+
+# VÒNG 14 — 2026-09-14 13:50 · commit mới `22cb27f`, cây làm việc sạch
+
+Sprint đóng dấu tuổi đã commit. State chạy lại lúc `13:48:14`. Auditor READ ONLY.
+
+---
+
+## ĐÃ TRẢ — dấu tuổi nay có bằng chứng
+
+Vòng 13 ghi nhận bản sửa đúng chỗ nhưng **chưa chứng minh được đã chạy**
+(state `13:41:50` cũ hơn mã `13:42:48`). Vòng này state mới:
+
+    state/sensor_coverage.json  (13:48:14)
+      probe_generated_at  2026-09-14T13:48:14.354708
+      tools_generated_at  2026-09-14T13:48:14.354708
+      tools_age_hours     0.0
+      refreshed_by        tool_validator
+      freshness_note      "Cả hai nửa vừa đo trong cùng một lần chạy tool_validator."
+
+Cả bốn trường có mặt. `0.0 giờ` lần này là **số đo thật**, không còn là
+`probe_generated_at or generated_at` lấp chỗ trống.
+
+Đáng ghi nhận hơn là phép kiểm. `tests/sensor_coverage/test_auto_validate.py`
+thay **một** phép tìm-chuỗi bằng **bốn** phép hỏi kết quả:
+
+    - source.split('def main(')[-1]; 'stamp_freshness(' in body
+    + coverage = tool_validator.sensor_coverage(report)
+    + for field in (probe_generated_at, tools_generated_at,
+    +               freshness_note, refreshed_by): assert not None
+
+Chú thích trong mã nói đúng lý do: phép kiểm cũ *"canh đúng một đường đi trong
+nhiều đường"* — `sprint_gate` gọi thẳng `sensor_coverage()` không qua `main()`,
+nên tệp sinh ra thiếu dấu mà phép kiểm vẫn xanh. **Hỏi kết quả, đừng hỏi mã
+nguồn.** Cổng: `Bộ kiểm phát hiện | ĐẠT`.
+
+---
+
+## AQ-046 · Source of Truth Drift — VẪN MỞ, và vòng này là bằng chứng rõ hơn
+
+**Issue:** `HANDOFF.md` không in kết luận merge — cả khi chặn lẫn khi không chặn.
+
+**Severity:** CRITICAL
+
+**Root Cause:** Không đổi. `git diff --stat fc0441c 22cb27f -- scripts/generate_handoff.py`
+→ **rỗng**. Tìm `merge|blocker|chặn|eligib` trong tệp sinh vẫn trả về đúng **một**
+dòng: `:133 add('## Cổng merge')` — dòng tiêu đề.
+
+**Evidence — đây là chỗ cần phân biệt "đã sửa mã" với "hôm nay dữ liệu khác":**
+
+    13:41:52  TECHNICAL_DEBT.md  | Đủ điều kiện merge | **KHÔNG** |  Bộ kiểm TRƯỢT
+    13:48:15  TECHNICAL_DEBT.md  | Đủ điều kiện merge | **CÓ**    |  Bộ kiểm ĐẠT
+
+    13:41:52  HANDOFF.md   grep "Đủ điều kiện|Đang chặn|blocker" -> 0
+    13:48:15  HANDOFF.md   grep "Đủ điều kiện|Đang chặn|blocker" -> 0
+
+Hôm qua cổng chặn, HANDOFF im lặng. Hôm nay cổng thông, HANDOFF im lặng **y hệt**.
+Con số trong tệp đổi, kết luận thì chưa từng có mặt. Nếu chỉ nhìn hôm nay, mục này
+trông như đã được sửa — nhưng mã sinh tệp không đổi một ký tự.
+
+**Business Impact:** Không giảm. Một mục drift chỉ *nhìn thấy được* vào ngày cổng
+trượt; các ngày còn lại nó nằm im và trông như lành. Đó là loại lỗi dễ bị đóng
+nhầm nhất — và là lý do quy tắc "phân biệt mã đổi với dữ liệu đổi" tồn tại.
+HANDOFF vẫn là tệp đầu vào của mọi phiên, vẫn tự khai thay cho `AI_HANDOFF.md`,
+và vẫn kết thúc bằng lời khuyên `npm run gate` sau khi cổng vừa chạy xong.
+
+**Suggested Sprint:** SPRINT GATE-SINGLE-VOICE — không đổi.
+(1) In `Đủ điều kiện merge` + khối `Đang chặn` từ cùng kết quả `sprint_gate.evaluate()`.
+(2) Bất biến: hai tệp sinh trong một lần chạy phải khai cùng kết luận merge.
+(3) Phép kiểm phải chạy được **cả hai nhánh** (chặn / không chặn) — nếu chỉ kiểm
+trên ngày cổng thông thì nó lặp lại đúng lỗi mà `test_auto_validate.py` vừa bỏ:
+canh một đường đi trong nhiều đường.
+
+---
+
+## AQ-047 · Risk Consistency — KHÔNG ĐỔI
+
+    state/sensor_coverage.json  summary            {covered 8, blind 0}   <- NGUỒN
+                                capability_summary {covered 3, blind 2}   <- NĂNG LỰC
+    grep -c "sensor_coverage|capability_summary" scripts/calculate_risk_score.py -> 0
+    state/risk_score.json  chứa 'blind'/'Scheduled'/'USB'/'capability' -> KHÔNG CHUỖI NÀO
+                           overall_score 23  LOW
+                           notes: chỉ một dòng về tuổi Nessus 163 giờ
+
+`calculate_risk_score.py` không đổi (mtime `08:21:49`, trước cả sprint). HANDOFF vẫn
+in `Nguồn / Năng lực` vào **một** cột `Trạng thái`, `persistence: covered` đứng ngay
+trên `Scheduled Task Execution: blind`.
+
+**Severity:** HIGH. **Suggested Sprint:** SPRINT COVERAGE-INTO-RISK — không đổi.
+
+---
+
+## BỐN MỤC CŨ — KHÔNG ĐỔI
+
+| Mục | Đo lại vòng 14 |
+|---|---|
+| **AQ-045** CRITICAL | `by_severity {INFO 420, HIGH 6}` · khoá duy nhất, không có biến thể `*_including_noise` · Risk 23 |
+| **AQ-002** CRITICAL | `attribution {FULL 424, PARTIAL 2}` · `hostname_source {unresolved: 11}` |
+| **AQ-043** HIGH | `except ImportError` trong `state_manager.py`: 1 |
+| **AQ-044** HIGH | `UNEVALUABLE` trong `run_coherence_audit.py`: 0 |
+
+`22cb27f` chỉ chạm `tool_validator.py` và hai tệp kiểm; không tệp nào trong bảng trên
+nằm trong commit.
+
+---
+
+## TỒN ĐỌNG SAU VÒNG 14
+
+| Mục | Hạng | Tuổi |
+|---|---|---|
+| AQ-046 | CRITICAL | ❌ 2 vòng — kết luận merge vắng mặt ở cả hai nhánh |
+| AQ-045 | CRITICAL | ❌ 5 vòng |
+| AQ-002 | CRITICAL | ❌ **14 vòng** |
+| AQ-047 | HIGH | ❌ 2 vòng |
+| AQ-044 | HIGH | ❌ 6 vòng |
+| AQ-043 | HIGH | ❌ 7 vòng |
+
+**Đang mở: 6 (3 CRITICAL, 3 HIGH). Đã trả tích luỹ: 35.**
+
+---
+
+## NHẬN ĐỊNH VÒNG 14
+
+Sprint này làm đúng hai việc và cả hai đều thuộc loại khó thấy: đóng dấu ở **cửa
+tạo** thay vì cửa ghi, và viết phép kiểm **hỏi kết quả** thay vì đọc mã nguồn.
+Phép kiểm cũ xanh trong khi tệp thiếu dấu — đó là định nghĩa của một phép kiểm
+mô tả đường đi vừa chạy. Bản mới hỏi hàm tạo, nên nó đúng cho mọi đường gọi.
+
+Và chính vòng này cho một ví dụ sạch về bẫy ngược lại. Cổng vừa đổi từ TRƯỢT sang
+ĐẠT, nên `TECHNICAL_DEBT.md` nay nói "Đủ điều kiện merge: CÓ" và mâu thuẫn hôm qua
+biến mất khỏi màn hình. Không một dòng mã nào của `generate_handoff.py` được sửa.
+AQ-046 không được trả — nó chỉ **tạm thời không nhìn thấy được**, vì tệp im lặng
+thì im lặng bất kể câu trả lời là gì. Một mục drift chỉ hiện ra vào ngày xấu là
+mục nguy hiểm nhất trong hàng đợi, không phải mục nhẹ nhất.
+
+Đó cũng là điều kiện nghiệm thu mà sprint tới phải mang theo: phép kiểm cho
+AQ-046 phải chạy trên **cả ngày chặn lẫn ngày thông**. Bằng không nó lặp lại đúng
+lỗi mà `test_auto_validate.py` vừa bỏ đi trong cùng commit này.
+
+---
+
+*Vòng 14, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*

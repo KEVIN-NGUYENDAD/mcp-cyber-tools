@@ -42,6 +42,32 @@ WEIGHTS = {
     'security_events': 0.04,
 }
 
+# AQ-047. `sensor_coverage.json` tách hai câu hỏi khác nhau và trả lời cả hai:
+#
+#   summary            {'covered': 8, 'partial': 0, 'blind': 0}   <- theo NGUỒN
+#   capability_summary {'covered': 3, 'partial': 0, 'blind': 2}   <- theo NĂNG LỰC
+#
+# Cột thứ nhất hỏi "nguồn có mở được không"; cột thứ hai hỏi "thứ ta cần có được
+# ghi không". Engine rủi ro chỉ đọc cột thứ nhất, nên hai năng lực đang mù —
+# Scheduled Task Execution và USB Device Activity — không chạm tới điểm số, không
+# sinh một lời rào nào, và đầu ra là `LOW`.
+#
+# Đáng chú ý: nguồn `persistence` = covered trong khi năng lực *Scheduled Task
+# Execution* = blind. Scheduled Task là một trong những kỹ thuật duy trì phổ biến
+# nhất; hệ thống công bố "persistence: covered" trên một máy nó không thấy tác vụ
+# định kỳ.
+#
+# Ánh xạ dưới đây nói mỗi năng lực nuôi thành phần nào. Nó phải được viết ra chứ
+# không suy được từ tên: `usb_device_activity` nuôi `security_events` vì câu hỏi
+# "cái gì đã được cắm vào máy này" chỉ có log sự kiện trả lời được.
+CAPABILITY_COMPONENT = {
+    'security_log': 'security_events',
+    'process_creation': 'threat_hunting',
+    'script_block_logging': 'threat_hunting',
+    'scheduled_task_execution': 'threat_hunting',
+    'usb_device_activity': 'security_events',
+}
+
 HUNTING_FILES = [
     'hunting_persistence.json',
     'hunting_suspicious_processes.json',
@@ -324,6 +350,18 @@ class RiskScoreCalculator:
 
     # ------------------------------------------------------------------
 
+    def blind_capabilities(self):
+        """Năng lực phát hiện đang mù, đọc từ `sensor_coverage.json` (AQ-047).
+
+        Đây là tệp DUY NHẤT ghi nhận "nguồn mở được nhưng thứ ta cần không được
+        ghi". Engine rủi ro trước đây không đọc nó, nên câu trả lời đã được đo
+        và đã được ghi vẫn nằm lại trong tệp.
+        """
+        coverage = self.load_state('sensor_coverage.json')
+        return [capability
+                for capability in (coverage.get('detection_capabilities') or [])
+                if capability.get('status') == 'blind']
+
     def calculate(self):
         analyzers = [
             ('threat_hunting', self.analyze_threat_hunting),
@@ -343,6 +381,31 @@ class RiskScoreCalculator:
 
         weight_available = 0.0
         unmeasurable = []
+
+        # AQ-047. Năng lực mù rút trọng số của thành phần nó nuôi, theo TỈ LỆ số
+        # năng lực mù trên tổng số năng lực nuôi thành phần đó.
+        #
+        # Rút trọn trọng số thì sai theo hướng ngược lại: `threat_hunting` còn
+        # được nuôi bởi Process Creation và Script Block Logging, cả hai đang
+        # covered, và bỏ hết phần đóng góp của chúng là vứt đi những quan sát có
+        # thật. Giữ nguyên trọng số cũng sai — đó chính là lỗi đang sửa.
+        #
+        # Tỉ lệ là phép chia duy nhất mà dữ liệu chống đỡ được: 1 trong 3 năng
+        # lực nuôi `threat_hunting` bị mù thì một phần ba câu trả lời của thành
+        # phần đó không tồn tại.
+        blind_capabilities = self.blind_capabilities()
+        degraded = {}
+        if blind_capabilities:
+            per_component = {}
+            for key, component in CAPABILITY_COMPONENT.items():
+                per_component.setdefault(component, []).append(key)
+            for capability in blind_capabilities:
+                component = CAPABILITY_COMPONENT.get(capability['key'])
+                if not component:
+                    continue
+                degraded.setdefault(component, {'blind': [], 'total': len(
+                    per_component.get(component) or [1])})
+                degraded[component]['blind'].append(capability)
 
         for name, analyzer in analyzers:
             health, detail, counts = analyzer()
@@ -367,6 +430,17 @@ class RiskScoreCalculator:
                 continue
 
             health = max(0, min(100, int(health)))
+
+            # AQ-047. Phần trọng số ứng với các năng lực mù rời khỏi CẢ tử số
+            # lẫn mẫu số — y hệt cách một thành phần không đo được rời đi ở
+            # trên. Phần còn lại vẫn được tính, vì phần đó vẫn quan sát được.
+            blind_here = degraded.get(name)
+            if blind_here:
+                kept = 1.0 - (len(blind_here['blind']) / float(blind_here['total']))
+                blind_here['weight_dropped'] = weight * (1.0 - kept)
+                blind_here['health_claimed'] = health
+                weight = weight * kept
+
             weight_available += weight
             component_scores[name] = health
             weighted_health += weight * health
@@ -403,6 +477,20 @@ class RiskScoreCalculator:
                 'Không đo được {} thành phần ({}); điểm được chuẩn hoá trên {:.0%} '
                 'trọng số còn lại thay vì đoán giá trị thay thế.'
                 .format(len(unmeasurable), ', '.join(unmeasurable), weight_available))
+        # AQ-047. Mỗi năng lực mù được GỌI TÊN trong notes. Một dòng nói "2 năng
+        # lực mù" không giúp ai đi bật kênh log nào.
+        for component, info in sorted(degraded.items()):
+            for capability in info['blind']:
+                self.notes.append(
+                    'Năng lực "{}" đang MÙ nên thành phần `{}` chỉ được tính trên '
+                    '{:.0%} trọng số của nó. {} Sức khoẻ {} mà thành phần này khai '
+                    'chỉ nói về phần còn quan sát được.'
+                    .format(capability.get('label') or capability.get('key'),
+                            component,
+                            1.0 - info.get('weight_dropped', 0) / WEIGHTS[component],
+                            capability.get('action') or capability.get('reason') or '',
+                            info.get('health_claimed')))
+
         if overall_score is not None:
             risk_level = risk_level_from_score(overall_score)
 
@@ -420,6 +508,19 @@ class RiskScoreCalculator:
         # được phép tính là 100 điểm sức khoẻ - tức là hệ thống tự thưởng điểm
         # cho việc bị mù. Ghi chú thôi thì không đủ: thứ người trực ca nhìn trên
         # bảng điều khiển là chữ LOW, không phải dòng notes bên dưới.
+        # AQ-047. Cùng một lập luận, áp cho NĂNG LỰC thay vì nguồn: không khẳng
+        # định được "rủi ro THẤP" về một kỹ thuật mà máy không ghi lại. Scheduled
+        # Task là một trong những kỹ thuật duy trì phổ biến nhất, và chữ người
+        # trực ca đọc trên bảng là `LOW`, không phải dòng notes bên dưới.
+        if blind_capabilities and risk_level == 'LOW':
+            self.notes.append(
+                'Capability floor áp dụng: {} năng lực phát hiện đang mù ({}), '
+                'nên risk_level nâng từ LOW lên MEDIUM. overall_score giữ nguyên.'
+                .format(len(blind_capabilities),
+                        ', '.join(c.get('label') or c.get('key')
+                                  for c in blind_capabilities)))
+            risk_level = 'MEDIUM'
+
         blind = self.coverage_blind_sources
         if blind and risk_level == 'LOW':
             self.notes.append(

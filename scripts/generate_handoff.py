@@ -82,7 +82,7 @@ def unknown(value, suffix=''):
     return '%s%s' % (value, suffix)
 
 
-def build():
+def build(verdict=None):
     validation = read_json('tool_validation.json') or {}
     summary = validation.get('summary') or {}
     risk = read_json('risk_score.json') or {}
@@ -130,8 +130,48 @@ def build():
         add('cổng chạy trước khi commit — không phải một con số trễ.')
         add('')
 
+    # AQ-046. Tệp này in bảng cổng — PASS/EMPTY/BLIND/FAIL — nhưng không in KẾT
+    # LUẬN của cổng. Ngày 14/09 lúc 13:41:52, cùng một lần chạy sinh ra
+    # `TECHNICAL_DEBT.md` nói "Đủ điều kiện merge: KHÔNG" và tệp này in bốn con
+    # số, ba trong đó là `0`, rồi khuyên "chạy `npm run gate` trước khi mở PR" —
+    # trong khi cổng vừa chạy và vừa trượt.
+    #
+    # Không con số nào sai. Tệp chỉ đơn giản không mang theo câu trả lời, và nó
+    # là tệp ĐẦU VÀO của mỗi phiên: người đọc nó sẽ tin mình đang ở trạng thái
+    # ship được.
+    #
+    # Mười ba vòng qua hàng đợi này đóng nhiều mục bằng cách khai vắng mặt thay
+    # vì lấp (`run_scope: STANDALONE`, `Commit lúc chạy`). Đây là mặt còn lại
+    # của cùng kỷ luật: khai KẾT LUẬN, đừng chỉ khai số.
+    #
+    # `verdict` đến thẳng từ `sprint_gate.evaluate()` của chính lần chạy này —
+    # không tính lại, vì hai phép tính độc lập là đúng cách để hai tệp lại lệch
+    # nhau lần nữa.
     add('## Cổng merge')
     add('')
+    if verdict is None:
+        # Chạy tay `generate_handoff.py` thì không có kết luận nào để in. Bảng
+        # cổng khi đó là một nửa câu trả lời, và nửa câu trả lời ở đây đọc lên
+        # giống hệt "đang ổn" — nên nói thẳng là chưa biết.
+        add('> **Chưa biết cổng có cho merge hay không.** Tệp này được sinh ngoài')
+        add('> một lần chạy cổng, nên không có kết luận nào để chép lại. Các con số')
+        add('> dưới đây là của lần đo gần nhất, không phải một phán quyết.')
+        add('>')
+        add('> Chạy `npm run gate` để có kết luận.')
+        add('')
+    else:
+        ready = verdict.get('merge_ready')
+        add('| | |')
+        add('|---|---|')
+        add('| **Đủ điều kiện merge** | **%s** |'
+            % ('CÓ' if ready else 'KHÔNG'))
+        if not ready:
+            add('')
+            add('### Đang chặn')
+            add('')
+            for blocker in verdict.get('blockers') or []:
+                add('- %s' % blocker)
+        add('')
     add('| | |')
     add('|---|---|')
     for key in ('PASS', 'EMPTY', 'BLIND', 'FAIL'):
@@ -197,25 +237,74 @@ def build():
             add('> - %s' % item)
         add('')
 
+    # AQ-047 (3). Hai bảng này từng bị gộp thành một cột tên `Trạng thái`, và cả
+    # hai cùng dùng chữ `blind` — chữ mà bảng cổng bên trên vừa dùng cho một
+    # phép đếm khác hẳn (`| BLIND | 0 |` là tool-BLIND).
+    #
+    # Ba phép đếm khác đơn vị mang cùng một cái tên. Hệ quả cụ thể: nguồn
+    # `persistence` đọc là `covered` ngay phía trên năng lực *Scheduled Task
+    # Execution* đọc là `blind`, và không có gì nói rằng hai dòng đó trả lời hai
+    # câu hỏi khác nhau — nên chúng đọc như mâu thuẫn, rồi bị bỏ qua.
     add('## Vùng quan sát')
     add('')
-    add('| Nguồn / Năng lực | Trạng thái |')
+    add('Hai bảng dưới đây trả lời hai câu hỏi khác nhau, và một bảng xanh không')
+    add('bù được cho bảng kia đỏ.')
+    add('')
+    add('### Mù nguồn — nguồn có mở để đọc được không')
+    add('')
+    add('| Nguồn | Trạng thái |')
     add('|---|---|')
     for key in ('defender', 'firewall', 'security_log', 'event_logs',
                 'persistence', 'processes', 'network', 'ioc'):
         add('| `%s` | %s |' % (key, coverage.get(key) or 'UNKNOWN'))
-    for capability in coverage.get('detection_capabilities') or []:
-        add('| **%s** | %s |' % (capability.get('label'), capability.get('status')))
     add('')
+    add('### Mù năng lực — thứ ta cần có được ghi lại không')
+    add('')
+    capabilities = coverage.get('detection_capabilities') or []
+    blind_caps = [c for c in capabilities if c.get('status') == 'blind']
+    add('| Năng lực | Trạng thái | Cách sửa |')
+    add('|---|---|---|')
+    for capability in capabilities:
+        status = capability.get('status') or 'UNKNOWN'
+        add('| %s | %s | %s |'
+            % (capability.get('label'),
+               '**%s**' % status if status == 'blind' else status,
+               capability.get('action') or '—' if status != 'covered' else '—'))
+    add('')
+    if blind_caps:
+        add('> **%d năng lực đang mù.** Một nguồn `covered` KHÔNG có nghĩa là kỹ'
+            % len(blind_caps))
+        add('> thuật tương ứng quan sát được: `persistence` mở được, nhưng')
+        add('> *Scheduled Task Execution* thì không được ghi ở đâu cả. Điểm rủi ro')
+        add('> đã rút trọng số tương ứng và không được phép xuống `LOW`.')
+        add('')
     if coverage.get('freshness_note'):
         add('_%s_' % coverage['freshness_note'])
         add('')
 
     add('## Việc tiếp theo')
     add('')
-    add('1. Đọc `docs/project/AUDIT_QUEUE.md` — còn CRITICAL/HIGH thì sửa trước.')
-    add('2. Đọc `docs/project/TECHNICAL_DEBT.md` — nợ đo được và nợ ghi nhận.')
-    add('3. `npm run gate` trước khi mở PR.')
+    # AQ-046 (3). Khi cổng đang chặn, việc đầu tiên là cái đang chặn — không
+    # phải lời khuyên chạy cổng, vì cổng vừa chạy xong và đã trả lời.
+    if verdict is not None and not verdict.get('merge_ready'):
+        blockers = verdict.get('blockers') or []
+        add('**Cổng đang chặn. Không mở PR cho tới khi %d mục dưới đây hết:**'
+            % len(blockers))
+        add('')
+        for index, blocker in enumerate(blockers, 1):
+            add('%d. %s' % (index, blocker))
+        add('')
+        add('Sau đó:')
+        add('')
+        add('- Đọc `docs/project/AUDIT_QUEUE.md` — còn CRITICAL/HIGH thì sửa trước.')
+        add('- Đọc `docs/project/TECHNICAL_DEBT.md` — nợ đo được và nợ ghi nhận.')
+    else:
+        add('1. Đọc `docs/project/AUDIT_QUEUE.md` — còn CRITICAL/HIGH thì sửa trước.')
+        add('2. Đọc `docs/project/TECHNICAL_DEBT.md` — nợ đo được và nợ ghi nhận.')
+        if verdict is None:
+            add('3. `npm run gate` — tệp này chưa biết cổng có cho merge không.')
+        else:
+            add('3. `npm run gate` trước khi mở PR.')
     add('')
     add('## Tài liệu handoff viết tay')
     add('')
@@ -226,11 +315,13 @@ def build():
     return '\n'.join(lines) + '\n'
 
 
-def main():
+def main(verdict=None):
+    """AQ-046. `verdict` là kết quả `sprint_gate.evaluate()` của CHÍNH lần chạy
+    này. Không có nó thì tệp phải nói là không có — xem `build()`."""
     if not os.path.isdir(DOCS_DIR):
         os.makedirs(DOCS_DIR)
     with io.open(HANDOFF_FILE, 'w', encoding='utf-8') as handle:
-        handle.write(build())
+        handle.write(build(verdict))
     print(json.dumps({'status': 'success',
                       'handoff': os.path.relpath(HANDOFF_FILE, PROJECT_ROOT)},
                      indent=2, ensure_ascii=False))

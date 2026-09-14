@@ -522,7 +522,10 @@ def main():
     # 10 — va no van duoc quy trinh chi dinh la tep phai doc dau moi phien.
     try:
         import generate_handoff
-        generate_handoff.main()
+        # AQ-046. Truyen KET LUAN sang, khong de HANDOFF tu tinh lai: hai phep
+        # tinh doc lap tren cung mot du lieu la dung cach de hai tep lech nhau
+        # lan nua, va lan truoc chung da lech.
+        generate_handoff.main(verdict)
     except Exception as error:  # noqa: BLE001
         print('[WARN] khong sinh duoc HANDOFF.md: %s' % error, file=sys.stderr)
 

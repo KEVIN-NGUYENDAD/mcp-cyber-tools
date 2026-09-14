@@ -1,8 +1,26 @@
 {
-  "timestamp": "2026-09-14T13:31:47.225662",
+  "timestamp": "2026-09-14T13:50:42.939467",
   "question": "Cái gì quan trọng nhất hôm nay?",
-  "total_items_analyzed": 6,
+  "total_items_analyzed": 7,
   "top_5_critical": [
+    {
+      "source": "timeline",
+      "priority_score": 90,
+      "title": "Xử lý: Level Change",
+      "category": "Risk",
+      "priority": "CRITICAL",
+      "description": "Mức rủi ro thay đổi: LOW → MEDIUM",
+      "impact": "Recent incident detected",
+      "reason": "Level Change",
+      "affected_assets": [],
+      "time_estimate": "1-2 hours",
+      "steps": [
+        "Investigate",
+        "Isolate if needed",
+        "Resolve"
+      ],
+      "priority_rank": 1
+    },
     {
       "source": "risk",
       "priority_score": 72,
@@ -10,24 +28,8 @@
       "category": "Risk Management",
       "priority": "HIGH",
       "description": "threat_hunting score chỉ 28/100",
-      "impact": "Ảnh hưởng đến Risk Score: 22",
+      "impact": "Ảnh hưởng đến Risk Score: 18",
       "reason": "threat_hunting component weak",
-      "affected_assets": [],
-      "steps": [
-        "Phân tích chi tiết",
-        "Lập kế hoạch cải thiện"
-      ],
-      "priority_rank": 1
-    },
-    {
-      "source": "risk",
-      "priority_score": 20,
-      "title": "Cải thiện Waap",
-      "category": "Risk Management",
-      "priority": "MEDIUM",
-      "description": "waap score chỉ 80/100",
-      "impact": "Ảnh hưởng đến Risk Score: 22",
-      "reason": "waap component weak",
       "affected_assets": [],
       "steps": [
         "Phân tích chi tiết",
@@ -37,19 +39,35 @@
     },
     {
       "source": "risk",
-      "priority_score": 13,
-      "title": "Cải thiện Security Events",
+      "priority_score": 20,
+      "title": "Cải thiện Waap",
       "category": "Risk Management",
       "priority": "MEDIUM",
-      "description": "security_events score chỉ 87/100",
-      "impact": "Ảnh hưởng đến Risk Score: 22",
-      "reason": "security_events component weak",
+      "description": "waap score chỉ 80/100",
+      "impact": "Ảnh hưởng đến Risk Score: 18",
+      "reason": "waap component weak",
       "affected_assets": [],
       "steps": [
         "Phân tích chi tiết",
         "Lập kế hoạch cải thiện"
       ],
       "priority_rank": 3
+    },
+    {
+      "source": "risk",
+      "priority_score": 13,
+      "title": "Cải thiện Security Events",
+      "category": "Risk Management",
+      "priority": "MEDIUM",
+      "description": "security_events score chỉ 87/100",
+      "impact": "Ảnh hưởng đến Risk Score: 18",
+      "reason": "security_events component weak",
+      "affected_assets": [],
+      "steps": [
+        "Phân tích chi tiết",
+        "Lập kế hoạch cải thiện"
+      ],
+      "priority_rank": 4
     },
     {
       "source": "asset",
@@ -69,35 +87,16 @@
         "Test in staging",
         "Apply patches"
       ],
-      "priority_rank": 4
-    },
-    {
-      "source": "asset",
-      "priority_score": 0,
-      "title": "Patch 192.168.0.10 (Server)",
-      "category": "Patch Management",
-      "priority": "HIGH",
-      "description": "0 critical, 0 high vulnerabilities",
-      "impact": "Device có 14 vulnerability",
-      "reason": "High vulnerability count",
-      "affected_assets": [
-        "192.168.0.10"
-      ],
-      "time_estimate": "4-8 hours",
-      "steps": [
-        "Identify patches",
-        "Test in staging",
-        "Apply patches"
-      ],
       "priority_rank": 5
     }
   ],
   "summary": {
-    "critical_count": 0,
-    "high_count": 3,
+    "critical_count": 1,
+    "high_count": 2,
     "sources": {
+      "timeline": 1,
       "risk": 3,
-      "asset": 2
+      "asset": 1
     }
   }
 }
