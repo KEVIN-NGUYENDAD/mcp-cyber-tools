@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-09-14T13:50:43.161320",
-  "run_id": "RUN-20260914T135019-35a83a",
+  "timestamp": "2026-09-14T13:52:26.502303",
+  "run_id": "RUN-20260914T135203-b9c580",
   "question": "C\u00f3 s\u1ef1 c\u1ed1 g\u00ec c\u1ea7n x\u1eed l\u00fd?",
   "total_incidents": 1,
   "total_records": 3,
@@ -16,8 +16,7 @@
   },
   "skipped_rules": [],
   "declined_rules": [
-    "Quy tac 2 (Risk Level = HIGH -> su co): da go bo. Su co ve mot con so tinh ra, khong phai ve mot quan sat; va no khep vong phan hoi incidents <-> risk_score (AQ-039).",
-    "Bo qua 1 su kien timeline thuoc nhom Risk: chung la risk_score noi lai, khong phai quan sat moi (AQ-039)."
+    "Quy tac 2 (Risk Level = HIGH -> su co): da go bo. Su co ve mot con so tinh ra, khong phai ve mot quan sat; va no khep vong phan hoi incidents <-> risk_score (AQ-039)."
   ],
   "incidents": [
     {
@@ -40,8 +39,8 @@
       "source_state": "hunting_lateral_movement.json",
       "source_key": "Explicit Credential Logon",
       "source_run_id": "RUN-20260914T132454-cb565f",
-      "last_seen_run_id": "RUN-20260914T135019-35a83a",
-      "last_seen_at": "2026-09-14T13:50:43.150521"
+      "last_seen_run_id": "RUN-20260914T135203-b9c580",
+      "last_seen_at": "2026-09-14T13:52:26.491777"
     },
     {
       "incident_id": "INC-0002",

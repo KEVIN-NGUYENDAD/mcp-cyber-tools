@@ -182,7 +182,60 @@ def check_attribution(findings, scope):
                       'biet' % full_unresolved})
 
 
-INVARIANTS = (check_crypto, check_vulnerability_units, check_attribution)
+def check_suppressed_severity(findings, scope):
+    """AQ-045. `by_severity` cấp tệp phải đếm tập ĐÃ LỌC tiếng ồn.
+
+    Cuộc săn đếm `by_severity` ở stage sớm, trên toàn bộ chỉ báo;
+    `ioc_quality` gắn cờ `suppressed` ở stage sau. Cuộc săn không thể biết chỉ
+    báo nào sẽ bị hạ xuống tiếng ồn, nên con số nó công bố là số TRƯỚC lọc — và
+    `calculate_risk_score` đọc đúng con số đó.
+
+    Đã đo: 6 chỉ báo `ROUTINE_OS_ACTIVITY` giữ nhãn `HIGH` trong bảng tổng kết,
+    chiếm 78% điểm rủi ro của cả hệ thống (18.0 / 23).
+
+    Phép kiểm cùng hình dạng với hai phép trên: cộng hai đầu rồi so.
+    """
+    checked = []
+    for name in HUNTS:
+        data = _read('%s.json' % name)
+        if data is None:
+            continue
+        indicators = data.get('indicators') or []
+        published = data.get('by_severity')
+        if published is None:
+            continue
+
+        kept = len([i for i in indicators if not i.get('suppressed')])
+        counted = sum(v for v in published.values() if isinstance(v, int))
+        checked.append('%s %d/%d' % (name.replace('hunting_', ''), counted, kept))
+
+        if counted != kept:
+            findings.append({
+                'level': 'SUPPRESSED_COUNTED', 'field': '%s.by_severity' % name,
+                'detail': 'by_severity tong %d nhung chi co %d chi bao khong bi '
+                          'loc — %d chi bao da duoc ket luan la tieng on van dang '
+                          'duoc cham diem' % (counted, kept, counted - kept)})
+
+        # Một chỉ báo bị lọc mà vẫn giữ nhãn CRITICAL/HIGH trong bảng công bố là
+        # đúng cái đẩy risk lên. Bắt riêng, vì nó nói rõ hậu quả hơn phép so tổng.
+        noisy_high = len([i for i in indicators
+                          if i.get('suppressed')
+                          and i.get('severity') in ('CRITICAL', 'HIGH')])
+        if noisy_high and (published.get('HIGH') or published.get('CRITICAL')):
+            kept_high = len([i for i in indicators
+                             if not i.get('suppressed')
+                             and i.get('severity') in ('CRITICAL', 'HIGH')])
+            if not kept_high:
+                findings.append({
+                    'level': 'NOISE_SCORED', 'field': '%s.by_severity' % name,
+                    'detail': 'khai CRITICAL/HIGH trong khi 0 chi bao khong-bi-loc '
+                              'o muc do; %d muc do deu mang suppressed' % noisy_high})
+
+    scope['suppressed'] = ' | '.join(checked) if checked else '-'
+
+
+INVARIANTS = (check_crypto, check_vulnerability_units, check_attribution,
+              check_suppressed_severity)
 
 
 def audit():
@@ -195,7 +248,7 @@ def audit():
 
 def main():
     findings, scope = audit()
-    for key in ('crypto', 'vulns', 'attribution'):
+    for key in ('crypto', 'vulns', 'attribution', 'suppressed'):
         print('PHAM VI %-12s %s' % (key, scope.get(key, '-')))
     for finding in findings:
         print('%-22s %-34s %s'

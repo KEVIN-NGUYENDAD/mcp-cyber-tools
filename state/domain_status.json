@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-09-14T13:50:20.557950",
+  "timestamp": "2026-09-14T13:52:04.220805",
   "domain": "sentinelops.fyi",
   "nameservers": [
-    "salvador.ns.porkbun.com.",
     "curitiba.ns.porkbun.com.",
     "fortaleza.ns.porkbun.com.",
-    "maceio.ns.porkbun.com."
+    "maceio.ns.porkbun.com.",
+    "salvador.ns.porkbun.com."
   ],
   "a_records": [
     "216.24.57.15",
     "216.24.57.7"
   ],
   "mx_records": [
-    "20 fwd2.porkbun.com.",
-    "10 fwd1.porkbun.com."
+    "10 fwd1.porkbun.com.",
+    "20 fwd2.porkbun.com."
   ],
   "spf": "v=spf1 include:_spf.porkbun.com ~all",
   "dmarc": "v=DMARC1; p=quarantine; rua=mailto:tha2171264@maricopa.edu",
@@ -26,6 +26,6 @@
     "has_spf": true,
     "has_dmarc": true
   },
-  "run_id": "RUN-20260914T135019-35a83a",
+  "run_id": "RUN-20260914T135203-b9c580",
   "run_scope": "PIPELINE"
 }

@@ -506,6 +506,22 @@ def _count(indicators, field):
     return out
 
 
+def _count_systems(indicators, field):
+    """Đếm theo HỆ THỐNG được quy kết, không theo chỉ báo (AQ-002).
+
+    Một chỉ báo có thể quy kết về nhiều máy, và nhãn `attribution_quality` là
+    của cả chỉ báo. Muốn giải thích nhãn đó thì phải xuống một cấp — nguồn tên
+    của từng máy — nên phép đếm này có mẫu số riêng, và mẫu số ấy khác mẫu số
+    của `by_attribution`.
+    """
+    out = {}
+    for indicator in indicators:
+        for system in (indicator.get('attribution') or {}).get('systems') or []:
+            key = system.get('hostname_source') or 'không khai'
+            out[key] = out.get(key, 0) + 1
+    return out
+
+
 def score_file(path, hunt, inventory):
     with io.open(path, encoding='utf-8') as handle:
         data = json.load(handle)
@@ -534,6 +550,26 @@ def score_file(path, hunt, inventory):
                             % (len(kept), len(indicators))),
         'by_confidence': _count(kept, 'confidence'),
         'by_attribution': _count(kept, 'attribution_quality'),
+        # AQ-002, vong thu muoi mot. Hang doi doc `FULL: 424 / 426` canh
+        # `assets.json` voi `hostname_source: {unresolved: 11}` va ket luan nhan
+        # `FULL` la bia. Do lai thi khong phai: gan nhu moi `FULL` la CHINH MAY
+        # DANG CHAY, va ten cua no den tu `local_host_identity()`, khong tu kho
+        # quet mang. Moi peer o xa khong phan giai duoc deu dang la `PARTIAL`.
+        #
+        # Nhung hang doi dung o mot diem: ngoai le do NGAM. No chi doc duoc bang
+        # cach di vao `enrich_systems()`, con mot nguoi doc state thi khong thay
+        # gi ngoai hai con so khong giai thich duoc cho nhau. Muoi mot vong lap
+        # lai cung mot ket luan sai la cai gia cua viec bat nguoi doc phai suy.
+        #
+        # Nen khai ra: nguon cua tung hostname, dem ngay canh nhan chat luong.
+        'by_hostname_source': _count_systems(kept, 'hostname_source'),
+        'attribution_note': (
+            'Hau het `FULL` den tu `hostname_source: local host` — may dang chay '
+            'tu biet ten no, va mot lan quet mang khong bao gio biet ten do ro '
+            'hon. Day la ngoai le HOP LE va co y, khong phai nhan suy tu '
+            '`assets.json`: moi he thong o xa khong phan giai duoc ten deu la '
+            '`PARTIAL`. Doi chieu bang nay voi `by_attribution` — `FULL` ma nguon '
+            'la `unresolved` moi la nhan bia.'),
         'by_evidence': _count(kept, 'evidence_quality'),
         'by_confidence_all': _count(indicators, 'confidence'),
         'average_score': _mean(kept),
@@ -541,6 +577,32 @@ def score_file(path, hunt, inventory):
         'score_variance': _variance(kept),
         'by_class_variance': _class_variance(kept),
     }
+
+    # AQ-045. `by_severity` ở CẤP TỆP được đếm trong chính cuộc săn
+    # (`hunt_lateral_movement.py:221-227`), trên toàn bộ chỉ báo. Cuộc săn chạy ở
+    # stage sớm; cờ `suppressed` được gắn ở đây, stage sau. Nên cuộc săn không
+    # THỂ biết chỉ báo nào sẽ bị hạ xuống tiếng ồn — và trước đây không ai tính
+    # lại con số đó.
+    #
+    # Hậu quả đo được: 6 chỉ báo `ROUTINE_OS_ACTIVITY` (tài khoản máy đăng nhập
+    # vào chính nó — hoạt động nền của Windows) vẫn đứng trong `by_severity` là
+    # `HIGH: 6`. `calculate_risk_score` đọc bảng tổng kết trước lọc đó và cho
+    # `threat_hunting` health 28, contribution 18.0 trên tổng 23 — **78% điểm rủi
+    # ro của cả hệ thống đến từ tiếng ồn đã được nhận diện là tiếng ồn.**
+    #
+    # Chỗ sửa không phải `analyze_threat_hunting`. Chỗ sửa là đây: nơi duy nhất
+    # biết chỉ báo nào bị lọc. Khuôn `average_score` / `average_score_all` mà
+    # chính tệp này đã dùng ở AQ-001 áp thẳng sang: tên trần mang số SAU lọc,
+    # hậu tố `_including_noise` giữ số trước lọc để còn rà lại được.
+    published = data.get('by_severity')
+    if published is not None:
+        data['by_severity_including_noise'] = published
+    data['by_severity'] = _count(kept, 'severity')
+    data['by_severity_note'] = (
+        '`by_severity` đếm %d chỉ báo còn lại sau lọc tiếng ồn. Số trên toàn bộ '
+        '%d chỉ báo nằm ở `by_severity_including_noise`. Mọi consumer chấm điểm '
+        'phải dùng số đã lọc: một chỉ báo mang `suppressed: true` đã được kết '
+        'luận là không phải phát hiện.' % (len(kept), len(indicators)))
 
     with io.open(path, 'w', encoding='utf-8') as handle:
         handle.write(json.dumps(data, indent=2, ensure_ascii=False))
@@ -835,6 +897,26 @@ def main():
         'suppressed': len(indicators) - len(kept),
         'by_confidence': _count(kept, 'confidence'),
         'by_attribution': _count(kept, 'attribution_quality'),
+        # AQ-002, vong thu muoi mot. Hang doi doc `FULL: 424 / 426` canh
+        # `assets.json` voi `hostname_source: {unresolved: 11}` va ket luan nhan
+        # `FULL` la bia. Do lai thi khong phai: gan nhu moi `FULL` la CHINH MAY
+        # DANG CHAY, va ten cua no den tu `local_host_identity()`, khong tu kho
+        # quet mang. Moi peer o xa khong phan giai duoc deu dang la `PARTIAL`.
+        #
+        # Nhung hang doi dung o mot diem: ngoai le do NGAM. No chi doc duoc bang
+        # cach di vao `enrich_systems()`, con mot nguoi doc state thi khong thay
+        # gi ngoai hai con so khong giai thich duoc cho nhau. Muoi mot vong lap
+        # lai cung mot ket luan sai la cai gia cua viec bat nguoi doc phai suy.
+        #
+        # Nen khai ra: nguon cua tung hostname, dem ngay canh nhan chat luong.
+        'by_hostname_source': _count_systems(kept, 'hostname_source'),
+        'attribution_note': (
+            'Hau het `FULL` den tu `hostname_source: local host` — may dang chay '
+            'tu biet ten no, va mot lan quet mang khong bao gio biet ten do ro '
+            'hon. Day la ngoai le HOP LE va co y, khong phai nhan suy tu '
+            '`assets.json`: moi he thong o xa khong phan giai duoc ten deu la '
+            '`PARTIAL`. Doi chieu bang nay voi `by_attribution` — `FULL` ma nguon '
+            'la `unresolved` moi la nhan bia.'),
         'by_evidence': _count(kept, 'evidence_quality'),
         'average_score': (round(sum(i['confidence_score'] for i in kept)
                                 / float(len(kept)), 1) if kept else 0.0),

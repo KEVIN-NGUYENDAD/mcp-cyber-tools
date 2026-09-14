@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T13:50:48.520461",
+  "generated_at": "2026-09-14T13:52:31.691412",
   "version": "2.0.0",
   "defender": "covered",
   "firewall": "covered",
@@ -132,7 +132,7 @@
     "threat_hunting_active": true,
     "dfir_active": true,
     "event_hub_active": true,
-    "last_sync": "2026-09-14T13:50:48.520461"
+    "last_sync": "2026-09-14T13:52:31.691412"
   },
   "access_diagnosis": {
     "can_fix": true,
@@ -191,7 +191,7 @@
       "label": "Security Log",
       "detail": "Log Security thô — nền của mọi thứ dưới đây",
       "status": "covered",
-      "reason": "Log Security mở được, 13577 bản ghi."
+      "reason": "Log Security mở được, 13556 bản ghi."
     },
     {
       "key": "process_creation",
@@ -232,14 +232,14 @@
     "partial": 0,
     "blind": 2
   },
-  "probe_generated_at": "2026-09-14T13:50:48.520461",
+  "probe_generated_at": "2026-09-14T13:52:31.691412",
   "tools_generated_at": "2026-09-14T13:48:14.354708",
-  "tools_age_hours": 0.0,
+  "tools_age_hours": 0.1,
   "refreshed_by": "refresh_sensor_coverage",
-  "freshness_note": "Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (0.0 giờ trước).",
+  "freshness_note": "Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (0.1 giờ trước).",
   "tools_refresh": {
     "state": "fresh",
-    "age_hours": 0.0,
+    "age_hours": 0.1,
     "note": "Kết quả tool còn trong ngưỡng 20 giờ."
   }
 }

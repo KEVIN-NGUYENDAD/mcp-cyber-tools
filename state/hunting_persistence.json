@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T13:50:29.765489",
+  "timestamp": "2026-09-14T13:52:13.153507",
   "hunting_type": "Persistence Indicators",
   "hunt_version": "2.0.0",
   "data_source": "LIVE_OBSERVED",
@@ -55,7 +55,7 @@
       "tool": "huntSuspiciousTasks",
       "ok": true,
       "records": 40,
-      "duration": 1.92,
+      "duration": 1.87,
       "error": null
     }
   ],
@@ -77,7 +77,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "Adobe Acrobat Update Task",
       "location": "\\",
       "command": "",
@@ -172,7 +172,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "Duet Updater",
       "location": "\\",
       "command": "",
@@ -267,7 +267,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "HOME-SOC-MCP-Server",
       "location": "\\",
       "command": "",
@@ -362,7 +362,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "HOME-SOC-Scan-And-Export",
       "location": "\\",
       "command": "",
@@ -457,7 +457,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "McUpdaterModuleTask",
       "location": "\\",
       "command": "",
@@ -552,7 +552,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NvDriverUpdateCheckDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -647,7 +647,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NVIDIA GeForce Experience SelfUpdate_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -742,7 +742,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NvNodeLauncher_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -837,7 +837,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NvProfileUpdaterDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -932,7 +932,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NvProfileUpdaterOnLogon_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -1027,7 +1027,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NvTmRep_CrashReport1_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -1122,7 +1122,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NvTmRep_CrashReport2_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -1217,7 +1217,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NvTmRep_CrashReport3_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -1312,7 +1312,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "NvTmRep_CrashReport4_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -1407,7 +1407,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OmenInstallMonitor",
       "location": "\\",
       "command": "",
@@ -1502,7 +1502,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OmenInstallMonitor-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -1597,7 +1597,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OmenInstallMonitorCustomEvent",
       "location": "\\",
       "command": "",
@@ -1692,7 +1692,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OmenInstallMonitorCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -1787,7 +1787,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OmenOverlay",
       "location": "\\",
       "command": "",
@@ -1882,7 +1882,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OmenOverlay-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -1977,7 +1977,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OmenOverlayCustomEvent",
       "location": "\\",
       "command": "",
@@ -2072,7 +2072,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OmenOverlayCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -2167,7 +2167,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OneDrive Per-Machine Standalone Update Task",
       "location": "\\",
       "command": "",
@@ -2262,7 +2262,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OneDrive Reporting Task-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -2357,7 +2357,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "OneDrive Startup Task-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -2452,7 +2452,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "RtkAudUService64_BG",
       "location": "\\",
       "command": "",
@@ -2547,7 +2547,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "SecurityScannerScheduler",
       "location": "\\",
       "command": "",
@@ -2642,7 +2642,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "SentinelOps-Collectors",
       "location": "\\",
       "command": "",
@@ -2737,7 +2737,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "SentinelOps-DailyBrief",
       "location": "\\",
       "command": "",
@@ -2832,7 +2832,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "RunPlatformExperienceHelperOnUnlock",
       "location": "\\GoogleUserPEH\\",
       "command": "",
@@ -2927,7 +2927,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "RunPlatformExperienceHelper_Daily",
       "location": "\\GoogleUserPEH\\",
       "command": "",
@@ -3022,7 +3022,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "RunPlatformExperienceHelper_Metrics",
       "location": "\\GoogleUserPEH\\",
       "command": "",
@@ -3117,7 +3117,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "HP Support Assistant Update Notice",
       "location": "\\Hewlett-Packard\\HP Support Assistant\\",
       "command": "",
@@ -3212,7 +3212,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "WarrantyChecker",
       "location": "\\Hewlett-Packard\\HP Support Assistant\\",
       "command": "",
@@ -3307,7 +3307,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "WarrantyChecker_DeviceScan",
       "location": "\\Hewlett-Packard\\HP Support Assistant\\",
       "command": "",
@@ -3402,7 +3402,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "Printer Health Monitor",
       "location": "\\HP\\HP Print Scan Doctor\\",
       "command": "",
@@ -3497,7 +3497,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "Printer Health Monitor Logon",
       "location": "\\HP\\HP Print Scan Doctor\\",
       "command": "",
@@ -3592,7 +3592,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "McAfee Windows Notification Token",
       "location": "\\McAfee\\WPS\\",
       "command": "",
@@ -3687,7 +3687,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.081047",
       "name": "SoftLandingCreativeManagementTask",
       "location": "\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
       "command": "",
@@ -3782,7 +3782,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "SoftLandingDeferralTask-{df2f07e3-f532-4014-985c-57d23b709758}",
       "location": "\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
       "command": "",
@@ -3877,7 +3877,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "SecurityHealth",
       "location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "C:\\WINDOWS\\system32\\SecurityHealthSystray.exe",
@@ -3972,7 +3972,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OfficeSuite",
       "location": "HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "C:\\Program Files\\MobiSystems\\OfficeSuite\\MobiSystemsUpdate.exe",
@@ -4067,7 +4067,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "HPSEU_Host_Launcher",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "C:\\Program Files\\HP\\HP System Event Utility\\Host Launcher\\HpseuHostLauncher.exe",
@@ -4162,7 +4162,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OneDrive",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe\" /background",
@@ -4257,7 +4257,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "CiscoMeetingDaemon",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Users\\tamng\\AppData\\Local\\WebEx\\WebexHost.exe\" /daemon /runFrom=autorun",
@@ -4352,7 +4352,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "Zalo",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Users\\tamng\\AppData\\Local\\Programs\\Zalo\\Zalo.exe\"",
@@ -4447,7 +4447,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.693212",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "GoogleDriveFS",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe\" --startup_mode",
@@ -4542,7 +4542,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "Microsoft.Lists",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "C:\\Program Files\\Microsoft OneDrive\\26.158.0816.0003\\OneDrive.Sync.Service.exe",
@@ -4637,7 +4637,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "CanvaAutoLaunchAvailabilityCheckAgent",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Users\\tamng\\AppData\\Local\\Programs\\Canva\\Canva.exe\" --start-availability-check-agent",
@@ -4732,7 +4732,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "com.reolink.app",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "C:\\Users\\tamng\\AppData\\Local\\Programs\\Reolink\\Reolink.exe",
@@ -4827,7 +4827,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "Teams",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Users\\tamng\\AppData\\Local\\Microsoft\\WindowsApps\\MSTeams_8wekyb3d8bbwe\\ms-teams.exe\" msteams:system-initiated",
@@ -4922,7 +4922,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "CocCocBrowserAutoLaunch_2EB4E61B4934250225A4EF7A9E338DF8",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe\" --startup-foreground-launch",
@@ -5017,7 +5017,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "Adobe Acrobat Synchronizer",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Program Files\\Adobe\\Acrobat DC\\Acrobat\\AdobeCollabSync.exe\"",
@@ -5112,7 +5112,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "GoogleChromeAutoLaunch_2BF8234FA344A63A9A22F0EEE26CD9A5",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\" --no-startup-window /prefetch:5",
@@ -5207,7 +5207,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "MicrosoftCopilotAutoLaunch_9363C8F78DD8A7FC1496ECDBAE0320EA",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Program Files (x86)\\Microsoft\\Copilot\\Application\\mscopilot.exe\" --no-startup-window --win-session-start",
@@ -5302,7 +5302,7 @@
     {
       "type": "Persistence: RunKey",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "MicrosoftEdgeAutoLaunch_6070D1264E363D1A2FC9A988E51739C9",
       "location": "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
       "command": "\"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe\" --no-startup-window --win-session-start",
@@ -5397,7 +5397,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "Adobe Acrobat Update Task",
       "location": "\\",
       "command": "",
@@ -5492,7 +5492,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "Duet Updater",
       "location": "\\",
       "command": "",
@@ -5587,7 +5587,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "HOME-SOC-MCP-Server",
       "location": "\\",
       "command": "",
@@ -5682,7 +5682,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "HOME-SOC-Scan-And-Export",
       "location": "\\",
       "command": "",
@@ -5777,7 +5777,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "McUpdaterModuleTask",
       "location": "\\",
       "command": "",
@@ -5872,7 +5872,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NvDriverUpdateCheckDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -5967,7 +5967,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NVIDIA GeForce Experience SelfUpdate_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -6062,7 +6062,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NvNodeLauncher_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -6157,7 +6157,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NvProfileUpdaterDaily_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -6252,7 +6252,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NvProfileUpdaterOnLogon_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -6347,7 +6347,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NvTmRep_CrashReport1_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -6442,7 +6442,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NvTmRep_CrashReport2_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -6537,7 +6537,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NvTmRep_CrashReport3_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -6632,7 +6632,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "NvTmRep_CrashReport4_{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}",
       "location": "\\",
       "command": "",
@@ -6727,7 +6727,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OmenInstallMonitor",
       "location": "\\",
       "command": "",
@@ -6822,7 +6822,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OmenInstallMonitor-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -6917,7 +6917,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OmenInstallMonitorCustomEvent",
       "location": "\\",
       "command": "",
@@ -7012,7 +7012,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OmenInstallMonitorCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -7107,7 +7107,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OmenOverlay",
       "location": "\\",
       "command": "",
@@ -7202,7 +7202,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OmenOverlay-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -7297,7 +7297,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OmenOverlayCustomEvent",
       "location": "\\",
       "command": "",
@@ -7392,7 +7392,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OmenOverlayCustomEvent-sid-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -7487,7 +7487,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OneDrive Per-Machine Standalone Update Task",
       "location": "\\",
       "command": "",
@@ -7582,7 +7582,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OneDrive Reporting Task-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -7677,7 +7677,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "OneDrive Startup Task-S-1-5-21-2427165457-1881523816-796667683-1001",
       "location": "\\",
       "command": "",
@@ -7772,7 +7772,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "RtkAudUService64_BG",
       "location": "\\",
       "command": "",
@@ -7867,7 +7867,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "SecurityScannerScheduler",
       "location": "\\",
       "command": "",
@@ -7962,7 +7962,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "SentinelOps-Collectors",
       "location": "\\",
       "command": "",
@@ -8057,7 +8057,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "SentinelOps-DailyBrief",
       "location": "\\",
       "command": "",
@@ -8152,7 +8152,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "RunPlatformExperienceHelperOnUnlock",
       "location": "\\GoogleUserPEH\\",
       "command": "",
@@ -8247,7 +8247,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "RunPlatformExperienceHelper_Daily",
       "location": "\\GoogleUserPEH\\",
       "command": "",
@@ -8342,7 +8342,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "RunPlatformExperienceHelper_Metrics",
       "location": "\\GoogleUserPEH\\",
       "command": "",
@@ -8437,7 +8437,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "HP Support Assistant Update Notice",
       "location": "\\Hewlett-Packard\\HP Support Assistant\\",
       "command": "",
@@ -8532,7 +8532,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "WarrantyChecker",
       "location": "\\Hewlett-Packard\\HP Support Assistant\\",
       "command": "",
@@ -8627,7 +8627,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "WarrantyChecker_DeviceScan",
       "location": "\\Hewlett-Packard\\HP Support Assistant\\",
       "command": "",
@@ -8722,7 +8722,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "Printer Health Monitor",
       "location": "\\HP\\HP Print Scan Doctor\\",
       "command": "",
@@ -8817,7 +8817,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "Printer Health Monitor Logon",
       "location": "\\HP\\HP Print Scan Doctor\\",
       "command": "",
@@ -8912,7 +8912,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "McAfee Windows Notification Token",
       "location": "\\McAfee\\WPS\\",
       "command": "",
@@ -9007,7 +9007,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "SoftLandingCreativeManagementTask",
       "location": "\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
       "command": "",
@@ -9102,7 +9102,7 @@
     {
       "type": "Persistence: ScheduledTask",
       "severity": "INFO",
-      "timestamp": "2026-09-14T13:50:29.694718",
+      "timestamp": "2026-09-14T13:52:13.082048",
       "name": "SoftLandingDeferralTask-{df2f07e3-f532-4014-985c-57d23b709758}",
       "location": "\\SoftLanding\\S-1-5-21-2427165457-1881523816-796667683-1001\\",
       "command": "",
@@ -9195,11 +9195,11 @@
       "suppressed": false
     }
   ],
-  "run_id": "RUN-20260914T135019-35a83a",
+  "run_id": "RUN-20260914T135203-b9c580",
   "run_scope": "PIPELINE",
   "ioc_quality": {
     "version": "1.0.0",
-    "scored_at": "2026-09-14T13:50:42.626784",
+    "scored_at": "2026-09-14T13:52:25.967084",
     "total": 96,
     "suppressed": 0,
     "by_noise_class": {},
@@ -9211,6 +9211,10 @@
     "by_attribution": {
       "FULL": 96
     },
+    "by_hostname_source": {
+      "local host": 96
+    },
+    "attribution_note": "Hau het `FULL` den tu `hostname_source: local host` — may dang chay tu biet ten no, va mot lan quet mang khong bao gio biet ten do ro hon. Day la ngoai le HOP LE va co y, khong phai nhan suy tu `assets.json`: moi he thong o xa khong phan giai duoc ten deu la `PARTIAL`. Doi chieu bang nay voi `by_attribution` — `FULL` ma nguon la `unresolved` moi la nhan bia.",
     "by_evidence": {
       "COMPLETE": 96
     },
@@ -9234,5 +9238,9 @@
         "discriminating": false
       }
     }
-  }
+  },
+  "by_severity_including_noise": {
+    "INFO": 96
+  },
+  "by_severity_note": "`by_severity` đếm 96 chỉ báo còn lại sau lọc tiếng ồn. Số trên toàn bộ 96 chỉ báo nằm ở `by_severity_including_noise`. Mọi consumer chấm điểm phải dùng số đã lọc: một chỉ báo mang `suppressed: true` đã được kết luận là không phải phát hiện."
 }
