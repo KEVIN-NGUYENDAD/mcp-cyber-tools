@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T07:00:31.099986",
+  "generated_at": "2026-09-14T07:22:46.229370",
   "version": "2.0.0",
   "defender": "covered",
   "firewall": "covered",
@@ -30,7 +30,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 8,
+      "evidence_records": 9,
       "probes_dead": [],
       "reason": null
     },
@@ -54,7 +54,7 @@
       "empty": 2,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 1785,
+      "evidence_records": 1858,
       "probes_dead": [],
       "reason": null
     },
@@ -66,7 +66,7 @@
       "empty": 1,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 453,
+      "evidence_records": 460,
       "probes_dead": [],
       "reason": null
     },
@@ -78,7 +78,7 @@
       "empty": 1,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 1101,
+      "evidence_records": 1100,
       "probes_dead": [],
       "reason": null
     },
@@ -90,7 +90,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 1141,
+      "evidence_records": 1116,
       "probes_dead": [],
       "reason": null
     },
@@ -102,7 +102,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 549,
+      "evidence_records": 1165,
       "probes_dead": [],
       "reason": null
     },
@@ -128,11 +128,11 @@
     "empty": 6,
     "blind": 0,
     "fail": 0,
-    "evidence_records": 7870,
+    "evidence_records": 8541,
     "threat_hunting_active": true,
     "dfir_active": true,
     "event_hub_active": true,
-    "last_sync": "2026-09-14T07:00:31.099986"
+    "last_sync": "2026-09-14T07:22:46.229370"
   },
   "access_diagnosis": {
     "can_fix": true,
@@ -178,7 +178,7 @@
       "probe": "event_log_ps_operational",
       "log": "Microsoft-Windows-PowerShell/Operational",
       "readable": true,
-      "records": "554",
+      "records": "438",
       "covers": "Script block logging (4104): nội dung lệnh PowerShell đã chạy — che được phần PowerShell của vùng mù 4688, không che phần còn lại",
       "used_by": [
         "huntEncodedPowerShell"
@@ -191,7 +191,7 @@
       "label": "Security Log",
       "detail": "Log Security thô — nền của mọi thứ dưới đây",
       "status": "covered",
-      "reason": "Log Security mở được, 13951 bản ghi."
+      "reason": "Log Security mở được, 13633 bản ghi."
     },
     {
       "key": "process_creation",
@@ -205,18 +205,41 @@
       "label": "Script Block Logging",
       "detail": "Event ID 4104 — nội dung lệnh PowerShell đã chạy",
       "status": "covered",
-      "reason": "Chính sách Script Block Logging đang BẬT — mọi khối lệnh PowerShell đều được ghi (554 bản ghi trong log).",
+      "reason": "Chính sách Script Block Logging đang BẬT — mọi khối lệnh PowerShell đều được ghi (438 bản ghi trong log).",
       "module_logging": false
+    },
+    {
+      "key": "scheduled_task_execution",
+      "label": "Scheduled Task Execution",
+      "detail": "Kênh TaskScheduler/Operational — tác vụ nào được tạo, sửa, chạy",
+      "status": "blind",
+      "reason": "Kênh Microsoft-Windows-TaskScheduler/Operational đang TẮT — việc tác vụ được tạo, sửa và CHẠY không được ghi ở đâu cả. Không có kênh này, huntSuspiciousTasks chỉ thấy tác vụ đang còn tồn tại — không thấy tác vụ đã chạy xong rồi bị xoá, thứ mà một kẻ tấn công cẩn thận luôn để lại đúng dạng đó.",
+      "action": "scripts\\enable_forensic_logs.ps1 (cần Administrator)",
+      "fixable_here": false
+    },
+    {
+      "key": "usb_device_activity",
+      "label": "USB Device Activity",
+      "detail": "Kênh DriverFrameworks-UserMode/Operational — thiết bị nào được cắm vào",
+      "status": "blind",
+      "reason": "Kênh Microsoft-Windows-DriverFrameworks-UserMode/Operational đang TẮT — việc thiết bị USB được cắm vào không được ghi ở đâu cả. usbLogs không có nguồn nào khác cho câu hỏi \"cái gì đã được cắm vào máy này, lúc nào\".",
+      "action": "scripts\\enable_forensic_logs.ps1 (cần Administrator)",
+      "fixable_here": false
     }
   ],
   "capability_summary": {
     "covered": 3,
     "partial": 0,
-    "blind": 0
+    "blind": 2
   },
-  "probe_generated_at": "2026-09-14T07:00:31.099986",
-  "tools_generated_at": "2026-09-13T23:27:56.992085",
-  "tools_age_hours": 7.5,
+  "probe_generated_at": "2026-09-14T07:22:46.229370",
+  "tools_generated_at": "2026-09-14T07:22:38.910997",
+  "tools_age_hours": 0.0,
   "refreshed_by": "refresh_sensor_coverage",
-  "freshness_note": "Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (7.5 giờ trước) — chạy `npm run validate` để làm mới."
+  "freshness_note": "Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (0.0 giờ trước).",
+  "tools_refresh": {
+    "state": "fresh",
+    "age_hours": 0.0,
+    "note": "Kết quả tool còn trong ngưỡng 20 giờ."
+  }
 }

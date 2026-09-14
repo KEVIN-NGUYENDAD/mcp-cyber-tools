@@ -57,7 +57,7 @@ class IntelligencePipeline:
         with open(self.log_file, 'a', encoding='utf-8') as f:
             f.write(log_entry + '\n')
 
-    def run_stage(self, stage_name, script_path, description):
+    def run_stage(self, stage_name, script_path, description, args=None):
         """Run a single pipeline stage"""
         self.log(f'▶ Starting: {description}')
         stage_start = time.time()
@@ -67,7 +67,7 @@ class IntelligencePipeline:
             child_env['PYTHONIOENCODING'] = 'utf-8'
 
             result = subprocess.run(
-                [sys.executable, str(script_path)],
+                [sys.executable, str(script_path)] + list(args or []),
                 cwd=str(self.project_root),
                 env=child_env,
                 capture_output=True,
@@ -493,10 +493,19 @@ class IntelligencePipeline:
         # "tool nao tra ve bang chung" (dat). Nua re moi la nua thay doi thuong
         # xuyen — mot log bi tat, mot quyen bi thu hoi — nen no duoc lam moi moi
         # lan chay, con nua dat giu nguyen VA TU KHAI tuoi cua no.
+        # Sprint 16: --auto-validate lam not viec con lai. Hai moc thoi gian noi
+        # THAT ve viec nua tool dang cu, nhung khong ai di lam cho no moi. Mot con
+        # so trung thuc ve mot thu khong bao gio duoc sua van la no. Voi co nay,
+        # khi nua tool qua 20 gio, stage khoi chay tool_validator o NEN roi tra
+        # quyen dieu khien ve ngay — lan chay ke tiep doc duoc ket qua moi.
+        #
+        # Tac dung phu co that: validator goi that ca 99 tool, trong do co
+        # defenderQuickScan. Tu dong hoa nghia la mot lan quet nhanh moi ngay.
         ok, _ = self.run_stage(
             'Sensor Coverage Refresh',
             self.scripts_dir / 'refresh_sensor_coverage.py',
-            'Re-probing which sources can still be read'
+            'Re-probing which sources can still be read',
+            args=['--auto-validate']
         )
         success = success and ok
 

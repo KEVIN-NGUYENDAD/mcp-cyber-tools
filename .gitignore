@@ -58,3 +58,9 @@ SentinelOps_Backup_*.zip
 # Test scripts
 test_*.ps1
 test_*.sh
+
+# Sprint 16: dau vet runtime cua viec tu lam moi nua ket qua tool.
+# Khoa la trang thai cua MOT may tai MOT thoi diem; commit no vao repo se
+# khien may khac doc duoc mot tien trinh khong ton tai tren may ho.
+state/.tool_validation.lock
+state/logs/tool_validation_auto.log

@@ -28,12 +28,17 @@ for path in (os.path.join(PROJECT_ROOT, 'scripts'),
         sys.path.insert(0, path)
 
 from harness import Suite  # noqa: E402
+import sensor_probe  # noqa: E402
 
 COVERAGE_FILE = os.path.join(PROJECT_ROOT, 'state', 'sensor_coverage.json')
 
 SENSORS = ['defender', 'firewall', 'security_log', 'event_logs',
            'persistence', 'processes', 'network', 'ioc']
-CAPABILITIES = ['security_log', 'process_creation', 'script_block_logging']
+CAPABILITIES = ['security_log', 'process_creation', 'script_block_logging',
+                # Sprint 16: hai kênh log đang TẮT. Chúng có mặt ở đây CHÍNH VÌ
+                # đang tắt — một vùng mù không có tên trên bảng sẽ không bao giờ
+                # được ai đi bật.
+                'scheduled_task_execution', 'usb_device_activity']
 VALID = ('covered', 'partial', 'blind')
 
 
@@ -108,6 +113,27 @@ def run():
         # mốc luôn bằng nhau thì việc tách chúng ra là vô nghĩa.
         suite.check('Hai moc thoi gian khong bi gan bang nhau mot cach may moc',
                     True, '')
+
+    # -- kênh tắt KHÔNG được đọc như kênh rỗng -------------------------------
+    #
+    # `Get-WinEvent -LogName X` trả về đúng một câu "No events were found" cho
+    # cả "log đang tắt" lẫn "log bật nhưng chưa có gì". Ba ca dưới đây ép mỗi
+    # trạng thái phải ra một ô khác nhau; gộp bất kỳ hai ca nào lại là đủ để
+    # trượt.
+    cases = [
+        ({'log_enabled': False, 'log_records': '0', 'readable': False},
+         'blind', 'kenh TAT'),
+        ({'log_enabled': True, 'log_records': '0', 'readable': False},
+         'partial', 'vua bat, 0 ban ghi'),
+        ({'log_enabled': True, 'log_records': '1522', 'readable': True},
+         'covered', 'bat va co ban ghi'),
+    ]
+    for probe, expected, label in cases:
+        got = sensor_probe._capability_task_scheduler({'task_scheduler_log': probe})
+        suite.check('TaskScheduler %s -> %s' % (label, expected),
+                    got['status'] == expected, 'nhan %r' % got['status'])
+        if expected != 'covered':
+            suite.check('  -> %s co kem cach sua' % label, bool(got.get('action')))
 
     # -- event 4688 ----------------------------------------------------------
     event = coverage.get('event_4688') or {}
