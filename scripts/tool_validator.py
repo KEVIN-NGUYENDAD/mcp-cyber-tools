@@ -189,12 +189,15 @@ SENSOR_LABEL = {
 
 # Tool chỉ trả về đường dẫn tới báo cáo vừa ghi, không trả về quan sát nào cho
 # người gọi. Không thể tính là PASS: không có bằng chứng nào đi ra khỏi tool.
-REPORT_WRITERS = {
-    'timeline': 'Ghi file báo cáo rồi chỉ trả về đường dẫn',
-    'securityAudit': 'Trả về checklist tĩnh viết cứng trong mã, không quan sát gì',
-    'collectEvidence': 'Ghi file báo cáo rồi chỉ trả về đường dẫn',
-    'collectLogs': 'Ghi file báo cáo rồi chỉ trả về đường dẫn',
-}
+#
+# Sprint 10 đã dọn sạch danh sách này: `timeline`, `collectEvidence`,
+# `collectLogs` và `securityAudit` nay trả về bằng chứng thật kèm đường dẫn,
+# nên chúng được phán quyết bằng đúng luật như 95 tool còn lại.
+#
+# Giữ lại cái bảng rỗng thay vì xoá hẳn: cửa này sẽ mở lại nếu có ai thêm một
+# tool chỉ ghi file, và luật "không có bằng chứng đi ra thì không phải PASS"
+# vẫn phải có chỗ để sống.
+REPORT_WRITERS = {}
 
 
 # --------------------------------------------------------------------------
@@ -224,14 +227,6 @@ REMAINING_DEBT = [
      '`scripts/enable_security_log_access.ps1` dưới quyền Administrator. '
      'Script sửa hệ thống thì phải do người quyết định chạy, không phải pipeline.',
      _debt_security_log_closed),
-    ('`securityAudit` trả về một checklist viết cứng trong mã, không quan sát gì',
-     'Viết lại nó là thêm tính năng, nằm ngoài phạm vi sprint kiểm định.'),
-    ('`timeline`, `collectEvidence`, `collectLogs` ghi file rồi chỉ trả về đường '
-     'dẫn — không có bằng chứng nào đi ra tới người gọi',
-     'Đổi hợp đồng trả về sẽ phá mọi nơi đang gọi chúng; cần một sprint riêng.'),
-    ('`alternateDataStreams` mặc định `-Path "C:\\"` nên chỉ soi đúng một mục, '
-     'không bao giờ tìm được ADS ở đâu cả',
-     'Cho nó đệ quy toàn ổ đĩa là một thay đổi hành vi nặng về I/O, phải đo trước.'),
     ('Log `Microsoft-Windows-TaskScheduler/Operational` và '
      '`Microsoft-Windows-DriverFrameworks-UserMode/Operational` đang TẮT',
      'Bật chúng là thay đổi cấu hình máy. Cho tới lúc đó, "không có bản ghi nào" '
@@ -330,6 +325,12 @@ def static_inventory(modules_dir=None):
 # Đếm bằng chứng
 # --------------------------------------------------------------------------
 
+# Tool trả về một envelope có tóm tắt thì SỐ QUAN SÁT nằm trong envelope, không
+# phải là "1 object". Đếm envelope là 1 sẽ làm một tool thu được 300 sự kiện đọc
+# y hệt một tool thu được 0 — và cái thứ hai đáng lẽ phải là EMPTY.
+ENVELOPE_COUNT_KEYS = ('recordCount', 'logCount', 'eventCount', 'returned')
+
+
 def evidence_count(result):
     """Bao nhiêu bản ghi quan sát thật sự đi ra khỏi tool."""
     parsed = result.get('parsed')
@@ -337,6 +338,9 @@ def evidence_count(result):
         if isinstance(parsed, list):
             return len(parsed)
         if isinstance(parsed, dict):
+            for key in ENVELOPE_COUNT_KEYS:
+                if isinstance(parsed.get(key), int):
+                    return parsed[key]
             return 1 if parsed else 0
         return 1 if parsed not in ('', None) else 0
 
