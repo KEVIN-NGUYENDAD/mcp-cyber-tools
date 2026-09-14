@@ -1,15 +1,31 @@
 {
-  "overall_score": 3,
+  "overall_score": 22,
   "risk_level": "LOW",
   "critical_count": 0,
-  "high_count": 0,
+  "high_count": 7,
   "factors": [
+    {
+      "name": "threat_hunting",
+      "health": 28,
+      "weight": 0.25,
+      "risk_contribution": 18.0,
+      "detail": "lateral_movement: 0C/6H",
+      "measurable": true
+    },
     {
       "name": "waap",
       "health": 80,
       "weight": 0.1,
       "risk_contribution": 2.0,
       "detail": "WAAP health_score 80",
+      "measurable": true
+    },
+    {
+      "name": "incidents",
+      "health": 94,
+      "weight": 0.25,
+      "risk_contribution": 1.5,
+      "detail": "0 s\u1ef1 c\u1ed1 CRITICAL, 1 HIGH \u0111ang m\u1edf (2 b\u1ea3n ghi \u0111\u00e3 \u0111\u00f3ng/thu h\u1ed3i, kh\u00f4ng t\u00ednh \u0111i\u1ec3m)",
       "measurable": true
     },
     {
@@ -21,27 +37,11 @@
       "measurable": true
     },
     {
-      "name": "threat_hunting",
-      "health": 100,
-      "weight": 0.25,
-      "risk_contribution": 0.0,
-      "detail": "kh\u00f4ng c\u00f3 IOC CRITICAL/HIGH",
-      "measurable": true
-    },
-    {
-      "name": "incidents",
-      "health": 100,
-      "weight": 0.25,
-      "risk_contribution": 0.0,
-      "detail": "0 s\u1ef1 c\u1ed1 CRITICAL, 0 HIGH \u0111ang m\u1edf (2 b\u1ea3n ghi \u0111\u00e3 \u0111\u00f3ng/thu h\u1ed3i, kh\u00f4ng t\u00ednh \u0111i\u1ec3m)",
-      "measurable": true
-    },
-    {
       "name": "asset",
       "health": 100,
       "weight": 0.2,
       "risk_contribution": 0.0,
-      "detail": "0 l\u1ed7 h\u1ed5ng CRITICAL, 0 HIGH tr\u00ean 11 t\u00e0i s\u1ea3n \u2014 b\u1ea3n qu\u00e9t 158 gi\u1edd tu\u1ed5i",
+      "detail": "0 l\u1ed7 h\u1ed5ng CRITICAL, 0 HIGH tr\u00ean 11 t\u00e0i s\u1ea3n \u2014 b\u1ea3n qu\u00e9t 163 gi\u1edd tu\u1ed5i",
       "measurable": true
     },
     {
@@ -69,19 +69,19 @@
       "measurable": true
     }
   ],
-  "generated_at": "2026-09-14T08:21:54.957087",
+  "generated_at": "2026-09-14T13:25:31.423462",
   "engine": "calculate_risk_score",
   "engine_version": "2.0.0",
   "scale": "risk_ascending",
   "scale_description": "overall_score cao = r\u1ee7i ro cao (0 an to\u00e0n nh\u1ea5t, 100 nguy hi\u1ec3m nh\u1ea5t)",
   "notes": [
-    "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 158 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay."
+    "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 163 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay."
   ],
-  "timestamp": "2026-09-14T08:21:54.957087",
+  "timestamp": "2026-09-14T13:25:31.423462",
   "threat_level": "LOW",
   "component_scores": {
-    "threat_hunting": 100,
-    "incidents": 100,
+    "threat_hunting": 28,
+    "incidents": 94,
     "asset": 100,
     "waap": 80,
     "crypto": 100,
@@ -99,6 +99,6 @@
     "firewall": 0.04,
     "security_events": 0.04
   },
-  "run_id": null,
-  "run_scope": "STANDALONE"
+  "run_id": "RUN-20260914T132454-cb565f",
+  "run_scope": "PIPELINE"
 }

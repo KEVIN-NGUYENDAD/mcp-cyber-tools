@@ -98,6 +98,35 @@ class CryptoInventory:
         except Exception:
             return {}
 
+    # AQ-020 / AQ-041, ba vòng chưa trả. Nessus ghi `severity` là SỐ NGUYÊN
+    # (0=info … 4=critical). Bộ đếm dưới đây cộng vào khoá đúng như nhận được —
+    # tức khoá `0` và `2` — rồi đọc ra bằng `severity_counts.get('CRITICAL', 0)`.
+    # Khoá int không bao giờ khớp khoá str, nên cả ba phép trừ luôn nhân với 0
+    # và `crypto_score` là hằng số 100 bất kể quét ra gì.
+    #
+    # Nó xanh suốt ba vòng vì 100 là một con số hợp lệ, và "không có phát hiện
+    # crypto nào" là một kết quả có thật ở nhiều máy. Một điểm số hằng số trông
+    # giống hệt một hệ thống sạch.
+    #
+    # Chuẩn hoá ở ĐÚNG MỘT chỗ — lúc đọc — rồi ghi nhãn đã chuẩn hoá vào chính
+    # finding, để không consumer nào phải tự đoán thang điểm lần nữa.
+    NESSUS_SEVERITY = {0: 'INFO', 1: 'LOW', 2: 'MEDIUM', 3: 'HIGH', 4: 'CRITICAL'}
+
+    @classmethod
+    def normalize_severity(cls, raw):
+        """Severity của Nessus -> nhãn. Không đọc được thì nói, không đoán."""
+        if isinstance(raw, bool):
+            return 'UNKNOWN'
+        if isinstance(raw, int):
+            return cls.NESSUS_SEVERITY.get(raw, 'UNKNOWN')
+        if isinstance(raw, str):
+            text = raw.strip()
+            if text.isdigit():
+                return cls.NESSUS_SEVERITY.get(int(text), 'UNKNOWN')
+            upper = text.upper()
+            return upper if upper in cls.NESSUS_SEVERITY.values() else 'UNKNOWN'
+        return 'UNKNOWN'
+
     def analyze_crypto(self, scan_data):
         """Analyze cryptographic findings in scan data"""
         findings = []
@@ -118,7 +147,7 @@ class CryptoInventory:
         for vuln in vulnerabilities:
             plugin_family = vuln.get('plugin_family', '')
             plugin_name = vuln.get('plugin_name', '')
-            severity = vuln.get('severity', 'info')
+            severity = self.normalize_severity(vuln.get('severity'))
 
             name_lower = plugin_name.lower() if plugin_name else ''
             family_lower = plugin_family.lower()
@@ -155,16 +184,31 @@ class CryptoInventory:
         crypto_score -= medium_count * 5     # Medium -5 each
         crypto_score = max(0, crypto_score)
 
+        # AQ-041. Bất biến của cả họ lỗi này: tổng phân phối phải bằng tổng số.
+        # Nó không kiểm tên trường nào cả — nó cộng hai đầu của cùng một phép
+        # ánh xạ rồi so. Chính phép cộng này bắt được lỗi khoá int/str, vì bản
+        # cũ cho ra tổng 0 bên cạnh `total_findings: 19`.
+        #
+        # `UNKNOWN` phải có mặt trong bảng: severity không đọc được vẫn là một
+        # finding, và giấu nó đi thì tổng lại lệch lần nữa — theo hướng ngược lại.
+        breakdown = {
+            'CRITICAL': critical_count,
+            'HIGH': high_count,
+            'MEDIUM': medium_count,
+            'LOW': severity_counts.get('LOW', 0),
+            'INFO': severity_counts.get('INFO', 0),
+            'UNKNOWN': severity_counts.get('UNKNOWN', 0),
+        }
+        if sum(breakdown.values()) != len(findings):
+            raise AssertionError(
+                'severity_breakdown tong %d nhung co %d finding — mot severity '
+                'khong duoc phan loai, diem crypto se sai'
+                % (sum(breakdown.values()), len(findings)))
+
         return {
             'findings': findings,
             'score': crypto_score,
-            'severity_breakdown': {
-                'CRITICAL': critical_count,
-                'HIGH': high_count,
-                'MEDIUM': medium_count,
-                'LOW': severity_counts.get('LOW', 0),
-                'INFO': severity_counts.get('INFO', 0)
-            }
+            'severity_breakdown': breakdown,
         }
 
     def save_crypto_inventory(self, analysis):

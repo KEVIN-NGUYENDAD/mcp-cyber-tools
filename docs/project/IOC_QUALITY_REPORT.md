@@ -2,7 +2,7 @@
 
 Sinh tự động bởi `scripts/ioc_quality.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T13:25:30.648591
+Cập nhật: 2026-09-14T13:31:46.911633
 
 > **`confidence_score` KHÔNG phải mức độ nguy hiểm.** Nó trả lời một câu hẹp hơn nhiều: *quan sát này có đúng như nó tự nói không*. Một lần đăng nhập nền của Windows hoàn toàn có thể đạt 100 điểm tin cậy — đó là một quan sát chắc chắn về một việc hoàn toàn bình thường. Đọc một con số cao ở đây thành "nguy hiểm" là cách nhanh nhất để biến bảng này thành thứ ngược lại với mục đích của nó.
 
@@ -10,13 +10,13 @@ Cập nhật: 2026-09-14T13:25:30.648591
 
 | | |
 |---|---|
-| Tổng chỉ báo | **618** |
-| Còn lại sau lọc tiếng ồn | **419** |
-| Bị hạ xuống tiếng ồn | 199 |
-| HIGH confidence | 419 |
+| Tổng chỉ báo | **573** |
+| Còn lại sau lọc tiếng ồn | **373** |
+| Bị hạ xuống tiếng ồn | 200 |
+| HIGH confidence | 373 |
 | MEDIUM confidence | 0 |
 | LOW confidence | 0 |
-| Quy kết FULL | 417 |
+| Quy kết FULL | 371 |
 | Quy kết PARTIAL | 2 |
 | Quy kết UNATTRIBUTED | 0 |
 | Kho tài sản đọc được | 11 máy |
@@ -27,22 +27,21 @@ Cập nhật: 2026-09-14T13:25:30.648591
 |---|---|---|---|---|
 | `credential_dumping` | 0 | 0 | None | H 0 / M 0 / L 0 |
 | `persistence` | 96 | 0 | 100.0 | H 96 / M 0 / L 0 |
-| `lateral_movement` | 425 | 199 | 96.3 | H 226 / M 0 / L 0 |
-| `suspicious_processes` | 97 | 0 | 97.1 | H 97 / M 0 / L 0 |
+| `lateral_movement` | 426 | 200 | 96.3 | H 226 / M 0 / L 0 |
+| `suspicious_processes` | 51 | 0 | 97.7 | H 51 / M 0 / L 0 |
 
-## High Confidence (≥ 75) — 419 chỉ báo
+## High Confidence (≥ 75) — 373 chỉ báo
 
 | Điểm | Số | Cuộc săn | Loại | Mức | Lớp bằng chứng | Bằng chứng | Quy kết |
 |---|---|---|---|---|---|---|---|
 | 100 | 143 | `lateral_movement` | Logon Activity | INFO | EVENT_LOG | COMPLETE | FULL |
 | 100 | 80 | `persistence` | Persistence: ScheduledTask | INFO | SCHEDULED_TASK | COMPLETE | FULL |
-| 100 | 69 | `suspicious_processes` | Network Connection | INFO | PROCESS_TABLE | COMPLETE | FULL |
+| 100 | 39 | `suspicious_processes` | Network Connection | INFO | PROCESS_TABLE | COMPLETE | FULL |
 | 100 | 16 | `persistence` | Persistence: RunKey | INFO | REGISTRY | COMPLETE | FULL |
 | 100 | 3 | `suspicious_processes` | Living Off The Land Binary | INFO | PROCESS_TABLE | COMPLETE | FULL |
-| 100 | 3 | `suspicious_processes` | Network Connection | INFO | SERVICE | COMPLETE | FULL |
 | 90 | 81 | `lateral_movement` | Logon Activity | INFO | EVENT_LOG | PARTIAL | FULL |
 | 90 | 2 | `lateral_movement` | Logon Activity | INFO | EVENT_LOG | COMPLETE | PARTIAL |
-| 87 | 20 | `suspicious_processes` | Network Connection | INFO | PROCESS_TABLE | PARTIAL | FULL |
+| 87 | 7 | `suspicious_processes` | Network Connection | INFO | PROCESS_TABLE | PARTIAL | FULL |
 | 87 | 1 | `suspicious_processes` | Living Off The Land Binary | INFO | PROCESS_TABLE | PARTIAL | FULL |
 | 87 | 1 | `suspicious_processes` | Network Connection | INFO | SERVICE | PARTIAL | FULL |
 
@@ -60,13 +59,13 @@ Một chỉ báo không quy kết được về máy nào thì không hành đ�
 
 _Không có chỉ báo nào bị bỏ lại không quy kết._
 
-## Tiếng ồn bị hạ cấp — 199
+## Tiếng ồn bị hạ cấp — 200
 
 Những mục này **vẫn nằm trong tệp state**, mang cờ `suppressed: true` kèm lý do. Xoá hẳn sẽ khiến không ai kiểm lại được quyết định lọc — và bộ lọc tiếng ồn chính là chỗ dễ giấu một phát hiện thật nhất.
 
 | Loại tiếng ồn | Số lượng |
 |---|---|
-| ROUTINE_OS_ACTIVITY | 199 |
+| ROUTINE_OS_ACTIVITY | 200 |
 
 ## Phân bố điểm
 
@@ -74,9 +73,9 @@ Một thang 0–100 mà mọi bản ghi đều rơi vào một ô thì không đ
 
 | Khoảng điểm | Số chỉ báo |  |
 |---|---|---|
-| 100–109 | 314 | █████████████████████████████ |
-| 90–99 | 83 | ███████ |
-| 80–89 | 22 | ██ |
+| 100–109 | 281 | ██████████████████████████████ |
+| 90–99 | 83 | ████████ |
+| 80–89 | 9 | █ |
 
 ## Cách tính điểm
 

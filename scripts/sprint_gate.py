@@ -49,6 +49,7 @@ import pipeline_field_audit  # noqa: E402
 import portal_escape_audit  # noqa: E402
 import run_coherence_audit  # noqa: E402
 import deploy_truth_audit  # noqa: E402
+import schema_reconcile_audit  # noqa: E402
 import tool_validator  # noqa: E402
 
 
@@ -118,6 +119,11 @@ def collect(validate=False):
     # voi tep duoc soi. Cac bo kia hoi "cai nay co dung khong"; bo nay hoi "cai
     # gi dang chay" — va khong bo nao trong so do tra loi duoc cau thu hai.
     deploy, deploy_scope = deploy_truth_audit.audit()
+    # AQ-041. Ba muc CRITICAL dung yen ba vong deu cung mot ho: mot phep anh xa
+    # sai giua hai luoc do, khong ai doi chieu hai dau. Chung khong phai ten
+    # truong doc sai nen `portal_field_audit` mu; khong phai `.get(k, mac dinh)`
+    # nen `pipeline_field_audit` mu. Bo nay cong hai dau roi so.
+    reconcile, reconcile_scope = schema_reconcile_audit.audit()
     pipeline = _read_json(os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json'))
 
     return {
@@ -135,6 +141,8 @@ def collect(validate=False):
         'coherence_scope': coherence_scope,
         'deploy': deploy,
         'deploy_scope': deploy_scope,
+        'reconcile': reconcile,
+        'reconcile_scope': reconcile_scope,
     }
 
 
@@ -258,6 +266,12 @@ def evaluate(data):
     # qua xanh cua cac bo khac deu noi ve mot artifact khong ai mo.
     for finding in (data.get('deploy') or []):
         blockers.append('deploy truth [%s] %s'
+                        % (finding['level'], finding['detail']))
+
+    # AQ-041. Hai dau mot phep cong khong khop nghia la mot con so cong bo dang
+    # noi ve mot tap khac voi tap no trich dan.
+    for finding in (data.get('reconcile') or []):
+        blockers.append('schema reconcile [%s] %s'
                         % (finding['level'], finding['detail']))
 
     pipeline = data['pipeline'] or {}
@@ -423,6 +437,10 @@ def write_debt(data, verdict):
     add('| State cùng một lần chạy | %d / %d tệp có dấu, %d lần chạy khác nhau |'
         % (runs.get('files_stamped', 0), runs.get('files_present', 0),
            len(runs.get('distinct_runs') or [])))
+    reconcile_debt = data.get('reconcile_scope') or {}
+    add('| Tổng crypto khớp số finding | %s |' % reconcile_debt.get('crypto', '-'))
+    add('| Đơn vị lỗ hổng đối chiếu được | %s |' % reconcile_debt.get('vulns', '-'))
+    add('| Nguồn hostname sau quy kết | %s |' % reconcile_debt.get('attribution', '-'))
     add('| Điểm vào triển khai khớp `package.json` | %s |'
         % ('có — %s' % (deploy_scope_debt.get('entrypoint') or '?')
            if not (data.get('deploy') or []) else 'KHÔNG — %d vi phạm'
@@ -553,6 +571,10 @@ def main():
     print('Điểm vào triển khai: %s (%d vi phạm, %d route đối chiếu)'
           % (deploy_scope.get('entrypoint') or 'KHONG XAC DINH',
              len(data.get('deploy') or []), deploy_scope.get('routes_checked', 0)))
+    reconcile_scope = data.get('reconcile_scope') or {}
+    print('Đối chiếu lược đồ  : %d vi phạm | crypto %s | vuln %s'
+          % (len(data.get('reconcile') or []),
+             reconcile_scope.get('crypto', '-'), reconcile_scope.get('vulns', '-')))
     print('Tuổi đầu vào       : %s'
           % ' | '.join('%s %s' % (name.replace('.json', ''),
                                   'KHONG RO' if age is None else '%.1fh' % age)
