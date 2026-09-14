@@ -485,6 +485,21 @@ class IntelligencePipeline:
         self.log('📝 PHASE 11: REPORT GENERATION')
         self.log('-' * 50)
 
+        # 18A. Sensor coverage refresh (Sprint 15)
+        #
+        # `sensor_coverage.json` tung dung yen giua cac lan kiem tay, vi
+        # tool_validator goi that 99 tool (~5 phut, co tac dung phu). Nhung tep
+        # do tron hai cau tra loi: "nguon co mo duoc khong" (re, ~10 giay) va
+        # "tool nao tra ve bang chung" (dat). Nua re moi la nua thay doi thuong
+        # xuyen — mot log bi tat, mot quyen bi thu hoi — nen no duoc lam moi moi
+        # lan chay, con nua dat giu nguyen VA TU KHAI tuoi cua no.
+        ok, _ = self.run_stage(
+            'Sensor Coverage Refresh',
+            self.scripts_dir / 'refresh_sensor_coverage.py',
+            'Re-probing which sources can still be read'
+        )
+        success = success and ok
+
         # 18B. Detection quality (Sprint 12)
         #
         # Chạy SAU khi mọi cuộc săn đã ghi xong và TRƯỚC báo cáo: nếu một chỉ báo
