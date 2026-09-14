@@ -1236,33 +1236,56 @@ All remediation requires explicit human authorization.
     return 'LOW';
   }
 
+  // state/incidents.json dung `incident_id`, `title`, `assets`. Ban cu doc
+  // `id`, `threat_name`, `host`, `risk_score` — khong truong nao ton tai, nen
+  // moi canh bao gui di deu ghi "Incident: undefined / Threat: undefined".
+  // Day la cung mot loi doc-truong-khong-co-that voi asset_manager va portal,
+  // chi khac la no di thang toi dien thoai cua nguoi truc ca.
+  static field(incident, ...names) {
+    for (const name of names) {
+      const value = incident?.[name];
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return null;
+  }
+
+  static incidentId(incident) {
+    return TelegramCommandCenter.field(incident, 'incident_id', 'id') || 'UNKNOWN';
+  }
+
+  static incidentHost(incident) {
+    const assets = TelegramCommandCenter.field(incident, 'assets', 'affected_systems');
+    if (Array.isArray(assets) && assets.length) return assets.join(', ');
+    return TelegramCommandCenter.field(incident, 'host') || 'chua quy ket';
+  }
+
   async sendAlertWithButtons(incident) {
     try {
+      const id = TelegramCommandCenter.incidentId(incident);
+      const title = TelegramCommandCenter.field(incident, 'title', 'threat_name') || 'Khong ro';
       const alertText = `
 🚨 *SECURITY ALERT*
 
-📋 *Incident*: ${incident.id}
-🎯 *Threat*: ${incident.threat_name}
-🔴 *Severity*: ${incident.severity}
-💯 *Risk*: ${incident.risk_score || 'N/A'}/100
-
-🖥️ *Host*: ${incident.host || 'Unknown'}
-⏰ *Time*: ${incident.timestamp || new Date().toISOString()}
+📋 *Incident*: ${id}
+🎯 *Threat*: ${title}
+🔴 *Severity*: ${incident.severity || 'UNKNOWN'}
+🖥️ *Asset*: ${TelegramCommandCenter.incidentHost(incident)}
+⏰ *Time*: ${TelegramCommandCenter.field(incident, 'timestamp', 'detected_at') || new Date().toISOString()}
 
 *Select action:*
       `.trim();
 
       const keyboard = [
         [
-          { text: '📋 Details', callback_data: `details_${incident.id}` },
-          { text: '📚 Runbook', callback_data: `runbook_${incident.id}` }
+          { text: '📋 Details', callback_data: `details_${id}` },
+          { text: '📚 Runbook', callback_data: `runbook_${id}` }
         ],
         [
-          { text: '🔍 Validate', callback_data: `validate_${incident.id}` },
-          { text: '✅ Approve', callback_data: `approve_${incident.id}` }
+          { text: '🔍 Validate', callback_data: `validate_${id}` },
+          { text: '✅ Approve', callback_data: `approve_${id}` }
         ],
         [
-          { text: '❌ Close', callback_data: `close_${incident.id}` }
+          { text: '❌ Close', callback_data: `close_${id}` }
         ]
       ];
 
@@ -1278,6 +1301,78 @@ All remediation requires explicit human authorization.
       return result;
     } catch (error) {
       console.error('Error sending alert with buttons:', error);
+      throw error;
+    }
+  }
+
+  // Sprint 11.3: 7 su co -> 7 tin nhan -> nguoi truc ca cuon qua ca bay.
+  // Gop thanh mot tin, nhung gop KHONG duoc phep lam mat tinh hanh dong: mot
+  // ban tom tat chon mot su co CRITICAL giua sau su co INFO con te hon bay tin
+  // rieng le. Nen CRITICAL/HIGH van hien day du va co nut rieng; chi MEDIUM/LOW
+  // moi bi cuon lai thanh mot dong.
+  async sendExecutiveAlert(incidents) {
+    try {
+      const order = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3, INFO: 4 };
+      const sorted = [...incidents].sort(
+        (a, b) => (order[a.severity] ?? 9) - (order[b.severity] ?? 9));
+
+      const tally = {};
+      for (const incident of sorted) {
+        const key = incident.severity || 'UNKNOWN';
+        tally[key] = (tally[key] || 0) + 1;
+      }
+      const tallyLine = Object.keys(order)
+        .filter(k => tally[k])
+        .map(k => `${k} ${tally[k]}`)
+        .join(' · ');
+
+      const urgent = sorted.filter(i => i.severity === 'CRITICAL' || i.severity === 'HIGH');
+      const rest = sorted.filter(i => !urgent.includes(i));
+
+      const lines = [
+        '🚨 *EXECUTIVE ALERT*',
+        '',
+        `*${sorted.length} sự cố mới* — ${tallyLine}`,
+        ''
+      ];
+
+      for (const incident of urgent) {
+        const mark = incident.severity === 'CRITICAL' ? '🔴' : '🟠';
+        lines.push(`${mark} *${TelegramCommandCenter.incidentId(incident)}* — ${TelegramCommandCenter.field(incident, 'title', 'threat_name') || 'Khong ro'}`);
+        lines.push(`     🖥️ ${TelegramCommandCenter.incidentHost(incident)}`);
+      }
+
+      if (rest.length) {
+        if (urgent.length) lines.push('');
+        // Cuon lai nhung van NEU TEN: mot ma so su co van tra cuu duoc bang
+        // /details, con "4 su co muc thap" thi khong.
+        lines.push(`▫️ ${rest.length} sự cố mức thấp: ${rest.map(i => TelegramCommandCenter.incidentId(i)).join(', ')}`);
+      }
+
+      lines.push('');
+      lines.push(`⏰ ${new Date().toISOString()}`);
+
+      // Mot hang nut cho moi su co khan — toi da 5 hang de tin nhan khong bien
+      // thanh mot ban phim. Con lai tra ve bang /open.
+      const keyboard = urgent.slice(0, 5).map(incident => {
+        const id = TelegramCommandCenter.incidentId(incident);
+        return [
+          { text: `📋 ${id}`, callback_data: `details_${id}` },
+          { text: '📚 Runbook', callback_data: `runbook_${id}` }
+        ];
+      });
+      if (sorted.length > urgent.slice(0, 5).length) {
+        keyboard.push([{ text: '📂 Xem tất cả', callback_data: 'open_all' }]);
+      }
+
+      const result = await this.bot.sendMessage(this.chatId, lines.join('\n'), {
+        chat_id: this.chatId,
+        parse_mode: 'Markdown',
+        reply_markup: { inline_keyboard: keyboard }
+      });
+      return result;
+    } catch (error) {
+      console.error('Error sending executive alert:', error);
       throw error;
     }
   }
