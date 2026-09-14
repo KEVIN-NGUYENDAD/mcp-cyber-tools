@@ -45,6 +45,7 @@ if SCRIPT_DIR not in sys.path:
 import detection_quality  # noqa: E402
 import portal_field_audit  # noqa: E402
 import telegram_field_audit  # noqa: E402
+import pipeline_field_audit  # noqa: E402
 import tool_validator  # noqa: E402
 
 
@@ -96,6 +97,12 @@ def collect(validate=False):
     # Lop Telegram nguy hiem hon portal o mot diem: mot tin nhan sai di toi
     # dien thoai mot minh, khong co o nao ben canh de doi chieu.
     telegram = telegram_field_audit.audit()
+    # SPRINT B. Lop Python la lop TINH ra so, khong chi hien thi no. Mot truong
+    # doc sai o day khong lam hong mot o — no lam hong con so, roi con so do di
+    # tiep vao portal, Telegram va bao cao, tat ca cung hien dung mot gia tri sai
+    # mot cach nhat quan. Ca hai bo audit truoc chi soi JavaScript, va do dung la
+    # ly do `waap.get('score', 50)` song sot qua nhieu sprint voi gate xanh.
+    pipeline_fields = pipeline_field_audit.audit()
     pipeline = _read_json(os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json'))
 
     return {
@@ -107,6 +114,7 @@ def collect(validate=False):
         'pipeline': pipeline,
         'portal': portal,
         'telegram': telegram,
+        'pipeline_fields': pipeline_fields,
     }
 
 
@@ -146,6 +154,14 @@ def evaluate(data):
     if telegram_missing:
         blockers.append('%d truong telegram doc tu state khong ton tai'
                         % len(telegram_missing))
+
+    fabricated = [f for f in (data.get('pipeline_fields') or [])
+                  if f['level'] == 'FABRICATED']
+    if fabricated:
+        blockers.append('%d so lieu gia trong pipeline Python (%s)'
+                        % (len(fabricated),
+                           ', '.join('%s:%s' % (f['file'], f['field'])
+                                     for f in fabricated[:3])))
 
     pipeline = data['pipeline'] or {}
     stages = pipeline.get('stages') or pipeline.get('results') or []
@@ -255,6 +271,9 @@ def write_debt(data, verdict):
     telegram_missing = [f for f in (data.get('telegram') or [])
                         if f['level'] == 'MISSING']
     add('| Trường Telegram đọc sai | %d |' % len(telegram_missing))
+    add('| Số liệu giả trong pipeline Python | %d |'
+        % len([f for f in (data.get('pipeline_fields') or [])
+               if f['level'] == 'FABRICATED']))
     add('')
 
     if verdict['blockers']:
@@ -318,6 +337,15 @@ def main():
     verdict = evaluate(data)
     path = write_debt(data, verdict)
 
+    # AQ-011. HANDOFF.md duoc SINH RA cung luc voi TECHNICAL_DEBT.md, tu cung
+    # mot nguon. Ban viet tay truoc do cong bo Risk Score 74 trong khi state noi
+    # 10 — va no van duoc quy trinh chi dinh la tep phai doc dau moi phien.
+    try:
+        import generate_handoff
+        generate_handoff.main()
+    except Exception as error:  # noqa: BLE001
+        print('[WARN] khong sinh duoc HANDOFF.md: %s' % error, file=sys.stderr)
+
     summary = verdict['summary']
     print('')
     print('PASS %s | EMPTY %s | BLIND %s | FAIL %s' % (
@@ -338,6 +366,10 @@ def main():
                         if f['level'] == 'MISSING']
     print('Trường Telegram    : %d đọc sai / %d truy cập'
           % (len(telegram_missing), len(data.get('telegram') or [])))
+    pipeline_fields = data.get('pipeline_fields') or []
+    fabricated = [f for f in pipeline_fields if f['level'] == 'FABRICATED']
+    print('Trường Python      : %d số liệu giả / %d truy cập lần được'
+          % (len(fabricated), len(pipeline_fields)))
     print('Nợ kỹ thuật        : %s' % os.path.relpath(path, PROJECT_ROOT))
     print('')
 

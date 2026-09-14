@@ -435,6 +435,48 @@ def score_indicator(indicator, hunt, inventory):
     return indicator
 
 
+def _mean(indicators):
+    if not indicators:
+        return None
+    return round(sum(i.get('confidence_score') or 0 for i in indicators)
+                 / float(len(indicators)), 1)
+
+
+def _variance(indicators):
+    """Phương sai điểm. 0 nghĩa là thang điểm chưa phân biệt được gì ở đây.
+
+    AQ-008 / AQ-012. Một chỉ số mà 96/96 bản ghi đạt đúng 100 không phải một
+    chỉ số tốt — nó là một hằng số đội lốt phép đo. Ghi phương sai ra cạnh
+    trung bình để không ai đọc `average_score: 100.0` như một thành tích.
+    """
+    if len(indicators) < 2:
+        return None
+    scores = [i.get('confidence_score') or 0 for i in indicators]
+    mean = sum(scores) / float(len(scores))
+    return round(sum((x - mean) ** 2 for x in scores) / float(len(scores)), 2)
+
+
+def _class_variance(indicators):
+    """Phương sai theo từng lớp bằng chứng, kèm cờ "chưa phân biệt được"."""
+    groups = {}
+    for indicator in indicators:
+        groups.setdefault(indicator.get('evidence_class') or 'UNKNOWN',
+                          []).append(indicator)
+    out = {}
+    for klass, rows in sorted(groups.items()):
+        variance = _variance(rows)
+        out[klass] = {
+            'count': len(rows),
+            'mean': _mean(rows),
+            'variance': variance,
+            # Mot lop chi co mot ban ghi thi chua noi duoc gi; mot lop nhieu ban
+            # ghi ma phuong sai 0 thi da noi ro: thang diem khong tach duoc
+            # chung. Hai truong hop do khac nhau va khong duoc gop.
+            'discriminating': None if variance is None else variance > 0.0,
+        }
+    return out
+
+
 def _count(indicators, field):
     out = {}
     for indicator in indicators:
@@ -459,15 +501,24 @@ def score_file(path, hunt, inventory):
         'suppressed': len(indicators) - len(kept),
         'by_noise_class': _count([i for i in indicators if i.get('suppressed')],
                                  'noise_class'),
-        # Dem tren `kept`, KHONG tren `indicators`: phan tom tat cua bao cao dem
-        # tren kept, va hai con so mang cung mot ten "LOW" nhung tinh tren hai
-        # tap khac nhau la dung cach mot bang so tu mau thuan voi chinh no.
+        # AQ-001. Moi khoi thong ke phai TU KHAI mau so cua no. Ban dau khoi nay
+        # de `total: 455` canh cac phan phoi cong lai bang 228 va mot
+        # `average_score` tinh tren 228 — hai mau so, mot object, khong nhan.
+        # Con so 96.3 dung tren tap cua no; doc canh `total: 455` no thanh 96.3
+        # cua 455, lech 23.6 diem. Khong ai lam gi sai; cai ten da noi doi.
+        'scored_population': len(kept),
+        'population_note': ('Mọi phân phối và `average_score` tính trên %d chỉ '
+                            'báo còn lại sau lọc tiếng ồn, KHÔNG trên %d tổng. '
+                            'Số trên toàn bộ nằm ở `*_all`.'
+                            % (len(kept), len(indicators))),
         'by_confidence': _count(kept, 'confidence'),
-        'by_confidence_including_noise': _count(indicators, 'confidence'),
         'by_attribution': _count(kept, 'attribution_quality'),
         'by_evidence': _count(kept, 'evidence_quality'),
-        'average_score': (round(sum(i['confidence_score'] for i in kept)
-                                / float(len(kept)), 1) if kept else 0.0),
+        'by_confidence_all': _count(indicators, 'confidence'),
+        'average_score': _mean(kept),
+        'average_score_all': _mean(indicators),
+        'score_variance': _variance(kept),
+        'by_class_variance': _class_variance(kept),
     }
 
     with io.open(path, 'w', encoding='utf-8') as handle:
