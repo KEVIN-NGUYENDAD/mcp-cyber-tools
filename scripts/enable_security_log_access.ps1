@@ -203,6 +203,7 @@ if ($sblValue -eq 1) {
     New-ItemProperty -Path $sblPath -Name EnableScriptBlockLogging `
         -Value 1 -PropertyType DWord -Force | Out-Null
     Write-Good 'Da bat Script Block Logging.'
+    Write-Step 'Chi co hieu luc voi PHIEN PowerShell MOI — cua so dang mo van ghi nhu cu.'
     Write-Step 'Tat lai: Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name EnableScriptBlockLogging -Value 0'
     Write-Step 'Luu y: noi dung moi lenh PowerShell se nam trong log ke tu bay gio.'
 }
@@ -212,11 +213,25 @@ Write-Host ''
 # 4. Kiem chung ngay tai day
 # --------------------------------------------------------------------------
 Write-Host '-- Kiem chung -----------------------------------------------'
+
+# CANH BAO VE CHINH DONG KIEM CHUNG NAY:
+#
+# Cua so nay DA nang quyen, nen no doc duoc log Security du co them nhom hay
+# khong. Dong [OK] duoi day KHONG chung minh cach sua da an. No chi chung minh
+# log ton tai va khong hong.
+#
+# Day dung la kieu tu tran an ma ca du an nay ton tai de cham dut: mot phep thu
+# chay trong dieu kien de hon dieu kien that, roi lay ket qua do lam bang chung
+# cho dieu kien that. Bang chung THAT chi co the lay tu mot tien trinh KHONG
+# nang quyen, sau khi dang nhap lai.
 try {
     $ev = Get-WinEvent -LogName 'Security' -MaxEvents 1 -ErrorAction Stop
-    Write-Good ("Doc duoc log Security tu cua so NAY (su kien gan nhat: ID {0})" -f $ev.Id)
+    Write-Good ("Log Security doc duoc tu cua so NAY (su kien gan nhat: ID {0})" -f $ev.Id)
+    Write-Step 'Nhung cua so nay dang nang quyen, nen dieu do la duong nhien.'
+    Write-Step 'No KHONG chung minh cach sua da an — xem buoc 1 va 2 ben duoi.'
 } catch {
-    Write-Warn2 ("Cua so nay chua doc duoc: {0}" -f $_.Exception.Message)
+    Write-Warn2 ("Ngay ca cua so nang quyen nay cung khong doc duoc: {0}" -f $_.Exception.Message)
+    Write-Step 'Day khong con la van de quyen thong thuong. Kiem tra: wevtutil gl Security'
 }
 Write-Host ''
 
