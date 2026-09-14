@@ -21,6 +21,7 @@ export const paths = {
   assets: path.join(PROJECT_ROOT, 'state', 'assets.json'),
   riskScore: path.join(PROJECT_ROOT, 'state', 'risk_score.json'),
   executiveFindings: path.join(PROJECT_ROOT, 'state', 'executive_findings.json'),
+  evidenceManifest: path.join(PROJECT_ROOT, 'state', 'evidence_manifest.json'),
   waapStatus: path.join(PROJECT_ROOT, 'state', 'waap_status.json'),
   domainStatus: path.join(PROJECT_ROOT, 'state', 'domain_status.json'),
   notificationHistory: path.join(PROJECT_ROOT, 'state', 'notification_history.json'),

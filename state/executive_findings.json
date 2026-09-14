@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T07:54:04.561229",
+  "timestamp": "2026-09-14T08:01:46.602555",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
@@ -23,7 +23,7 @@
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-14T07:53:44.438663"
+      "timestamp": "2026-09-14T08:01:26.113551"
     },
     "shadow_assets.json": {
       "present": true,
@@ -33,53 +33,53 @@
     "incidents.json": {
       "present": true,
       "records": 1,
-      "timestamp": "2026-09-14T07:54:04.133002"
+      "timestamp": "2026-09-14T08:01:46.198921"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-14T07:53:43.547074"
+      "timestamp": "2026-09-14T08:01:25.164893"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-14T07:53:43.851632"
+      "timestamp": "2026-09-14T08:01:25.470451"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 96,
-      "timestamp": "2026-09-14T07:53:51.034045"
+      "timestamp": "2026-09-14T08:01:32.834333"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-14T07:54:03.390226"
+      "timestamp": "2026-09-14T08:01:45.539682"
     },
     "hunting_lateral_movement.json": {
       "present": true,
-      "records": 436,
-      "timestamp": "2026-09-14T07:53:57.579444"
+      "records": 356,
+      "timestamp": "2026-09-14T08:01:39.540491"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
-      "records": 45,
-      "timestamp": "2026-09-14T07:53:54.349436"
+      "records": 44,
+      "timestamp": "2026-09-14T08:01:36.569840"
     }
   },
   "coverage_gaps": [
     {
       "rule_id": "RULE-1",
       "reason": "NO_SHADOW_ASSETS",
-      "detail": "Kh\u00f4ng c\u00f3 thi\u1ebft b\u1ecb l\u1ea1 n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan: arp -a th\u1ea5y 3 thi\u1ebft b\u1ecb v\u00e0 t\u1ea5t c\u1ea3 \u0111\u1ec1u c\u00f3 trong kho t\u00e0i s\u1ea3n; 369 IOC kh\u00f4ng ch\u1ee9a REMOTE_PEER n\u00e0o ngo\u00e0i kho. \u0110\u00e2y l\u00e0 k\u1ebft qu\u1ea3 \u0110\u00c3 KI\u1ec2M, kh\u00f4ng ph\u1ea3i rule im l\u1eb7ng."
+      "detail": "Kh\u00f4ng c\u00f3 thi\u1ebft b\u1ecb l\u1ea1 n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan: arp -a th\u1ea5y 3 thi\u1ebft b\u1ecb v\u00e0 t\u1ea5t c\u1ea3 \u0111\u1ec1u c\u00f3 trong kho t\u00e0i s\u1ea3n; 368 IOC kh\u00f4ng ch\u1ee9a REMOTE_PEER n\u00e0o ngo\u00e0i kho. \u0110\u00e2y l\u00e0 k\u1ebft qu\u1ea3 \u0110\u00c3 KI\u1ec2M, kh\u00f4ng ph\u1ea3i rule im l\u1eb7ng."
     },
     {
       "rule_id": "RULE-3",
       "reason": "NO_DEFENDER_DETECTION",
-      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 45 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
+      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 44 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
     }
   ],
   "suppressed_excluded": {
-    "hunting_lateral_movement.json": 208
+    "hunting_lateral_movement.json": 128
   },
   "findings": [
     {
@@ -120,7 +120,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-14T07:54:04.556073",
+      "detected_at": "2026-09-14T08:01:46.598427",
       "ioc_quality": {
         "confidence_score": 90,
         "confidence": "HIGH",
@@ -165,7 +165,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-14T07:54:04.556073",
+      "detected_at": "2026-09-14T08:01:46.598427",
       "ioc_quality": {
         "confidence_score": 90,
         "confidence": "HIGH",

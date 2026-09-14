@@ -523,6 +523,18 @@ class IntelligencePipeline:
         )
         success = success and ok
 
+        # 18A2. Evidence manifest (Sprint B - AQ-006)
+        #
+        # Bam SHA-256 that tren hien vat bang chung that, so voi moc ghi lan dau.
+        # Truoc day `/evidence` in "Hash Verification: PASSED" tu dung mot phep
+        # so `reportCount > 0`, va khong mot ham bam nao ton tai trong repo.
+        ok, _ = self.run_stage(
+            'Evidence Manifest',
+            self.scripts_dir / 'evidence_manifest.py',
+            'Hashing evidence artifacts against recorded baseline'
+        )
+        success = success and ok
+
         # 18B. Detection quality (Sprint 12)
         #
         # Chạy SAU khi mọi cuộc săn đã ghi xong và TRƯỚC báo cáo: nếu một chỉ báo

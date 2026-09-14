@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T07:53:44.438663",
+  "timestamp": "2026-09-14T08:01:26.113551",
   "total_assets": 11,
   "assets": [
     {
@@ -10,7 +10,7 @@
       "os": "Windows",
       "device_type": "Router",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 39,
       "critical": 0,
       "high": 0,
@@ -59,11 +59,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.10",
@@ -73,7 +73,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -122,11 +122,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.11",
@@ -136,7 +136,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -185,11 +185,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.12",
@@ -199,7 +199,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -248,11 +248,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.21",
@@ -262,7 +262,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 48,
       "critical": 0,
       "high": 0,
@@ -311,11 +311,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.233",
@@ -325,7 +325,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 3,
       "critical": 0,
       "high": 0,
@@ -374,11 +374,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.3",
@@ -388,7 +388,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -437,11 +437,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.4",
@@ -451,7 +451,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 11,
       "critical": 0,
       "high": 0,
@@ -500,11 +500,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.5",
@@ -514,7 +514,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 13,
       "critical": 0,
       "high": 0,
@@ -563,11 +563,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.51",
@@ -577,7 +577,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 215,
       "critical": 0,
       "high": 0,
@@ -626,11 +626,11 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     },
     {
       "ip": "192.168.0.8",
@@ -640,7 +640,7 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:53:44.222015",
+      "last_seen": "2026-09-14T08:01:25.876121",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -689,14 +689,14 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "19 l\u1ea7n quan s\u00e1t"
+            "reason": "20 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:53:44.438663"
+      "trust_scored_at": "2026-09-14T08:01:26.113551"
     }
   ],
-  "trust_scored_at": "2026-09-14T07:53:44.438663",
+  "trust_scored_at": "2026-09-14T08:01:26.113551",
   "trust_summary": {
     "scored": 11,
     "total": 11,

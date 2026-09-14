@@ -21,7 +21,9 @@
     "logs:enable": "powershell -ExecutionPolicy Bypass -File scripts/enable_forensic_logs.ps1",
     "ioc:quality": "python scripts/ioc_quality.py",
     "audit:pipeline": "python scripts/pipeline_field_audit.py",
-    "handoff": "python scripts/generate_handoff.py"
+    "handoff": "python scripts/generate_handoff.py",
+    "evidence:manifest": "python scripts/evidence_manifest.py",
+    "audit:escape": "python scripts/portal_escape_audit.py"
   },
   "keywords": [],
   "author": "",

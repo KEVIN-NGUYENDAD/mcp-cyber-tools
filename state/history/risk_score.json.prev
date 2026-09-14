@@ -69,13 +69,13 @@
       "measurable": true
     }
   ],
-  "generated_at": "2026-09-14T07:49:05.093808",
+  "generated_at": "2026-09-14T07:54:04.358450",
   "engine": "calculate_risk_score",
   "engine_version": "2.0.0",
   "scale": "risk_ascending",
   "scale_description": "overall_score cao = r\u1ee7i ro cao (0 an to\u00e0n nh\u1ea5t, 100 nguy hi\u1ec3m nh\u1ea5t)",
   "notes": [],
-  "timestamp": "2026-09-14T07:49:05.093808",
+  "timestamp": "2026-09-14T07:54:04.358450",
   "threat_level": "LOW",
   "component_scores": {
     "threat_hunting": 76,

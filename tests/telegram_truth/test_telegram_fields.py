@@ -125,6 +125,49 @@ def run():
         suite.check('Moi phat hien mang attribution_quality',
                     not [r for r in rows if not r.get('attribution_quality')])
 
+    # -- AQ-006: không khẳng định thứ không có -----------------------------
+    # `custodyValid = reportCount > 0` từng sinh ra bốn dòng: hash PASSED,
+    # tamper-proof, chữ ký đã xác minh, sẵn sàng phân tích. Không một hàm băm
+    # nào tồn tại trong repo, và `reportCount` còn đếm nhầm nguồn.
+    # `findings` o tren da bi khoi /executive gan de bang du lieu khac — goi lai
+    # ro rang thay vi dua vao thu tu cac khoi trong ham.
+    claims = [f for f in tfa.audit() if f['level'] == 'CLAIM']
+    suite.check('Khong con khang dinh nao thieu du lieu phia sau',
+                not claims,
+                '; '.join('%s:%s' % (f['file'], f['line']) for f in claims[:4]))
+    suite.check('/evidence khong con suy custody tu `reportCount > 0`',
+                'custodyValid = reportCount > 0' not in bot_code)
+    suite.check('/evidence doc evidence_manifest.json',
+                'paths.evidenceManifest' in bot)
+
+    manifest = state('evidence_manifest.json')
+    suite.check('evidence_manifest.json ton tai', manifest is not None)
+    if manifest:
+        for field in ('total', 'verified', 'changed', 'signature_status',
+                      'integrity_scope'):
+            suite.check('  manifest co truong "%s"' % field, field in manifest)
+        # Thu KHONG co phai duoc noi thang, khong duoc de mot dau tick noi ho.
+        suite.check('  chu ky so khai dung la CHUA CO',
+                    manifest.get('signature_status') == 'NOT_IMPLEMENTED',
+                    str(manifest.get('signature_status')))
+        # Bam that, khong phai chuoi giu cho.
+        artifacts = manifest.get('artifacts') or {}
+        if artifacts:
+            first = list(artifacts.values())[0]
+            digest = str(first.get('sha256') or '')
+            suite.check('  bam la SHA-256 that (64 ky tu hex)',
+                        len(digest) == 64
+                        and all(c in '0123456789abcdef' for c in digest),
+                        digest[:20])
+
+    # /analytics: bon phan tram viet cung, mot muc khong ton tai trong repo.
+    suite.check('/analytics khong con "Privilege Escalation" (khong co hunt nao)',
+                'Privilege Escalation' not in bot_code)
+    suite.check('/analytics tinh Top Risks tu tep hunting that',
+                'function topRisks(' in bot)
+    suite.check('  -> va bo qua muc da ha xuong tieng on',
+                'i.suppressed' in bot)
+
     # -- không còn giá trị xanh viết cứng ----------------------------------
     hardcoded = re.findall(r"'(?:ONLINE|ACTIVE|READY|HEALTHY|SECURE)'", bot)
     suite.check('Chu trang thai viet cung khong duoc dung lam GIA TRI mac dinh',
