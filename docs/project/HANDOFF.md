@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T13:48:15.722973
+Cập nhật: 2026-09-14T13:50:53.112929
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `fc0441c` |
+| Commit lúc chạy | `22cb27f` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | fix(handoff): stop claiming a commit the file cannot know, and date the stale row |
+| Tiêu đề | fix(validator): stamp freshness where coverage is created, not where it is written |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
@@ -18,6 +18,10 @@ Cây làm việc có thay đổi chưa commit, nên commit ở trên là của s
 cổng chạy trước khi commit — không phải một con số trễ.
 
 ## Cổng merge
+
+| | |
+|---|---|
+| **Đủ điều kiện merge** | **CÓ** |
 
 | | |
 |---|---|
@@ -32,8 +36,8 @@ cổng chạy trước khi commit — không phải một con số trễ.
 
 | | |
 |---|---|
-| Risk Score | 23/100 |
-| Risk Level | LOW |
+| Risk Score | 18/100 |
+| Risk Level | MEDIUM |
 | Sự cố đang mở | 1 |
 | └ CRITICAL | 0 |
 | └ HIGH | 1 |
@@ -43,7 +47,12 @@ cổng chạy trước khi commit — không phải một con số trễ.
 
 ## Vùng quan sát
 
-| Nguồn / Năng lực | Trạng thái |
+Hai bảng dưới đây trả lời hai câu hỏi khác nhau, và một bảng xanh không
+bù được cho bảng kia đỏ.
+
+### Mù nguồn — nguồn có mở để đọc được không
+
+| Nguồn | Trạng thái |
 |---|---|
 | `defender` | covered |
 | `firewall` | covered |
@@ -53,13 +62,23 @@ cổng chạy trước khi commit — không phải một con số trễ.
 | `processes` | covered |
 | `network` | covered |
 | `ioc` | covered |
-| **Security Log** | covered |
-| **Process Creation** | covered |
-| **Script Block Logging** | covered |
-| **Scheduled Task Execution** | blind |
-| **USB Device Activity** | blind |
 
-_Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
+### Mù năng lực — thứ ta cần có được ghi lại không
+
+| Năng lực | Trạng thái | Cách sửa |
+|---|---|---|
+| Security Log | covered | — |
+| Process Creation | covered | — |
+| Script Block Logging | covered | — |
+| Scheduled Task Execution | **blind** | scripts\enable_forensic_logs.ps1 (cần Administrator) |
+| USB Device Activity | **blind** | scripts\enable_forensic_logs.ps1 (cần Administrator) |
+
+> **2 năng lực đang mù.** Một nguồn `covered` KHÔNG có nghĩa là kỹ
+> thuật tương ứng quan sát được: `persistence` mở được, nhưng
+> *Scheduled Task Execution* thì không được ghi ở đâu cả. Điểm rủi ro
+> đã rút trọng số tương ứng và không được phép xuống `LOW`.
+
+_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (0.0 giờ trước)._
 
 ## Việc tiếp theo
 

@@ -246,6 +246,74 @@ def run():
     suite.check('Portal co duong doc health_score chinh thuc',
                 'function waapHealth(' in app)
 
+    # -- AQ-046: hai tep sinh cung mot lan chay phai khai cung mot ket luan ---
+    # Ngay 14/09 luc 13:41:52, `TECHNICAL_DEBT.md` ket luan "Du dieu kien merge:
+    # KHONG" trong khi `HANDOFF.md` — sinh cung giay, tu cung nguon — in bon con
+    # so dep va khuyen "chay `npm run gate` truoc khi mo PR". Khong tep nao noi
+    # doi ve mot con so; tep thu hai chi khong mang theo CAU TRA LOI.
+    #
+    # Do la tep dau vao cua moi phien, nen im lang o day doc len la "dang on".
+    import generate_handoff
+
+    blocked = {'merge_ready': False, 'summary': {},
+               'blockers': ['bo kiem phat hien truot (TONG: 337/340 dat)']}
+    text = generate_handoff.build(blocked)
+    suite.check('Cong chan -> HANDOFF in ro KHONG du dieu kien merge',
+                '**Đủ điều kiện merge** | **KHÔNG**' in text,
+                'khong tim thay hang ket luan')
+    suite.check('Cong chan -> HANDOFF liet ke blocker',
+                '337/340' in text, 'blocker khong duoc chep sang')
+    nextup = text[text.index('## Việc tiếp theo'):]
+    suite.check('Cong chan -> viec dau tien la blocker, khong phai "chay gate"',
+                nextup.index('Cổng đang chặn') < nextup.index('AUDIT_QUEUE'),
+                'loi khuyen dung truoc blocker')
+
+    passing = {'merge_ready': True, 'summary': {}, 'blockers': []}
+    suite.check('Cong mo -> HANDOFF in ro CO du dieu kien merge',
+                '**Đủ điều kiện merge** | **CÓ**' in generate_handoff.build(passing))
+
+    # Chay tay, ngoai mot lan chay cong: khong co ket luan nao de chep. Bang cong
+    # khi do la mot nua cau tra loi, va nua cau tra loi o day doc giong "dang on"
+    # — nen phai khai thang la chua biet, khong duoc im.
+    standalone = generate_handoff.build(None)
+    suite.check('Khong co verdict -> KHAI la chua biet, khong im lang',
+                'Chưa biết cổng có cho merge hay không' in standalone)
+    suite.check('Khong co verdict -> KHONG bia ra mot ket luan',
+                'Đủ điều kiện merge' not in standalone)
+
+    # -- AQ-047: nang luc mu phai cham toi diem rui ro -----------------------
+    # `sensor_coverage.json` tach "nguon co mo duoc khong" khoi "thu ta can co
+    # duoc ghi khong", va noi thang hai nang luc dang mu. Roi khong ai doc: engine
+    # rui ro chi biet mot loai mu, nen dau ra la LOW tren mot may khong thay tac
+    # vu dinh ky — mot trong nhung ky thuat duy tri pho bien nhat.
+    import calculate_risk_score as crs
+
+    coverage = state('sensor_coverage.json') or {}
+    caps = coverage.get('detection_capabilities') or []
+    blind_caps = [c for c in caps if c.get('status') == 'blind']
+    suite.check('Moi nang luc deu duoc anh xa ve mot thanh phan rui ro',
+                all(c.get('key') in crs.CAPABILITY_COMPONENT for c in caps),
+                str([c.get('key') for c in caps
+                     if c.get('key') not in crs.CAPABILITY_COMPONENT]))
+    suite.check('Moi thanh phan duoc anh xa toi deu co trong WEIGHTS',
+                all(v in crs.WEIGHTS for v in crs.CAPABILITY_COMPONENT.values()))
+
+    risk = state('risk_score.json') or {}
+    notes = ' '.join(risk.get('notes') or [])
+    if blind_caps:
+        for capability in blind_caps:
+            label = capability.get('label') or capability.get('key')
+            suite.check('Nang luc mu "%s" duoc GOI TEN trong notes' % label,
+                        label in notes,
+                        'mot dong "2 nang luc mu" khong giup ai di bat kenh nao')
+        suite.check('Con nang luc mu -> risk_level KHONG duoc la LOW',
+                    risk.get('risk_level') != 'LOW',
+                    'nhan %r' % risk.get('risk_level'))
+        suite.check('  -> va co dong giai thich vi sao khong LOW',
+                    'Capability floor' in notes)
+    else:
+        suite.check('Khong con nang luc mu -> khong can san nang muc', True)
+
     return suite
 
 
