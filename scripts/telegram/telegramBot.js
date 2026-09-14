@@ -85,12 +85,21 @@ function riskView(risk) {
            scoreText: `${raw}/100`, levelText: level };
 }
 
+// AQ-016. Ban cu tu cham 60/15/15/10 — ban sao thu sau cua cung mot cong thuc —
+// va goi ket qua la "WAAP Score /100", cung ten voi `waap_score.health_score`,
+// von cham SAU thanh phan khac han tu MOT TEP KHAC. Hai phep do khac nhau, cung
+// ten, cung don vi, hien canh nhau.
+//
+// AQ-018 them mot loi nua o chinh cong thuc do: `protection_active` la `unknown`
+// tren may nay, va `? 10 : 0` bien "chua do duoc" thanh "khong co bao ve" — tru
+// 10 diem cho mot thuoc tinh he thong tu khai la chua do duoc.
+//
+// Gio doc thang khoi da tinh san trong waap_status.json, noi thanh phan chua do
+// duoc roi khoi ca tu so lan mau so.
 function waapScoreFrom(waap) {
-  const summary = (waap && waap.security_summary) || {};
-  return (summary.ssl_valid ? 60 : 0)
-    + (summary.waf_active ? 15 : 0)
-    + (summary.cdn_active ? 15 : 0)
-    + (summary.protection_active ? 10 : 0);
+  const block = waap && waap.protection_coverage;
+  if (block && typeof block.score === 'number') return block.score;
+  return null;
 }
 
 // Lich su canh bao da tung mang BA ten cho cung mot mang: `notifications` (noi
@@ -401,7 +410,8 @@ Score: *${score}/100*
       const scoreEmoji = execRisk.emoji;
 
       const execWaapScore = waapScoreFrom(waap);
-      const waapEmoji = execWaapScore >= 80 ? '✅' : execWaapScore >= 60 ? '⚠️' : '🔴';
+      const waapEmoji = execWaapScore === null ? '⚪'
+        : (execWaapScore >= 80 ? '✅' : execWaapScore >= 60 ? '⚠️' : '🔴');
       const dnsEmoji = dnsHealthPercent >= 90 ? '✅' : dnsHealthPercent >= 60 ? '⚠️' : '🔴';
 
       // CAPTURE ACTUAL RUNTIME VALUES IMMEDIATELY BEFORE MESSAGE BUILD
@@ -686,7 +696,7 @@ ${analyticsIncidents} Incidents Detected
 Score: ${riskView(risk).scoreText}
 
 *Application Security*
-WAAP Score: ${waapScore}/100
+Protection coverage: ${waapScore === null ? 'CHUA DO DUOC' : waapScore + '/100'}
 DNS Health: ${dnsHealthPercent}%
 
 ${'─'.repeat(32)}

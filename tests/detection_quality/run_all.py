@@ -45,6 +45,7 @@ EXTRA_SUITES = [
     ('ioc_quality', 'test_ioc_quality'),
     ('green_defaults', 'test_green_defaults'),
     ('portal_hardening', 'test_portal_hardening'),
+    ('gate_integrity', 'test_gate_integrity'),
 ]
 
 

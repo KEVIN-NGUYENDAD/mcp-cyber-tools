@@ -2,22 +2,25 @@
 
 Sinh tự động bởi `scripts/sprint_gate.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T08:02:15
+Cập nhật: 2026-09-14T08:09:43
 
 ## Cổng merge
 
 | | |
 |---|---|
 | Đủ điều kiện merge | **CÓ** |
-| PASS | 94 |
-| EMPTY | 5 |
+| PASS | 93 |
+| EMPTY | 6 |
 | BLIND | 0 |
 | FAIL | 0 |
 | Bộ kiểm phát hiện | ĐẠT |
-| Toàn vẹn bằng chứng | 0 vi phạm / 496 chỉ báo |
+| Toàn vẹn bằng chứng | 0 vi phạm / 406 chỉ báo |
 | Pipeline | 28 stage, 0 thất bại |
 | Trường portal đọc sai | 0 |
 | Trường Telegram đọc sai | 0 |
+| Tuổi `tool_validation.json` | 0.0 giờ |
+| Tuổi `pipeline_results.json` | 0.1 giờ |
+| Tuổi `sensor_coverage.json` | 0.0 giờ |
 | Biểu thức innerHTML chưa escape | 0 |
 | Số liệu giả trong pipeline Python | 0 |
 
@@ -25,7 +28,7 @@ Cập nhật: 2026-09-14T08:02:15
 
 | Hạng mục | Chi tiết | Mức |
 |---|---|---|
-| Tool EMPTY | 5 tool đọc được nguồn nhưng không có bản ghi nào khớp | Không phải nợ — đây là "đã nhìn, không có gì". Ghi ra để không ai nhầm nó với BLIND. |
+| Tool EMPTY | 6 tool đọc được nguồn nhưng không có bản ghi nào khớp | Không phải nợ — đây là "đã nhìn, không có gì". Ghi ra để không ai nhầm nó với BLIND. |
 | Năng lực: Scheduled Task Execution | Kênh Microsoft-Windows-TaskScheduler/Operational đang TẮT — việc tác vụ được tạo, sửa và CHẠY không được ghi ở đâu cả. Không có kênh này, huntSuspiciousTasks chỉ thấy tác vụ đang còn tồn tại — không thấy tác vụ đã chạy x | BLIND |
 | Năng lực: USB Device Activity | Kênh Microsoft-Windows-DriverFrameworks-UserMode/Operational đang TẮT — việc thiết bị USB được cắm vào không được ghi ở đâu cả. usbLogs không có nguồn nào khác cho câu hỏi "cái gì đã được cắm vào máy này, lúc nào". | BLIND |
 

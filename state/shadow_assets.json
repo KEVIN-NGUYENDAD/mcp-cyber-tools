@@ -1,5 +1,5 @@
 {
-  "scan_time": "2026-09-14T08:01:26.301551",
+  "scan_time": "2026-09-14T08:06:10.324298",
   "detector": "shadow_asset_detector",
   "detector_version": "2.0.0",
   "data_source": "OBSERVED",
@@ -24,13 +24,13 @@
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T08:01:26.301551",
+      "detected_at": "2026-09-14T08:06:10.324298",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T08:01:25.876121"
+        "last_seen": "2026-09-14T08:06:09.889291"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
@@ -43,13 +43,13 @@
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T08:01:26.301551",
+      "detected_at": "2026-09-14T08:06:10.324298",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T08:01:25.876121"
+        "last_seen": "2026-09-14T08:06:09.889291"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
@@ -62,13 +62,13 @@
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T08:01:26.301551",
+      "detected_at": "2026-09-14T08:06:10.324298",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T08:01:25.876121"
+        "last_seen": "2026-09-14T08:06:09.889291"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
@@ -81,13 +81,13 @@
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T08:01:26.301551",
+      "detected_at": "2026-09-14T08:06:10.324298",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T08:01:25.876121"
+        "last_seen": "2026-09-14T08:06:09.889291"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
@@ -100,13 +100,13 @@
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T08:01:26.301551",
+      "detected_at": "2026-09-14T08:06:10.324298",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T08:01:25.876121"
+        "last_seen": "2026-09-14T08:06:09.889291"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
@@ -119,13 +119,13 @@
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T08:01:26.301551",
+      "detected_at": "2026-09-14T08:06:10.324298",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T08:01:25.876121"
+        "last_seen": "2026-09-14T08:06:09.889291"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
@@ -138,13 +138,13 @@
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T08:01:26.301551",
+      "detected_at": "2026-09-14T08:06:10.324298",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T08:01:25.876121"
+        "last_seen": "2026-09-14T08:06:09.889291"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
@@ -157,13 +157,13 @@
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T08:01:26.301551",
+      "detected_at": "2026-09-14T08:06:10.324298",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T08:01:25.876121"
+        "last_seen": "2026-09-14T08:06:09.889291"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     }

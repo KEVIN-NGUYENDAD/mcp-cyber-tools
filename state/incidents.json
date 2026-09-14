@@ -1,31 +1,11 @@
 {
-  "timestamp": "2026-09-14T08:01:46.198921",
+  "timestamp": "2026-09-14T08:06:29.046972",
   "question": "C\u00f3 s\u1ef1 c\u1ed1 g\u00ec c\u1ea7n x\u1eed l\u00fd?",
-  "total_incidents": 1,
-  "by_severity": {
-    "HIGH": 1
-  },
+  "total_incidents": 0,
+  "by_severity": {},
   "by_status": {
-    "OPEN": 1
+    "OPEN": 0
   },
   "skipped_rules": [],
-  "incidents": [
-    {
-      "incident_id": "INC-0023",
-      "severity": "HIGH",
-      "status": "OPEN",
-      "title": "LATERAL MOVEMENT THREAT: Explicit Credential Logon",
-      "description": "Lateral movement pattern: Explicit Credential Logon",
-      "assets": [
-        "192.168.0.51"
-      ],
-      "asset_scope": "ATTRIBUTED",
-      "evidence": [
-        "A logon was attempted using explicit credentials.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nAccount Whose Credentials Were Used:\r\n\tAccount Name:\t\ttamngankevin@gmail.com\r\n\tAccount Domain:\t\tMicrosoftAccount\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nTarget Server:\r\n\tTarget Server Name:\tlocalhost\r\n\tAdditional Information:\tlocalhost\r\n\r\nProcess Information:\r\n\tProcess ID:\t\t0x6e0\r\n\tProcess Name:\t\tC:\\Windows\\System32\\lsass.exe\r\n\r\nNetwork Information:\r\n\tNetwork Addre",
-        "Ngu\u1ed3n MCP: huntRemoteDesktop"
-      ],
-      "recommended_action": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "created_at": "2026-09-14T08:01:46.197921"
-    }
-  ]
+  "incidents": []
 }

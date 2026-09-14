@@ -50,19 +50,31 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
 STATE_DIR = os.path.join(PROJECT_ROOT, 'state')
 
-# Bốn tệp được chỉ đích danh, cộng những tệp cùng lớp: chúng đều tính ra con số
-# mà người khác đọc.
-FILES = [
-    'calculate_risk_score.py',
-    'generate_priority_queue.py',
-    'correlation_engine.py',
-    'daily_brief_generator.py',
-    'generate_daily_brief.py',
-    'generate_incidents.py',
-    'calculate_waap_score.py',
-    'asset_builder.py',
-    'ioc_quality.py',
-]
+# AQ-014. Danh sách viết tay là lý do bộ này chỉ bắt được 1/5 chỗ hỏng ở vòng
+# trước: `collect_timeline_events.py` và `run_intelligence_pipeline.py` đọc cùng
+# một khoá sai, và chúng không có tên trong danh sách.
+#
+# Sửa tay từng chỗ khi Auditor chỉ đích danh là cách làm đã tự chứng minh không
+# scale. Quét TẤT CẢ — một tệp mới thêm vào `scripts/` được soi ngay từ lần chạy
+# đầu tiên, không phải chờ ai đó nhớ ra là phải thêm nó vào đây.
+SKIP = set([
+    'pipeline_field_audit.py',       # chính nó
+    'portal_field_audit.py',
+    'telegram_field_audit.py',
+    'portal_escape_audit.py',
+])
+
+
+def python_files():
+    names = []
+    for name in sorted(os.listdir(SCRIPT_DIR)):
+        if not name.endswith('.py') or name in SKIP or name.startswith('_'):
+            continue
+        names.append(name)
+    return names
+
+
+FILES = python_files()
 
 # Khoá được phép thiếu: chúng là bộ đếm hoặc danh sách mà "không có" và "bằng 0"
 # thật sự cùng nghĩa. Danh sách này phải NGẮN và mỗi mục phải tự biện minh được.
@@ -79,10 +91,22 @@ BENIGN_DEFAULTS = {
 class StateBinding(ast.NodeVisitor):
     """Biến nào đang giữ nội dung của tệp state nào."""
 
-    LOADERS = ('load_state', 'read_state_safe', 'read_json', '_read_json')
+    LOADERS = ('load_state', 'read_state_safe', 'read_json', '_read_json',
+               'load_json', 'read_state', '_load', 'load')
 
     def __init__(self):
-        self.bindings = {}     # tên biến -> tên tệp state
+        # Một biến có thể được gán lại nhiều lần trong cùng một tệp:
+        #
+        #     current = self.load_state('assets.json')     ... current.get('assets')
+        #     current = self.load_state('risk_score.json') ... current.get('score')
+        #
+        # Giữ mỗi tên biến ứng với MỘT tệp là sai, và sai theo hướng tệ nhất: nó
+        # báo động trên chỗ đúng. Một bộ audit báo sai vài lần sẽ bị bỏ qua,
+        # rồi lần nó báo đúng cũng bị bỏ qua theo.
+        #
+        # Nên ghi kèm số dòng, và mỗi `.get` được quy về phép gán GẦN NHẤT phía
+        # trên nó.
+        self.bindings = {}     # tên biến -> [(dòng, tệp state)]
         self.gets = []         # (biến, khoá, có_default, dòng)
 
     # -- nhận diện phép gán từ một loader --------------------------------
@@ -91,7 +115,8 @@ class StateBinding(ast.NodeVisitor):
         if filename:
             for target in node.targets:
                 if isinstance(target, ast.Name):
-                    self.bindings[target.id] = filename
+                    self.bindings.setdefault(target.id, []).append(
+                        (node.lineno, filename))
         self.generic_visit(node)
 
     def _state_file(self, value):
@@ -129,7 +154,9 @@ class StateBinding(ast.NodeVisitor):
             key = self._literal(node.args[0])
             if key is not None:
                 self.gets.append((node.func.value.id, key,
-                                  len(node.args) > 1, node.lineno))
+                                  len(node.args) > 1,
+                                  node.args[1] if len(node.args) > 1 else None,
+                                  node.lineno))
         self.generic_visit(node)
 
     @staticmethod
@@ -139,6 +166,29 @@ class StateBinding(ast.NodeVisitor):
         if isinstance(node, ast.Constant) and isinstance(node.value, str):
             return node.value
         return None
+
+
+# Giá trị mặc định KHAI BÁO SỰ VẮNG MẶT, không giả vờ là một phép đo.
+#
+# Đây là ranh giới thật của lớp lỗi này. `data.get('x', 50)` nguy hiểm vì 50
+# trông y hệt một con số đã đo. `data.get('x', 'UNKNOWN')` thì không: nó nói
+# thẳng ra rằng không biết, và người đọc nhìn thấy điều đó.
+ABSENCE_LITERALS = set(['UNKNOWN', 'N/A', 'n/a', 'unknown', 'UNMEASURED', '-',
+                        '?', 'CHUA_DO', 'NOT_IMPLEMENTED'])
+
+
+def declares_absence(node):
+    if node is None:
+        return False
+    if isinstance(node, ast.Str):
+        return node.s in ABSENCE_LITERALS
+    if isinstance(node, ast.Constant):
+        if node.value is None:
+            return True
+        return isinstance(node.value, str) and node.value in ABSENCE_LITERALS
+    if isinstance(node, ast.NameConstant):   # Python 3.7
+        return node.value is None
+    return False
 
 
 def load_state(filename):
@@ -170,10 +220,13 @@ def audit_file(filename):
 
     findings = []
     seen = set()
-    for variable, key, has_default, line in visitor.gets:
-        state_file = visitor.bindings.get(variable)
-        if not state_file:
+    for variable, key, has_default, default_node, line in visitor.gets:
+        # Phép gán gần nhất phía TRÊN lời gọi này.
+        candidates = [(at, name) for at, name in visitor.bindings.get(variable, [])
+                      if at <= line]
+        if not candidates:
             continue
+        state_file = max(candidates)[1]
         signature = (filename, state_file, key)
         if signature in seen:
             continue
@@ -192,7 +245,7 @@ def audit_file(filename):
             findings.append({'level': 'OK', 'file': filename, 'line': line,
                              'state': state_file,
                              'field': '%s.%s' % (variable, key), 'detail': ''})
-        elif has_default and key not in BENIGN_DEFAULTS:
+        elif has_default and key not in BENIGN_DEFAULTS                 and not declares_absence(default_node):
             # Đây là lớp lỗi đang săn: khoá không tồn tại, và một giá trị mặc
             # định đang thế chỗ nó mà không ai biết.
             findings.append({'level': 'FABRICATED', 'file': filename, 'line': line,
