@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "generated_at": "2026-09-13T19:32:40.187249",
+  "version": "2.0.0",
+  "generated_at": "2026-09-13T21:26:16.546867",
   "tools_registered": 99,
   "tools_in_source": 99,
   "tools_not_registered": [],
@@ -12,11 +12,30 @@
       "error": "",
       "reason": null
     },
+    "account_in_administrators": {
+      "readable": true,
+      "value": "True",
+      "error": "",
+      "reason": null
+    },
+    "integrity_level": {
+      "readable": true,
+      "value": "Mandatory Label\\Medium Mandatory Level",
+      "error": "",
+      "reason": null
+    },
+    "event_log_readers": {
+      "readable": true,
+      "value": "",
+      "error": "",
+      "reason": null
+    },
     "security_log": {
       "readable": false,
       "value": "",
       "error": "Attempted to perform an unauthorized operation.",
-      "reason": "ACCESS_DENIED"
+      "reason": "ACCESS_DENIED",
+      "log_state": "unknown"
     },
     "security_4688": {
       "readable": false,
@@ -44,15 +63,21 @@
     },
     "event_log_system": {
       "readable": true,
-      "value": "1796",
+      "value": "7045",
       "error": "",
-      "reason": null
+      "reason": null,
+      "log_enabled": true,
+      "log_records": "45840",
+      "log_state": "enabled"
     },
     "event_log_application": {
       "readable": true,
-      "value": "257",
+      "value": "16384",
       "error": "",
-      "reason": null
+      "reason": null,
+      "log_enabled": true,
+      "log_records": "36207",
+      "log_state": "enabled"
     },
     "event_log_powershell": {
       "readable": true,
@@ -64,7 +89,10 @@
       "readable": true,
       "value": "4104",
       "error": "",
-      "reason": null
+      "reason": null,
+      "log_enabled": true,
+      "log_records": "472",
+      "log_state": "enabled"
     },
     "defender": {
       "readable": true,
@@ -80,7 +108,7 @@
     },
     "process_table": {
       "readable": true,
-      "value": "457",
+      "value": "459",
       "error": "",
       "reason": null
     },
@@ -104,7 +132,7 @@
     },
     "network_stack": {
       "readable": true,
-      "value": "213",
+      "value": "280",
       "error": "",
       "reason": null
     },
@@ -119,17 +147,166 @@
       "value": "",
       "error": "Error 0x00000522 occurred:",
       "reason": "ACCESS_DENIED"
+    },
+    "script_block_policy": {
+      "readable": true,
+      "value": "absent",
+      "error": "",
+      "reason": null
+    },
+    "module_logging_policy": {
+      "readable": true,
+      "value": "absent",
+      "error": "",
+      "reason": null
+    },
+    "process_cmdline_policy": {
+      "readable": true,
+      "value": "1",
+      "error": "",
+      "reason": null
+    },
+    "rdp_session_log": {
+      "readable": true,
+      "value": "59",
+      "error": "",
+      "reason": null,
+      "log_enabled": true,
+      "log_records": "1514",
+      "log_state": "enabled"
+    },
+    "ntlm_log": {
+      "readable": true,
+      "value": "4023",
+      "error": "",
+      "reason": null,
+      "log_enabled": true,
+      "log_records": "197",
+      "log_state": "enabled"
+    },
+    "winrm_log": {
+      "readable": true,
+      "value": "142",
+      "error": "",
+      "reason": null,
+      "log_enabled": true,
+      "log_records": "1642",
+      "log_state": "enabled"
+    },
+    "task_scheduler_log": {
+      "readable": false,
+      "value": "",
+      "error": "",
+      "reason": "DISABLED",
+      "log_name": "Microsoft-Windows-TaskScheduler/Operational",
+      "log_enabled": false,
+      "log_records": "",
+      "log_state": "disabled",
+      "probe_only_state": true
+    },
+    "usb_driver_log": {
+      "readable": false,
+      "value": "",
+      "error": "",
+      "reason": "DISABLED",
+      "log_name": "Microsoft-Windows-DriverFrameworks-UserMode/Operational",
+      "log_enabled": false,
+      "log_records": "",
+      "log_state": "disabled",
+      "probe_only_state": true
     }
   },
   "event_4688": {
     "event_id": 4688,
     "observable": false,
     "status": "ACCESS_DENIED",
-    "reason": "Kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c log Security: \"Attempted to perform an unauthorized operation.\". Log Security \u0111\u00f2i quy\u1ec1n Administrator, n\u00ean ch\u01b0a th\u1ec3 bi\u1ebft audit 4688 b\u1eadt hay t\u1eaft.",
-    "remediation": "Ch\u1ea1y pipeline d\u01b0\u1edbi quy\u1ec1n Administrator, r\u1ed3i ki\u1ec3m tra l\u1ea1i; n\u1ebfu v\u1eabn tr\u1ed1ng th\u00ec b\u1eadt audit \"Process Creation\".",
+    "reason": "Kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c log Security: \"Attempted to perform an unauthorized operation.\". T\u00e0i kho\u1ea3n C\u00d3 trong nh\u00f3m Administrators nh\u01b0ng ti\u1ebfn tr\u00ecnh ch\u01b0a n\u00e2ng quy\u1ec1n (Mandatory Label\\Medium Mandatory Level). UAC l\u1ecdc token th\u00e0nh \"deny only\", n\u00ean quy\u1ec1n c\u00f3 m\u00e0 kh\u00f4ng d\u00f9ng \u0111\u01b0\u1ee3c. V\u00ec log kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c n\u00ean ch\u01b0a th\u1ec3 bi\u1ebft audit 4688 b\u1eadt hay t\u1eaft.",
+    "remediation": "Ch\u1ea1y `scripts/enable_security_log_access.ps1` M\u1ed8T L\u1ea6N d\u01b0\u1edbi quy\u1ec1n Administrator. N\u00f3 th\u00eam t\u00e0i kho\u1ea3n v\u00e0o nh\u00f3m \"Event Log Readers\" \u2014 sau \u0111\u00f3 m\u1ecdi l\u1ea7n ch\u1ea1y pipeline b\u00ecnh th\u01b0\u1eddng (kh\u00f4ng n\u00e2ng quy\u1ec1n) \u0111\u1ec1u \u0111\u1ecdc \u0111\u01b0\u1ee3c log Security.",
+    "fixable_here": true,
+    "situation": "HAS_RIGHTS_NOT_ELEVATED",
     "is_admin": false,
     "trap": "Truy v\u1ea5n l\u1ecdc theo Id tr\u00ean log n\u00e0y tr\u1ea3 v\u1ec1 \"No events were found\" thay v\u00ec b\u00e1o t\u1eeb ch\u1ed1i quy\u1ec1n \u2014 m\u1ecdi tool d\u1ef1a v\u00e0o \u0111\u00f3 s\u1ebd tr\u00f4ng nh\u01b0 \"s\u1ea1ch\" trong khi th\u1ef1c ra \u0111ang m\u00f9."
   },
+  "access_diagnosis": {
+    "can_fix": true,
+    "situation": "HAS_RIGHTS_NOT_ELEVATED",
+    "reason": "T\u00e0i kho\u1ea3n C\u00d3 trong nh\u00f3m Administrators nh\u01b0ng ti\u1ebfn tr\u00ecnh ch\u01b0a n\u00e2ng quy\u1ec1n (Mandatory Label\\Medium Mandatory Level). UAC l\u1ecdc token th\u00e0nh \"deny only\", n\u00ean quy\u1ec1n c\u00f3 m\u00e0 kh\u00f4ng d\u00f9ng \u0111\u01b0\u1ee3c.",
+    "action": "Ch\u1ea1y `scripts/enable_security_log_access.ps1` M\u1ed8T L\u1ea6N d\u01b0\u1edbi quy\u1ec1n Administrator. N\u00f3 th\u00eam t\u00e0i kho\u1ea3n v\u00e0o nh\u00f3m \"Event Log Readers\" \u2014 sau \u0111\u00f3 m\u1ecdi l\u1ea7n ch\u1ea1y pipeline b\u00ecnh th\u01b0\u1eddng (kh\u00f4ng n\u00e2ng quy\u1ec1n) \u0111\u1ec1u \u0111\u1ecdc \u0111\u01b0\u1ee3c log Security.",
+    "event_log_readers_members": "(tr\u1ed1ng)",
+    "note": "N\u00e2ng quy\u1ec1n ch\u1ec9 s\u1eeda cho m\u1ed9t l\u1ea7n ch\u1ea1y. Th\u00e0nh vi\u00ean nh\u00f3m s\u1eeda v\u0129nh vi\u1ec5n \u2014 v\u00e0 pipeline ch\u1ea1y theo l\u1ecbch th\u00ec kh\u00f4ng ai b\u1ea5m UAC \u0111\u01b0\u1ee3c."
+  },
+  "fallback_sources": [
+    {
+      "probe": "rdp_session_log",
+      "log": "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational",
+      "readable": true,
+      "records": "1514",
+      "covers": "Phi\u00ean RDP: \u0111\u0103ng nh\u1eadp, \u0111\u0103ng xu\u1ea5t, k\u1ebft n\u1ed1i l\u1ea1i (ID 21/22/23/24/25/39/40)",
+      "used_by": [
+        "rdpLogs",
+        "huntRemoteDesktop"
+      ]
+    },
+    {
+      "probe": "ntlm_log",
+      "log": "Microsoft-Windows-NTLM/Operational",
+      "readable": true,
+      "records": "197",
+      "covers": "X\u00e1c th\u1ef1c NTLM \u0111i v\u00e0 \u0111\u1ebfn \u2014 t\u00edn hi\u1ec7u di chuy\u1ec3n ngang",
+      "used_by": [
+        "huntLateralMovement"
+      ]
+    },
+    {
+      "probe": "winrm_log",
+      "log": "Microsoft-Windows-WinRM/Operational",
+      "readable": true,
+      "records": "1642",
+      "covers": "Th\u1ef1c thi t\u1eeb xa qua WinRM/PowerShell Remoting",
+      "used_by": [
+        "huntLateralMovement"
+      ]
+    },
+    {
+      "probe": "event_log_ps_operational",
+      "log": "Microsoft-Windows-PowerShell/Operational",
+      "readable": true,
+      "records": "472",
+      "covers": "Script block logging (4104): n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y \u2014 che \u0111\u01b0\u1ee3c ph\u1ea7n PowerShell c\u1ee7a v\u00f9ng m\u00f9 4688, kh\u00f4ng che ph\u1ea7n c\u00f2n l\u1ea1i",
+      "used_by": [
+        "huntEncodedPowerShell"
+      ]
+    }
+  ],
+  "detection_capabilities": [
+    {
+      "key": "security_log",
+      "label": "Security Log",
+      "detail": "Log Security th\u00f4 \u2014 n\u1ec1n c\u1ee7a m\u1ecdi th\u1ee9 d\u01b0\u1edbi \u0111\u00e2y",
+      "status": "blind",
+      "reason": "Kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c log Security (ACCESS_DENIED). T\u00e0i kho\u1ea3n C\u00d3 trong nh\u00f3m Administrators nh\u01b0ng ti\u1ebfn tr\u00ecnh ch\u01b0a n\u00e2ng quy\u1ec1n (Mandatory Label\\Medium Mandatory Level). UAC l\u1ecdc token th\u00e0nh \"deny only\", n\u00ean quy\u1ec1n c\u00f3 m\u00e0 kh\u00f4ng d\u00f9ng \u0111\u01b0\u1ee3c.",
+      "action": "Ch\u1ea1y `scripts/enable_security_log_access.ps1` M\u1ed8T L\u1ea6N d\u01b0\u1edbi quy\u1ec1n Administrator. N\u00f3 th\u00eam t\u00e0i kho\u1ea3n v\u00e0o nh\u00f3m \"Event Log Readers\" \u2014 sau \u0111\u00f3 m\u1ecdi l\u1ea7n ch\u1ea1y pipeline b\u00ecnh th\u01b0\u1eddng (kh\u00f4ng n\u00e2ng quy\u1ec1n) \u0111\u1ec1u \u0111\u1ecdc \u0111\u01b0\u1ee3c log Security.",
+      "fixable_here": true
+    },
+    {
+      "key": "process_creation",
+      "label": "Process Creation",
+      "detail": "Event ID 4688 + d\u00f2ng l\u1ec7nh",
+      "status": "blind",
+      "reason": "Log Security kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c, n\u00ean ch\u01b0a th\u1ec3 bi\u1ebft audit \"Process Creation\" b\u1eadt hay t\u1eaft. Truy v\u1ea5n l\u1ecdc Id=4688 tr\u1ea3 v\u1ec1 \"No events were found\" \u2014 \u0111\u00f3 l\u00e0 t\u1eeb ch\u1ed1i quy\u1ec1n \u0111\u1ed9i l\u1ed1t b\u1eb1ng ch\u1ee9ng v\u1eafng m\u1eb7t.",
+      "action": "Ch\u1ea1y `scripts/enable_security_log_access.ps1` M\u1ed8T L\u1ea6N d\u01b0\u1edbi quy\u1ec1n Administrator. N\u00f3 th\u00eam t\u00e0i kho\u1ea3n v\u00e0o nh\u00f3m \"Event Log Readers\" \u2014 sau \u0111\u00f3 m\u1ecdi l\u1ea7n ch\u1ea1y pipeline b\u00ecnh th\u01b0\u1eddng (kh\u00f4ng n\u00e2ng quy\u1ec1n) \u0111\u1ec1u \u0111\u1ecdc \u0111\u01b0\u1ee3c log Security.",
+      "fixable_here": true
+    },
+    {
+      "key": "script_block_logging",
+      "label": "Script Block Logging",
+      "detail": "Event ID 4104 \u2014 n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y",
+      "status": "partial",
+      "reason": "C\u00f3 s\u1ef1 ki\u1ec7n 4104 nh\u01b0ng ch\u00ednh s\u00e1ch Script Block Logging \u0111ang T\u1eaeT. PowerShell ch\u1ec9 t\u1ef1 ghi nh\u1eefng kh\u1ed1i l\u1ec7nh n\u00f3 cho l\u00e0 \u0111\u00e1ng ng\u1edd \u2014 ph\u1ea7n c\u00f2n l\u1ea1i kh\u00f4ng \u0111\u01b0\u1ee3c ghi. Th\u1ea5y b\u1ea3n ghi \u1edf \u0111\u00e2y KH\u00d4NG c\u00f3 ngh\u0129a l\u00e0 \u0111ang ghi \u0111\u1ea7y \u0111\u1ee7.",
+      "action": "B\u1eadt EnableScriptBlockLogging t\u1ea1i HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging (c\u1ea7n Administrator).",
+      "module_logging": false
+    }
+  ],
   "results": [
     {
       "tool": "whoami",
@@ -140,7 +317,9 @@
       "evidence_count": 1,
       "duration": 0.23,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "hostname",
@@ -151,7 +330,9 @@
       "evidence_count": 1,
       "duration": 0.23,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "systemInfo",
@@ -160,9 +341,11 @@
       "sensor": "host",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.8,
+      "duration": 0.75,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "localUsers",
@@ -171,9 +354,11 @@
       "sensor": "host",
       "status": "PASS",
       "evidence_count": 6,
-      "duration": 0.34,
+      "duration": 0.35,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "localAdmins",
@@ -182,9 +367,11 @@
       "sensor": "host",
       "status": "PASS",
       "evidence_count": 2,
-      "duration": 0.34,
+      "duration": 0.35,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "installedSoftware",
@@ -195,7 +382,9 @@
       "evidence_count": 50,
       "duration": 0.42,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "sharedFolders",
@@ -206,7 +395,9 @@
       "evidence_count": 3,
       "duration": 0.68,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "environmentVars",
@@ -215,9 +406,11 @@
       "sensor": "host",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.58,
+      "duration": 0.67,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 3,
+      "variants_failed": []
     },
     {
       "tool": "userProfiles",
@@ -226,9 +419,11 @@
       "sensor": "host",
       "status": "PASS",
       "evidence_count": 2,
-      "duration": 0.31,
+      "duration": 0.32,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "loggedOnUsers",
@@ -239,7 +434,9 @@
       "evidence_count": 1,
       "duration": 0.66,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "ipconfig",
@@ -248,9 +445,11 @@
       "sensor": "network",
       "status": "PASS",
       "evidence_count": 20,
-      "duration": 0.06,
+      "duration": 0.04,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "netstat",
@@ -258,10 +457,12 @@
       "script_style": "cmd",
       "sensor": "network",
       "status": "PASS",
-      "evidence_count": 212,
+      "evidence_count": 240,
       "duration": 0.05,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 3,
+      "variants_failed": []
     },
     {
       "tool": "arp",
@@ -269,10 +470,12 @@
       "script_style": "cmd",
       "sensor": "network",
       "status": "PASS",
-      "evidence_count": 11,
+      "evidence_count": 12,
       "duration": 0.05,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "routePrint",
@@ -281,9 +484,11 @@
       "sensor": "network",
       "status": "PASS",
       "evidence_count": 47,
-      "duration": 0.14,
+      "duration": 0.07,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "dnsCache",
@@ -291,10 +496,12 @@
       "script_style": "cmd",
       "sensor": "network",
       "status": "PASS",
-      "evidence_count": 182,
+      "evidence_count": 100,
       "duration": 0.05,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 2,
+      "variants_failed": []
     },
     {
       "tool": "ping",
@@ -303,12 +510,14 @@
       "sensor": "network",
       "status": "PASS",
       "evidence_count": 6,
-      "duration": 0.05,
+      "duration": 0.08,
       "args_used": {
         "host": "127.0.0.1",
         "count": 1
       },
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "tracert",
@@ -317,11 +526,13 @@
       "sensor": "network",
       "status": "PASS",
       "evidence_count": 4,
-      "duration": 0.04,
+      "duration": 0.06,
       "args_used": {
         "host": "127.0.0.1"
       },
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "nslookup",
@@ -330,11 +541,13 @@
       "sensor": "network",
       "status": "PASS",
       "evidence_count": 5,
-      "duration": 0.09,
+      "duration": 0.1,
       "args_used": {
         "host": "localhost"
       },
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "scanPort",
@@ -343,12 +556,14 @@
       "sensor": "network",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 6.96,
+      "duration": 6.86,
       "args_used": {
         "host": "127.0.0.1",
         "port": 135
       },
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "activeConnections",
@@ -356,10 +571,12 @@
       "script_style": "multiline",
       "sensor": "network",
       "status": "PASS",
-      "evidence_count": 80,
-      "duration": 1.52,
+      "evidence_count": 100,
+      "duration": 1.8,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "tasklist",
@@ -367,10 +584,12 @@
       "script_style": "cmd",
       "sensor": "processes",
       "status": "PASS",
-      "evidence_count": 462,
-      "duration": 0.52,
+      "evidence_count": 464,
+      "duration": 0.48,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "processMonitor",
@@ -379,9 +598,11 @@
       "sensor": "processes",
       "status": "PASS",
       "evidence_count": 20,
-      "duration": 0.42,
+      "duration": 0.4,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "processDetails",
@@ -390,11 +611,13 @@
       "sensor": "processes",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 3.12,
+      "duration": 2.95,
       "args_used": {
         "processId": 4
       },
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "processTree",
@@ -402,10 +625,12 @@
       "script_style": "inline",
       "sensor": "processes",
       "status": "PASS",
-      "evidence_count": 459,
-      "duration": 0.86,
+      "evidence_count": 461,
+      "duration": 0.8,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "processByPid",
@@ -414,11 +639,13 @@
       "sensor": "processes",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.7,
+      "duration": 0.69,
       "args_used": {
         "pid": 4
       },
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "runningProcesses",
@@ -427,9 +654,11 @@
       "sensor": "processes",
       "status": "PASS",
       "evidence_count": 50,
-      "duration": 0.35,
+      "duration": 0.34,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "cpuUsage",
@@ -440,7 +669,9 @@
       "evidence_count": 10,
       "duration": 0.35,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "memoryUsage",
@@ -451,7 +682,9 @@
       "evidence_count": 10,
       "duration": 0.33,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "topProcesses",
@@ -460,9 +693,11 @@
       "sensor": "processes",
       "status": "PASS",
       "evidence_count": 10,
-      "duration": 0.33,
+      "duration": 0.32,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 4,
+      "variants_failed": []
     },
     {
       "tool": "suspiciousProcesses",
@@ -470,10 +705,12 @@
       "script_style": "inline",
       "sensor": "processes",
       "status": "PASS",
-      "evidence_count": 97,
-      "duration": 0.37,
+      "evidence_count": 96,
+      "duration": 0.39,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "servicesChecker",
@@ -484,7 +721,9 @@
       "evidence_count": 312,
       "duration": 0.43,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "runningServices",
@@ -493,9 +732,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 143,
-      "duration": 0.37,
+      "duration": 0.39,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "stoppedServices",
@@ -504,9 +745,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 169,
-      "duration": 0.39,
+      "duration": 0.37,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "autoStartServices",
@@ -515,9 +758,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 107,
-      "duration": 0.41,
+      "duration": 0.43,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "disabledServices",
@@ -526,9 +771,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 6,
-      "duration": 0.38,
+      "duration": 0.41,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "eventLogs",
@@ -542,7 +789,9 @@
         "logName": "System",
         "count": 10
       },
-      "note": null
+      "note": null,
+      "variants_tested": 3,
+      "variants_failed": []
     },
     {
       "tool": "securityLogs",
@@ -551,9 +800,11 @@
       "sensor": "security_log",
       "status": "BLIND",
       "evidence_count": 0,
-      "duration": 0.37,
+      "duration": 0.36,
       "args_used": {},
-      "note": "security_log: ACCESS_DENIED"
+      "note": "security_log: ACCESS_DENIED",
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "systemLogs",
@@ -562,9 +813,11 @@
       "sensor": "event_logs",
       "status": "PASS",
       "evidence_count": 100,
-      "duration": 0.38,
+      "duration": 0.37,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "applicationLogs",
@@ -573,9 +826,11 @@
       "sensor": "event_logs",
       "status": "PASS",
       "evidence_count": 100,
-      "duration": 0.45,
+      "duration": 0.47,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "failedLogons",
@@ -584,9 +839,11 @@
       "sensor": "security_log",
       "status": "BLIND",
       "evidence_count": 0,
-      "duration": 0.3,
+      "duration": 0.31,
       "args_used": {},
-      "note": "security_log: ACCESS_DENIED"
+      "note": "security_log: ACCESS_DENIED",
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "successfulLogons",
@@ -595,9 +852,11 @@
       "sensor": "security_log",
       "status": "BLIND",
       "evidence_count": 0,
-      "duration": 0.34,
+      "duration": 0.32,
       "args_used": {},
-      "note": "security_log: ACCESS_DENIED"
+      "note": "security_log: ACCESS_DENIED",
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "powershellLogs",
@@ -606,20 +865,24 @@
       "sensor": "event_logs",
       "status": "PASS",
       "evidence_count": 100,
-      "duration": 0.46,
+      "duration": 0.47,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "rdpLogs",
       "module": "eventlogs.js",
-      "script_style": "inline",
+      "script_style": "multiline",
       "sensor": "security_log",
-      "status": "BLIND",
-      "evidence_count": 0,
-      "duration": 0.3,
+      "status": "PASS",
+      "evidence_count": 23,
+      "duration": 0.38,
       "args_used": {},
-      "note": "security_log: ACCESS_DENIED"
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "usbLogs",
@@ -630,7 +893,9 @@
       "evidence_count": 0,
       "duration": 0.4,
       "args_used": {},
-      "note": "ngu\u1ed3n \u0111\u1ecdc \u0111\u01b0\u1ee3c, kh\u00f4ng c\u00f3 b\u1ea3n ghi n\u00e0o kh\u1edbp"
+      "note": "ngu\u1ed3n \u0111\u1ecdc \u0111\u01b0\u1ee3c, kh\u00f4ng c\u00f3 b\u1ea3n ghi n\u00e0o kh\u1edbp",
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "serviceLogs",
@@ -639,9 +904,11 @@
       "sensor": "event_logs",
       "status": "PASS",
       "evidence_count": 50,
-      "duration": 0.36,
+      "duration": 0.38,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "firewallStatus",
@@ -650,9 +917,11 @@
       "sensor": "firewall",
       "status": "PASS",
       "evidence_count": 3,
-      "duration": 0.86,
+      "duration": 0.91,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "firewallRules",
@@ -661,9 +930,11 @@
       "sensor": "firewall",
       "status": "PASS",
       "evidence_count": 100,
-      "duration": 1.92,
+      "duration": 1.93,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "inboundRules",
@@ -672,9 +943,11 @@
       "sensor": "firewall",
       "status": "PASS",
       "evidence_count": 50,
-      "duration": 1.77,
+      "duration": 1.76,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "outboundRules",
@@ -683,9 +956,11 @@
       "sensor": "firewall",
       "status": "PASS",
       "evidence_count": 50,
-      "duration": 1.73,
+      "duration": 1.85,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "disabledFirewallRules",
@@ -694,9 +969,11 @@
       "sensor": "firewall",
       "status": "PASS",
       "evidence_count": 50,
-      "duration": 1.8,
+      "duration": 1.83,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "defenderStatus",
@@ -705,9 +982,11 @@
       "sensor": "defender",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.81,
+      "duration": 0.79,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "defenderThreats",
@@ -716,9 +995,11 @@
       "sensor": "defender",
       "status": "PASS",
       "evidence_count": 2,
-      "duration": 0.72,
+      "duration": 0.73,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "defenderHistory",
@@ -727,9 +1008,11 @@
       "sensor": "defender",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.76,
+      "duration": 0.79,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "defenderExclusions",
@@ -738,9 +1021,11 @@
       "sensor": "defender",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 1.21,
+      "duration": 1.05,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "defenderQuickScan",
@@ -749,9 +1034,11 @@
       "sensor": "defender",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.79,
+      "duration": 0.8,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "startupPrograms",
@@ -760,9 +1047,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 23,
-      "duration": 0.52,
+      "duration": 0.38,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "startupFolders",
@@ -771,9 +1060,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 5,
-      "duration": 0.34,
+      "duration": 0.32,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "scheduledTasks",
@@ -782,9 +1073,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 100,
-      "duration": 1.13,
+      "duration": 1.28,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "registryRunKeys",
@@ -793,9 +1086,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 16,
-      "duration": 0.32,
+      "duration": 0.34,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "registryRunOnce",
@@ -804,9 +1099,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.34,
+      "duration": 0.33,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "wmiPersistence",
@@ -815,9 +1112,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.32,
+      "duration": 0.39,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "servicePersistence",
@@ -825,10 +1124,12 @@
       "script_style": "multiline",
       "sensor": "persistence",
       "status": "PASS",
-      "evidence_count": 97,
-      "duration": 0.42,
+      "evidence_count": 96,
+      "duration": 0.41,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "browserPersistence",
@@ -837,9 +1138,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.33,
+      "duration": 0.34,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "dllHijackLocations",
@@ -850,7 +1153,9 @@
       "evidence_count": 1,
       "duration": 0.32,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "persistenceAudit",
@@ -859,9 +1164,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 1.89,
+      "duration": 1.75,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "checkHash",
@@ -870,11 +1177,13 @@
       "sensor": "ioc",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.38,
+      "duration": 0.39,
       "args_used": {
         "path": "C:\\GitHub\\mcp-cyber-tools\\package.json"
       },
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "readLogFile",
@@ -888,7 +1197,9 @@
         "path": "C:\\GitHub\\mcp-cyber-tools\\package.json",
         "lines": 5
       },
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "fileMetadata",
@@ -897,11 +1208,13 @@
       "sensor": "ioc",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.33,
+      "duration": 0.36,
       "args_used": {
         "path": "C:\\GitHub\\mcp-cyber-tools\\package.json"
       },
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "recentFiles",
@@ -912,7 +1225,9 @@
       "evidence_count": 50,
       "duration": 0.32,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "downloadsFolder",
@@ -923,7 +1238,9 @@
       "evidence_count": 2,
       "duration": 0.31,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "desktopFiles",
@@ -932,9 +1249,11 @@
       "sensor": "ioc",
       "status": "PASS",
       "evidence_count": 2306,
-      "duration": 0.78,
+      "duration": 0.8,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "tempFiles",
@@ -943,9 +1262,11 @@
       "sensor": "ioc",
       "status": "PASS",
       "evidence_count": 50,
-      "duration": 0.54,
+      "duration": 0.55,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "recycleBin",
@@ -954,9 +1275,11 @@
       "sensor": "ioc",
       "status": "PASS",
       "evidence_count": 50,
-      "duration": 0.35,
+      "duration": 0.36,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "alternateDataStreams",
@@ -965,9 +1288,11 @@
       "sensor": "ioc",
       "status": "EMPTY",
       "evidence_count": 0,
-      "duration": 0.29,
+      "duration": 0.32,
       "args_used": {},
-      "note": "ngu\u1ed3n \u0111\u1ecdc \u0111\u01b0\u1ee3c, kh\u00f4ng c\u00f3 b\u1ea3n ghi n\u00e0o kh\u1edbp"
+      "note": "ngu\u1ed3n \u0111\u1ecdc \u0111\u01b0\u1ee3c, kh\u00f4ng c\u00f3 b\u1ea3n ghi n\u00e0o kh\u1edbp",
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "suspiciousExecutables",
@@ -978,7 +1303,9 @@
       "evidence_count": 0,
       "duration": 0.31,
       "args_used": {},
-      "note": "ngu\u1ed3n \u0111\u1ecdc \u0111\u01b0\u1ee3c, kh\u00f4ng c\u00f3 b\u1ea3n ghi n\u00e0o kh\u1edbp"
+      "note": "ngu\u1ed3n \u0111\u1ecdc \u0111\u01b0\u1ee3c, kh\u00f4ng c\u00f3 b\u1ea3n ghi n\u00e0o kh\u1edbp",
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntEncodedPowerShell",
@@ -987,9 +1314,11 @@
       "sensor": "event_logs",
       "status": "PASS",
       "evidence_count": 100,
-      "duration": 0.68,
+      "duration": 0.7,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntPersistence",
@@ -998,9 +1327,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 56,
-      "duration": 1.69,
+      "duration": 1.91,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntSuspiciousServices",
@@ -1009,9 +1340,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 21,
-      "duration": 1.02,
+      "duration": 0.92,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntSuspiciousTasks",
@@ -1020,9 +1353,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 40,
-      "duration": 1.77,
+      "duration": 1.65,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntCredentialDumping",
@@ -1031,31 +1366,37 @@
       "sensor": "security_log",
       "status": "BLIND",
       "evidence_count": 0,
-      "duration": 0.5,
+      "duration": 0.55,
       "args_used": {},
-      "note": "security_log: ACCESS_DENIED"
+      "note": "security_log: ACCESS_DENIED",
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntLateralMovement",
       "module": "hunting.js",
       "script_style": "multiline_indirect",
       "sensor": "security_log",
-      "status": "BLIND",
-      "evidence_count": 0,
-      "duration": 0.32,
+      "status": "PASS",
+      "evidence_count": 197,
+      "duration": 0.56,
       "args_used": {},
-      "note": "security_log: ACCESS_DENIED"
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntRemoteDesktop",
       "module": "hunting.js",
       "script_style": "multiline_indirect",
       "sensor": "security_log",
-      "status": "BLIND",
-      "evidence_count": 0,
-      "duration": 0.3,
+      "status": "PASS",
+      "evidence_count": 23,
+      "duration": 0.36,
       "args_used": {},
-      "note": "security_log: ACCESS_DENIED"
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntNetworkBeacons",
@@ -1063,10 +1404,12 @@
       "script_style": "multiline_indirect",
       "sensor": "network",
       "status": "PASS",
-      "evidence_count": 56,
-      "duration": 1.44,
+      "evidence_count": 67,
+      "duration": 1.55,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntLivingOffTheLand",
@@ -1075,9 +1418,11 @@
       "sensor": "processes",
       "status": "PASS",
       "evidence_count": 8,
-      "duration": 0.36,
+      "duration": 0.35,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "huntIndicators",
@@ -1086,9 +1431,11 @@
       "sensor": "ioc",
       "status": "EMPTY",
       "evidence_count": 0,
-      "duration": 0.96,
+      "duration": 0.91,
       "args_used": {},
-      "note": "ngu\u1ed3n \u0111\u1ecdc \u0111\u01b0\u1ee3c, kh\u00f4ng c\u00f3 b\u1ea3n ghi n\u00e0o kh\u1edbp"
+      "note": "ngu\u1ed3n \u0111\u1ecdc \u0111\u01b0\u1ee3c, kh\u00f4ng c\u00f3 b\u1ea3n ghi n\u00e0o kh\u1edbp",
+      "variants_tested": 3,
+      "variants_failed": []
     },
     {
       "tool": "collectEvidence",
@@ -1097,11 +1444,13 @@
       "sensor": "composite",
       "status": "EMPTY",
       "evidence_count": 0,
-      "duration": 1.47,
+      "duration": 1.49,
       "args_used": {
         "incidentId": "VALIDATION-PROBE"
       },
-      "note": "Ghi file b\u00e1o c\u00e1o r\u1ed3i ch\u1ec9 tr\u1ea3 v\u1ec1 \u0111\u01b0\u1eddng d\u1eabn"
+      "note": "Ghi file b\u00e1o c\u00e1o r\u1ed3i ch\u1ec9 tr\u1ea3 v\u1ec1 \u0111\u01b0\u1eddng d\u1eabn",
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "collectProcesses",
@@ -1110,9 +1459,11 @@
       "sensor": "processes",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.48,
+      "duration": 0.47,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "collectServices",
@@ -1121,9 +1472,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.38,
+      "duration": 0.4,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "collectNetworkState",
@@ -1132,9 +1485,11 @@
       "sensor": "network",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 1.0,
+      "duration": 1.02,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "collectStartupItems",
@@ -1143,9 +1498,11 @@
       "sensor": "persistence",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 1.81,
+      "duration": 1.56,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "collectFirewall",
@@ -1154,9 +1511,11 @@
       "sensor": "firewall",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.88,
+      "duration": 0.89,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "collectDefender",
@@ -1165,9 +1524,11 @@
       "sensor": "defender",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 1.01,
+      "duration": 0.92,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "collectLogs",
@@ -1176,9 +1537,11 @@
       "sensor": "security_log",
       "status": "BLIND",
       "evidence_count": 0,
-      "duration": 0.36,
+      "duration": 0.37,
       "args_used": {},
-      "note": "security_log: ACCESS_DENIED"
+      "note": "security_log: ACCESS_DENIED",
+      "variants_tested": 3,
+      "variants_failed": []
     },
     {
       "tool": "timeline",
@@ -1187,11 +1550,13 @@
       "sensor": "security_log",
       "status": "EMPTY",
       "evidence_count": 0,
-      "duration": 5.01,
+      "duration": 4.91,
       "args_used": {
         "days": 1
       },
-      "note": "Ghi file b\u00e1o c\u00e1o r\u1ed3i ch\u1ec9 tr\u1ea3 v\u1ec1 \u0111\u01b0\u1eddng d\u1eabn"
+      "note": "Ghi file b\u00e1o c\u00e1o r\u1ed3i ch\u1ec9 tr\u1ea3 v\u1ec1 \u0111\u01b0\u1eddng d\u1eabn",
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "securityAudit",
@@ -1204,7 +1569,9 @@
       "args_used": {
         "auditType": "quick"
       },
-      "note": "Tr\u1ea3 v\u1ec1 checklist t\u0129nh vi\u1ebft c\u1ee9ng trong m\u00e3, kh\u00f4ng quan s\u00e1t g\u00ec"
+      "note": "Tr\u1ea3 v\u1ec1 checklist t\u0129nh vi\u1ebft c\u1ee9ng trong m\u00e3, kh\u00f4ng quan s\u00e1t g\u00ec",
+      "variants_tested": 1,
+      "variants_failed": []
     },
     {
       "tool": "get_security_score",
@@ -1213,9 +1580,11 @@
       "sensor": "internal_state",
       "status": "PASS",
       "evidence_count": 1,
-      "duration": 0.18,
+      "duration": 0.19,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     },
     {
       "tool": "get_daily_brief",
@@ -1226,7 +1595,9 @@
       "evidence_count": 9,
       "duration": 0.16,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 2,
+      "variants_failed": []
     },
     {
       "tool": "get_recent_incidents",
@@ -1237,7 +1608,9 @@
       "evidence_count": 1,
       "duration": 0.16,
       "args_used": {},
-      "note": null
+      "note": null,
+      "variants_tested": 3,
+      "variants_failed": []
     },
     {
       "tool": "get_asset_status",
@@ -1250,15 +1623,19 @@
       "args_used": {
         "source": "defender_status"
       },
-      "note": null
+      "note": null,
+      "variants_tested": 0,
+      "variants_failed": []
     }
   ],
   "summary": {
-    "PASS": 84,
+    "PASS": 87,
     "EMPTY": 7,
-    "BLIND": 8,
+    "BLIND": 5,
     "FAIL": 0,
     "total": 99,
-    "evidence_records": 6118
+    "evidence_records": 6341,
+    "variants_tested": 55,
+    "tools_with_param_defects": 0
   }
 }

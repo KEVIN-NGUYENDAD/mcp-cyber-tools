@@ -25,6 +25,48 @@ exit 0
 `;
 }
 
+/**
+ * Nguồn thay thế cho log Security, đọc được KHÔNG cần nâng quyền.
+ *
+ * Log Security đóng trên máy không nâng quyền, và Sprint 8 để nguyên vùng mù đó.
+ * Nhưng có những log khác ghi một phần cùng sự việc và KHÔNG đòi quyền gì:
+ *
+ *   TerminalServices-LocalSessionManager  phiên RDP: vào, ra, kết nối lại
+ *   NTLM/Operational                      xác thực NTLM đi và đến
+ *   WinRM/Operational                     thực thi từ xa (chỉ ID 81/91/168/169:
+ *                                         phiên và xác thực ĐẾN. Phần còn lại
+ *                                         của log này là máy NÀY thử gọi ra
+ *                                         ngoài và thất bại — đổ hết vào kết
+ *                                         quả săn thì được 200 "chỉ dấu" mà
+ *                                         không cái nào là chỉ dấu)
+ *
+ * Đây KHÔNG phải "đã hết mù". Chúng thấy phiên chứ không thấy chi tiết đăng
+ * nhập; thấy NTLM chứ không thấy Kerberos. Nên mỗi bản ghi phải mang theo
+ * `Source` và `Fallback`: người đọc cần biết bằng chứng này đến từ nguồn thay
+ * thế, để không nhầm nó với độ phủ đầy đủ của log Security.
+ */
+function fromLog(logName, ids, sourceLabel, isFallback = true) {
+  const idFilter = ids && ids.length ? `; Id=${ids.join(",")}` : "";
+  return `
+    Get-WinEvent -FilterHashtable @{LogName='${logName}'${idFilter}} -MaxEvents 200 -ErrorAction SilentlyContinue |
+    ForEach-Object {
+      $msg = [string]$_.Message
+      # Dia chi nguon nam chon trong van ban thong bao. Keo no ra thanh truong
+      # rieng: mot phien co 'LOCAL' la dang nhap tai may, khong phai RDP tu xa.
+      # De nguyen trong prose thi ca hai doc giong nhau trong moi bang tong hop.
+      $addr = if ($msg -match 'Source Network Address:\\s*(\\S+)') { $Matches[1] } else { $null }
+      [PSCustomObject]@{
+        TimeCreated   = $_.TimeCreated
+        Id            = $_.Id
+        Source        = '${sourceLabel}'
+        Fallback      = $${isFallback}
+        RemoteAddress = $addr
+        IsRemote      = ($addr -ne $null -and $addr -ne 'LOCAL')
+        Message       = $msg
+      }
+    }`;
+}
+
 export function registerHuntingTools(server) {
   // 1. HUNTENCODEDPOWERSHELL
   server.tool(
@@ -139,10 +181,26 @@ export function registerHuntingTools(server) {
     "Hunt for lateral movement indicators",
     {},
     async () => {
+      // Log Security là nguồn chính; NTLM và WinRM là nguồn thay thế đọc được
+      // khi tiến trình chưa nâng quyền. Không có nguồn nào thay được nguồn kia:
+      // Security thấy cả Kerberos, NTLM chỉ thấy NTLM. Gộp lại để bớt mù, và
+      // đánh dấu Fallback để không ai nhầm bớt mù với hết mù.
       const result = runPowerShell(jsonOrEmpty(`
-        Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4769,4768} -MaxEvents 500 -ErrorAction SilentlyContinue |
-        Where-Object { $_.Message -match 'Network|3389|445' } |
-        Select-Object TimeCreated, Id, Message
+        @(
+          Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4769,4768} -MaxEvents 500 -ErrorAction SilentlyContinue |
+          Where-Object { $_.Message -match 'Network|3389|445' } |
+          ForEach-Object {
+            [PSCustomObject]@{
+              TimeCreated = $_.TimeCreated
+              Id          = $_.Id
+              Source      = 'Security'
+              Fallback    = $false
+              Message     = ([string]$_.Message)
+            }
+          }
+        ) + @(${fromLog("Microsoft-Windows-NTLM/Operational", [], "NTLM")}
+        ) + @(${fromLog("Microsoft-Windows-WinRM/Operational", [91, 168, 169, 81], "WinRM")}
+        ) | Sort-Object TimeCreated -Descending
       `));
       return formatResponse(result.success, result.data, result.error);
     }
@@ -154,9 +212,26 @@ export function registerHuntingTools(server) {
     "Hunt for RDP activity and anomalies",
     {},
     async () => {
+      // TerminalServices-LocalSessionManager ghi chính các phiên RDP và đọc
+      // được không cần nâng quyền — trên máy này nó có 1514 bản ghi trong khi
+      // log Security cho 0. Nó không thay được 4624/4625 (không có chi tiết
+      // xác thực), nhưng "thấy phiên" hơn hẳn "không thấy gì".
       const result = runPowerShell(jsonOrEmpty(`
-        Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4625,4648,4778,4779} -MaxEvents 100 -ErrorAction SilentlyContinue |
-        Select-Object TimeCreated, Id, Message
+        @(
+          Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4625,4648,4778,4779} -MaxEvents 100 -ErrorAction SilentlyContinue |
+          ForEach-Object {
+            [PSCustomObject]@{
+              TimeCreated = $_.TimeCreated
+              Id          = $_.Id
+              Source      = 'Security'
+              Fallback    = $false
+              Message     = ([string]$_.Message)
+            }
+          }
+        ) + @(${fromLog(
+          "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational",
+          [21, 22, 23, 24, 25, 39, 40], "TerminalServices")}
+        ) | Sort-Object TimeCreated -Descending
       `));
       return formatResponse(result.success, result.data, result.error);
     }

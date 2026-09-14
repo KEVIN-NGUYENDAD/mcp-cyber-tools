@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-TOOL VALIDATOR (Sprint 8: Sensor Visibility & Tool Validation)
+TOOL VALIDATOR (Sprint 8 dung len, Sprint 9 mo rong)
 
 Gọi thật từng tool của MCP server, rồi phán quyết mỗi tool vào một trong bốn ô:
 
@@ -52,7 +52,7 @@ try:
 except ImportError:
     write_state_atomic = None
 
-VERSION = '1.0.0'
+VERSION = '2.0.0'
 CALL_TIMEOUT = 90
 
 STATUS_PASS = 'PASS'
@@ -202,9 +202,10 @@ REPORT_WRITERS = {
 # một món nợ không được ghi sẽ được phát hiện lại từ đầu ở sprint sau.
 # --------------------------------------------------------------------------
 REMAINING_DEBT = [
-    ('Log Security đòi quyền Administrator — 8 tool mù, và không thể biết audit '
-     '4688 bật hay tắt',
-     'Không phải lỗi mã. Phải chạy pipeline dưới quyền Administrator mới trả lời được.'),
+    ('Log Security vẫn đóng — 5 tool còn mù, và chưa thể biết audit 4688 bật hay tắt',
+     'Không phải lỗi mã, và Sprint 9 đã dựng sẵn cách sửa: chạy MỘT LẦN '
+     '`scripts/enable_security_log_access.ps1` dưới quyền Administrator. '
+     'Script sửa hệ thống thì phải do người quyết định chạy, không phải pipeline.'),
     ('`securityAudit` trả về một checklist viết cứng trong mã, không quan sát gì',
      'Viết lại nó là thêm tính năng, nằm ngoài phạm vi sprint kiểm định.'),
     ('`timeline`, `collectEvidence`, `collectLogs` ghi file rồi chỉ trả về đường '
@@ -213,9 +214,21 @@ REMAINING_DEBT = [
     ('`alternateDataStreams` mặc định `-Path "C:\\"` nên chỉ soi đúng một mục, '
      'không bao giờ tìm được ADS ở đâu cả',
      'Cho nó đệ quy toàn ổ đĩa là một thay đổi hành vi nặng về I/O, phải đo trước.'),
-    ('Event 4104 (script block logging) của Microsoft-Windows-PowerShell/Operational '
-     'đọc được nhưng không nguồn nào trong pipeline dùng',
-     'Dùng nó là thêm nguồn phát hiện mới — đúng nghĩa thêm tính năng.'),
+    ('Log `Microsoft-Windows-TaskScheduler/Operational` và '
+     '`Microsoft-Windows-DriverFrameworks-UserMode/Operational` đang TẮT',
+     'Bật chúng là thay đổi cấu hình máy. Cho tới lúc đó, "không có bản ghi nào" '
+     'ở hai nguồn này nghĩa là chưa ai từng ghi, không phải không có gì xảy ra.'),
+    ('Nguồn thay thế chỉ che được MỘT PHẦN vùng mù: TerminalServices thấy phiên '
+     'chứ không thấy chi tiết xác thực; NTLM thấy NTLM chứ không thấy Kerberos',
+     'Đây là giới hạn của chính các log đó, không sửa được bằng mã. Mọi bản ghi '
+     'từ nguồn thay thế đều mang cờ `Fallback = true` để không ai nhầm bớt mù '
+     'với hết mù.'),
+    ('Script Block Logging chỉ PARTIAL: log `PowerShell/Operational` đọc được và '
+     'có sự kiện 4104, nhưng chính sách `EnableScriptBlockLogging` đang TẮT',
+     'Khi chính sách tắt, PowerShell vẫn tự ghi 4104 cho những khối lệnh NÓ cho '
+     'là đáng ngờ — nên "có bản ghi" ở đây không đồng nghĩa "đang ghi đầy đủ". '
+     'Đây chính là lý do phải có ô ⚠ PARTIAL: một cột hai giá trị sẽ tô xanh '
+     'chỗ này. Bật chính sách là thay đổi cấu hình máy, phải do người quyết định.'),
     ('`state/sensor_coverage.json` không tự làm mới theo pipeline',
      'tool_validator.py gọi thật 99 tool và có tác dụng phụ (ghi báo cáo, quét). '
      'Portal hiển thị tuổi của dữ liệu và cảnh báo khi quá 24 giờ.'),
@@ -323,9 +336,32 @@ def sensor_readable(sensor, probes):
     return (len(dead) < len(keys)), dead
 
 
-def classify(tool, result, probes):
+# Tool mà nguồn dữ liệu phụ thuộc vào ĐỐI SỐ, không phải vào tên tool.
+# `eventLogs(logName='Security')` và `eventLogs(logName='System')` là hai cảm
+# biến khác nhau: một cái đòi nâng quyền, một cái không. Tra nguồn chỉ theo tên
+# tool sẽ gọi lần gọi thứ nhất là FAIL, trong khi sự thật là BLIND — và FAIL
+# nghĩa là "có gì đó cần sửa trong mã", một việc không tồn tại ở đây.
+ARG_SENSOR = {
+    'eventLogs': ('logName', {'Security': 'security_log'}),
+    'collectLogs': ('logName', {'Security': 'security_log',
+                                'System': 'event_logs',
+                                'Application': 'event_logs'}),
+}
+
+
+def sensor_for(tool, args):
+    rule = ARG_SENSOR.get(tool)
+    if rule and args:
+        field, mapping = rule
+        override = mapping.get(args.get(field))
+        if override:
+            return override
+    return SENSOR_OF.get(tool, 'composite')
+
+
+def classify(tool, result, probes, args=None):
     """Bốn ô: PASS / EMPTY / BLIND / FAIL. Kèm lý do khi không phải PASS."""
-    sensor = SENSOR_OF.get(tool, 'composite')
+    sensor = sensor_for(tool, args)
     count = evidence_count(result)
 
     if result.get('error') or not result.get('ok'):
@@ -363,6 +399,60 @@ def classify(tool, result, probes):
 # Chạy
 # --------------------------------------------------------------------------
 
+# Giá trị thử cho tham số, suy từ tên và kiểu trong inputSchema.
+# Cố ý KHÁC mặc định: mục đích là đi vào nhánh mà lần gọi mặc định không đi qua.
+PARAM_PROBE_VALUES = {
+    'limit': 3, 'count': 3, 'lines': 3, 'days': 2, 'top': 3, 'maxEvents': 3,
+    'port': 135, 'threshold': 1, 'minutes': 5, 'hours': 1,
+}
+
+
+def param_variants(tool, schema):
+    """Sinh các bộ đối số KHÁC mặc định để kiểm cả nhánh có tham số.
+
+    Sprint 8 gọi mỗi tool đúng một lần bằng đối số mặc định. Điều đó chứng minh
+    được một điều duy nhất: đường mặc định chạy. Một tool nhận `limit` có thể
+    chạy hoàn hảo khi không ai truyền gì và vỡ với mọi giá trị được truyền vào —
+    và trong một lần kiểm chỉ dùng mặc định, nó hiện lên là PASS.
+    """
+    props = (schema or {}).get('properties') or {}
+    if not props:
+        return []
+
+    base = dict(TOOL_ARGS.get(tool) or {})
+    variants = []
+
+    numeric_args = dict(base)
+    touched = []
+    enum_fields = []
+
+    for name, spec in props.items():
+        if not isinstance(spec, dict):
+            continue
+        if spec.get('enum'):
+            enum_fields.append((name, spec['enum']))
+            continue
+        kind = spec.get('type')
+        if name in PARAM_PROBE_VALUES and kind in ('number', 'integer', None):
+            numeric_args[name] = PARAM_PROBE_VALUES[name]
+            touched.append(name)
+
+    if touched:
+        variants.append(('tham số: %s' % ', '.join(sorted(touched)), numeric_args))
+
+    # Mỗi giá trị enum là một nhánh mã riêng — nhánh không được gọi là nhánh
+    # không được kiểm.
+    for name, values in enum_fields:
+        for value in values:
+            if base.get(name) == value:
+                continue
+            args = dict(base)
+            args[name] = value
+            variants.append(('%s=%s' % (name, value), args))
+
+    return variants
+
+
 def validate(verbose=True):
     probes = sensor_probe.probe_all()
     event_4688 = sensor_probe.security_log_summary(probes)
@@ -370,31 +460,62 @@ def validate(verbose=True):
 
     rows = []
     with McpBridge() as bridge:
-        available = bridge.list_tools()
+        definitions = bridge.list_tool_defs()
+        available = [d['name'] for d in definitions]
+        schemas = {d['name']: d.get('inputSchema') for d in definitions}
+
+        def call(name, args):
+            try:
+                return bridge.call_tool(name, args, timeout=CALL_TIMEOUT)
+            except McpBridgeError as error:
+                return {'tool': name, 'ok': False, 'empty': True, 'raw_text': '',
+                        'parsed': None, 'error': str(error)[:200], 'duration': None}
+
         for name in available:
             args = TOOL_ARGS.get(name)
-            try:
-                result = bridge.call_tool(name, args, timeout=CALL_TIMEOUT)
-            except McpBridgeError as error:
-                result = {'tool': name, 'ok': False, 'empty': True, 'raw_text': '',
-                          'parsed': None, 'error': str(error)[:200], 'duration': None}
+            result = call(name, args)
+            status, count, reason = classify(name, result, probes, args)
 
-            status, count, reason = classify(name, result, probes)
+            # Nhánh có tham số. Hỏng ở đây KHÔNG đổi status chính: status chính
+            # trả lời "tool có quan sát được gì không", còn đây trả lời "tool có
+            # chịu được đối số không". Gộp hai câu lại thì mất cả hai.
+            variants = []
+            for label, variant_args in param_variants(name, schemas.get(name)):
+                variant_result = call(name, variant_args)
+                variant_status, variant_count, variant_reason = classify(
+                    name, variant_result, probes, variant_args)
+                variants.append({
+                    'label': label,
+                    'args': variant_args,
+                    'status': variant_status,
+                    'evidence_count': variant_count,
+                    'note': variant_reason,
+                })
+
+            broken = [v for v in variants if v['status'] == STATUS_FAIL]
             meta = inventory.get(name, {})
             rows.append({
                 'tool': name,
                 'module': meta.get('module', '?'),
                 'script_style': meta.get('script_style', '?'),
-                'sensor': SENSOR_OF.get(name, 'composite'),
+                'sensor': sensor_for(name, args),
                 'status': status,
                 'evidence_count': count,
                 'duration': result.get('duration'),
                 'args_used': args or {},
                 'note': reason,
+                'variants_tested': len(variants),
+                'variants_failed': [
+                    {'label': v['label'], 'note': v['note']} for v in broken],
             })
             if verbose:
-                print('  %-26s %-6s %5s  %s' % (
-                    name, status, count, reason or ''))
+                flag = ''
+                if broken:
+                    flag = '  [%d/%d biến thể hỏng: %s]' % (
+                        len(broken), len(variants),
+                        ', '.join(v['label'] for v in broken))
+                print('  %-26s %-6s %5s  %s%s' % (
+                    name, status, count, reason or '', flag))
                 sys.stdout.flush()
 
     missing = sorted(set(inventory) - set(available))
@@ -409,6 +530,9 @@ def validate(verbose=True):
         'tools_without_sensor_map': unmapped,
         'probes': probes,
         'event_4688': event_4688,
+        'access_diagnosis': sensor_probe.access_diagnosis(probes),
+        'fallback_sources': sensor_probe.fallback_summary(probes),
+        'detection_capabilities': sensor_probe.capability_summary(probes),
         'results': rows,
         'summary': _summarize(rows),
     }
@@ -420,6 +544,9 @@ def _summarize(rows):
         summary[row['status']] = summary.get(row['status'], 0) + 1
     summary['total'] = len(rows)
     summary['evidence_records'] = sum(r['evidence_count'] for r in rows)
+    summary['variants_tested'] = sum(r.get('variants_tested', 0) for r in rows)
+    summary['tools_with_param_defects'] = sum(
+        1 for r in rows if r.get('variants_failed'))
     return summary
 
 
@@ -496,6 +623,21 @@ def sensor_coverage(report):
     coverage['event_4688'] = report['event_4688']
     coverage['details'] = details
     coverage['tool_summary'] = _tool_summary(report)
+    # Portal can biet KHONG CHI "nguon nao mu" ma con "co sua duoc khong".
+    # Mot o do khong kem loi khuyen thi chi la mot o do.
+    coverage['access_diagnosis'] = report.get('access_diagnosis')
+    coverage['fallback_sources'] = report.get('fallback_sources')
+    # Ba nang luc phat hien duoc goi ten. Chung KHONG trung voi bang nguon o
+    # tren: nguon tra loi "co mo duoc khong", nang luc tra loi "co dang ghi thu
+    # ta can khong". `event_logs` dang COVERED trong khi Script Block Logging chi
+    # PARTIAL — dung mot cot thi mat han su khac nhau do.
+    capabilities = report.get('detection_capabilities') or []
+    coverage['detection_capabilities'] = capabilities
+    coverage['capability_summary'] = {
+        'covered': sum(1 for c in capabilities if c.get('status') == COVERED),
+        'partial': sum(1 for c in capabilities if c.get('status') == PARTIAL),
+        'blind': sum(1 for c in capabilities if c.get('status') == BLIND),
+    }
     return coverage
 
 
@@ -584,7 +726,41 @@ def render_markdown(report, coverage):
     add('| ❌ BLIND | %d |' % summary[STATUS_BLIND])
     add('| 🔴 FAIL | %d |' % summary[STATUS_FAIL])
     add('| Tổng bản ghi thu được | %d |' % summary['evidence_records'])
+    add('| Biến thể tham số đã kiểm | %d |' % summary.get('variants_tested', 0))
+    add('| Tool lỗi khi truyền tham số | %d |' %
+        summary.get('tools_with_param_defects', 0))
     add('')
+    add('Kiểm bằng đúng đối số mặc định chỉ chứng minh được đường mặc định chạy.')
+    add('Mỗi tool có tham số còn được gọi lại với giá trị khác mặc định và với')
+    add('từng giá trị enum — nhánh không được gọi là nhánh không được kiểm.')
+    add('')
+
+    caps = report.get('detection_capabilities') or []
+    if caps:
+        add(u'## Năng lực phát hiện')
+        add('')
+        add(u'Bảng "Sensor coverage" bên dưới trả lời: **mở được nguồn không?**')
+        add(u'Bảng này trả lời một câu khác hẳn: **nguồn đó có đang GHI thứ ta**')
+        add(u'**cần không?** Hai câu này không thay nhau được. Ngay trên máy này, nguồn')
+        add(u'`event_logs` đang ✅ COVERED trong khi Script Block Logging chỉ ⚠ PARTIAL:')
+        add(u'log đọc được toàn bộ, nhưng thứ được ghi vào đó lại có chọn lọc. Đọc hết')
+        add(u'một cuốn sổ ghi chép có chọn lọc không phải là nhìn thấy mọi thứ.')
+        add('')
+        add(u'| Năng lực | Trạng thái | Nguồn | Vì sao |')
+        add('|---|---|---|---|')
+        for cap in caps:
+            add('| **%s** | %s %s | %s | %s |' % (
+                cap['label'], COVERAGE_ICON.get(cap['status'], '?'),
+                cap['status'].upper(), cap.get('detail', ''),
+                ' '.join((cap.get('reason') or '').split())))
+        add('')
+        actionable = [c for c in caps if c.get('action')]
+        if actionable:
+            add(u'Cách mở từng vùng mù:')
+            add('')
+            for cap in actionable:
+                add('- **%s** — %s' % (cap['label'], cap['action']))
+            add('')
 
     add('## Sensor coverage')
     add('')
@@ -614,16 +790,64 @@ def render_markdown(report, coverage):
         add('> **Cái bẫy**: %s' % e['trap'])
         add('')
 
+    diag = report.get('access_diagnosis') or {}
+    if diag:
+        add('## Chẩn đoán quyền truy cập')
+        add('')
+        add('Sprint 8 dừng ở "cần quyền Administrator". Câu đó đúng nhưng không')
+        add('dùng được, vì nó gộp ba tình huống đòi ba cách sửa khác hẳn nhau.')
+        add('')
+        add('| | |')
+        add('|---|---|')
+        add('| Tình huống | `%s` |' % diag.get('situation'))
+        add('| Sửa được tại đây | **%s** |' % str(diag.get('can_fix')).lower())
+        add('| Nguyên nhân | %s |' % diag.get('reason'))
+        add('| Cách sửa | %s |' % diag.get('action'))
+        if diag.get('event_log_readers_members'):
+            add('| Thành viên nhóm "Event Log Readers" | %s |'
+                % diag['event_log_readers_members'])
+        add('')
+        if diag.get('note'):
+            add('> %s' % diag['note'])
+            add('')
+
+    fallbacks = report.get('fallback_sources') or []
+    if fallbacks:
+        add('## Nguồn thay thế (đọc được, không cần nâng quyền)')
+        add('')
+        add('Đây **không phải** "đã hết mù". Đây là "mù ít hơn, và biết chính xác')
+        add('phần nào còn mù". Mọi bản ghi từ các nguồn này mang cờ `Fallback = true`.')
+        add('')
+        add('| Log | Đọc được | Bản ghi | Che được gì | Tool dùng |')
+        add('|---|---|---:|---|---|')
+        for item in fallbacks:
+            add('| `%s` | %s | %s | %s | %s |' % (
+                item['log'].split('/')[-1] if '/' in item['log'] else item['log'],
+                '✅' if item['readable'] else '❌',
+                item.get('records') or '-',
+                item['covers'],
+                ', '.join('`%s`' % t for t in item['used_by'])))
+        add('')
+
     add('## Ma trận tool')
     add('')
-    add('| Tool | Module | Kiểu lệnh | Nguồn | Trạng thái | Bản ghi | Ghi chú |')
-    add('|---|---|---|---|---|---:|---|')
+    add('| Tool | Module | Kiểu lệnh | Nguồn | Trạng thái | Bản ghi | Biến thể | Ghi chú |')
+    add('|---|---|---|---|---|---:|---:|---|')
     for row in sorted(report['results'],
                       key=lambda r: (r['module'], r['tool'])):
-        add('| `%s` | %s | %s | %s | %s %s | %d | %s |' % (
+        tested = row.get('variants_tested', 0)
+        failed = row.get('variants_failed') or []
+        variant_cell = '-' if not tested else (
+            '%d ✅' % tested if not failed
+            else '%d/%d 🔴' % (len(failed), tested))
+        note = (row['note'] or '')[:110]
+        if failed:
+            note = (note + ' | lỗi khi: ' +
+                    ', '.join(v['label'] for v in failed))[:180]
+        add('| `%s` | %s | %s | %s | %s %s | %d | %s | %s |' % (
             row['tool'], row['module'].replace('.js', ''), row['script_style'],
             row['sensor'], ICON[row['status']], row['status'],
-            row['evidence_count'], (row['note'] or '')[:110]))
+            row['evidence_count'], variant_cell, note))
     add('')
 
     add('## Technical debt còn lại')
@@ -680,6 +904,13 @@ def main():
         {k: coverage[k] for k in REPORTED_SENSORS}, ensure_ascii=False))
     print('Event 4688: observable=%s (%s)' % (
         report['event_4688']['observable'], report['event_4688']['status']))
+    # In riêng ba năng lực phát hiện. Dòng "Coverage" ở trên nói nguồn nào MỞ
+    # ĐƯỢC; dòng này nói nguồn nào đang GHI thứ ta cần. Trên máy này hai dòng đó
+    # mâu thuẫn nhau (event_logs=covered, script_block=partial) — và chính chỗ
+    # mâu thuẫn là chỗ đáng đọc.
+    print('Năng lực: %s' % ' | '.join(
+        '%s=%s' % (c['key'], c['status'])
+        for c in (report.get('detection_capabilities') or [])))
     return 0
 
 

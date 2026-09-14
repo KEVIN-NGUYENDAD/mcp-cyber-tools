@@ -370,6 +370,58 @@ const SENSOR_COVERAGE_COLOR = {
   covered: '#00C896', partial: '#FFB020', blind: '#FF3B5C'
 };
 
+// Ba nang luc phat hien duoc goi ten. Chung KHONG phai mot cach xem khac cua
+// bang nguon ben duoi — chung tra loi mot cau hoi khac.
+//
+//   bang nguon : "co mo duoc log nay khong?"
+//   bang nay   : "log nay co dang GHI thu ta can khong?"
+//
+// Vi du song tren chinh may nay: log PowerShell/Operational doc duoc het, nen
+// nguon `event_logs` hien COVERED. Nhung chinh sach Script Block Logging dang
+// tat, nen PowerShell chi ghi nhung khoi lenh no tu cho la dang ngo. Doc duoc
+// toan bo mot cuon so ghi chep co chon loc khong phai la nhin thay moi thu —
+// va neu chi co mot cot thi khac biet do bien mat.
+function renderCapabilityCoverage(capabilities) {
+  const box = document.getElementById('capability-coverage');
+  if (!box) return;
+
+  if (!capabilities || !capabilities.length) {
+    box.innerHTML = '';
+    return;
+  }
+
+  const rows = capabilities.map(c => {
+    const color = SENSOR_COVERAGE_COLOR[c.status] || 'var(--color-text-dim)';
+    const icon = SENSOR_COVERAGE_ICON[c.status] || '?';
+    return `
+      <div style="display: grid; grid-template-columns: 180px 120px 1fr; gap: 10px; align-items: start; padding: 9px 12px; border-top: 1px solid var(--color-border, rgba(255,255,255,0.08));">
+        <div>
+          <div style="color: var(--color-text); font-size: 0.9em;">${escapeHtmlSafe(c.label)}</div>
+          <div style="color: var(--color-text-dim); font-size: 0.72em; font-family: monospace;">${escapeHtmlSafe(c.detail || '')}</div>
+        </div>
+        <div style="font-weight: bold; color: ${color}; white-space: nowrap;">${icon} ${String(c.status).toUpperCase()}</div>
+        <div style="font-size: 0.78em; color: var(--color-text-dim); line-height: 1.45;">
+          ${escapeHtmlSafe(c.reason || '')}
+          ${c.action ? `<div style="margin-top: 4px; color: ${color};">→ ${escapeHtmlSafe(c.action)}</div>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  const s = { covered: 0, partial: 0, blind: 0 };
+  capabilities.forEach(c => { if (s[c.status] !== undefined) s[c.status] += 1; });
+
+  box.innerHTML = `
+    <div style="border: 1px solid var(--color-border, rgba(255,255,255,0.1)); border-radius: 6px; background: rgba(255,255,255,0.02);">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 9px 12px;">
+        <span style="font-size: 0.85em; color: var(--color-text); letter-spacing: 0.04em;">NANG LUC PHAT HIEN</span>
+        <span style="font-size: 0.75em; color: var(--color-text-dim); font-family: monospace;">
+          ✅ ${s.covered} covered &middot; ⚠ ${s.partial} partial &middot; ❌ ${s.blind} blind
+        </span>
+      </div>
+      ${rows}
+    </div>`;
+}
+
 function renderSensorCoverage() {
   const grid = document.getElementById('sensor-coverage-grid');
   if (!grid) return;
@@ -392,11 +444,13 @@ function renderSensorCoverage() {
     grid.innerHTML = '<div style="color: var(--color-text-dim);">Chua chay scripts/tool_validator.py — chua biet cam bien nao dang nhin thay gi.</div>';
     if (meta) meta.textContent = 'NEVER VERIFIED';
     if (note) note.textContent = '';
+    renderCapabilityCoverage(null);
     setToolCounts(null);
     return;
   }
 
   setToolCounts(coverage.tool_summary);
+  renderCapabilityCoverage(coverage.detection_capabilities);
 
   const order = ['defender', 'firewall', 'security_log', 'event_logs',
                  'persistence', 'processes', 'network', 'ioc'];
@@ -434,10 +488,40 @@ function renderSensorCoverage() {
   }
 
   if (note) {
+    const parts = [];
     const e = coverage.event_4688;
-    note.innerHTML = e
-      ? `<strong>Event ID 4688 (Process Creation):</strong> observable = <strong style="color: ${e.observable ? '#00C896' : '#FF3B5C'};">${e.observable}</strong> (${e.status}). ${escapeHtmlSafe(e.reason || '')}`
-      : '';
+    if (e) {
+      parts.push(`<strong>Event ID 4688 (Process Creation):</strong> observable = <strong style="color: ${e.observable ? '#00C896' : '#FF3B5C'};">${e.observable}</strong> (${e.status}). ${escapeHtmlSafe(e.reason || '')}`);
+    }
+
+    // Mot o do khong kem loi khuyen thi chi la mot o do. Neu vung mu sua duoc
+    // ngay tren may nay, no phai hien ra canh chinh vung mu do — khong phai
+    // nam trong mot file bao cao ma khong ai mo.
+    const d = coverage.access_diagnosis;
+    if (d && d.can_fix) {
+      parts.push(`<div style="margin-top: 10px; padding: 10px 12px; border-left: 4px solid #FFB020; background: rgba(255,176,32,0.08); border-radius: 4px;">
+        <strong style="color: #FFB020;">⚠ Vung mu nay SUA DUOC tren may nay.</strong><br>
+        <span style="color: var(--color-text);">${escapeHtmlSafe(d.action)}</span>
+      </div>`);
+    }
+
+    const fb = (coverage.fallback_sources || []).filter(f => f.readable);
+    if (fb.length) {
+      // Ten log Windows deu ket thuc bang '/Operational', nen cat lay doan cuoi
+      // thi bon nguon khac nhau hien ra thanh bon dong "Operational" giong het.
+      // Phan mang y nghia la doan TRUOC dau gach.
+      const shortName = (log) => log.split('/')[0].replace(/^Microsoft-Windows-/, '');
+      const items = fb.map(f =>
+        `<li><code>${escapeHtmlSafe(shortName(f.log))}</code> — ${escapeHtmlSafe(f.covers)} (${f.records || '?'} ban ghi)</li>`
+      ).join('');
+      parts.push(`<div style="margin-top: 10px;">
+        <strong>Nguon thay the dang doc duoc (khong can nang quyen):</strong>
+        <ul style="margin: 6px 0 0 18px; padding: 0;">${items}</ul>
+        <div style="margin-top: 6px; font-style: italic;">Day khong phai "da het mu" — day la "mu it hon, va biet phan nao con mu". Moi ban ghi tu cac nguon nay mang co <code>Fallback = true</code>.</div>
+      </div>`);
+    }
+
+    note.innerHTML = parts.join('');
   }
 }
 

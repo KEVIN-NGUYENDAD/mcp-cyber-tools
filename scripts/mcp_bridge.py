@@ -174,11 +174,21 @@ class McpBridge(object):
     # -- API công khai ----------------------------------------------------
 
     def list_tools(self, timeout=30):
+        return [t['name'] for t in self.list_tool_defs(timeout)]
+
+    def list_tool_defs(self, timeout=30):
+        """Định nghĩa đầy đủ của từng tool, kèm inputSchema.
+
+        Cần schema chứ không chỉ tên, vì kiểm một tool bằng đúng đối số mặc định
+        chỉ chứng minh được đường mặc định chạy. Tham số là nơi lỗi hay nấp:
+        một tool nhận `limit` có thể chạy tốt với giá trị mặc định và vỡ với mọi
+        giá trị khác, và không ai biết cho tới khi có người truyền vào.
+        """
         reply = self._request('tools/list', {}, timeout)
         if 'result' not in reply:
             raise McpBridgeError('tools/list thất bại: {}'.format(
                 json.dumps(reply)[:300]))
-        return [t['name'] for t in reply['result'].get('tools', [])]
+        return reply['result'].get('tools', [])
 
     def call_tool(self, name, arguments=None, timeout=DEFAULT_CALL_TIMEOUT):
         """Gọi một tool. Trả về dict mô tả đầy đủ kết quả, kể cả khi rỗng.
