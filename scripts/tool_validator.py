@@ -201,11 +201,29 @@ REPORT_WRITERS = {
 # Nợ kỹ thuật đã nhìn thấy nhưng chưa trả. Viết ra đây thay vì để trong đầu:
 # một món nợ không được ghi sẽ được phát hiện lại từ đầu ở sprint sau.
 # --------------------------------------------------------------------------
+# Mot so mon no co the duoc tra bang mot hanh dong NGOAI ma nguon (chay script
+# nang quyen, bat mot chinh sach). Mot bang no viet cung se van liet ke chung
+# sau khi chung da duoc tra — va mot bang no noi sai thi khong ai tin nua.
+#
+# Nen moi muc co the kem mot ham doc trang thai DO DUOC trong chinh lan chay
+# nay. Muc nao da tra thi roi khoi bang, va hien o dong tong ket ngay duoi.
+def _debt_security_log_closed(report):
+    return not (report['probes'].get('security_log') or {}).get('readable')
+
+
+def _debt_script_block_partial(report):
+    for cap in report.get('detection_capabilities') or []:
+        if cap.get('key') == 'script_block_logging':
+            return cap.get('status') != COVERED
+    return True
+
+
 REMAINING_DEBT = [
     ('Log Security vẫn đóng — 5 tool còn mù, và chưa thể biết audit 4688 bật hay tắt',
      'Không phải lỗi mã, và Sprint 9 đã dựng sẵn cách sửa: chạy MỘT LẦN '
      '`scripts/enable_security_log_access.ps1` dưới quyền Administrator. '
-     'Script sửa hệ thống thì phải do người quyết định chạy, không phải pipeline.'),
+     'Script sửa hệ thống thì phải do người quyết định chạy, không phải pipeline.',
+     _debt_security_log_closed),
     ('`securityAudit` trả về một checklist viết cứng trong mã, không quan sát gì',
      'Viết lại nó là thêm tính năng, nằm ngoài phạm vi sprint kiểm định.'),
     ('`timeline`, `collectEvidence`, `collectLogs` ghi file rồi chỉ trả về đường '
@@ -228,7 +246,8 @@ REMAINING_DEBT = [
      'Khi chính sách tắt, PowerShell vẫn tự ghi 4104 cho những khối lệnh NÓ cho '
      'là đáng ngờ — nên "có bản ghi" ở đây không đồng nghĩa "đang ghi đầy đủ". '
      'Đây chính là lý do phải có ô ⚠ PARTIAL: một cột hai giá trị sẽ tô xanh '
-     'chỗ này. Bật chính sách là thay đổi cấu hình máy, phải do người quyết định.'),
+     'chỗ này. Bật chính sách là thay đổi cấu hình máy, phải do người quyết định.',
+     _debt_script_block_partial),
     ('`state/sensor_coverage.json` không tự làm mới theo pipeline',
      'tool_validator.py gọi thật 99 tool và có tác dụng phụ (ghi báo cáo, quét). '
      'Portal hiển thị tuổi của dữ liệu và cảnh báo khi quá 24 giờ.'),
@@ -852,13 +871,31 @@ def render_markdown(report, coverage):
 
     add('## Technical debt còn lại')
     add('')
-    add('Những thứ lần kiểm này phát hiện nhưng KHÔNG sửa trong Sprint 8, kèm lý do.')
+    add('Những thứ lần kiểm này phát hiện nhưng KHÔNG sửa, kèm lý do.')
+    add('')
+    add('Bảng lọc theo trạng thái ĐO ĐƯỢC của chính lần chạy này. Món nợ nào đã')
+    add('trả thì rời khỏi bảng — một bảng nợ liệt kê thứ đã sửa xong là một bảng')
+    add('không ai còn tin, và nó sẽ âm thầm che luôn những món chưa trả.')
     add('')
     add('| # | Món nợ | Vì sao chưa trả |')
     add('|---:|---|---|')
-    for index, (item, reason) in enumerate(REMAINING_DEBT, 1):
+    outstanding, settled = [], []
+    for entry in REMAINING_DEBT:
+        item, reason = entry[0], entry[1]
+        resolved_when = entry[2] if len(entry) > 2 else None
+        if resolved_when is not None and not resolved_when(report):
+            settled.append(item)
+        else:
+            outstanding.append((item, reason))
+    for index, (item, reason) in enumerate(outstanding, 1):
         add('| %d | %s | %s |' % (index, item, reason))
     add('')
+    if settled:
+        add('Đã trả trong lần chạy này:')
+        add('')
+        for item in settled:
+            add('- ✅ %s' % item)
+        add('')
 
     add('## Probe cảm biến thô')
     add('')
