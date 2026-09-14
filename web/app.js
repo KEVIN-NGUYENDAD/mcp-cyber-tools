@@ -51,7 +51,7 @@ async function loadAllData() {
     // Load from public API endpoint or local JSON
     const baseUrl = '/api/state';
 
-    const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses, sensorCoverage, executiveFindings] = await Promise.allSettled([
+    const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses, sensorCoverage, executiveFindings, waapScoreFile] = await Promise.allSettled([
       fetch(`${baseUrl}/assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
       fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ shadows: [] })),
       fetch(`${baseUrl}/incidents.json`).then(r => r.json()).catch(() => ({ incidents: [] })),
@@ -69,7 +69,10 @@ async function loadAllData() {
       fetch(`${baseUrl}/hunting_credential_dumping.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
       fetch(`${baseUrl}/hunting_suspicious_processes.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
       fetch(`${baseUrl}/sensor_coverage.json`).then(r => r.json()).catch(() => null),
-      fetch(`${baseUrl}/executive_findings.json`).then(r => r.json()).catch(() => null)
+      fetch(`${baseUrl}/executive_findings.json`).then(r => r.json()).catch(() => null),
+      // AQ-016. `waap_score.json` la nguon DUY NHAT cua "WAAP Score". Portal
+      // truoc day khong nap tep nay ma tu tinh lay mot con so khac, cung ten.
+      fetch(`${baseUrl}/waap_score.json`).then(r => r.json()).catch(() => null)
     ]);
 
     stateData.assets = assets.value || { assets: [] };
@@ -91,6 +94,7 @@ async function loadAllData() {
     // portal, khong Telegram. Mot tep ten "executive_findings" ma khong ai doc
     // la mot bao cao khong bao gio duoc gui.
     stateData.executiveFindings = executiveFindings.value || null;
+    stateData.waapScore = waapScoreFile.value || null;
     // stateData.mcp tung duoc viet cung thanh { status: 'ONLINE', tool_count: '90+' ... }.
     // Gio no la ket qua kiem that; null khi chua tung chay tool_validator.py.
     stateData.mcp = stateData.sensorCoverage ? stateData.sensorCoverage.tool_summary || null : null;
@@ -218,10 +222,8 @@ function renderOverviewPage() {
     // Calculate WAAP Health Score from security_summary
     let waapScore = 0;
     if (stateData.waap?.security_summary) {
-      if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
-      if (stateData.waap.security_summary.waf_active) waapScore += 15;
-      if (stateData.waap.security_summary.cdn_active) waapScore += 15;
-      if (stateData.waap.security_summary.protection_active) waapScore += 10;
+      const _cov = protectionCoverage();
+      waapScore = _cov ? _cov.score : null;
     }
     const kpiWaap = document.getElementById('kpi-waap');
     if (kpiWaap) kpiWaap.textContent = waapScore > 0 ? waapScore : '-';
@@ -308,10 +310,8 @@ function updateExecutiveSecurityRow(assets) {
     // WAAP Security with null safety
     let waapScore = 0;
     if (stateData.waap?.security_summary) {
-      if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
-      if (stateData.waap.security_summary.waf_active) waapScore += 15;
-      if (stateData.waap.security_summary.cdn_active) waapScore += 15;
-      if (stateData.waap.security_summary.protection_active) waapScore += 10;
+      const _cov = protectionCoverage();
+      waapScore = _cov ? _cov.score : null;
     }
     const sslStatus = stateData.waap?.ssl_status ? stateData.waap.ssl_status.toUpperCase() : 'UNKNOWN';
     const wafStatus = stateData.waap?.security_summary?.waf_active ? '✓ ACTIVE' : '✗ INACTIVE';
@@ -746,7 +746,7 @@ function renderWAAPCommandCenter() {
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13px; font-family: monospace;">
         <div style="grid-column: 1/-1;">
           <div style="color: #a0a0a0; margin-bottom: 10px;">Security Score</div>
-          <div style="font-size: 28px; font-weight: bold; color: ${waapScore >= 80 ? '#00C896' : waapScore >= 60 ? '#FFD93D' : '#FF3B5C'};">${escapeHtmlSafe(waapScore)}/100</div>
+          <div style="font-size: 28px; font-weight: bold; color: ${waapScore >= 80 ? '#00C896' : waapScore >= 60 ? '#FFD93D' : '#FF3B5C'};">${escapeHtmlSafe(waapScore === null ? 'chua do' : waapScore)}/100</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">SSL</div>
@@ -931,7 +931,7 @@ function drawSecurityTopology(incidents) {
   html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
   html += `<div style="color: #06B6D4; font-weight: bold;">🛡️ WAAP DEFENSE</div>`;
-  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">Score: ${escapeHtmlSafe(waapScore)}/100</div>`;
+  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">Score: ${escapeHtmlSafe(waapScore === null ? 'chua do' : waapScore)}/100</div>`;
   html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
   html += `<div style="color: #F97316; font-weight: bold;">🚪 GATEWAY</div>`;
@@ -961,10 +961,8 @@ function drawSecurityTopology(incidents) {
 function calculateWAAPScore() {
   let score = 0;
   if (stateData.waap?.security_summary) {
-    if (stateData.waap.security_summary.ssl_valid) score += 60;
-    if (stateData.waap.security_summary.waf_active) score += 15;
-    if (stateData.waap.security_summary.cdn_active) score += 15;
-    if (stateData.waap.security_summary.protection_active) score += 10;
+    const _cov = protectionCoverage();
+    score = _cov ? _cov.score : null;
   }
   return score;
 }
@@ -1105,15 +1103,13 @@ function renderAnalytics() {
     // WAAP Assessment - Calculate score from security_summary
     let waapScore = 0;
     if (stateData.waap?.security_summary) {
-      if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
-      if (stateData.waap.security_summary.waf_active) waapScore += 15;
-      if (stateData.waap.security_summary.cdn_active) waapScore += 15;
-      if (stateData.waap.security_summary.protection_active) waapScore += 10;
+      const _cov = protectionCoverage();
+      waapScore = _cov ? _cov.score : null;
     }
     const sslStatus = stateData.waap?.ssl_status ? stateData.waap.ssl_status.toUpperCase() : 'UNKNOWN';
     const waapHtml = `
       <div style="font-size: 0.9em;">
-        <div style="margin: 10px 0;">Health Score: <span style="color: var(--color-accent); font-weight: bold;">${escapeHtmlSafe(waapScore || '-')}/100</span></div>
+        <div style="margin: 10px 0;">Health Score: <span style="color: var(--color-accent); font-weight: bold;">${escapeHtmlSafe(waapScore === null ? 'chua do' : waapScore)}/100</span></div>
         <div style="margin: 10px 0;">SSL Status: <span>${escapeHtmlSafe(sslStatus)}</span></div>
         <div style="margin: 10px 0;">Days to Renewal: <span style="color: var(--color-accent);">${escapeHtmlSafe(stateData.waap?.days_until_expiry || '-')}</span></div>
         <div style="margin: 10px 0;">WAF Active: <span>${stateData.waap?.security_summary?.waf_active === true ? 'YES' : 'NO'}</span></div>
@@ -1237,10 +1233,8 @@ function renderExecutiveScorecard() {
     // Calculate WAAP Score
     let waapScore = 0;
     if (stateData.waap?.security_summary) {
-      if (stateData.waap.security_summary.ssl_valid) waapScore += 60;
-      if (stateData.waap.security_summary.waf_active) waapScore += 15;
-      if (stateData.waap.security_summary.cdn_active) waapScore += 15;
-      if (stateData.waap.security_summary.protection_active) waapScore += 10;
+      const _cov = protectionCoverage();
+      waapScore = _cov ? _cov.score : null;
     }
 
     // Calculate DNS Health
@@ -1455,6 +1449,26 @@ function riskView(risk) {
 const UNKNOWN_COLOR = '#9B8AFB';
 
 const SEVERITY_RANK = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1, INFO: 0 };
+
+// AQ-016. Cong thuc 60/15/15/10 tung duoc sao chep NGUYEN VAN sau lan — nam o
+// day, mot trong telegramBot.js — va duoc goi la "WAAP Score /100", CUNG TEN voi
+// `waap_score.health_score`, von cham sau thanh phan khac han tu mot tep khac.
+// Cum tu "WAAP Score /100" vi the mang nam gia tri khac nhau cung luc: 80, 100,
+// 0, 0, 60. Sua mot ban la nam panel im lang bat dong.
+//
+// Gio: `waapHealth()` doc diem CHINH THUC tu waap_score.json;
+// `protectionCoverage()` doc pham vi bao ve da tinh san trong waap_status.json.
+// Khong noi nao trong portal tu cham WAAP nua.
+function waapHealth() {
+  const value = stateData.waapScore && stateData.waapScore.health_score;
+  return (typeof value === 'number' && Number.isFinite(value)) ? value : null;
+}
+
+function protectionCoverage() {
+  const block = stateData.waap && stateData.waap.protection_coverage;
+  if (!block || typeof block.score !== 'number') return null;
+  return block;
+}
 
 // AQ-009. `escapeHtmlSafe` co tu Sprint 17 nhung phai nho goi dung cho — va
 // "nho goi dung cho" la thu that bai deu dan: 25/26 sink con lai khong goi.
