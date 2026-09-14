@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T13:32:42.375047
+Cập nhật: 2026-09-14T13:48:15.722973
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `6e61795` |
+| Commit lúc chạy | `fc0441c` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | fix(schema): make both ends of each mapping add up, and name the units |
+| Tiêu đề | fix(handoff): stop claiming a commit the file cannot know, and date the stale row |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
@@ -21,12 +21,12 @@ cổng chạy trước khi commit — không phải một con số trễ.
 
 | | |
 |---|---|
-| PASS | 94 |
-| EMPTY | 5 |
+| PASS | 93 |
+| EMPTY | 6 |
 | BLIND | 0 |
 | FAIL | 0 |
 | Pipeline | 28 stage, 0 thất bại |
-| Toàn vẹn bằng chứng | 0 vi phạm / 434 chỉ báo _(đo cách đây 5.3 giờ)_ |
+| Toàn vẹn bằng chứng | 0 vi phạm / 573 chỉ báo _(vừa đo)_ |
 
 ## Trạng thái thật (đọc từ state/)
 
@@ -59,7 +59,7 @@ cổng chạy trước khi commit — không phải một con số trễ.
 | **Scheduled Task Execution** | blind |
 | **USB Device Activity** | blind |
 
-_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (5.3 giờ trước)._
+_Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
 
 ## Việc tiếp theo
 

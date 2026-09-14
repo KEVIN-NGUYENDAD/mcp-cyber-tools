@@ -714,6 +714,21 @@ def sensor_coverage(report):
         'partial': sum(1 for c in capabilities if c.get('status') == PARTIAL),
         'blind': sum(1 for c in capabilities if c.get('status') == BLIND),
     }
+    # Sprint 16 đưa việc đóng dấu tuổi về một chỗ — nhưng chỗ đó là `main()`,
+    # và `main()` không phải người gọi duy nhất. `sprint_gate.collect(validate=True)`
+    # gọi thẳng hàm này rồi tự ghi tệp, nên `npm run gate:full` sinh ra một
+    # `sensor_coverage.json` không có `probe_generated_at`, `tools_generated_at`
+    # hay `freshness_note` — đúng trạng thái mập mờ mà Sprint 15 đã sửa.
+    #
+    # Chính docstring của `stamp_freshness` mô tả lỗi này và nói nó "nằm im vì
+    # validator hiếm khi chạy". Nó vừa hết nằm im: `gate:full` chạy validator,
+    # và ba phép kiểm rơi ngay.
+    #
+    # Sửa bằng cách chuyển việc đóng dấu vào ĐÂY, nơi coverage được TẠO RA, chứ
+    # không phải nơi nó được ghi. Có một cửa tạo và nhiều cửa ghi, nên dấu phải
+    # đặt ở cửa tạo — bài học y hệt AQ-014 và `write_state_atomic`.
+    stamp_freshness(coverage, report.get('generated_at'),
+                    report.get('generated_at'), 'tool_validator')
     return coverage
 
 
@@ -1030,10 +1045,10 @@ def main():
     if not os.path.isdir(docs_dir):
         os.makedirs(docs_dir)
 
-    # Validator đo CẢ HAI nửa trong cùng một lần chạy, nên hai mốc bằng nhau ở
-    # đây là sự thật — không phải cái bẫy "đóng dấu mới lên nửa cũ".
-    stamp_freshness(coverage, report['generated_at'], report['generated_at'],
-                    'tool_validator')
+    # Validator đo CẢ HAI nửa trong cùng một lần chạy, nên hai mốc bằng nhau là
+    # sự thật — không phải cái bẫy "đóng dấu mới lên nửa cũ". Việc đóng dấu nay
+    # nằm trong `sensor_coverage()`, để người gọi nào cũng được đóng dấu chứ
+    # không riêng đường đi qua `main()`; không lặp lại ở đây.
 
     _write_json(os.path.join(state_dir, 'tool_validation.json'), report)
     _write_json(os.path.join(state_dir, 'sensor_coverage.json'), coverage)

@@ -143,6 +143,45 @@ def run():
         suite.check('4688 khong quan sat duoc -> co ly do',
                     bool(event.get('reason')))
 
+    # -- dau tuoi phai bam vao NOI TAO, khong phai noi ghi -------------------
+    # Ba phep kiem ben tren tung do o vong `gate:full` nay: `sprint_gate` goi
+    # thang `sensor_coverage()` roi tu ghi tep, bo qua `stamp_freshness()` ma
+    # `main()` goi. Mot ham tao, nhieu cho ghi — va chi mot cho nho dong dau.
+    #
+    # Kiem tren tep da ghi khong bat duoc lop loi nay: tep tren dia luon do NGUOI
+    # GHI GAN NHAT tao ra, nen no chi noi duoc ve duong di vua chay. Nen phep
+    # kiem duoi day goi thang ham tao, bang mot report toi thieu, va hoi: ket qua
+    # co tu mang dau tuoi khong.
+    # Dung chinh bao cao validator that thay vi tu dung mot report toi thieu:
+    # mot report bia se troi khoi hinh dang that cua no, va luc do phep kiem se
+    # do vi ly do khong lien quan gi den dieu no canh.
+    report_file = os.path.join(PROJECT_ROOT, 'state', 'tool_validation.json')
+    report = None
+    if os.path.exists(report_file):
+        try:
+            with io.open(report_file, encoding='utf-8') as handle:
+                report = json.load(handle)
+        except ValueError:
+            report = None
+
+    if report is None:
+        suite.check('co state/tool_validation.json de kiem dau tuoi', False,
+                    'chay `npm run validate` truoc')
+    else:
+        try:
+            import tool_validator
+            fresh = tool_validator.sensor_coverage(report)
+        except Exception as error:  # noqa: BLE001
+            suite.check('sensor_coverage() chay duoc tren bao cao that',
+                        False, str(error)[:80])
+            fresh = {}
+        for field in ('probe_generated_at', 'tools_generated_at',
+                      'freshness_note', 'refreshed_by'):
+            suite.check('sensor_coverage() tu dong dau `%s`' % field,
+                        fresh.get(field) is not None,
+                        'nguoi goi nao bo qua stamp_freshness() se ghi ra tep '
+                        'thieu truong nay')
+
     return suite
 
 

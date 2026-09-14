@@ -3213,3 +3213,423 @@ AQ-037 (xác nhận qua một merge nữa).
 ---
 
 *Vòng 10, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
+
+
+---
+---
+
+# VÒNG 11 — 2026-09-14 13:33 · ba commit mới, working tree sạch
+
+HEAD `fc0441c`. Commit mới từ vòng 10: `671c6b4` (deploy), `6e61795` (schema),
+`fc0441c` (handoff). Auditor READ ONLY.
+
+---
+
+## ĐÃ TRẢ
+
+### AQ-020 ✅ — `crypto_score` không còn là hằng số
+
+    state/crypto_inventory.json
+      score               90        (từng bị ghim ở 100 qua nhiều sprint)
+      severity_breakdown  {CRITICAL:0, HIGH:0, MEDIUM:2, LOW:0, INFO:17, UNKNOWN:0}
+      tổng breakdown      19  ==  total_findings 19        <- bất biến đã khớp
+
+    scripts/collect_crypto_inventory.py
+      NESSUS_SEVERITY = {0:'INFO', 1:'LOW', 2:'MEDIUM', 3:'HIGH', 4:'CRITICAL'}
+      # "Severity của Nessus -> nhãn. Không đọc được thì nói, không đoán."
+
+Hai finding MEDIUM ẩn từ vòng 3 nay hiện ra, và điểm tụt từ 100 xuống đúng `100 − 2×5 = 90`.
+Thêm ô `UNKNOWN` để giá trị không ánh xạ được không bị nuốt — đúng kỷ luật "vắng mặt
+được khai báo".
+
+### AQ-021 ✅ — và phát hiện của Auditor cần đính chính
+
+`399 vs 64` **không phải hai tổng mâu thuẫn**. Đó là hai **đơn vị** khác nhau không được
+gọi tên: 64 = số plugin phân biệt, 399 = số lượt trên 11 máy.
+
+    state/nessus_status.json
+      total            64
+      total_unit       "distinct_plugins"
+      distinct_plugins 64
+      total_instances  399          <- khớp đúng tổng của assets.json
+
+    docs/project/TECHNICAL_DEBT.md:28
+      | Đơn vị lỗ hổng đối chiếu được | assets 399 luot | nessus 64 plugin, 399 luot |
+
+Ghi nhận thẳng: vòng 3 tới vòng 10 tôi mô tả mục này là *"hai tổng mâu thuẫn, chênh 6.2
+lần"*. Con số thì đúng, cách gọi thì không — không có tổng nào sai, có hai đơn vị không
+nhãn. Bản chất lỗi vẫn là drift có thật (không ai đọc được tệp nào đang đếm gì, và Daily
+Brief in cả hai cạnh nhau), nhưng **cách trả là đặt tên đơn vị, không phải đối chiếu lại
+số**. Builder chẩn đoán đúng hơn mô tả trong hàng đợi.
+
+### AQ-033 / AQ-037 ✅ — HANDOFF thôi khẳng định điều nó không biết
+
+    | Commit lúc chạy | `6e61795` |
+    | Cây làm việc    | CÓ THAY ĐỔI CHƯA COMMIT |
+
+    "Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint TRƯỚC;
+     công của sprint này chưa có định danh. Đó là thứ tự đúng — cổng chạy trước
+     khi commit — không phải một con số trễ."
+
+    | Toàn vẹn bằng chứng | 0 vi phạm / 434 chỉ báo _(đo cách đây 5.3 giờ)_ |
+
+Bản sửa nhắm vào **lời khẳng định**, không nhắm vào giá trị: đổi nhãn từ `Commit` thành
+`Commit lúc chạy`, giải thích vì sao nó là commit trước, và đóng dấu tuổi lên hàng lấy
+từ cache. Bảy vòng tôi báo "HANDOFF trễ một sprint"; câu trả lời đúng là nó **không thể**
+biết commit của sprint đang chạy, và điều cần sửa là đừng vờ như biết.
+
+---
+
+## AQ-045 · Risk Consistency — KHÔNG ĐỔI, và đã định vị được dòng gây lỗi
+
+**Issue:**
+**78% điểm rủi ro (18.0 / 23) vẫn đến từ 6 chỉ báo mang `suppressed: true`,
+`noise_class: ROUTINE_OS_ACTIVITY`.**
+
+**Severity:** CRITICAL
+
+**Root Cause (định vị chính xác vòng này):**
+
+    scripts/hunt_lateral_movement.py:221-227
+        'by_severity': {},
+        ...
+        output['by_severity'][sev] = output['by_severity'].get(sev, 0) + 1
+
+`by_severity` được đếm trong **chính cuộc săn**, trên toàn bộ chỉ báo. Cuộc săn chạy ở
+stage sớm; `ioc_quality.py` gắn cờ `suppressed` ở stage sau. Nên cuộc săn **không thể**
+biết chỉ báo nào sẽ bị hạ xuống tiếng ồn — và không ai tính lại `by_severity` sau đó.
+
+`calculate_risk_score.py:275` đọc bảng tổng kết trước lọc đó.
+
+Đây không phải lỗi ở `analyze_threat_hunting`. Chỗ sửa là `ioc_quality.py`: sau khi gắn
+cờ, nó phải ghi lại `by_severity` (đã lọc) và giữ số cũ ở `by_severity_including_noise`
+— đúng khuôn `average_score` / `average_score_all` mà chính nó đã dùng ở AQ-001.
+
+**Evidence:**
+
+    state/hunting_lateral_movement.json (run_id đồng nhất, 7/7 tệp có dấu)
+      tổng 426   suppressed 200   kept 226
+      by_severity CÔNG BỐ          : {'INFO': 420, 'HIGH': 6}
+      HIGH trong kept              : 0
+      khoá liên quan có trong tệp  : chỉ `by_severity` — không có biến thể `*_all`
+
+    state/risk_score.json
+      threat_hunting  health 28   contribution 18.0   "lateral_movement: 0C/6H"
+      overall_score   23
+
+    18.0 / 23 = 78%.   Nếu tính sau lọc: health 100, contribution 0 -> Risk = 5.
+
+**Suggested Sprint:** SPRINT SUPPRESSED-AT-SOURCE —
+(1) `ioc_quality.py` ghi lại `by_severity` sau khi gắn cờ; số trước lọc chuyển sang
+`by_severity_including_noise`.
+(2) Bất biến trong gate: `sum(by_severity.values()) == len([i for i in indicators if not
+i.suppressed])`. Bất biến này cùng hình dạng với hai bất biến vừa đóng AQ-020 và AQ-021 —
+nên nó thuộc đúng sprint vừa chứng minh là hiệu quả.
+(3) Rà consumer còn lại của `by_severity`: portal KPI, Telegram, daily brief.
+
+---
+
+## AQ-002 · Schema Drift — KHÔNG ĐỔI, vòng thứ mười một
+
+**Issue:** `attribution_quality: FULL` trên **424 / 426** chỉ báo, trong khi **11/11** tài
+sản có `hostname_source: unresolved`.
+
+**Severity:** CRITICAL
+
+**Root Cause:** `ioc_quality.py` chấm attribution bằng sự hiện diện của IP, không bằng
+hostname đã phân giải. Bản vá hostname ở Sprint 17 áp phía tài sản, không nối sang phía
+chỉ báo. Không đổi từ vòng 1.
+
+**Evidence:**
+
+    state/assets.json      hostname_source = {unresolved: 11}
+    hunting_lateral_movement  attribution_quality = {FULL: 424, PARTIAL: 2}
+
+    -> 99.5% chỉ báo khai "đã quy kết đầy đủ" trên một kho không máy nào có tên.
+
+`docs/project/TECHNICAL_DEBT.md` đã ghi nhận nợ này ở bảng "nợ đã ghi nhận" (mục 2, cần
+nguồn tên thật: DNS ngược / DHCP). Nhưng **nhãn `FULL` vẫn đang được phát ra** — nợ hạ
+tầng không biện minh cho một nhãn chất lượng sai.
+
+**Suggested Sprint:** SPRINT SCHEMA-RECONCILE (phần cuối) — bất biến thứ ba cùng hình
+dạng: `%FULL attribution <= %assets có hostname_source != unresolved`. Với dữ liệu hôm
+nay vế phải là 0%, nên mọi chỉ báo về máy ở xa phải là `PARTIAL`. Máy cục bộ là ngoại lệ
+hợp lệ vì nó tự biết tên mình — và ngoại lệ đó phải khai rõ, không ngầm.
+
+---
+
+## AQ-044 · Green Default — KHÔNG ĐỔI cấu trúc
+
+**Issue:** `run_coherence_audit` vẫn không có trạng thái `UNEVALUABLE`.
+
+**Severity:** HIGH
+
+**Evidence:** `grep -c UNEVALUABLE scripts/run_coherence_audit.py scripts/sprint_gate.py`
+→ **0 và 0**. Vòng 9 đo `0/7 → 0 vi phạm`; vòng 10–11 đo `7/7 → 0 vi phạm`. Cùng mã, dữ
+liệu khác.
+
+**Suggested Sprint:** SPRINT RUN-ISOLATION (phần cuối, gộp AQ-043).
+
+---
+
+## AQ-043 · Green Default — KHÔNG ĐỔI
+
+**Issue:** `state_manager.py:67-70` — `except ImportError: pass` bỏ dấu lần chạy im lặng.
+
+**Severity:** HIGH
+
+**Evidence:** Không đổi. Cùng AQ-044 tạo đường liền: import hỏng → mất dấu → coherence
+báo `0 vi phạm` → cổng xanh.
+
+**Suggested Sprint:** SPRINT RUN-ISOLATION — ghi `run_scope: 'UNSTAMPED'`; gate coi
+`UNSTAMPED` và `UNEVALUABLE` là blocker.
+
+---
+
+## TỒN ĐỌNG SAU VÒNG 11
+
+| Mục | Hạng | Tuổi |
+|---|---|---|
+| AQ-045 | CRITICAL | ❌ 2 vòng — 78% điểm rủi ro từ chỉ báo đã gắn nhãn tiếng ồn |
+| AQ-002 | CRITICAL | ❌ **11 vòng** |
+| AQ-044 | HIGH | ❌ 3 vòng |
+| AQ-043 | HIGH | ❌ 4 vòng |
+
+**Đang mở: 4 (2 CRITICAL, 2 HIGH). Đã trả tích luỹ: 34.**
+
+---
+
+## NHẬN ĐỊNH VÒNG 11
+
+Ba mục đóng, và hai trong ba đóng theo cách đáng học.
+
+**AQ-021** cho thấy hàng đợi này có thể mô tả sai một lỗi có thật. Tôi gọi nó là *"hai
+tổng mâu thuẫn, chênh 6.2 lần"* suốt tám vòng. Không tổng nào sai — có hai đơn vị không
+nhãn, và bản sửa đúng là đặt tên (`total_unit: distinct_plugins`, `total_instances: 399`)
+chứ không phải đối chiếu lại số. Bằng chứng tôi đưa ra đúng; kết luận tôi rút ra thì
+không hoàn toàn. Ghi ra đây để lần sau phân biệt "hai số khác nhau" với "hai câu hỏi
+khác nhau" trước khi gọi là drift.
+
+**AQ-037** đóng bằng cách sửa **lời khẳng định** thay vì giá trị. Bảy vòng tôi báo
+"HANDOFF trễ một sprint". Câu trả lời đúng: nó *không thể* biết commit của sprint đang
+chạy — cổng chạy trước khi commit — nên việc cần làm là đổi nhãn thành `Commit lúc chạy`
+và nói ra lý do, cộng đóng dấu tuổi lên hàng lấy từ cache. Đó là cùng một kỷ luật đã
+dùng cho `run_scope: STANDALONE` và `signature_status: NOT_IMPLEMENTED`: **khai vắng mặt,
+đừng lấp.**
+
+Còn lại bốn mục, và chúng chia làm hai cặp rõ ràng:
+
+**AQ-045 + AQ-002** là hai bất biến so tổng cuối cùng. Sprint vừa rồi đã chứng minh hình
+dạng này hiệu quả: `sum(severity_breakdown) == total_findings` đóng AQ-020 ngay, và việc
+gọi tên đơn vị đóng AQ-021. Hai bất biến còn lại —
+`sum(by_severity) == len(kept)` và `%FULL <= %hostname đã phân giải` — cùng khuôn, cùng
+một sprint.
+
+**AQ-043 + AQ-044** là một đường liền từ hỏng-âm-thầm tới merge-được, và cả hai là cùng
+một quyết định: cơ chế `run_id` phải nói ra khi nó không hoạt động, ở cả hai đầu (nơi
+ghi và nơi kiểm).
+
+Hai sprint, bốn mục, và hàng đợi hết CRITICAL/HIGH. AQ-002 đã mở **11 vòng** — đây là
+mục cũ nhất còn sống, và nay nó là một dòng bất biến chứ không còn là một bài toán hạ
+tầng.
+
+---
+
+*Vòng 11, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
+
+
+---
+---
+
+# VÒNG 13 — 2026-09-14 13:43 · working tree mới (sprint đóng dấu tuổi)
+
+HEAD vẫn `fc0441c`. Working tree đổi so với vòng 12: `scripts/tool_validator.py`,
+`tests/sensor_coverage/test_coverage_refresh.py`, `state/sensor_coverage.json`,
+`state/tool_validation.json`, `docs/project/TECHNICAL_DEBT.md`, `HANDOFF.md`.
+Auditor READ ONLY.
+
+---
+
+## GHI NHẬN — bản sửa đúng chỗ, và phép kiểm đúng loại
+
+`tool_validator.py` chuyển `stamp_freshness()` từ `main()` vào `sensor_coverage()`,
+tức từ **nơi ghi** về **nơi tạo**. Lý do nêu trong mã đúng: `sprint_gate.py:86` gọi
+thẳng `sensor_coverage()` rồi tự ghi tệp ở `:90`, nên đường `gate:full` trước đây sinh
+ra tệp không dấu. Cùng bài học `write_state_atomic` (AQ-014).
+
+Phép kiểm mới cũng đúng loại: nó gọi thẳng hàm tạo thay vì đọc tệp đã ghi — vì tệp
+trên đĩa chỉ nói được về đường đi vừa chạy. Đó là phép kiểm bắt được *lớp* lỗi,
+không phải bắt được *lần* lỗi.
+
+**Nhưng chưa có bằng chứng bản sửa đã chạy.** `state/sensor_coverage.json` ghi lúc
+`13:41:50`; `tool_validator.py` sửa lúc `13:42:48`. Tệp trên đĩa **thiếu cả bốn
+trường** `probe_generated_at` / `tools_generated_at` / `freshness_note` /
+`refreshed_by`. Đây là "dữ liệu cũ hơn mã", không phải bản sửa hỏng — nhưng nó có
+nghĩa là mọi thứ đọc tệp đó lúc này (gate, HANDOFF, portal) vẫn đang đọc bản không
+dấu, và `sprint_gate.py:182` lấp chỗ trống bằng `probe_generated_at or generated_at`
+nên tuổi vẫn hiện `0.0 giờ` như thể có dấu.
+
+---
+
+## AQ-046 · Source of Truth Drift — MỚI
+
+**Issue:**
+Cùng một lần chạy cổng lúc `13:41:52`, `TECHNICAL_DEBT.md` kết luận
+**"Đủ điều kiện merge: KHÔNG"**, còn `HANDOFF.md` — tệp được chỉ định là nguồn đọc
+đầu tiên của mỗi phiên — **không hề nhắc rằng cổng đang chặn.**
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+`generate_handoff.py:133` in tiêu đề `## Cổng merge` rồi liệt kê PASS / EMPTY /
+BLIND / FAIL, nhưng trong toàn tệp **không có** từ `merge` nào khác, không có
+`blockers`, không có trường "đủ điều kiện". Tìm `merge|blocker|chặn` trên tệp sinh
+trả về đúng **một** dòng — chính dòng tiêu đề. Kết luận của cổng nằm ở
+`sprint_gate`, và chỉ `TECHNICAL_DEBT.md` in nó ra.
+
+**Evidence:**
+
+    docs/project/TECHNICAL_DEBT.md   (13:41:52)
+      | Đủ điều kiện merge | **KHÔNG** |
+      | Bộ kiểm phát hiện  | TRƯỢT     |
+      ### Đang chặn
+      - bo kiem phat hien truot (TONG: 337/340 dat)
+
+    docs/project/HANDOFF.md          (13:41:52 — CÙNG lần chạy)
+      ## Cổng merge
+      | PASS  | 93 |
+      | EMPTY | 6  |
+      | BLIND | 0  |
+      | FAIL  | 0  |
+      (hết bảng — không có hàng nào nói cổng đang chặn)
+
+      ## Việc tiếp theo
+      3. `npm run gate` trước khi mở PR.
+
+Một người đọc HANDOFF thấy bốn hàng, ba trong đó là `0`, và một lời khuyên chạy
+cổng "trước khi mở PR" — trong khi cổng **vừa chạy và vừa trượt**.
+
+**Business Impact:**
+Đây là lỗi nguy hiểm nhất trong bảy trục, vì nó nằm ở tệp *đầu vào* của mọi phiên
+làm việc. HANDOFF tự khai "mọi con số dưới đây đọc thẳng từ `state/` lúc chạy" và
+"Đọc tệp này thay cho `AI_HANDOFF.md`/`SESSION_STATE.md`". Nó giữ lời về số, nhưng
+bỏ mất **kết luận**. Một sprint đọc HANDOFF sẽ tin mình đang ở trạng thái ship được.
+
+**Suggested Sprint:** SPRINT GATE-SINGLE-VOICE —
+(1) `generate_handoff.py` in hàng `Đủ điều kiện merge` và khối `Đang chặn` từ cùng
+kết quả `sprint_gate.evaluate()` mà `TECHNICAL_DEBT.md` dùng; không tự tính lại.
+(2) Bất biến: hai tệp sinh trong cùng lần chạy phải khai cùng kết luận merge —
+nếu một tệp không in được kết luận thì nó không được in bảng cổng.
+(3) Khi chặn, `## Việc tiếp theo` phải mở đầu bằng blocker, không bằng lời khuyên
+chạy cổng.
+
+---
+
+## AQ-047 · Risk Consistency — MỚI
+
+**Issue:**
+Hai năng lực phát hiện đang **blind**, và điều đó không chạm tới điểm rủi ro, không
+sinh ra một lời rào nào. Risk vẫn `23/100 LOW`.
+
+**Severity:** HIGH
+
+**Root Cause:**
+`calculate_risk_score.py` chỉ biết một loại mù: `coverage.observable` trong các tệp
+`hunting_*.json` (dòng 262–323, 423–430). Nó **không đọc** `sensor_coverage.json`,
+nên `detection_capabilities` — nơi duy nhất ghi nhận "nguồn mở nhưng thứ ta cần
+không được ghi" — nằm ngoài tầm engine. Tìm trong `risk_score.json` các chuỗi
+`blind` / `mù` / `coverage` / `Scheduled` / `USB`: **không chuỗi nào có mặt**.
+
+**Evidence:**
+
+    state/sensor_coverage.json
+      summary            {'covered': 8, 'partial': 0, 'blind': 0}   <- theo NGUỒN
+      capability_summary {'covered': 3, 'partial': 0, 'blind': 2}   <- theo NĂNG LỰC
+      blind: Scheduled Task Execution, USB Device Activity
+
+    state/risk_score.json
+      overall_score 23   risk_level LOW
+      notes: ["Thành phần `asset` dựa trên bản quét Nessus 163 giờ tuổi..."]
+      -> lời rào duy nhất là về tuổi Nessus. Không lời nào về hai năng lực mù.
+
+Đáng chú ý: nguồn `persistence` = **covered**, trong khi năng lực *Scheduled Task
+Execution* = **blind**. Mã đã tự nói rõ hai cột này trả lời hai câu khác nhau
+(`tool_validator.py:709-712`) — nhưng `HANDOFF.md:46-60` in cả hai vào **một** cột
+tên `Trạng thái`, và dùng lại chữ `blind` mà dòng 26 vừa dùng để chỉ một thứ khác
+(`| BLIND | 0 |` là tool-BLIND). Cùng hình dạng AQ-021: hai câu hỏi, một nhãn.
+
+**Business Impact:**
+Scheduled Task là một trong những kỹ thuật duy trì phổ biến nhất. Hệ thống công bố
+`persistence: covered` và `Risk LOW` trên một máy mà nó **không thấy** tác vụ định
+kỳ. Đây đúng loại lỗi mà kỷ luật `points_available` sinh ra để chặn: thành phần
+không quan sát được phải rời **cả tử số lẫn mẫu số**, chứ không được im lặng tính
+là an toàn.
+
+**Suggested Sprint:** SPRINT COVERAGE-INTO-RISK —
+(1) `calculate_risk_score.py` đọc `capability_summary`; mỗi năng lực `blind` rút
+trọng số của thành phần tương ứng khỏi `weight_available` và sinh một dòng `notes`
+nêu tên năng lực.
+(2) Giữ `risk_level` không được xuống `LOW` khi còn năng lực mù — cùng cơ chế sàn
+đã dùng cho CRITICAL.
+(3) `HANDOFF.md` tách hai bảng và đặt tên khác nhau: `mù nguồn` / `mù năng lực`;
+không dùng lại chữ `BLIND` cho hai phép đếm khác đơn vị.
+
+---
+
+## BỐN MỤC CŨ — KHÔNG ĐỔI
+
+`git diff --stat HEAD` trên `ioc_quality.py`, `state_manager.py`,
+`run_coherence_audit.py`, `hunt_lateral_movement.py` → **rỗng**. Không tệp nào được sửa.
+
+| Mục | Đo lại vòng 13 |
+|---|---|
+| **AQ-045** CRITICAL | `by_severity {INFO 420, HIGH 6}` · kept 226 · HIGH trong kept **0** · Risk 23, threat_hunting health 28 |
+| **AQ-002** CRITICAL | `attribution {FULL 424, PARTIAL 2}` · `hostname_source {unresolved: 11}` |
+| **AQ-043** HIGH | `except ImportError` trong `state_manager.py`: 1 |
+| **AQ-044** HIGH | `UNEVALUABLE` trong `run_coherence_audit.py`: 0 |
+
+---
+
+## TỒN ĐỌNG SAU VÒNG 13
+
+| Mục | Hạng | Tuổi |
+|---|---|---|
+| AQ-046 | CRITICAL | 🆕 HANDOFF im lặng trong khi cổng đang chặn |
+| AQ-045 | CRITICAL | ❌ 4 vòng |
+| AQ-002 | CRITICAL | ❌ **13 vòng** |
+| AQ-047 | HIGH | 🆕 hai năng lực mù không chạm tới Risk |
+| AQ-044 | HIGH | ❌ 5 vòng |
+| AQ-043 | HIGH | ❌ 6 vòng |
+
+**Đang mở: 6 (3 CRITICAL, 3 HIGH). Đã trả tích luỹ: 34.**
+
+---
+
+## NHẬN ĐỊNH VÒNG 13
+
+Sprint này sửa đúng thứ nó nhắm: dấu tuổi chuyển về cửa tạo, và phép kiểm gọi thẳng
+hàm tạo thay vì đọc tệp. Đó là cách viết kiểm bắt được lớp lỗi. Ghi nhận.
+
+Nhưng chính lần chạy cổng ấy phơi ra hai chỗ hở lớn hơn, và cả hai cùng một bản
+chất: **kết luận không đi cùng số liệu.**
+
+`TECHNICAL_DEBT.md` nói "KHÔNG merge được"; `HANDOFF.md`, sinh cùng giây, in bốn
+con số đẹp và khuyên "chạy cổng trước khi mở PR". Không tệp nào nói dối về một con
+số — tệp thứ hai chỉ đơn giản không mang theo câu trả lời. Mười ba vòng qua hàng
+đợi này đã đóng nhiều mục bằng cách **khai vắng mặt thay vì lấp** (`run_scope:
+STANDALONE`, `signature_status: NOT_IMPLEMENTED`, `Commit lúc chạy`). AQ-046 là mặt
+còn lại của cùng kỷ luật: **khai kết luận, đừng chỉ khai số.**
+
+AQ-047 cũng vậy. `sensor_coverage.json` đã làm đúng phần khó — nó tách "nguồn có mở
+không" khỏi "thứ ta cần có được ghi không", và nói thẳng hai năng lực đang mù. Rồi
+không ai đọc. Engine rủi ro chỉ biết một loại mù, HANDOFF gộp hai cột thành một, và
+đầu ra cuối cùng là `LOW`. Sự thật được đo, được ghi, và bị bỏ lại trong tệp.
+
+Ba sprint là hết hàng đợi: **GATE-SINGLE-VOICE** (AQ-046) · **COVERAGE-INTO-RISK**
+(AQ-047, cùng họ với AQ-045 vì cả hai là "điểm rủi ro đọc sai bảng tổng kết") ·
+**RUN-ISOLATION** (AQ-043 + AQ-044). AQ-002 vẫn là mục cũ nhất — **13 vòng** — và
+vẫn chỉ cần một dòng bất biến.
+
+---
+
+*Vòng 13, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
