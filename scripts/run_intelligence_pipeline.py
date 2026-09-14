@@ -423,6 +423,20 @@ class IntelligencePipeline:
         )
         success = success and ok
 
+        # Stage 7E: IOC Quality (Sprint 17)
+        #
+        # Chay NGAY SAU bon cuoc san va TRUOC moi thu tieu thu chung: diem tin
+        # cay, chat luong bang chung va chat luong quy ket phai co mat truoc khi
+        # hang doi uu tien, incident va correlation doc chi bao — neu khong, ba
+        # lop do se xep hang mot dong du lieu ma khong biet phan nao trong do la
+        # tieng on nen cua Windows.
+        ok, _ = self.run_stage(
+            'IOC Quality',
+            self.scripts_dir / 'ioc_quality.py',
+            'Scoring IOC confidence, evidence and attribution'
+        )
+        success = success and ok
+
         self.log('')
 
         # Stage 8: Triage Engine

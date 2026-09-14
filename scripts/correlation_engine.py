@@ -692,6 +692,78 @@ class CorrelationEngine:
                     '{}: {}'.format(filename, coverage.get('reason') or
                                     'nguồn dữ liệu không đọc được'))
 
+    def attach_ioc_quality(self):
+        """Gắn chất lượng IOC vào từng phát hiện cấp điều hành.
+
+        Một phát hiện CRITICAL không kèm chất lượng dữ liệu là thứ khó đọc nhất
+        trên bàn của người trực ca: nó nói chuyện gì nghiêm trọng, nhưng không
+        nói nó dựa trên cái gì. Ba con số dưới đây tách ba câu hỏi khác nhau mà
+        một chữ "CRITICAL" gộp làm một:
+
+            severity            nghiêm trọng tới đâu NẾU nó có thật
+            confidence_score    dữ liệu dựng nên nó chắc tới đâu
+            attribution_quality có biết nó nói về máy nào không
+
+        Khớp theo IP vì cả bốn rule hiện tại đều lấy thiết bị làm trung tâm. Rule
+        nào sau này không như vậy sẽ nhận `indicator_count: 0` và một câu nói rõ
+        là không khớp được — chứ không phải một điểm số bịa ra.
+        """
+        try:
+            import ioc_quality
+        except ImportError:
+            return
+
+        by_ip = {}
+        for filename, _stage in self.IOC_STAGES:
+            for indicator in self.indicators(filename):
+                for ip in ioc_quality.systems_of(indicator):
+                    by_ip.setdefault(ip, []).append(indicator)
+
+        for finding in self.findings:
+            ips = extract_ips(finding.get('entities') or {})
+            techniques = set(str(t) for t in
+                             ((finding.get('entities') or {}).get('techniques') or []))
+            matched = []
+            seen = set()
+            for ip in ips:
+                for indicator in by_ip.get(ip, []):
+                    # Khớp theo IP một mình là không đủ khi IP đó là CHÍNH MÁY
+                    # NÀY: mọi chỉ báo trên máy đều mang IP của máy, nên bộ lọc
+                    # sẽ gom cả 593 mục và "mắt xích yếu nhất" thành mắt xích
+                    # yếu nhất của toàn bộ máy — một con số đúng về một câu hỏi
+                    # không ai hỏi. Khi phát hiện có khai kỹ thuật, kỹ thuật là
+                    # thứ thu hẹp lại đúng phần bằng chứng đã dựng nên nó.
+                    if techniques and str(indicator.get('type')) not in techniques:
+                        continue
+                    key = id(indicator)
+                    if key not in seen:
+                        seen.add(key)
+                        matched.append(indicator)
+            quality = ioc_quality.summarize(matched)
+            quality['matched_by'] = ('ip + technique' if techniques else 'ip')
+            finding['ioc_quality'] = quality
+            finding['confidence_score'] = quality['confidence_score']
+            finding['attribution_quality'] = quality['attribution_quality']
+            # `evidence_quality` da ton tai voi nghia "REAL / SIMULATED". Khong
+            # ghi de no: hai truong noi hai chuyen khac nhau, va gop lai se lam
+            # mat dung cai phan biet ma Sprint truoc dung len.
+            finding['evidence_completeness'] = quality['evidence_quality']
+
+            # Mot phat hien HIGH/CRITICAL dung tren du lieu diem thap van co the
+            # dung — nhung nguoi doc phai thay dieu do TRUOC khi di co lap mot
+            # thiet bi. Khong tu ha severity: muc do nghiem trong va do chac chan
+            # la hai truc, va tron chung lai chinh la thu ca sprint nay di tach.
+            score = quality.get('confidence_score')
+            if score is not None and score < ioc_quality.BAND_MEDIUM:
+                finding['quality_warning'] = (
+                    'Phát hiện mức %s nhưng bằng chứng yếu nhất chỉ đạt %d/100'
+                    '%s. Mức nghiêm trọng và độ chắc chắn là hai trục khác nhau.'
+                    % (finding.get('severity'), score,
+                       (' — %d/%d đầu vào là tiếng ồn đã bị hạ cấp'
+                        % (quality.get('suppressed_inputs') or 0,
+                           quality.get('indicator_count') or 0))
+                       if quality.get('suppressed_inputs') else ''))
+
     def run(self):
         self.load_sources()
 
@@ -700,6 +772,7 @@ class CorrelationEngine:
         self.rule_lateral_movement_probe()
         self.rule_high_risk_cluster()
 
+        self.attach_ioc_quality()
         self.findings.sort(key=lambda f: SEVERITY_ORDER.get(f['severity'], 9))
 
         by_severity = {}
@@ -721,6 +794,14 @@ class CorrelationEngine:
             'by_severity': by_severity,
             'by_rule': by_rule,
             'by_evidence_quality': by_quality,
+            'by_confidence': dict(
+                (f.get('ioc_quality', {}).get('confidence') or 'UNKNOWN',
+                 len([g for g in self.findings
+                      if (g.get('ioc_quality') or {}).get('confidence')
+                      == (f.get('ioc_quality', {}).get('confidence') or 'UNKNOWN')]))
+                for f in self.findings),
+            'quality_warnings': len([f for f in self.findings
+                                     if f.get('quality_warning')]),
             'sources': self.sources,
             'coverage_gaps': self.coverage_gaps,
             'findings': self.findings,

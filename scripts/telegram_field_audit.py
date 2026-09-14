@@ -145,7 +145,12 @@ def audit_file(filename):
 
         # Phạm vi: tới hết handler (xấp xỉ bằng dòng trống + khối mới).
         window = []
-        for candidate in lines[number:number + 90]:
+        # Cua so 90 dong la mot gia tri doan. Sprint 17 them ~22 dong vao
+        # handleExecutive va so truy cap quet duoc TUT tu 18 xuong 16 — bo kiem
+        # van xanh vi no chi doi >= 10. Mot bo kiem thu hep pham vi ma van bao
+        # dat la mot bo kiem dang ngung kiem. Cua so nay phai rong hon handler
+        # dai nhat, va ranh gioi that su van la dong khai bao handler ke tiep.
+        for candidate in lines[number:number + 200]:
             if re.match(r'^  (?:async )?[A-Za-z_]\w*\(', candidate):
                 break
             window.append(candidate)

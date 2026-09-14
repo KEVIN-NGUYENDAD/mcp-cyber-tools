@@ -297,6 +297,30 @@ Score: *${score}/100*
         dnsHealth: dnsHealthPercent
       });
 
+      // Sprint 17. executive_findings.json ton tai tu lau va /executive chua
+      // bao gio doc no — mot lenh ten "executive" bao cao moi thu TRU cac phat
+      // hien cap dieu hanh. Ba con so kem theo moi phat hien tach ba cau hoi ma
+      // mot chu "HIGH" mot minh gop lam mot: nghiem trong toi dau NEU co that,
+      // du lieu chac toi dau, va co biet no noi ve may nao khong.
+      let findings = { findings: [], quality_warnings: 0, coverage_gaps: [] };
+      if (fs.existsSync(paths.executiveFindings)) {
+        findings = JSON.parse(fs.readFileSync(paths.executiveFindings, 'utf8'));
+      }
+      const topFindings = (findings.findings || []).slice(0, 3);
+      const findingLines = topFindings.length
+        ? topFindings.map(f => {
+            const conf = (f.confidence_score === null || f.confidence_score === undefined)
+              ? 'n/a' : `${f.confidence_score}/100`;
+            return `  └ ${f.severity || '?'} ${f.title || f.rule_name || f.finding_id}\n`
+                 + `     conf ${conf} · evidence ${f.evidence_completeness || '?'}`
+                 + ` · attribution ${f.attribution_quality || '?'}`
+                 + (f.quality_warning ? '\n     ⚠ bang chung yeu' : '');
+          }).join('\n')
+        // Mot rule khong ket luan duoc KHONG doc giong "khong co gi". Noi ro so
+        // rule khong chay duoc, neu khong thi im lang se duoc hieu la an toan.
+        : `  └ Khong co phat hien tuong quan${(findings.coverage_gaps || []).length
+            ? ` (${findings.coverage_gaps.length} rule khong ket luan duoc)` : ''}`;
+
       const score = risk.overall_score || 0;
       // Prefer the engine's own risk_level - see /status above.
       const scoreLevel = risk.risk_level ||
@@ -338,6 +362,10 @@ ${waapEmoji} SSL/TLS: ${waap.ssl_status || 'N/A'}
 
 *🌐 DOMAIN OPERATIONS*
 ${dnsEmoji} DNS Health: ${dnsHealthPercent}%
+
+*🎯 EXECUTIVE FINDINGS*
+${(findings.findings || []).length} phat hien · ${findings.quality_warnings || 0} canh bao chat luong
+${findingLines}
 
 *└────────────────────┘*`;
 
