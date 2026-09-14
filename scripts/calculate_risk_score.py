@@ -75,6 +75,7 @@ class RiskScoreCalculator:
         self.state_dir = Path(__file__).parent.parent / 'state'
         self.factors = []
         self.notes = []
+        self.coverage_blind_sources = []
 
     def load_state(self, filename):
         return read_state_safe(self.state_dir / filename, dict)
@@ -145,11 +146,19 @@ class RiskScoreCalculator:
         crit_total, high_total = 0, 0
         parts = []
         simulated_sources = []
+        blind_sources = []
 
         for filename in HUNTING_FILES:
             data = self.load_state(filename)
             if not data:
                 continue
+
+            coverage = data.get('coverage') or {}
+            if coverage and not coverage.get('observable', True):
+                # Trục này đang mù. Trung bình có trọng số sẽ coi 0 phát hiện là
+                # 100 điểm sức khoẻ - tức là thưởng điểm cho việc không nhìn thấy.
+                blind_sources.append((filename, coverage.get('reason') or ''))
+
             by_severity = data.get('by_severity') or {}
             crit = by_severity.get('CRITICAL', 0) or 0
             high = by_severity.get('HIGH', 0) or 0
@@ -175,6 +184,18 @@ class RiskScoreCalculator:
 
         score = max(0, score)
         detail = '; '.join(parts) if parts else 'không có IOC CRITICAL/HIGH'
+
+        if blind_sources:
+            names = ', '.join(f.replace('hunting_', '').replace('.json', '')
+                              for f, _ in blind_sources)
+            detail += ' | KHÔNG QUAN SÁT ĐƯỢC: {}'.format(names)
+            self.notes.append(
+                'Vùng mù giám sát: {}/{} nguồn hunting không đọc được nguồn dữ liệu '
+                '({}). 0 phát hiện ở các nguồn này KHÔNG có nghĩa là sạch - '
+                'điểm rủi ro đang lạc quan hơn thực tế. Lý do: {}'
+                .format(len(blind_sources), len(HUNTING_FILES), names,
+                        blind_sources[0][1]))
+
         if simulated_sources:
             self.notes.append(
                 'Cảnh báo dữ liệu: {}/{} nguồn hunting mang data_source=SIMULATED '
@@ -185,7 +206,8 @@ class RiskScoreCalculator:
                                   for s in simulated_sources),
                         int(WEIGHTS['threat_hunting'] * 100), crit_total))
         return score, detail, {'critical': crit_total, 'high': high_total,
-                               'simulated_sources': simulated_sources}
+                               'simulated_sources': simulated_sources,
+                               'blind_sources': [f for f, _ in blind_sources]}
 
     # ------------------------------------------------------------------
 
@@ -220,6 +242,9 @@ class RiskScoreCalculator:
                 critical_count += counts.get('critical', 0)
                 high_count += counts.get('high', 0)
 
+            if counts.get('blind_sources'):
+                self.coverage_blind_sources = counts['blind_sources']
+
             self.factors.append({
                 'name': name,
                 'health': health,
@@ -240,6 +265,21 @@ class RiskScoreCalculator:
                 'Severity floor áp dụng: {} phát hiện CRITICAL nâng risk_level từ {} lên HIGH'
                 .format(critical_count, risk_level))
             risk_level = 'HIGH'
+
+        # Sàn vùng mù: không thể khẳng định "rủi ro THẤP" về những thứ không
+        # nhìn thấy. Khi một nguồn hunting không đọc được, 0 phát hiện của nó
+        # được phép tính là 100 điểm sức khoẻ - tức là hệ thống tự thưởng điểm
+        # cho việc bị mù. Ghi chú thôi thì không đủ: thứ người trực ca nhìn trên
+        # bảng điều khiển là chữ LOW, không phải dòng notes bên dưới.
+        blind = self.coverage_blind_sources
+        if blind and risk_level == 'LOW':
+            self.notes.append(
+                'Coverage floor áp dụng: {} nguồn hunting đang mù ({}), nên '
+                'risk_level nâng từ LOW lên MEDIUM. Không khẳng định được rủi ro '
+                'thấp khi chưa quan sát được. overall_score giữ nguyên.'
+                .format(len(blind), ', '.join(
+                    b.replace('hunting_', '').replace('.json', '') for b in blind)))
+            risk_level = 'MEDIUM'
 
         self.factors.sort(key=lambda f: f['risk_contribution'], reverse=True)
 

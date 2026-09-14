@@ -6,6 +6,7 @@ Runs all collectors and intelligence extractors in sequence
 Outputs: Comprehensive state/ updates and daily brief
 """
 
+import io
 import json
 import sys
 import os
@@ -62,11 +63,22 @@ class IntelligencePipeline:
         stage_start = time.time()
 
         try:
+            child_env = dict(os.environ)
+            child_env['PYTHONIOENCODING'] = 'utf-8'
+
             result = subprocess.run(
                 [sys.executable, str(script_path)],
                 cwd=str(self.project_root),
+                env=child_env,
                 capture_output=True,
                 text=True,
+                # encoding/errors là bắt buộc: text=True dùng codec của locale
+                # (cp1252 trên máy này), còn script con in JSON UTF-8 có tiếng
+                # Việt. Khi giải mã hỏng, Python 3.7 không báo UnicodeDecodeError
+                # mà ném "IndexError: list index out of range" từ luồng đọc - một
+                # thông báo không liên quan gì tới nguyên nhân thật.
+                encoding='utf-8',
+                errors='replace',
                 timeout=300
             )
 
@@ -157,21 +169,28 @@ class IntelligencePipeline:
 
         waap_score_val = waap_score.get('score', 0) if isinstance(waap_score, dict) else 0
 
-        # Determine risk level
-        avg_score = (crypto_score + waap_score_val) / 2 if crypto_score or waap_score_val else 50
-        if avg_score >= 80:
-            risk_level = 'LOW'
-        elif avg_score >= 60:
-            risk_level = 'MEDIUM'
+        # Risk level đọc từ engine chuẩn, không tự tính lại.
+        #
+        # Trước đây dòng này lấy trung bình crypto + WAAP rồi tự xếp hạng - một
+        # engine rủi ro thứ tư, sống sót qua cả Sprint 6 (vốn đã xoá risk_engine.py
+        # và bộ chấm điểm riêng của Daily Brief). Nó in ra HIGH trong khi
+        # state/risk_score.json ghi MEDIUM, và đây là dòng con người thực sự đọc
+        # ở cuối mỗi lần chạy.
+        risk_state = self.load_state_file('risk_score.json')
+        if isinstance(risk_state, dict) and risk_state.get('risk_level'):
+            risk_level = risk_state['risk_level']
+            risk_score_val = risk_state.get('overall_score')
         else:
-            risk_level = 'HIGH'
+            risk_level = 'UNKNOWN'
+            risk_score_val = None
 
         # Display summary
         self.log(f'Assets:       {asset_count}')
         self.log(f'Services:     {service_count}')
         self.log(f'Crypto Score: {crypto_score}')
         self.log(f'WAAP Score:   {waap_score_val}')
-        self.log(f'Risk Level:   {risk_level}')
+        self.log(f'Risk Level:   {risk_level}' +
+                 (f' (score {risk_score_val}/100)' if risk_score_val is not None else ''))
         self.log('=' * 50)
 
         # Save summary
@@ -487,7 +506,30 @@ class IntelligencePipeline:
         return 0 if success else 1
 
 
+def _force_utf8_stdout():
+    """Giu stdout o UTF-8 ke ca khi no bi chuyen huong ra file.
+
+    Tren Windows, stdout gan vao console dung UTF-8, nhung stdout bi chuyen
+    huong lai dung cp1252. Dong log dau tien cua pipeline co mot emoji, nen
+    `python run_intelligence_pipeline.py > pipeline.log` chet ngay o dong log
+    dau tien voi UnicodeEncodeError — truoc khi chay bat ky stage nao. Moi lan
+    chay theo lich (ghi log ra file) deu roi vao duong nay.
+    """
+    for stream_name in ('stdout', 'stderr'):
+        stream = getattr(sys, stream_name, None)
+        encoding = (getattr(stream, 'encoding', '') or '').lower()
+        if stream is None or encoding.replace('-', '') == 'utf8':
+            continue
+        try:
+            setattr(sys, stream_name, io.TextIOWrapper(
+                stream.buffer, encoding='utf-8', errors='replace',
+                line_buffering=True))
+        except (AttributeError, ValueError):
+            pass
+
+
 def main():
+    _force_utf8_stdout()
     pipeline = IntelligencePipeline()
     exit_code = pipeline.run()
     sys.exit(exit_code)

@@ -1,194 +1,220 @@
 #!/usr/bin/env python3
 """
-PERSISTENCE THREAT HUNTING (Phase N.9A)
-Tích hợp MCP huntPersistence module
-Phát hiện chỉ báo persistence trong hệ thống
+PERSISTENCE THREAT HUNTING — LIVE
+
+Nguồn: MCP tool `huntPersistence` + `huntSuspiciousTasks`, chạy trên máy này,
+qua scripts/mcp_bridge.py.
+
+Trước sprint này script chỉ xuất 5 chỉ báo hardcode. Nay nó xuất những cơ chế
+tự khởi động CÓ THẬT trên máy — và vì thế phải chấm điểm dè dặt: một máy bình
+thường có hàng chục scheduled task và Run key hợp lệ. Gắn CRITICAL cho tất cả
+chỉ là đổi một kiểu nhiễu này lấy một kiểu nhiễu khác.
+
+Mức độ được *kiếm* bằng dấu hiệu cụ thể, không phải bằng sự tồn tại.
+
 Populates: state/hunting_persistence.json
 """
 
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
-# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
-from state_manager import write_state_atomic, read_state_safe
+from state_manager import write_state_atomic
 import ioc_attribution
+from mcp_bridge import McpBridge, McpBridgeError, as_list
 
-class PersistenceHunter:
+HUNT_VERSION = '2.0.0'
+
+# Thư mục mà phần mềm hợp lệ hiếm khi dùng để tự khởi động.
+SUSPECT_PATH_RE = re.compile(
+    r'(\\Temp\\|\\AppData\\Local\\Temp\\|\\ProgramData\\|\\Users\\Public\\|\\Downloads\\)',
+    re.I)
+
+# Binary sống nhờ hệ thống — xuất hiện trong một mục autostart là đáng hỏi.
+LOLBIN_RE = re.compile(
+    r'\b(powershell|pwsh|cmd|wscript|cscript|mshta|rundll32|regsvr32|certutil|'
+    r'bitsadmin|msbuild|installutil|regasm|regsvcs)\b', re.I)
+
+ENCODED_RE = re.compile(r'-enc\b|-encodedcommand\b|frombase64string', re.I)
+
+
+class PersistenceHunter(object):
+
     def __init__(self):
         self.state_dir = Path(__file__).parent.parent / 'state'
         self.hunting_file = self.state_dir / 'hunting_persistence.json'
         self.indicators = []
+        self.errors = []
+        self.observable = False
+        self.tools_used = []
 
-    def load_state(self, filename):
-        """Tải state file"""
-        fp = self.state_dir / filename
-        return json.load(open(fp)) if fp.exists() else {}
+    # -- thu thập ---------------------------------------------------------
 
-    def detect_persistence_indicators(self):
-        """Phát hiện chỉ báo persistence từ MCP data"""
+    def collect(self, bridge):
+        records = []
+        for tool in ('huntPersistence', 'huntSuspiciousTasks'):
+            outcome = bridge.call_tool(tool)
+            self.tools_used.append({
+                'tool': tool,
+                'ok': outcome['ok'],
+                'records': len(as_list(outcome['parsed'])),
+                'duration': outcome['duration'],
+                'error': outcome['error'],
+            })
+            if not outcome['ok']:
+                self.errors.append('{}: {}'.format(tool, outcome['error']))
+                continue
+            self.observable = True
+            for item in as_list(outcome['parsed']):
+                if isinstance(item, dict):
+                    item['_tool'] = tool
+                    records.append(item)
+        return records
 
-        # Nếu trong thực tế, đây sẽ gọi MCP huntPersistence
-        # Hiện tại, ta simulate dựa trên dữ liệu có sẵn
+    # -- chấm điểm --------------------------------------------------------
 
-        # Kiểm tra từ timeline (Registry changes, Startup changes, etc.)
-        timeline = self.load_state('timeline.json')
+    @staticmethod
+    def describe(record):
+        kind = record.get('Kind') or ('ScheduledTask' if record.get('TaskName') else 'Autostart')
+        name = record.get('Name') or record.get('TaskName') or 'Unknown'
+        location = record.get('Location') or record.get('TaskPath') or ''
+        command = record.get('Command') or ''
+        return kind, name, location, command
 
-        # Kiểm tra từ security events
-        security = self.load_state('security_events.json')
+    def classify(self, record):
+        """Trả về (severity, lý do). Mặc định là INFO — mức phải kiếm được."""
+        _, name, location, command = self.describe(record)
+        haystack = '{} {} {}'.format(name, location, command)
+        reasons = []
+        severity = 'INFO'
 
-        # Simulate: Phát hiện các chỉ báo persistence tiềm tàng
-        # (Trong production, sẽ call MCP huntPersistence)
+        if ENCODED_RE.search(haystack):
+            severity = 'CRITICAL'
+            reasons.append('lệnh mã hoá base64 trong mục tự khởi động')
+        elif SUSPECT_PATH_RE.search(haystack):
+            severity = 'HIGH'
+            reasons.append('tự khởi động từ thư mục tạm/công cộng')
+        elif LOLBIN_RE.search(command):
+            severity = 'MEDIUM'
+            reasons.append('gọi binary sống nhờ hệ thống (LOLBin)')
 
-        # Chỉ báo 1: Registry Run Key
-        self.indicators.append({
-            'type': 'Registry Run Key Modification',
-            'severity': 'HIGH',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Registry Run Key có thể bị chỉnh sửa để persistence',
-            'evidence': [
-                'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run',
-                'HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'
-            ],
-            'recommendation': 'Kiểm tra registry run keys, xóa entries lạ',
-            'impact': 'Tự động khởi động malware',
-            'status': 'DETECTED'
-        })
+        if not reasons:
+            reasons.append('mục tự khởi động ở vị trí thông thường')
+        return severity, '; '.join(reasons)
 
-        # Chỉ báo 2: Startup Folder Modification
-        self.indicators.append({
-            'type': 'Startup Folder Persistence',
-            'severity': 'HIGH',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Thư mục Startup có chứa files lạ',
-            'evidence': [
-                'C:\\Users\\*\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup',
-                'C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp'
-            ],
-            'recommendation': 'Kiểm tra Startup folders, xóa files lạ',
-            'impact': 'Tự động khởi động malware',
-            'status': 'POTENTIAL'
-        })
+    def build_indicators(self, records):
+        for record in records:
+            kind, name, location, command = self.describe(record)
+            severity, reason = self.classify(record)
 
-        # Chỉ báo 3: Scheduled Task
-        self.indicators.append({
-            'type': 'Scheduled Task Persistence',
-            'severity': 'MEDIUM',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Scheduled task có thể dùng cho persistence',
-            'evidence': [
-                'C:\\Windows\\System32\\Tasks\\',
-                'C:\\Windows\\SysWOW64\\Tasks\\'
-            ],
-            'recommendation': 'Audit scheduled tasks, xóa các tasks lạ/lạ',
-            'impact': 'Thực thi code theo lịch',
-            'status': 'REQUIRES_AUDIT'
-        })
+            self.indicators.append({
+                'type': 'Persistence: {}'.format(kind),
+                'severity': severity,
+                'timestamp': datetime.now().isoformat(),
+                'name': name,
+                'location': location,
+                'command': command,
+                'description': '{} "{}" tại {}'.format(kind, name, location or 'n/a'),
+                'evidence': [
+                    'Kind={}'.format(kind),
+                    'Name={}'.format(name),
+                    'Location={}'.format(location or 'n/a'),
+                    'Command={}'.format(command or 'n/a'),
+                    'Nguồn MCP: {}'.format(record.get('_tool')),
+                ],
+                'assessment': reason,
+                'recommendation': ('Xác minh mục này có phải do bạn cài đặt'
+                                   if severity in ('CRITICAL', 'HIGH')
+                                   else 'Không cần hành động, ghi nhận để đối chiếu'),
+                'status': 'DETECTED',
+                'detection_method': 'MCP huntPersistence / huntSuspiciousTasks',
+            })
 
-        # Chỉ báo 4: Service Installation
-        self.indicators.append({
-            'type': 'Malicious Service',
-            'severity': 'HIGH',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'Service mới được cài đặt - kiểm tra xem có phải malware',
-            'evidence': [
-                'HKLM\\System\\CurrentControlSet\\Services\\',
-                'registry services entries'
-            ],
-            'recommendation': 'Kiểm tra services mới, xóa nếu lạ',
-            'impact': 'Tự động chạy malware service',
-            'status': 'REQUIRES_VERIFICATION'
-        })
-
-        # Chỉ báo 5: WMI Event Consumer (Advanced)
-        self.indicators.append({
-            'type': 'WMI Event Consumer Subscription',
-            'severity': 'CRITICAL',
-            'timestamp': datetime.now().isoformat(),
-            'description': 'WMI có thể bị dùng cho persistence',
-            'evidence': [
-                'WMI Event Consumers',
-                'WMI Event Filters',
-                'Filter to Consumer Binding'
-            ],
-            'recommendation': 'Kiểm tra WMI event subscribers, xóa các subscriptions lạ',
-            'impact': 'Execution hook vào WMI events',
-            'status': 'REQUIRES_FORENSICS'
-        })
-
-    def correlate_with_timeline(self):
-        """Tương quan với timeline events"""
-        timeline = self.load_state('timeline.json')
-
-        # Kiểm tra nếu có timeline events liên quan đến persistence
-        for event in timeline.get('events', []):
-            if event.get('category') in ['Risk', 'System']:
-                for indicator in self.indicators:
-                    if 'registry' in indicator['type'].lower() or \
-                       'task' in indicator['type'].lower():
-                        indicator['timeline_correlated'] = True
-                        indicator['correlation_details'] = event.get('description')
+    # -- xuất báo cáo -----------------------------------------------------
 
     def generate_hunting_report(self):
-        """Tạo report threat hunting"""
-        # Sprint 6.1: khai báo nguồn gốc trước khi xuất. Các chỉ báo dưới đây là
-        # hardcode trong script (xem chú thích "Simulate" ở detect_*), nên chúng
-        # KHÔNG được quy kết cho thiết bị thật — ioc_attribution cưỡng chế điều đó.
-        hunt_scope = ioc_attribution.resolve_hunt_scope()
-        ioc_attribution.apply_to_indicators(
-            self.indicators,
-            ioc_attribution.SOURCE_SIMULATED,
-            hunt_scope,
-            affected_key='affected_systems'
-        )
+        coverage = ioc_attribution.coverage_block(
+            self.observable,
+            'Scheduled Tasks + Registry Run keys',
+            None if self.observable else
+            'Không gọi được MCP tool: {}'.format('; '.join(self.errors) or 'không rõ'))
+
+        scope = ioc_attribution.live_scope(
+            coverage=coverage['status'],
+            source_detail='huntPersistence + huntSuspiciousTasks')
+
+        # Cuộc săn này quan sát CHÍNH máy đang chạy, nên quy kết về nó là sự
+        # thật kiểm chứng được - không phải suy đoán như khi gán IOC cho IP lạ.
+        local_ips = scope['local_host']['ips']
+        for indicator in self.indicators:
+            block = ioc_attribution.attribute(
+                ioc_attribution.SOURCE_LIVE,
+                affected_systems=local_ips,
+                method='host-local observation via MCP',
+                confidence='HIGH' if local_ips else 'LOW',
+                reason='Quan sát trực tiếp trên máy {}'.format(
+                    scope['local_host']['hostname']))
+            indicator['data_source'] = block['data_source']
+            indicator['affected_systems'] = block['affected_systems']
+            indicator['attribution'] = block['attribution']
+            indicator['hunt_scope'] = local_ips
 
         output = {
             'timestamp': datetime.now().isoformat(),
-            'data_source': ioc_attribution.SOURCE_SIMULATED,
-            'hunt_scope': hunt_scope,
-            'attribution_note': ioc_attribution.coverage_note(
-                ioc_attribution.SOURCE_SIMULATED, len(self.indicators)
-            ),
             'hunting_type': 'Persistence Indicators',
+            'hunt_version': HUNT_VERSION,
+            'data_source': ioc_attribution.SOURCE_LIVE,
+            'coverage': coverage,
+            'hunt_scope': scope,
+            'tools_used': self.tools_used,
+            'errors': self.errors,
             'question': 'Có chỉ báo persistence nào trong hệ thống không?',
             'total_indicators': len(self.indicators),
             'by_severity': {},
             'by_status': {},
-            'indicators': self.indicators
+            'indicators': self.indicators,
         }
 
-        # Thống kê by severity
         for indicator in self.indicators:
-            severity = indicator.get('severity', 'UNKNOWN')
-            output['by_severity'][severity] = output['by_severity'].get(severity, 0) + 1
-
-        # Thống kê by status
-        for indicator in self.indicators:
+            sev = indicator.get('severity', 'UNKNOWN')
+            output['by_severity'][sev] = output['by_severity'].get(sev, 0) + 1
             status = indicator.get('status', 'UNKNOWN')
             output['by_status'][status] = output['by_status'].get(status, 0) + 1
 
         write_state_atomic(self.hunting_file, output, indent=2)
-
         return output
 
-    def hunt(self):
-        """Chạy threat hunting"""
-        self.detect_persistence_indicators()
-        self.correlate_with_timeline()
-        report = self.generate_hunting_report()
+    # -- điều phối --------------------------------------------------------
 
+    def hunt(self):
+        try:
+            with McpBridge() as bridge:
+                records = self.collect(bridge)
+            self.build_indicators(records)
+        except McpBridgeError as error:
+            # Cầu nối chết: vẫn xuất báo cáo, nhưng nói rõ là KHÔNG quan sát được.
+            # Im lặng ghi 0 phát hiện sẽ bị đọc nhầm thành "máy sạch".
+            self.errors.append('MCP bridge: {}'.format(error))
+
+        report = self.generate_hunting_report()
         return {
-            'status': 'success',
-            'hunting_type': 'Persistence',
+            'status': 'success' if self.observable else 'degraded',
+            'hunting_type': 'Persistence Indicators',
+            'data_source': report['data_source'],
+            'observable': report['coverage']['observable'],
             'total_indicators': len(self.indicators),
             'critical': report['by_severity'].get('CRITICAL', 0),
             'high': report['by_severity'].get('HIGH', 0),
-            'medium': report['by_severity'].get('MEDIUM', 0)
+            'errors': self.errors,
         }
+
 
 if __name__ == '__main__':
     hunter = PersistenceHunter()
     result = hunter.hunt()
-    print(json.dumps(result, indent=2))
-    sys.exit(0 if result.get('status') == 'success' else 1)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+    # degraded vẫn là exit 0: pipeline cần chạy tiếp, và báo cáo đã nói rõ
+    # vì sao nó không kết luận được.
+    sys.exit(0)

@@ -51,7 +51,7 @@ async function loadAllData() {
     // Load from public API endpoint or local JSON
     const baseUrl = '/api/state';
 
-    const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses] = await Promise.allSettled([
+    const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses, sensorCoverage] = await Promise.allSettled([
       fetch(`${baseUrl}/assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
       fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ shadows: [] })),
       fetch(`${baseUrl}/incidents.json`).then(r => r.json()).catch(() => ({ incidents: [] })),
@@ -65,7 +65,8 @@ async function loadAllData() {
       fetch(`${baseUrl}/hunting_persistence.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
       fetch(`${baseUrl}/hunting_lateral_movement.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
       fetch(`${baseUrl}/hunting_credential_dumping.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
-      fetch(`${baseUrl}/hunting_suspicious_processes.json`).then(r => r.json()).catch(() => ({ indicators: [] }))
+      fetch(`${baseUrl}/hunting_suspicious_processes.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
+      fetch(`${baseUrl}/sensor_coverage.json`).then(r => r.json()).catch(() => null)
     ]);
 
     stateData.assets = assets.value || { assets: [] };
@@ -82,7 +83,10 @@ async function loadAllData() {
     stateData.threatLateral = threatLateral.value || { indicators: [] };
     stateData.threatCredential = threatCredential.value || { indicators: [] };
     stateData.threatProcesses = threatProcesses.value || { indicators: [] };
-    stateData.mcp = { status: 'ONLINE', tool_count: '90+', threat_hunting_active: true, dfir_active: true, event_hub_active: true, last_sync: '2 min ago' };
+    stateData.sensorCoverage = sensorCoverage.value || null;
+    // stateData.mcp tung duoc viet cung thanh { status: 'ONLINE', tool_count: '90+' ... }.
+    // Gio no la ket qua kiem that; null khi chua tung chay tool_validator.py.
+    stateData.mcp = stateData.sensorCoverage ? stateData.sensorCoverage.tool_summary || null : null;
 
     updateLastUpdate();
     console.log('[DATA] Loaded:', Object.keys(stateData).length, 'data sources');
@@ -343,9 +347,104 @@ function updateExecutiveSecurityRow(assets) {
     // MCP Intelligence
     const execMcpQueue = document.getElementById('exec-mcp-queue');
     if (execMcpQueue) execMcpQueue.textContent = '0';
+
+    renderSensorCoverage();
   } catch (error) {
     console.error('[ERROR] updateExecutiveSecurityRow:', error);
   }
+}
+
+// ============================================================================
+// SENSOR COVERAGE
+// ============================================================================
+//
+// Mot cam bien chet va mot may sach deu bao "0 phat hien". Khoi nay ton tai de
+// hai truong hop do khong con doc giong nhau tren man hinh.
+//
+// Nguon: state/sensor_coverage.json, sinh boi scripts/tool_validator.py.
+// Khong co file do thi khong ve gi ca — noi thang la chua tung kiem, chu khong
+// hien mot mau xanh mac dinh.
+
+const SENSOR_COVERAGE_ICON = { covered: '✅', partial: '⚠', blind: '❌' };
+const SENSOR_COVERAGE_COLOR = {
+  covered: '#00C896', partial: '#FFB020', blind: '#FF3B5C'
+};
+
+function renderSensorCoverage() {
+  const grid = document.getElementById('sensor-coverage-grid');
+  if (!grid) return;
+  const meta = document.getElementById('sensor-coverage-meta');
+  const note = document.getElementById('sensor-coverage-note');
+  const coverage = stateData.sensorCoverage;
+
+  const setToolCounts = (summary) => {
+    const put = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+    put('exec-mcp-tools', summary ? summary.tool_count : '?');
+    put('exec-mcp-pass', summary ? summary.pass : '?');
+    put('exec-mcp-blind', summary ? summary.blind : '?');
+    put('exec-mcp-fail', summary ? summary.fail : '?');
+  };
+
+  if (!coverage || !coverage.details) {
+    grid.innerHTML = '<div style="color: var(--color-text-dim);">Chua chay scripts/tool_validator.py — chua biet cam bien nao dang nhin thay gi.</div>';
+    if (meta) meta.textContent = 'NEVER VERIFIED';
+    if (note) note.textContent = '';
+    setToolCounts(null);
+    return;
+  }
+
+  setToolCounts(coverage.tool_summary);
+
+  const order = ['defender', 'firewall', 'security_log', 'event_logs',
+                 'persistence', 'processes', 'network', 'ioc'];
+  grid.innerHTML = order.map(key => {
+    const d = coverage.details[key];
+    if (!d) return '';
+    const color = SENSOR_COVERAGE_COLOR[d.status] || 'var(--color-text-dim)';
+    const icon = SENSOR_COVERAGE_ICON[d.status] || '?';
+    return `
+      <div style="border: 1px solid ${color}; border-left: 4px solid ${color}; border-radius: 6px; padding: 10px 12px; background: rgba(255,255,255,0.02);">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
+          <span style="font-size: 0.9em; color: var(--color-text);">${d.label}</span>
+          <span style="font-weight: bold; color: ${color}; white-space: nowrap;">${icon} ${d.status.toUpperCase()}</span>
+        </div>
+        <div style="margin-top: 6px; font-size: 0.78em; color: var(--color-text-dim); font-family: monospace;">
+          ${d.pass} pass &middot; ${d.empty} empty &middot; ${d.blind} blind &middot; ${d.fail} fail
+        </div>
+        ${d.reason ? `<div style="margin-top: 5px; font-size: 0.75em; color: ${color};">${escapeHtmlSafe(d.reason)}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  const s = coverage.summary || {};
+  if (meta) {
+    // Coverage khong tu lam moi theo pipeline (tool_validator.py goi that 99
+    // tool, co tac dung phu). Nen tuoi cua no phai hien ra: mot ban do vung mu
+    // cu ba ngay van doc nhu su that hom nay neu khong ai noi no bao nhieu tuoi.
+    const ageHours = coverage.generated_at
+      ? (Date.now() - new Date(coverage.generated_at).getTime()) / 3600000
+      : null;
+    const stale = ageHours !== null && ageHours > 24;
+    meta.textContent = `${s.covered || 0} covered / ${s.partial || 0} partial / ${s.blind || 0} blind`
+      + (coverage.generated_at ? ` — ${new Date(coverage.generated_at).toLocaleString()}` : '')
+      + (stale ? ` (CU ${Math.floor(ageHours / 24)} ngay — chay lai tool_validator.py)` : '');
+    meta.style.color = stale ? '#FFB020' : 'var(--color-text-dim)';
+  }
+
+  if (note) {
+    const e = coverage.event_4688;
+    note.innerHTML = e
+      ? `<strong>Event ID 4688 (Process Creation):</strong> observable = <strong style="color: ${e.observable ? '#00C896' : '#FF3B5C'};">${e.observable}</strong> (${e.status}). ${escapeHtmlSafe(e.reason || '')}`
+      : '';
+  }
+}
+
+function escapeHtmlSafe(text) {
+  return String(text == null ? '' : text)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 // ============================================================================
@@ -406,12 +505,12 @@ function renderMCPCommandCenter() {
   if (!element) return;
 
   // Read MCP status from state data or default to ONLINE
-  const mcpStatus = stateData.mcp?.status || 'ONLINE';
-  const mcpToolCount = stateData.mcp?.tool_count || '90+';
-  const mcpThreatHunting = stateData.mcp?.threat_hunting_active ? 'ACTIVE' : 'OFFLINE';
-  const mcpDfir = stateData.mcp?.dfir_active ? 'ACTIVE' : 'OFFLINE';
-  const mcpEventHub = stateData.mcp?.event_hub_active ? 'ACTIVE' : 'OFFLINE';
-  const mcpLastSync = stateData.mcp?.last_sync || '2 min ago';
+  const mcpStatus = stateData.mcp?.status || 'UNVERIFIED';
+  const mcpToolCount = stateData.mcp?.tool_count ?? '?';
+  const mcpThreatHunting = stateData.mcp?.threat_hunting_active ? 'ACTIVE' : 'UNVERIFIED';
+  const mcpDfir = stateData.mcp?.dfir_active ? 'ACTIVE' : 'UNVERIFIED';
+  const mcpEventHub = stateData.mcp?.event_hub_active ? 'ACTIVE' : 'UNVERIFIED';
+  const mcpLastSync = stateData.mcp?.last_sync || 'chua kiem bao gio';
 
   element.innerHTML = `
     <div style="background: rgba(139, 92, 246, 0.1); border: 2px solid #8B5CF6; border-radius: 8px; padding: 20px; margin-top: 20px;">
@@ -665,8 +764,8 @@ function drawSecurityTopology(incidents) {
   html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
   html += `<div style="color: #8B5CF6; font-weight: bold;">🤖 MCP INTELLIGENCE</div>`;
-  const mcpToolCount = stateData.mcp?.tool_count || '90+';
-  const mcpStatus = stateData.mcp?.status || 'ACTIVE';
+  const mcpToolCount = stateData.mcp?.tool_count ?? '?';
+  const mcpStatus = stateData.mcp?.status || 'UNVERIFIED';
   html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">${mcpToolCount} Tools | ${mcpStatus}</div>`;
 
   html += `</div>`;
