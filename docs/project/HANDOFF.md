@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T13:56:28.522722
+Cập nhật: 2026-09-14T14:08:04.349205
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `09000ba` |
+| Commit lúc chạy | `8d9d457` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | fix(risk): stop scoring noise that was already classified as noise |
+| Tiêu đề | fix(gate): an audit that could not run must say so, not report zero violations |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
