@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/sprint_gate.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T13:32:42
+Cập nhật: 2026-09-14T13:48:15
 
 ## Cổng merge
 
 | | |
 |---|---|
 | Đủ điều kiện merge | **CÓ** |
-| PASS | 94 |
-| EMPTY | 5 |
+| PASS | 93 |
+| EMPTY | 6 |
 | BLIND | 0 |
 | FAIL | 0 |
 | Bộ kiểm phát hiện | ĐẠT |
@@ -18,8 +18,8 @@ Cập nhật: 2026-09-14T13:32:42
 | Pipeline | 28 stage, 0 thất bại |
 | Trường portal đọc từ state không tồn tại | 0 / 28 truy cập soi được |
 | Trường Telegram đọc từ state không tồn tại | 0 / 15 truy cập soi được |
-| Tuổi `tool_validation.json` | 5.3 giờ |
-| Tuổi `pipeline_results.json` | 0.0 giờ |
+| Tuổi `tool_validation.json` | 0.0 giờ |
+| Tuổi `pipeline_results.json` | 0.3 giờ |
 | Tuổi `sensor_coverage.json` | 0.0 giờ |
 | Biểu thức innerHTML chưa escape | 0 / 85 biểu thức trong sink |
 | `.get(khoá, mặc định)` bịa số trong Python | 0 / 106 lời gọi lần được |
@@ -40,7 +40,7 @@ các lớp lỗi nằm ngoài mọi hàng ở đây.
 
 | Hạng mục | Chi tiết | Mức |
 |---|---|---|
-| Tool EMPTY | 5 tool đọc được nguồn nhưng không có bản ghi nào khớp | Không phải nợ — đây là "đã nhìn, không có gì". Ghi ra để không ai nhầm nó với BLIND. |
+| Tool EMPTY | 6 tool đọc được nguồn nhưng không có bản ghi nào khớp | Không phải nợ — đây là "đã nhìn, không có gì". Ghi ra để không ai nhầm nó với BLIND. |
 | Năng lực: Scheduled Task Execution | Kênh Microsoft-Windows-TaskScheduler/Operational đang TẮT — việc tác vụ được tạo, sửa và CHẠY không được ghi ở đâu cả. Không có kênh này, huntSuspiciousTasks chỉ thấy tác vụ đang còn tồn tại — không thấy tác vụ đã chạy x | BLIND |
 | Năng lực: USB Device Activity | Kênh Microsoft-Windows-DriverFrameworks-UserMode/Operational đang TẮT — việc thiết bị USB được cắm vào không được ghi ở đâu cả. usbLogs không có nguồn nào khác cho câu hỏi "cái gì đã được cắm vào máy này, lúc nào". | BLIND |
 

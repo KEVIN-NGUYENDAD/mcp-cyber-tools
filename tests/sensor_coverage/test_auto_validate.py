@@ -15,6 +15,7 @@ mỗi cửa ứng với một nhóm ca dưới đây:
   3. Thất bại trong im lặng. Không khởi chạy được mà vẫn báo "tự động".
 """
 
+import json
 import os
 import sys
 
@@ -139,11 +140,32 @@ def run():
 
     # Chinh tool_validator phai dong dau, khong chi rieng refresh. Day la lo hong
     # Sprint 15 de lai: validator ghi de ca tep va lam hai moc bien mat.
-    source = open(os.path.join(PROJECT_ROOT, 'scripts', 'tool_validator.py'),
-                  encoding='utf-8').read()
-    body = source.split('def main(')[-1]
-    suite.check('tool_validator.main() co dong dau hai moc truoc khi ghi',
-                'stamp_freshness(' in body)
+    #
+    # Phep kiem nay TUNG doc ma nguon cua `main()` va tim chuoi `stamp_freshness(`.
+    # Nhung dieu can bao dam khong phai "main() co goi ham do" — ma la "coverage
+    # di ra tu day luon mang dau tuoi". Hai cau do khac nhau, va su khac nhau vua
+    # tra gia that: `sprint_gate.collect(validate=True)` goi thang
+    # `sensor_coverage()` roi tu ghi tep, khong di qua `main()` — nen
+    # `npm run gate:full` sinh ra mot tep thieu ca ba truong, trong khi phep kiem
+    # tim-chuoi nay van xanh. No canh dung mot duong di trong nhieu duong.
+    #
+    # Dau tuoi nay da chuyen vao `sensor_coverage()`, noi coverage duoc TAO RA,
+    # nen moi nguoi goi deu duoc dong dau. Phep kiem vi the hoi thang ket qua,
+    # khong hoi ma nguon: no manh hon ban cu, vi no dung cho MOI duong goi chu
+    # khong rieng `main()`.
+    report_file = os.path.join(PROJECT_ROOT, 'state', 'tool_validation.json')
+    if not os.path.exists(report_file):
+        suite.check('co state/tool_validation.json de kiem dau tuoi', False,
+                    'chay `npm run validate` truoc')
+    else:
+        with open(report_file, encoding='utf-8') as handle:
+            report = json.load(handle)
+        coverage = tool_validator.sensor_coverage(report)
+        for field in ('probe_generated_at', 'tools_generated_at',
+                      'freshness_note', 'refreshed_by'):
+            suite.check('sensor_coverage() tra ve co `%s`' % field,
+                        coverage.get(field) is not None,
+                        'duong goi nao cung phai duoc dong dau, khong rieng main()')
 
     return suite
 
