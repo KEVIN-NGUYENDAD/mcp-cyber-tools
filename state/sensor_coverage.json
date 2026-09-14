@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T21:56:56.732596",
+  "generated_at": "2026-09-13T22:47:19.483532",
   "version": "2.0.0",
   "defender": "covered",
   "firewall": "covered",
@@ -54,7 +54,7 @@
       "empty": 2,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 1858,
+      "evidence_records": 1815,
       "probes_dead": [],
       "reason": null
     },
@@ -66,7 +66,7 @@
       "empty": 1,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 459,
+      "evidence_records": 460,
       "probes_dead": [],
       "reason": null
     },
@@ -90,7 +90,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 1116,
+      "evidence_records": 1101,
       "probes_dead": [],
       "reason": null
     },
@@ -102,7 +102,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 699,
+      "evidence_records": 922,
       "probes_dead": [],
       "reason": null
     },
@@ -126,11 +126,11 @@
     "empty": 6,
     "blind": 0,
     "fail": 0,
-    "evidence_records": 8073,
+    "evidence_records": 8239,
     "threat_hunting_active": true,
     "dfir_active": true,
     "event_hub_active": true,
-    "last_sync": "2026-09-13T21:56:56.732596"
+    "last_sync": "2026-09-13T22:47:19.483532"
   },
   "access_diagnosis": {
     "can_fix": true,
@@ -176,7 +176,7 @@
       "probe": "event_log_ps_operational",
       "log": "Microsoft-Windows-PowerShell/Operational",
       "readable": true,
-      "records": "596",
+      "records": "1081",
       "covers": "Script block logging (4104): n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y \u2014 che \u0111\u01b0\u1ee3c ph\u1ea7n PowerShell c\u1ee7a v\u00f9ng m\u00f9 4688, kh\u00f4ng che ph\u1ea7n c\u00f2n l\u1ea1i",
       "used_by": [
         "huntEncodedPowerShell"
@@ -189,7 +189,7 @@
       "label": "Security Log",
       "detail": "Log Security th\u00f4 \u2014 n\u1ec1n c\u1ee7a m\u1ecdi th\u1ee9 d\u01b0\u1edbi \u0111\u00e2y",
       "status": "covered",
-      "reason": "Log Security m\u1edf \u0111\u01b0\u1ee3c, 16227 b\u1ea3n ghi."
+      "reason": "Log Security m\u1edf \u0111\u01b0\u1ee3c, 14891 b\u1ea3n ghi."
     },
     {
       "key": "process_creation",
@@ -203,7 +203,7 @@
       "label": "Script Block Logging",
       "detail": "Event ID 4104 \u2014 n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y",
       "status": "covered",
-      "reason": "Ch\u00ednh s\u00e1ch Script Block Logging \u0111ang B\u1eacT \u2014 m\u1ecdi kh\u1ed1i l\u1ec7nh PowerShell \u0111\u1ec1u \u0111\u01b0\u1ee3c ghi (596 b\u1ea3n ghi trong log).",
+      "reason": "Ch\u00ednh s\u00e1ch Script Block Logging \u0111ang B\u1eacT \u2014 m\u1ecdi kh\u1ed1i l\u1ec7nh PowerShell \u0111\u1ec1u \u0111\u01b0\u1ee3c ghi (1081 b\u1ea3n ghi trong log).",
       "module_logging": false
     }
   ],

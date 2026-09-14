@@ -291,6 +291,22 @@ class IntelligencePipeline:
         )
         success = success and ok
 
+        # 8A. Trust scoring (Sprint 11)
+        # asset_builder.py tồn tại từ lâu nhưng chưa bao giờ nằm trong pipeline,
+        # và nó đọc khoá `all_assets` mà tệp sống không có — nên nó thoát ngay ở
+        # dòng đầu và `trust_score` chưa từng xuất hiện trong assets.json. Mọi
+        # nơi tiêu thụ đọc trường đó đều nhận về None và hiển thị "N/A" như thể
+        # đó là một giá trị bình thường.
+        #
+        # Phải chạy SAU extract (extract ghi đè toàn bộ tồn kho từ Nessus, xoá
+        # mọi trường làm giàu) và TRƯỚC shadow detection.
+        ok, _ = self.run_stage(
+            'Asset Trust Scoring',
+            self.scripts_dir / 'asset_builder.py',
+            'Scoring asset trust from observable evidence only'
+        )
+        success = success and ok
+
         # 8B. Shadow asset detection (Sprint 6.1)
         # Chạy ngay sau asset extraction vì nó đối chiếu kho tài sản vừa dựng với
         # bảng ARP thật; kết quả là đầu vào của correlation Rule 1 ở Phase 10.

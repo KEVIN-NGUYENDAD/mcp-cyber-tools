@@ -29,6 +29,7 @@ from datetime import datetime
 
 from state_manager import write_state_atomic
 import ioc_attribution
+import asset_store
 
 DETECTOR_VERSION = '2.0.0'
 
@@ -45,19 +46,17 @@ class ShadowAssetDetector:
 
     def load_inputs(self):
         """Nạp kho tài sản và bảng ARP. Thiếu một trong hai vẫn chạy được."""
-        if self.assets_file.exists():
-            try:
-                with open(self.assets_file, encoding='utf-8') as f:
-                    data = json.load(f)
-                # Chấp nhận cả hai schema đang tồn tại; ưu tiên schema sống.
-                assets = data.get('assets') or data.get('all_assets') or []
-                self.inventory = dict(
-                    (a['ip'], a) for a in assets if a.get('ip')
-                )
-            except (ValueError, OSError) as exc:
-                self.notes.append('Không đọc được assets.json: {}'.format(exc))
+        # Sprint 11: bỏ nhánh `data.get('assets') or data.get('all_assets')`.
+        # Hai khoá song song là thứ Sprint 11 vừa dẹp; giữ lại nhánh chấp nhận
+        # cả hai chính là giữ cho lược đồ thứ hai một chỗ để sống lại.
+        assets, _meta, error = asset_store.read_assets_safe(str(self.assets_file))
+        if error:
+            # Ghi vào notes chứ không im: không có đường cơ sở thì MỌI thiết bị
+            # trong ARP đều trông như thiết bị lạ, và một danh sách shadow dài
+            # bất thường phải kèm lý do vì sao nó dài.
+            self.notes.append('Không có đường cơ sở: {}'.format(error))
         else:
-            self.notes.append('assets.json không tồn tại — không có đường cơ sở.')
+            self.inventory = dict((a['ip'], a) for a in assets if a.get('ip'))
 
         self.arp = ioc_attribution.arp_devices()
         if not self.arp:

@@ -22,6 +22,7 @@ from collections import defaultdict
 
 # Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
 from state_manager import write_state_atomic, read_state_safe
+import asset_store
 
 try:
     import requests
@@ -259,15 +260,18 @@ class AssetIntelligence:
         return assets_by_ip
 
     def load_previous_assets(self):
-        """Load previous asset baseline for change detection"""
-        if self.assets_file.exists():
-            try:
-                with open(self.assets_file, 'r') as f:
-                    data = json.load(f)
-                    return {a['ip']: a for a in data.get('assets', [])}
-            except Exception:
-                return {}
-        return {}
+        """Duong co so lan truoc, doc qua asset_store.
+
+        Truoc Sprint 11 cho nay tu mo tep va `data.get('assets', [])`. Neu luoc
+        do sai thi no tra ve {} — va "khong co duong co so" doc y het "chua tung
+        thay thiet bi nao", nen MOI thiet bi se bi bao la MOI. Nay so khong doc
+        duoc duoc noi thang ra.
+        """
+        assets, _meta, error = asset_store.read_assets_safe()
+        if error:
+            print('[WARN] khong doc duoc duong co so: %s' % error, file=sys.stderr)
+            return {}
+        return {a['ip']: a for a in assets if a.get('ip')}
 
     def detect_changes(self, current_assets, previous_assets):
         """Detect new/removed/changed assets"""
@@ -313,16 +317,13 @@ class AssetIntelligence:
         return changes
 
     def save_assets(self, assets):
-        """Save asset inventory to state/assets.json"""
+        """Ghi ton kho qua asset_store — duong ghi DUY NHAT cua assets.json."""
         try:
-            output = {
-                'timestamp': datetime.now().isoformat(),
-                'total_assets': len(assets),
-                'assets': sorted(assets.values(), key=lambda x: x['ip'])
-            }
-            write_state_atomic(self.assets_file, output, indent=2)
+            asset_store.write_assets(
+                sorted(assets.values(), key=lambda x: x['ip']))
             return True
-        except Exception as e:
+        except asset_store.AssetStoreError as error:
+            print('[FAIL] khong ghi duoc assets.json: %s' % error, file=sys.stderr)
             return False
 
     def save_changes(self, changes):
