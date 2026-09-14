@@ -2,7 +2,7 @@
 
 Sinh tự động bởi `scripts/sprint_gate.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T13:32:03
+Cập nhật: 2026-09-14T13:32:42
 
 ## Cổng merge
 

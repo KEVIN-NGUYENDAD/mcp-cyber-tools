@@ -60,6 +60,17 @@ def git(*args):
         return ''
 
 
+def _age_hours(timestamp):
+    """Tuổi của một mốc thời gian, tính bằng giờ. None = không khai mốc."""
+    if not timestamp:
+        return None
+    try:
+        then = datetime.fromisoformat(str(timestamp).replace('Z', ''))
+    except (ValueError, TypeError):
+        return None
+    return (datetime.now() - then).total_seconds() / 3600.0
+
+
 def unknown(value, suffix=''):
     """Thiếu dữ liệu đọc ra UNKNOWN, không đọc ra 0.
 
@@ -91,16 +102,33 @@ def build():
     add('Cập nhật: %s' % datetime.now().isoformat())
     add('')
 
-    add('## Sprint vừa xong')
+    # AQ-033 / AQ-037. Tiêu đề cũ là "Sprint vừa xong", và bảng dưới nó khai
+    # `HEAD` lúc chạy. Hai thứ đó không bao giờ là một: tệp này sinh ra TRƯỚC
+    # commit của chính sprint đang làm, nên `HEAD` ở đây luôn là sprint TRƯỚC.
+    #
+    # Ba vòng audit đọc nó như một con số trễ và đề nghị chạy lại sau commit.
+    # Nhưng chạy lại sau commit thì HANDOFF phải được commit tiếp, và commit đó
+    # lại làm HANDOFF trễ lần nữa — đuổi theo cái đuôi của chính nó.
+    #
+    # Nên không đuổi. Tệp này khai đúng điều nó biết: đây là trạng thái kho lúc
+    # cổng chạy, và commit của sprint này nằm sau nó.
+    add('## Trạng thái kho lúc chạy cổng')
     add('')
     add('| | |')
     add('|---|---|')
-    add('| Commit | `%s` |' % (git('rev-parse', '--short', 'HEAD') or 'UNKNOWN'))
+    add('| Commit lúc chạy | `%s` |'
+        % (git('rev-parse', '--short', 'HEAD') or 'UNKNOWN'))
     add('| Branch | `%s` |' % (git('rev-parse', '--abbrev-ref', 'HEAD') or 'UNKNOWN'))
     add('| Tiêu đề | %s |' % (git('log', '-1', '--pretty=%s') or 'UNKNOWN'))
+    dirty = bool(git('status', '--porcelain'))
     add('| Cây làm việc | %s |'
-        % ('sạch' if not git('status', '--porcelain') else 'CÓ THAY ĐỔI CHƯA COMMIT'))
+        % ('sạch' if not dirty else 'CÓ THAY ĐỔI CHƯA COMMIT'))
     add('')
+    if dirty:
+        add('Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint')
+        add('**trước**; công của sprint này chưa có định danh. Đó là thứ tự đúng —')
+        add('cổng chạy trước khi commit — không phải một con số trễ.')
+        add('')
 
     add('## Cổng merge')
     add('')
@@ -123,10 +151,21 @@ def build():
     add('| Pipeline | %d stage, %d thất bại%s |'
         % (len(stages), len(failed),
            '' if not unstated else ', %d không khai trạng thái' % len(unstated)))
+    # AQ-033. Hàng này đọc từ `tool_validation.json`, còn mọi hàng quanh nó đọc
+    # từ state vừa ghi trong lần chạy này. Khi validator không chạy cùng lượt,
+    # nó in một con số nhiều giờ tuổi ngay cạnh các con số tươi, và không có gì
+    # trên bảng nói ra điều đó — vòng 7 thấy `434 chỉ báo` trong khi cổng cùng
+    # lúc đếm 573.
+    #
+    # Trộn hai thời điểm trong một bảng là một lỗi truth, kể cả khi cả hai số
+    # đều đúng vào lúc chúng được đo. Nên tuổi đi kèm số.
     integrity = validation.get('detection_integrity') or {}
-    add('| Toàn vẹn bằng chứng | %s vi phạm / %s chỉ báo |'
+    age = _age_hours(validation.get('generated_at'))
+    add('| Toàn vẹn bằng chứng | %s vi phạm / %s chỉ báo%s |'
         % (unknown(integrity.get('total_violations')),
-           unknown(integrity.get('total_indicators'))))
+           unknown(integrity.get('total_indicators')),
+           '' if age is None else
+           ' _(đo cách đây %.1f giờ)_' % age if age >= 1.0 else ' _(vừa đo)_'))
     add('')
 
     add('## Trạng thái thật (đọc từ state/)')
