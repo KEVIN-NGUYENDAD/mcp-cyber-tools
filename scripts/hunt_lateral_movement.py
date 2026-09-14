@@ -25,6 +25,7 @@ from pathlib import Path
 
 from state_manager import write_state_atomic
 import ioc_attribution
+import detection_quality
 from mcp_bridge import McpBridge, McpBridgeError, as_list
 
 HUNT_VERSION = '2.0.0'
@@ -133,7 +134,20 @@ class LateralMovementHunter(object):
                 'event_time': event.get('TimeCreated'),
                 'event_id': event_id,
                 'description': '{} (Event {})'.format(technique, event_id),
-                'evidence': [message[:600], 'Nguồn MCP: {}'.format(event.get('_tool'))],
+                # Trích đoạn phải chứa IP đã dùng để quy kết. `message[:600]`
+                # đúng chỉ khi IP tình cờ nằm ở đầu thông điệp — với sự kiện
+                # đăng nhập thì địa chỉ mạng nằm ở cuối, nên nó sai gần như mọi
+                # lần có quy kết thật.
+                'evidence': [
+                    detection_quality.evidence_excerpt(
+                        message, ips[0] if ips else None),
+                    'Nguồn MCP: {}'.format(event.get('_tool')),
+                ],
+                'matched_text': ips[0] if ips else None,
+                # Với 4648, mức HIGH đến từ CHÍNH loại sự kiện, không từ một
+                # đoạn văn bản khớp được — nên nó phải được khai riêng. Sáu chỉ
+                # báo HIGH trước Sprint 12 không nói được vì sao chúng là HIGH.
+                'severity_basis': 'Event ID {} — {}'.format(event_id, technique),
                 'assessment': ('IP từ xa: {}'.format(', '.join(ips)) if ips
                                else 'Không có IP từ xa trong sự kiện'),
                 'recommendation': ('Đối chiếu đăng nhập này với lịch làm việc thực tế'

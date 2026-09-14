@@ -110,7 +110,11 @@ class SuspiciousProcessHunter(object):
             path = proc.get('Path') or ''
             lowered = name.lower()
 
-            if SUSPECT_PATH_RE.search(path):
+            # Ghi lại CHÍNH đoạn đường dẫn đã kích hoạt kết luận. Không có nó,
+            # người đọc thấy một kết luận HIGH và phải tự đoán chỗ nào đáng ngờ —
+            # và `detection_quality` không kiểm chứng được gì cả.
+            suspect = SUSPECT_PATH_RE.search(path)
+            if suspect:
                 severity, assessment = 'HIGH', 'LOLBin chạy từ thư mục tạm/công cộng'
             elif lowered in HIGH_RISK_LOLBINS:
                 severity, assessment = 'MEDIUM', 'LOLBin ít khi chạy hợp lệ trên máy trạm'
@@ -126,7 +130,8 @@ class SuspiciousProcessHunter(object):
                 assessment,
                 'Đối chiếu tiến trình với phần mềm đã cài' if severity != 'INFO'
                 else 'Không cần hành động',
-                {'command_line': path, 'pid': proc.get('Id')},
+                {'command_line': path, 'pid': proc.get('Id'),
+                 'matched_text': suspect.group(0) if suspect else None},
                 dedup_key=('lolbin', name, path))
 
         # Một kết nối ra cổng 443 là bình thường. Điều đáng chú ý là tiến trình
@@ -137,7 +142,8 @@ class SuspiciousProcessHunter(object):
             remote = conn.get('RemoteAddress')
             port = conn.get('RemotePort')
 
-            if SUSPECT_PATH_RE.search(path):
+            suspect = SUSPECT_PATH_RE.search(path)
+            if suspect:
                 severity = 'HIGH'
                 assessment = 'Tiến trình ở thư mục tạm đang mở kết nối ra ngoài'
             elif port not in COMMON_PORTS:
@@ -158,7 +164,8 @@ class SuspiciousProcessHunter(object):
                 'Xác minh đích đến của kết nối' if severity != 'INFO'
                 else 'Không cần hành động',
                 {'remote_address': remote, 'remote_port': port,
-                 'pid': conn.get('ProcessId')},
+                 'pid': conn.get('ProcessId'),
+                 'matched_text': suspect.group(0) if suspect else None},
                 dedup_key=('conn', name, remote, port))
 
         for proc in unusual:
@@ -167,7 +174,8 @@ class SuspiciousProcessHunter(object):
 
             # %LOCALAPPDATA%\Programs là nơi cài đặt hợp lệ của rất nhiều phần
             # mềm hiện đại. Chỉ Temp/Downloads/Public mới thực sự đáng ngờ.
-            if SUSPECT_PATH_RE.search(path):
+            suspect = SUSPECT_PATH_RE.search(path)
+            if suspect:
                 severity = 'HIGH'
                 assessment = 'Tiến trình chạy từ thư mục tạm/tải về/công cộng'
             else:
@@ -181,7 +189,8 @@ class SuspiciousProcessHunter(object):
                 assessment,
                 'Kiểm tra chữ ký số và nguồn gốc của tệp' if severity == 'HIGH'
                 else 'Không cần hành động',
-                {'command_line': path, 'pid': proc.get('Id')},
+                {'command_line': path, 'pid': proc.get('Id'),
+                 'matched_text': suspect.group(0) if suspect else None},
                 dedup_key=('unusual', name, path))
 
     # -- xuất báo cáo -----------------------------------------------------
