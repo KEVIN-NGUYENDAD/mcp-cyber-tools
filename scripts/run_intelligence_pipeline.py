@@ -485,6 +485,19 @@ class IntelligencePipeline:
         self.log('📝 PHASE 11: REPORT GENERATION')
         self.log('-' * 50)
 
+        # 18B. Detection quality (Sprint 12)
+        #
+        # Chạy SAU khi mọi cuộc săn đã ghi xong và TRƯỚC báo cáo: nếu một chỉ báo
+        # kết luận điều gì mà bằng chứng của nó không chứng minh được, thì điều
+        # cần làm là biết ngay ở đây, chứ không phải sau khi nó đã đi vào bản tin
+        # buổi sáng.
+        ok, _ = self.run_stage(
+            'Detection Quality',
+            self.scripts_dir / 'detection_quality.py',
+            'Auditing that every indicator carries the evidence for its own claim'
+        )
+        success = success and ok
+
         # 19. Daily brief - reports the canonical risk score, so it runs last
         ok, _ = self.run_stage(
             'Daily Brief',
