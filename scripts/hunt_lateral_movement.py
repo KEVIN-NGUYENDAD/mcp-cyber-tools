@@ -56,6 +56,7 @@ class LateralMovementHunter(object):
         self.observable = False
         self.coverage_reason = None
         self.tools_used = []
+        self.self_log = detection_quality.SelfObservationLog()
 
     # -- thu thập ---------------------------------------------------------
 
@@ -121,6 +122,13 @@ class LateralMovementHunter(object):
                 event_id, ('Logon Activity', 'INFO'))
 
             message = str(event.get('Message') or '')
+
+            # Su kien 4648 mang ten tien trinh khoi tao. Neu do la python dang
+            # chay chinh script san nay thi day la bo may giam sat tu dang nhap,
+            # khong phai mot lan di chuyen ngang.
+            if self.self_log.check(message, event_id=event_id):
+                continue
+
             ips = self.remote_ips(message)
 
             # Không có IP từ xa thì đây là đăng nhập cục bộ, không phải lateral.
@@ -207,6 +215,8 @@ class LateralMovementHunter(object):
             'errors': self.errors,
             'question': 'Có chỉ báo di chuyển ngang trong hệ thống không?',
             'total_indicators': len(self.indicators),
+            'self_observation': self.self_log.report(
+                'su kien do chinh bo may giam sat sinh ra'),
             'blast_radius': radius,
             'by_severity': {},
             'indicators': self.indicators,

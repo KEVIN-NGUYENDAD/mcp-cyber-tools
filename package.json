@@ -10,8 +10,10 @@
     "validate": "python scripts/tool_validator.py",
     "assets": "python scripts/asset_manager.py --health",
     "trust": "python scripts/asset_builder.py",
-    "test:detection": "python scripts/test_detection_quality.py",
-    "audit:detection": "python scripts/detection_quality.py"
+    "test:detection": "python tests/detection_quality/run_all.py",
+    "audit:detection": "python scripts/detection_quality.py",
+    "gate": "python scripts/sprint_gate.py",
+    "gate:full": "python scripts/sprint_gate.py --validate"
   },
   "keywords": [],
   "author": "",

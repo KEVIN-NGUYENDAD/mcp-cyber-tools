@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T23:16:29.469838",
+  "timestamp": "2026-09-13T23:28:39.148399",
   "date": "2026-09-13",
   "incident_summary": {
     "total_open": 1,
@@ -60,7 +60,7 @@
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 148.7,
+    "scan_age_hours": 148.9,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -164,6 +164,6 @@
     "high_count": 7,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-13T23:16:28.958633"
+    "generated_at": "2026-09-13T23:28:38.558698"
   }
 }

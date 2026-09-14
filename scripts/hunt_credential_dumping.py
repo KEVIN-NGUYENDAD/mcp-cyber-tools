@@ -33,6 +33,33 @@ import detection_quality
 
 HUNT_VERSION = '2.0.0'
 
+# Từ khoá chia làm hai loại, và gộp chúng lại là một lỗi có thật:
+#
+#   MƠ HỒ       `lsass` là tên một tiến trình hệ thống. Nó xuất hiện hợp lệ
+#               khắp nơi — trong đường dẫn, trong log, trong tài liệu, trong
+#               lệnh grep của người đang điều tra. Thấy nó trong tham số của
+#               một lệnh khác thì đó là manh mối, chưa phải phát hiện.
+#
+#   RÕ RÀNG     `mimikatz`, `ntdsutil`, `procdump`, `comsvcs` là TÊN CÔNG CỤ.
+#               Không có lý do bình thường nào để chúng nằm trong một dòng lệnh.
+#
+# Hạ cấp cả hai loại như nhau tạo ra một điểm mù cụ thể: mimikatz đổi tên thành
+# svchost.exe rồi gọi `svchost.exe mimikatz sekurlsa::logonpasswords` sẽ chỉ ra
+# MEDIUM, vì từ khoá nằm ở tham số chứ không ở tên chương trình. Đó chính là
+# cách kẻ tấn công né tên tiến trình.
+AMBIGUOUS_KEYWORDS = ('lsass',)
+
+# "Tên công cụ" phải là một TOKEN LỆNH, không phải một chuỗi con nằm trong đường
+# dẫn. `mimikatz sekurlsa::...` là một lần gọi; `C:\Downloads\procdump-docs\readme.md`
+# là một tệp tài liệu đang được mở.
+#
+# Ranh giới: từ khoá bắt đầu một token (đầu chuỗi, hoặc sau khoảng trắng/nháy/
+# dấu phân cách đường dẫn), theo sau có thể là chữ số và phần mở rộng, rồi kết
+# thúc token. `procdump-docs` không qua được, `procdump64.exe` thì qua.
+TOOL_TOKEN_RE = re.compile(
+    r'(?:^|[\s"\'\\/])(mimikatz|ntdsutil|procdump|comsvcs)\d*(?:\.(?:exe|dll))?'
+    r'(?=[\s"\',;]|$)', re.I)
+
 TECHNIQUE_RE = [
     (re.compile(r'\blsass\b', re.I), 'LSASS Memory Access', 'CRITICAL'),
     (re.compile(r'\bmimikatz\b', re.I), 'Mimikatz Activity', 'CRITICAL'),
@@ -77,7 +104,7 @@ class CredentialDumpingHunter(object):
         # Sự kiện do chính bộ máy giám sát sinh ra, và sự kiện không khớp trường
         # nào. Cả hai đều bị loại khỏi chỉ báo — nên cả hai đều phải đếm được và
         # hiện ra trong báo cáo. Bộ lọc im lặng là chỗ giấu tấn công tốt nhất.
-        self.self_observed = []
+        self.self_log = detection_quality.SelfObservationLog()
         self.unmatched = 0
 
     # -- thu thập ---------------------------------------------------------
@@ -138,19 +165,6 @@ class CredentialDumpingHunter(object):
     def _keyword_count(text):
         return sum(1 for pattern, _, _ in TECHNIQUE_RE if pattern.search(text or ''))
 
-    def _self_observation(self, fields):
-        """Sự kiện này có phải do chính bộ máy giám sát sinh ra không?
-
-        Trả về lý do (chuỗi) nếu đúng, None nếu không. Không bao giờ lọc âm
-        thầm: mọi sự kiện bị loại đều được đếm và báo cáo, vì một bộ lọc không
-        ai nhìn thấy là chỗ hoàn hảo để giấu một cuộc tấn công thật.
-        """
-        command = fields.get('command_line') or ''
-        if not command:
-            return None
-        reason = detection_quality.is_self_observation(command)
-        return ('dòng lệnh ' + reason) if reason else None
-
     @staticmethod
     def _executable(command_line):
         """Phần thực thi của dòng lệnh: token đầu, kể cả khi nằm trong dấu nháy."""
@@ -165,13 +179,8 @@ class CredentialDumpingHunter(object):
             message = str(event.get('Message') or '')
             fields = self._fields(message)
 
-            reason = self._self_observation(fields)
-            if reason:
-                self.self_observed.append({
-                    'event_time': event.get('TimeCreated'),
-                    'reason': reason,
-                    'command_line': (fields.get('command_line') or '')[:200],
-                })
+            if self.self_log.check(fields.get('command_line') or '',
+                                   event_time=event.get('TimeCreated')):
                 continue
 
             # Khớp ở TRƯỜNG NÀO, không chỉ "có khớp hay không".
@@ -205,7 +214,14 @@ class CredentialDumpingHunter(object):
                     re.search(r'lsass|mimikatz|ntdsutil|procdump|comsvcs',
                               self._executable(command), re.I))
                 combo = self._keyword_count(command) >= 2
-                if in_executable or combo:
+                # Tên công cụ tấn công được GỌI trong dòng lệnh là bằng chứng
+                # đủ, dù nó nằm ở tham số — đó chính là cách một mimikatz đã đổi
+                # tên vẫn lộ ra. Nhưng cùng chữ đó nằm trong một đường dẫn tài
+                # liệu thì không phải một lần gọi.
+                tool_token = (
+                    (matched_text or '').lower() not in AMBIGUOUS_KEYWORDS
+                    and bool(TOOL_TOKEN_RE.search(command)))
+                if in_executable or combo or tool_token:
                     status = severity
                 else:
                     # Một từ khoá lọt vào tham số của một lệnh khác — `grep lsass`,
@@ -293,12 +309,8 @@ class CredentialDumpingHunter(object):
             'errors': self.errors,
             'question': 'Có chỉ báo đánh cắp credentials nào không?',
             'total_indicators': len(self.indicators),
-            'self_observed_excluded': len(self.self_observed),
-            'self_observation_note': (
-                'Sự kiện 4688 do chính tiến trình giám sát sinh ra đã bị loại. '
-                'Không loại thì mỗi lần điều tra lại tự tạo thêm bằng chứng cho '
-                'lần chạy sau.' if self.self_observed else None),
-            'self_observed_samples': self.self_observed[:5],
+            'self_observation': self.self_log.report(
+                'dong lenh 4688 cua chinh tien trinh giam sat'),
             'unmatched_events': self.unmatched,
             'credential_risk_level': risk,
             'by_severity': {},

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T23:16:29.161055",
+  "timestamp": "2026-09-13T23:28:38.799625",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
@@ -18,7 +18,7 @@
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-13T23:16:09.644510"
+      "timestamp": "2026-09-13T23:28:10.424651"
     },
     "shadow_assets.json": {
       "present": true,
@@ -28,49 +28,49 @@
     "incidents.json": {
       "present": true,
       "records": 1,
-      "timestamp": "2026-09-13T23:16:28.784405"
+      "timestamp": "2026-09-13T23:28:38.335672"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T23:16:08.740524"
+      "timestamp": "2026-09-13T23:28:09.445773"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T23:16:09.051357"
+      "timestamp": "2026-09-13T23:28:09.802954"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 96,
-      "timestamp": "2026-09-13T23:16:16.009027"
+      "timestamp": "2026-09-13T23:28:25.294211"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T23:16:28.362010"
+      "timestamp": "2026-09-13T23:28:37.826694"
     },
     "hunting_lateral_movement.json": {
       "present": true,
-      "records": 396,
-      "timestamp": "2026-09-13T23:16:22.465538"
+      "records": 386,
+      "timestamp": "2026-09-13T23:28:32.005127"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
-      "records": 67,
-      "timestamp": "2026-09-13T23:16:19.319107"
+      "records": 38,
+      "timestamp": "2026-09-13T23:28:28.981919"
     }
   },
   "coverage_gaps": [
     {
       "rule_id": "RULE-1",
       "reason": "NO_SHADOW_ASSETS",
-      "detail": "Kh\u00f4ng c\u00f3 thi\u1ebft b\u1ecb l\u1ea1 n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan: arp -a th\u1ea5y 3 thi\u1ebft b\u1ecb v\u00e0 t\u1ea5t c\u1ea3 \u0111\u1ec1u c\u00f3 trong kho t\u00e0i s\u1ea3n; 559 IOC kh\u00f4ng ch\u1ee9a REMOTE_PEER n\u00e0o ngo\u00e0i kho. \u0110\u00e2y l\u00e0 k\u1ebft qu\u1ea3 \u0110\u00c3 KI\u1ec2M, kh\u00f4ng ph\u1ea3i rule im l\u1eb7ng."
+      "detail": "Kh\u00f4ng c\u00f3 thi\u1ebft b\u1ecb l\u1ea1 n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan: arp -a th\u1ea5y 3 thi\u1ebft b\u1ecb v\u00e0 t\u1ea5t c\u1ea3 \u0111\u1ec1u c\u00f3 trong kho t\u00e0i s\u1ea3n; 520 IOC kh\u00f4ng ch\u1ee9a REMOTE_PEER n\u00e0o ngo\u00e0i kho. \u0110\u00e2y l\u00e0 k\u1ebft qu\u1ea3 \u0110\u00c3 KI\u1ec2M, kh\u00f4ng ph\u1ea3i rule im l\u1eb7ng."
     },
     {
       "rule_id": "RULE-3",
       "reason": "NO_DEFENDER_DETECTION",
-      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 67 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
+      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 38 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
     }
   ],
   "findings": [
@@ -101,7 +101,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T23:16:29.160045"
+      "detected_at": "2026-09-13T23:28:38.799625"
     },
     {
       "finding_id": "EF-0002",
@@ -109,7 +109,7 @@
       "rule_name": "Lateral Movement Probe",
       "severity": "HIGH",
       "title": "D\u00f2 qu\u00e9t di chuy\u1ec3n ngang nh\u1eafm v\u00e0o 192.168.0.51",
-      "summary": "396 k\u1ef9 thu\u1eadt lateral movement (Explicit Credential Logon, Logon Activity, Remote Logon) quy k\u1ebft v\u1ec1 192.168.0.51 tr\u00f9ng th\u1eddi \u0111i\u1ec3m v\u1edbi 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i trong last_24_hours. \u0110\u00e2y l\u00e0 m\u1eabu d\u00f2 credential \u0111\u1ec3 m\u1edf r\u1ed9ng ch\u1ed7 \u0111\u1ee9ng.",
+      "summary": "386 k\u1ef9 thu\u1eadt lateral movement (Explicit Credential Logon, Logon Activity, Remote Logon) quy k\u1ebft v\u1ec1 192.168.0.51 tr\u00f9ng th\u1eddi \u0111i\u1ec3m v\u1edbi 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i trong last_24_hours. \u0110\u00e2y l\u00e0 m\u1eabu d\u00f2 credential \u0111\u1ec3 m\u1edf r\u1ed9ng ch\u1ed7 \u0111\u1ee9ng.",
       "entities": {
         "ip": "192.168.0.51",
         "is_known_asset": true,
@@ -198,11 +198,6 @@
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Logon Activity: Logon Activity (Event 4023)",
         "[Lateral] Logon Activity: Logon Activity (Event 4023)",
         "[Lateral] Logon Activity: Logon Activity (Event 4023)",
@@ -400,6 +395,11 @@
         "[Lateral] Logon Activity: Logon Activity (Event 4023)",
         "[Lateral] Logon Activity: Logon Activity (Event 4022)",
         "[Lateral] Logon Activity: Logon Activity (Event 4022)",
+        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
+        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
+        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
+        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
+        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
@@ -484,16 +484,6 @@
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
-        "[Lateral] Remote Logon: Remote Logon (Event 4624)",
         "[Lateral] Logon Activity: Logon Activity (Event 22)",
         "[Lateral] Logon Activity: Logon Activity (Event 21)",
         "[Lateral] Logon Activity: Logon Activity (Event 23)",
@@ -526,7 +516,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T23:16:29.161055"
+      "detected_at": "2026-09-13T23:28:38.799625"
     }
   ]
 }
