@@ -434,10 +434,40 @@ function renderSensorCoverage() {
   }
 
   if (note) {
+    const parts = [];
     const e = coverage.event_4688;
-    note.innerHTML = e
-      ? `<strong>Event ID 4688 (Process Creation):</strong> observable = <strong style="color: ${e.observable ? '#00C896' : '#FF3B5C'};">${e.observable}</strong> (${e.status}). ${escapeHtmlSafe(e.reason || '')}`
-      : '';
+    if (e) {
+      parts.push(`<strong>Event ID 4688 (Process Creation):</strong> observable = <strong style="color: ${e.observable ? '#00C896' : '#FF3B5C'};">${e.observable}</strong> (${e.status}). ${escapeHtmlSafe(e.reason || '')}`);
+    }
+
+    // Mot o do khong kem loi khuyen thi chi la mot o do. Neu vung mu sua duoc
+    // ngay tren may nay, no phai hien ra canh chinh vung mu do — khong phai
+    // nam trong mot file bao cao ma khong ai mo.
+    const d = coverage.access_diagnosis;
+    if (d && d.can_fix) {
+      parts.push(`<div style="margin-top: 10px; padding: 10px 12px; border-left: 4px solid #FFB020; background: rgba(255,176,32,0.08); border-radius: 4px;">
+        <strong style="color: #FFB020;">⚠ Vung mu nay SUA DUOC tren may nay.</strong><br>
+        <span style="color: var(--color-text);">${escapeHtmlSafe(d.action)}</span>
+      </div>`);
+    }
+
+    const fb = (coverage.fallback_sources || []).filter(f => f.readable);
+    if (fb.length) {
+      // Ten log Windows deu ket thuc bang '/Operational', nen cat lay doan cuoi
+      // thi bon nguon khac nhau hien ra thanh bon dong "Operational" giong het.
+      // Phan mang y nghia la doan TRUOC dau gach.
+      const shortName = (log) => log.split('/')[0].replace(/^Microsoft-Windows-/, '');
+      const items = fb.map(f =>
+        `<li><code>${escapeHtmlSafe(shortName(f.log))}</code> — ${escapeHtmlSafe(f.covers)} (${f.records || '?'} ban ghi)</li>`
+      ).join('');
+      parts.push(`<div style="margin-top: 10px;">
+        <strong>Nguon thay the dang doc duoc (khong can nang quyen):</strong>
+        <ul style="margin: 6px 0 0 18px; padding: 0;">${items}</ul>
+        <div style="margin-top: 6px; font-style: italic;">Day khong phai "da het mu" — day la "mu it hon, va biet phan nao con mu". Moi ban ghi tu cac nguon nay mang co <code>Fallback = true</code>.</div>
+      </div>`);
+    }
+
+    note.innerHTML = parts.join('');
   }
 }
 

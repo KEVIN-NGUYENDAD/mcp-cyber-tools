@@ -1,18 +1,24 @@
 {
-  "timestamp": "2026-09-13T19:30:06.956875",
+  "timestamp": "2026-09-13T21:17:07.882299",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
   "rules_evaluated": 3,
-  "total_findings": 0,
-  "by_severity": {},
-  "by_rule": {},
-  "by_evidence_quality": {},
+  "total_findings": 2,
+  "by_severity": {
+    "HIGH": 2
+  },
+  "by_rule": {
+    "RULE-2": 2
+  },
+  "by_evidence_quality": {
+    "REAL": 2
+  },
   "sources": {
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-13T19:29:53.049073"
+      "timestamp": "2026-09-13T21:16:55.304326"
     },
     "shadow_assets.json": {
       "present": true,
@@ -21,38 +27,38 @@
     },
     "incidents.json": {
       "present": true,
-      "records": 1,
-      "timestamp": "2026-09-13T19:30:06.631413"
+      "records": 0,
+      "timestamp": "2026-09-13T21:17:07.537759"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T19:29:52.327737"
+      "timestamp": "2026-09-13T21:16:54.596406"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T19:29:52.631332"
+      "timestamp": "2026-09-13T21:16:54.887548"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 96,
-      "timestamp": "2026-09-13T19:29:59.566116"
+      "timestamp": "2026-09-13T21:17:00.943385"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T19:30:05.404786"
+      "timestamp": "2026-09-13T21:17:07.144472"
     },
     "hunting_lateral_movement.json": {
       "present": true,
-      "records": 0,
-      "timestamp": "2026-09-13T19:30:04.155632"
+      "records": 220,
+      "timestamp": "2026-09-13T21:17:05.858242"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
-      "records": 58,
-      "timestamp": "2026-09-13T19:30:02.755415"
+      "records": 62,
+      "timestamp": "2026-09-13T21:17:04.144820"
     }
   },
   "coverage_gaps": [
@@ -72,15 +78,212 @@
       "detail": "state/shadow_assets.json kh\u00f4ng c\u00f3 m\u1ee5c shadows n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan."
     },
     {
-      "rule_id": "RULE-2",
-      "reason": "NO_LATERAL_IOC",
-      "detail": "state/hunting_lateral_movement.json kh\u00f4ng c\u00f3 indicator n\u00e0o."
-    },
-    {
       "rule_id": "RULE-3",
       "reason": "NO_DEFENDER_DETECTION",
-      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 58 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
+      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 62 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
     }
   ],
-  "findings": []
+  "findings": [
+    {
+      "finding_id": "EF-0001",
+      "rule_id": "RULE-2",
+      "rule_name": "Lateral Movement Probe",
+      "severity": "HIGH",
+      "title": "D\u00f2 qu\u00e9t di chuy\u1ec3n ngang nh\u1eafm v\u00e0o 192.168.0.233",
+      "summary": "2 k\u1ef9 thu\u1eadt lateral movement (Logon Activity) quy k\u1ebft v\u1ec1 192.168.0.233 tr\u00f9ng th\u1eddi \u0111i\u1ec3m v\u1edbi 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i trong last_24_hours. \u0110\u00e2y l\u00e0 m\u1eabu d\u00f2 credential \u0111\u1ec3 m\u1edf r\u1ed9ng ch\u1ed7 \u0111\u1ee9ng.",
+      "entities": {
+        "ip": "192.168.0.233",
+        "is_known_asset": true,
+        "techniques": [
+          "Logon Activity"
+        ],
+        "failed_logons": 3
+      },
+      "evidence": [
+        "[Lateral] Logon Activity: Logon Activity (Event 4022)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4022)",
+        "[Security Events] failed_logons=3 trong last_24_hours"
+      ],
+      "recommended_action": "1. Ki\u1ec3m tra Event ID 4625/4768 cho 192.168.0.233 | 2. Ch\u1eb7n SMB/WinRM/RDP t\u1eeb ngu\u1ed3n l\u1ea1 | 3. Reset m\u1eadt kh\u1ea9u c\u00e1c t\u00e0i kho\u1ea3n b\u1ecb d\u00f2",
+      "confidence": "HIGH",
+      "evidence_quality": "REAL",
+      "sources": [
+        "hunting_lateral_movement.json",
+        "security_events.json"
+      ],
+      "detected_at": "2026-09-13T21:17:07.882299"
+    },
+    {
+      "finding_id": "EF-0002",
+      "rule_id": "RULE-2",
+      "rule_name": "Lateral Movement Probe",
+      "severity": "HIGH",
+      "title": "D\u00f2 qu\u00e9t di chuy\u1ec3n ngang nh\u1eafm v\u00e0o 192.168.0.51",
+      "summary": "145 k\u1ef9 thu\u1eadt lateral movement (Logon Activity) quy k\u1ebft v\u1ec1 192.168.0.51 tr\u00f9ng th\u1eddi \u0111i\u1ec3m v\u1edbi 3 l\u1ea7n \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i trong last_24_hours. \u0110\u00e2y l\u00e0 m\u1eabu d\u00f2 credential \u0111\u1ec3 m\u1edf r\u1ed9ng ch\u1ed7 \u0111\u1ee9ng.",
+      "entities": {
+        "ip": "192.168.0.51",
+        "is_known_asset": true,
+        "techniques": [
+          "Logon Activity"
+        ],
+        "failed_logons": 3
+      },
+      "evidence": [
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4023)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4022)",
+        "[Lateral] Logon Activity: Logon Activity (Event 4022)",
+        "[Security Events] failed_logons=3 trong last_24_hours"
+      ],
+      "recommended_action": "1. Ki\u1ec3m tra Event ID 4625/4768 cho 192.168.0.51 | 2. Ch\u1eb7n SMB/WinRM/RDP t\u1eeb ngu\u1ed3n l\u1ea1 | 3. Reset m\u1eadt kh\u1ea9u c\u00e1c t\u00e0i kho\u1ea3n b\u1ecb d\u00f2",
+      "confidence": "HIGH",
+      "evidence_quality": "REAL",
+      "sources": [
+        "hunting_lateral_movement.json",
+        "security_events.json"
+      ],
+      "detected_at": "2026-09-13T21:17:07.882299"
+    }
+  ]
 }
