@@ -109,8 +109,20 @@ def build():
     for key in ('PASS', 'EMPTY', 'BLIND', 'FAIL'):
         add('| %s | %s |' % (key, unknown(summary.get(key))))
     stages = pipeline.get('stages') or pipeline.get('results') or []
-    failed = [s for s in stages if not s.get('success', True)]
-    add('| Pipeline | %d stage, %d thất bại |' % (len(stages), len(failed)))
+    # AQ-026. Ban dau dong nay la ban sao cua chinh loi AQ-013: doc khoa
+    # `success` ma bo ghi pipeline khong bao gio ghi, voi mac dinh True. Toi sua
+    # o `sprint_gate.py` va de nguyen ban sao o day — dung kieu sai ma vong audit
+    # truoc vua chung minh la khong scale.
+    #
+    # Thieu truong trang thai KHONG duoc tinh la dat; no duoc dem rieng.
+    failed = [s for s in stages
+              if str(s.get('status', '')).lower()
+              not in ('success', 'ok', 'passed', 'skipped')
+              and 'status' in s]
+    unstated = [s for s in stages if 'status' not in s]
+    add('| Pipeline | %d stage, %d thất bại%s |'
+        % (len(stages), len(failed),
+           '' if not unstated else ', %d không khai trạng thái' % len(unstated)))
     integrity = validation.get('detection_integrity') or {}
     add('| Toàn vẹn bằng chứng | %s vi phạm / %s chỉ báo |'
         % (unknown(integrity.get('total_violations')),

@@ -49,12 +49,41 @@ STATE_DIR = os.path.join(PROJECT_ROOT, 'state')
 #
 # Tên các script của chính bộ máy. Một dòng lệnh gọi chúng là bộ máy đang chạy,
 # không phải kẻ tấn công đang hành động.
-SELF_OBSERVATION_HINTS = (
-    'hunt_credential_dumping', 'hunt_lateral_movement', 'hunt_persistence',
-    'hunt_suspicious_processes', 'mcp_bridge', 'tool_validator', 'sensor_probe',
-    'run_intelligence_pipeline', 'correlation_engine', 'detection_quality',
-    'asset_store', 'asset_builder', 'generate_incidents',
+def _module_names():
+    """Tên mọi module Python trong `scripts/` — suy ra, không viết tay.
+
+    Danh sách viết tay trước đây liệt kê 13 tên và dừng lại ở đó. Mọi module
+    thêm vào sau — `ioc_quality`, `sprint_gate`, `evidence_manifest`,
+    `pipeline_field_audit`, ... — đều không có trong danh sách, nên một dòng lệnh
+    sửa chính những tệp đó KHÔNG được nhận ra là tự quan sát.
+
+    Chuyện đó vừa xảy ra, và theo cách khó chịu nhất có thể: câu bình luận giải
+    thích vì sao `lsass` là từ khoá mơ hồ — viết vào `ioc_quality.py` qua một
+    lệnh PowerShell — bị Event 4688 ghi lại, rồi bị chính cuộc săn credential
+    dumping khớp. **Viết lời giải thích về luật phát hiện đã kích hoạt luật phát
+    hiện**, sinh ra 6 chỉ báo CRITICAL và đẩy risk_level từ LOW lên HIGH.
+
+    Đây cùng một lớp lỗi với `pipeline_field_audit.FILES`: một danh sách viết
+    tay về chính mã nguồn của mình sẽ trôi lại phía sau mã nguồn đó. Cách chữa
+    giống hệt — đọc thư mục.
+    """
+    names = set()
+    try:
+        for filename in os.listdir(SCRIPT_DIR):
+            if filename.endswith('.py'):
+                names.add(filename[:-3].lower())
+    except OSError:
+        pass
+    return names
+
+
+# Tên module không suy ra được từ `scripts/` (cầu nối MCP, thư mục khác).
+EXTRA_SELF_HINTS = (
+    'mcp_bridge', 'mcp-cyber-tools', 'run_all.py', 'test_ioc_quality',
+    'tests/detection_quality', 'tests/ioc_quality',
 )
+
+SELF_OBSERVATION_HINTS = tuple(sorted(_module_names() | set(EXTRA_SELF_HINTS)))
 
 # Từ khoá nhận dạng nối bằng `|` là một BIỂU THỨC, không phải một cuộc tấn công.
 # Kẻ tấn công gọi mimikatz; nó không gõ cả bảng mẫu nhận dạng của người phòng thủ.
