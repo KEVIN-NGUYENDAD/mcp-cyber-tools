@@ -2,16 +2,20 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T13:32:03.615960
+Cập nhật: 2026-09-14T13:32:42.375047
 
-## Sprint vừa xong
+## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit | `58f01a5` |
+| Commit lúc chạy | `6e61795` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | chore: keep scratch PR body out of the repo |
+| Tiêu đề | fix(schema): make both ends of each mapping add up, and name the units |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
+
+Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
+**trước**; công của sprint này chưa có định danh. Đó là thứ tự đúng —
+cổng chạy trước khi commit — không phải một con số trễ.
 
 ## Cổng merge
 
@@ -22,7 +26,7 @@ Cập nhật: 2026-09-14T13:32:03.615960
 | BLIND | 0 |
 | FAIL | 0 |
 | Pipeline | 28 stage, 0 thất bại |
-| Toàn vẹn bằng chứng | 0 vi phạm / 434 chỉ báo |
+| Toàn vẹn bằng chứng | 0 vi phạm / 434 chỉ báo _(đo cách đây 5.3 giờ)_ |
 
 ## Trạng thái thật (đọc từ state/)
 
