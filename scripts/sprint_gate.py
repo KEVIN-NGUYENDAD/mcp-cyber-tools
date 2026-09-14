@@ -43,6 +43,7 @@ if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
 import detection_quality  # noqa: E402
+import portal_field_audit  # noqa: E402
 import tool_validator  # noqa: E402
 
 
@@ -87,6 +88,10 @@ def collect(validate=False):
 
     tests_ok, tests_detail = run_tests()
     integrity = detection_quality.audit_state()
+    # Portal doc truong khong ton tai la mot lop loi DA xay ra bon lan trong
+    # repo nay, va lan nao cung im lang. No thuoc ve cong chan, khong phai mot
+    # lan don dep.
+    portal = portal_field_audit.audit()
     pipeline = _read_json(os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json'))
 
     return {
@@ -96,6 +101,7 @@ def collect(validate=False):
         'tests_ok': tests_ok,
         'tests_detail': tests_detail,
         'pipeline': pipeline,
+        'portal': portal,
     }
 
 
@@ -123,6 +129,12 @@ def evaluate(data):
     if not integrity.get('ok'):
         blockers.append('%d vi pham toan ven bang chung'
                         % integrity.get('total_violations', 0))
+
+    portal_missing = [f for f in (data.get('portal') or [])
+                      if f['level'] == 'MISSING']
+    if portal_missing:
+        blockers.append('%d truong portal doc tu state khong ton tai'
+                        % len(portal_missing))
 
     pipeline = data['pipeline'] or {}
     stages = pipeline.get('stages') or pipeline.get('results') or []
@@ -226,6 +238,9 @@ def write_debt(data, verdict):
            data['integrity'].get('total_indicators', 0)))
     add('| Pipeline | %d stage, %d thất bại |'
         % (verdict['stages'], verdict['failed_stages']))
+    portal_missing = [f for f in (data.get('portal') or [])
+                      if f['level'] == 'MISSING']
+    add('| Trường portal đọc sai | %d |' % len(portal_missing))
     add('')
 
     if verdict['blockers']:
@@ -301,6 +316,10 @@ def main():
              data['integrity'].get('total_indicators', 0)))
     print('Pipeline           : %d stage, %d thất bại'
           % (verdict['stages'], verdict['failed_stages']))
+    portal_missing = [f for f in (data.get('portal') or [])
+                      if f['level'] == 'MISSING']
+    print('Trường portal      : %d đọc sai / %d truy cập'
+          % (len(portal_missing), len(data.get('portal') or [])))
     print('Nợ kỹ thuật        : %s' % os.path.relpath(path, PROJECT_ROOT))
     print('')
 
