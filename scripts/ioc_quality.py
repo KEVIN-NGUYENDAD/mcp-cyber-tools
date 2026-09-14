@@ -261,14 +261,18 @@ def attribution_quality(systems):
     with_ip = [s for s in systems if s.get('ip')]
     if not with_ip:
         return ATTR_NONE, 'Không hệ thống nào có IP'
-    full = [s for s in systems if s.get('identified')]
+    full = [s for s in systems if s.get('identified') and s.get('hostname_source') != 'unresolved']
     if len(full) == len(systems):
         return ATTR_FULL, '%d hệ thống đủ IP + hostname + asset_id' % len(full)
     missing = sorted(set(m for s in systems for m in s.get('missing_identity') or []))
-    if full:
-        return (ATTR_PARTIAL,
-                '%d/%d hệ thống đủ định danh; số còn lại thiếu %s'
-                % (len(full), len(systems), ', '.join(missing)))
+    unresolved = [s.get('ip') for s in systems if s.get('hostname_source') == 'unresolved']
+    if full or unresolved:
+        reason = '%d/%d hệ thống đủ định danh' % (len(full), len(systems))
+        if missing:
+            reason += '; số còn lại thiếu %s' % ', '.join(missing)
+        if unresolved:
+            reason += '; %d chưa phân giải hostname: %s' % (len(unresolved), ', '.join(unresolved[:3]))
+        return ATTR_PARTIAL, reason
     return (ATTR_PARTIAL,
             'Có IP và asset_id nhưng thiếu %s' % ', '.join(missing))
 
