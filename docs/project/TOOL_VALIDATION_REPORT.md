@@ -2,7 +2,7 @@
 
 **Sprint**: 8 — Sensor Visibility & Tool Validation  
 **Sinh tự động bởi**: `scripts/tool_validator.py` v2.0.0  
-**Thời điểm**: 2026-09-13T21:56:56.732596  
+**Thời điểm**: 2026-09-13T22:47:19.483532  
 **Máy**: KEVIN (Administrator: False)
 
 Đừng sửa tay file này — chạy lại `python scripts/tool_validator.py`.
@@ -29,7 +29,7 @@ tool không biết nó đang mù — mà từ `scripts/sensor_probe.py`.
 | ⚪ EMPTY | 6 |
 | ❌ BLIND | 0 |
 | 🔴 FAIL | 0 |
-| Tổng bản ghi thu được | 8073 |
+| Tổng bản ghi thu được | 8239 |
 | Biến thể tham số đã kiểm | 57 |
 | Tool lỗi khi truyền tham số | 0 |
 
@@ -48,9 +48,9 @@ một cuốn sổ ghi chép có chọn lọc không phải là nhìn thấy mọ
 
 | Năng lực | Trạng thái | Nguồn | Vì sao |
 |---|---|---|---|
-| **Security Log** | ✅ COVERED | Log Security thô — nền của mọi thứ dưới đây | Log Security mở được, 16227 bản ghi. |
+| **Security Log** | ✅ COVERED | Log Security thô — nền của mọi thứ dưới đây | Log Security mở được, 14891 bản ghi. |
 | **Process Creation** | ✅ COVERED | Event ID 4688 + dòng lệnh | Có sự kiện 4688 và dòng lệnh được ghi kèm. |
-| **Script Block Logging** | ✅ COVERED | Event ID 4104 — nội dung lệnh PowerShell đã chạy | Chính sách Script Block Logging đang BẬT — mọi khối lệnh PowerShell đều được ghi (596 bản ghi trong log). |
+| **Script Block Logging** | ✅ COVERED | Event ID 4104 — nội dung lệnh PowerShell đã chạy | Chính sách Script Block Logging đang BẬT — mọi khối lệnh PowerShell đều được ghi (1081 bản ghi trong log). |
 
 ## Sensor coverage
 
@@ -58,11 +58,11 @@ một cuốn sổ ghi chép có chọn lọc không phải là nhìn thấy mọ
 |---|---|---:|---:|---:|---:|---:|---:|---|
 | Defender | ✅ COVERED | 6 | 6 | 0 | 0 | 0 | 7 |  |
 | Firewall | ✅ COVERED | 6 | 6 | 0 | 0 | 0 | 254 |  |
-| Security Event Log | ✅ COVERED | 9 | 7 | 2 | 0 | 0 | 1858 |  |
-| Event Logs (System/App/PS) | ✅ COVERED | 7 | 6 | 1 | 0 | 0 | 459 |  |
+| Security Event Log | ✅ COVERED | 9 | 7 | 2 | 0 | 0 | 1815 |  |
+| Event Logs (System/App/PS) | ✅ COVERED | 7 | 6 | 1 | 0 | 0 | 460 |  |
 | Persistence | ✅ COVERED | 20 | 19 | 1 | 0 | 0 | 1101 |  |
-| Processes | ✅ COVERED | 12 | 12 | 0 | 0 | 0 | 1116 |  |
-| Network | ✅ COVERED | 12 | 12 | 0 | 0 | 0 | 699 |  |
+| Processes | ✅ COVERED | 12 | 12 | 0 | 0 | 0 | 1101 |  |
+| Network | ✅ COVERED | 12 | 12 | 0 | 0 | 0 | 922 |  |
 | IOC / Filesystem | ✅ COVERED | 11 | 9 | 2 | 0 | 0 | 2464 |  |
 
 ## Event ID 4688 — Process Creation
@@ -99,7 +99,7 @@ phần nào còn mù". Mọi bản ghi từ các nguồn này mang cờ `Fallbac
 | `Operational` | ✅ | 1522 | Phiên RDP: đăng nhập, đăng xuất, kết nối lại (ID 21/22/23/24/25/39/40) | `rdpLogs`, `huntRemoteDesktop` |
 | `Operational` | ✅ | 197 | Xác thực NTLM đi và đến — tín hiệu di chuyển ngang | `huntLateralMovement` |
 | `Operational` | ✅ | 1642 | Thực thi từ xa qua WinRM/PowerShell Remoting | `huntLateralMovement` |
-| `Operational` | ✅ | 596 | Script block logging (4104): nội dung lệnh PowerShell đã chạy — che được phần PowerShell của vùng mù 4688, không che phần còn lại | `huntEncodedPowerShell` |
+| `Operational` | ✅ | 1081 | Script block logging (4104): nội dung lệnh PowerShell đã chạy — che được phần PowerShell của vùng mù 4688, không che phần còn lại | `huntEncodedPowerShell` |
 
 ## Ma trận tool
 
@@ -150,13 +150,13 @@ phần nào còn mù". Mọi bản ghi từ các nguồn này mang cờ `Fallbac
 | `userProfiles` | host | multiline | host | ✅ PASS | 2 | - |  |
 | `whoami` | host | multiline_indirect | host | ✅ PASS | 1 | - |  |
 | `huntCredentialDumping` | hunting | multiline_indirect | security_log | ⚪ EMPTY | 0 | - | nguồn đọc được, không có bản ghi nào khớp |
-| `huntEncodedPowerShell` | hunting | multiline_indirect | event_logs | ✅ PASS | 99 | - |  |
+| `huntEncodedPowerShell` | hunting | multiline_indirect | event_logs | ✅ PASS | 100 | - |  |
 | `huntIndicators` | hunting | multiline_indirect | ioc | ⚪ EMPTY | 0 | 3 ✅ | nguồn đọc được, không có bản ghi nào khớp |
-| `huntLateralMovement` | hunting | multiline_indirect | security_log | ✅ PASS | 326 | - |  |
+| `huntLateralMovement` | hunting | multiline_indirect | security_log | ✅ PASS | 287 | - |  |
 | `huntLivingOffTheLand` | hunting | multiline_indirect | processes | ✅ PASS | 9 | - |  |
-| `huntNetworkBeacons` | hunting | multiline_indirect | network | ✅ PASS | 52 | - |  |
+| `huntNetworkBeacons` | hunting | multiline_indirect | network | ✅ PASS | 62 | - |  |
 | `huntPersistence` | hunting | multiline_indirect | persistence | ✅ PASS | 56 | - |  |
-| `huntRemoteDesktop` | hunting | multiline_indirect | security_log | ✅ PASS | 129 | - |  |
+| `huntRemoteDesktop` | hunting | multiline_indirect | security_log | ✅ PASS | 125 | - |  |
 | `huntSuspiciousServices` | hunting | multiline_indirect | persistence | ✅ PASS | 21 | - |  |
 | `huntSuspiciousTasks` | hunting | multiline_indirect | persistence | ✅ PASS | 40 | - |  |
 | `collectDefender` | incident | inline | defender | ✅ PASS | 1 | - |  |
@@ -169,11 +169,11 @@ phần nào còn mù". Mọi bản ghi từ các nguồn này mang cờ `Fallbac
 | `collectStartupItems` | incident | inline | persistence | ✅ PASS | 1 | - |  |
 | `securityAudit` | incident | multiline | composite | ✅ PASS | 5 | 1 ✅ |  |
 | `timeline` | incident | multiline | security_log | ✅ PASS | 300 | 1 ✅ |  |
-| `activeConnections` | network | multiline | network | ✅ PASS | 78 | 1 ✅ |  |
+| `activeConnections` | network | multiline | network | ✅ PASS | 96 | 1 ✅ |  |
 | `arp` | network | cmd | network | ✅ PASS | 12 | - |  |
-| `dnsCache` | network | cmd | network | ✅ PASS | 158 | 2 ✅ |  |
+| `dnsCache` | network | cmd | network | ✅ PASS | 308 | 2 ✅ |  |
 | `ipconfig` | network | cmd | network | ✅ PASS | 20 | - |  |
-| `netstat` | network | cmd | network | ✅ PASS | 315 | 3 ✅ |  |
+| `netstat` | network | cmd | network | ✅ PASS | 360 | 3 ✅ |  |
 | `nslookup` | network | cmd | network | ✅ PASS | 5 | - |  |
 | `ping` | network | cmd | network | ✅ PASS | 6 | 1 ✅ |  |
 | `routePrint` | network | cmd | network | ✅ PASS | 47 | - |  |
@@ -194,16 +194,16 @@ phần nào còn mù". Mọi bản ghi từ các nguồn này mang cờ `Fallbac
 | `processByPid` | process | inline | processes | ✅ PASS | 1 | - |  |
 | `processDetails` | process | inline | processes | ✅ PASS | 1 | - |  |
 | `processMonitor` | process | inline | processes | ✅ PASS | 20 | - |  |
-| `processTree` | process | inline | processes | ✅ PASS | 453 | - |  |
+| `processTree` | process | inline | processes | ✅ PASS | 447 | - |  |
 | `runningProcesses` | process | inline | processes | ✅ PASS | 50 | 1 ✅ |  |
-| `suspiciousProcesses` | process | inline | processes | ✅ PASS | 95 | - |  |
-| `tasklist` | process | cmd | processes | ✅ PASS | 456 | - |  |
+| `suspiciousProcesses` | process | inline | processes | ✅ PASS | 92 | - |  |
+| `tasklist` | process | cmd | processes | ✅ PASS | 450 | - |  |
 | `topProcesses` | process | inline | processes | ✅ PASS | 10 | 4 ✅ |  |
 | `autoStartServices` | services | multiline | persistence | ✅ PASS | 107 | - |  |
 | `disabledServices` | services | multiline | persistence | ✅ PASS | 6 | - |  |
-| `runningServices` | services | multiline | persistence | ✅ PASS | 143 | - |  |
+| `runningServices` | services | multiline | persistence | ✅ PASS | 140 | - |  |
 | `servicesChecker` | services | multiline | persistence | ✅ PASS | 312 | - |  |
-| `stoppedServices` | services | multiline | persistence | ✅ PASS | 169 | - |  |
+| `stoppedServices` | services | multiline | persistence | ✅ PASS | 172 | - |  |
 
 ## Technical debt còn lại
 
@@ -218,7 +218,6 @@ không ai còn tin, và nó sẽ âm thầm che luôn những món chưa trả.
 | 1 | Log `Microsoft-Windows-TaskScheduler/Operational` và `Microsoft-Windows-DriverFrameworks-UserMode/Operational` đang TẮT | Bật chúng là thay đổi cấu hình máy. Cho tới lúc đó, "không có bản ghi nào" ở hai nguồn này nghĩa là chưa ai từng ghi, không phải không có gì xảy ra. |
 | 2 | Nguồn thay thế chỉ che được MỘT PHẦN vùng mù: TerminalServices thấy phiên chứ không thấy chi tiết xác thực; NTLM thấy NTLM chứ không thấy Kerberos | Đây là giới hạn của chính các log đó, không sửa được bằng mã. Mọi bản ghi từ nguồn thay thế đều mang cờ `Fallback = true` để không ai nhầm bớt mù với hết mù. |
 | 3 | `state/sensor_coverage.json` không tự làm mới theo pipeline | tool_validator.py gọi thật 99 tool và có tác dụng phụ (ghi báo cáo, quét). Portal hiển thị tuổi của dữ liệu và cảnh báo khi quá 24 giờ. |
-| 4 | `assets.json` có hai người ghi: asset_builder.py ghi `all_assets`, extract_asset_intelligence.py ghi `assets` | Tồn tại từ trước Sprint 8, đã ghi nhận, chưa gộp. |
 
 Đã trả trong lần chạy này:
 
@@ -237,17 +236,17 @@ không ai còn tin, và nó sẽ âm thầm che luôn những món chưa trả.
 | `security_4688` | ✅ | 4688 |
 | `security_4624` | ✅ | 4624 |
 | `security_4625` | ❌ | No events were found that match the specified selection criteria. |
-| `event_log_system` | ✅ | 10016 |
-| `event_log_application` | ✅ | 16384 |
+| `event_log_system` | ✅ | 566 |
+| `event_log_application` | ✅ | 1 |
 | `event_log_powershell` | ✅ | 400 |
 | `event_log_ps_operational` | ✅ | 4104 |
 | `defender` | ✅ | True |
 | `firewall` | ✅ | 3 |
-| `process_table` | ✅ | 447 |
+| `process_table` | ✅ | 446 |
 | `scheduled_tasks` | ✅ | 228 |
 | `registry_run` | ✅ | 1 |
 | `wmi_subscriptions` | ✅ | 1 |
-| `network_stack` | ✅ | 198 |
+| `network_stack` | ✅ | 257 |
 | `filesystem_user` | ✅ | 66 |
 | `audit_policy` | ❌ | Error 0x00000522 occurred: |
 | `script_block_policy` | ✅ | 1 |

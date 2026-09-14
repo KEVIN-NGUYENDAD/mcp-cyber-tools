@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T21:57:06.818927",
+  "timestamp": "2026-09-13T22:44:22.614099",
   "total_assets": 11,
   "assets": [
     {
@@ -7,154 +7,672 @@
       "hostname": "192.168.0.1",
       "os": "Windows",
       "device_type": "Router",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 39,
       "critical": 0,
       "high": 0,
       "medium": 1,
       "low": 2,
-      "info": 36
+      "info": 36,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Router / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (39 so v\u1edbi TB 39.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.10",
       "hostname": "192.168.0.10",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
-      "info": 13
+      "info": 13,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (14 so v\u1edbi TB 14.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.11",
       "hostname": "192.168.0.11",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
-      "info": 13
+      "info": 13,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (14 so v\u1edbi TB 14.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.12",
       "hostname": "192.168.0.12",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
-      "info": 13
+      "info": 13,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (14 so v\u1edbi TB 14.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.21",
       "hostname": "192.168.0.21",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 48,
       "critical": 0,
       "high": 0,
       "medium": 2,
       "low": 1,
-      "info": 45
+      "info": 45,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (48 so v\u1edbi TB 48.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.233",
       "hostname": "192.168.0.233",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 3,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 0,
-      "info": 3
+      "info": 3,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (3 so v\u1edbi TB 3.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.3",
       "hostname": "192.168.0.3",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
-      "info": 13
+      "info": 13,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (14 so v\u1edbi TB 14.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.4",
       "hostname": "192.168.0.4",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 11,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 0,
-      "info": 11
+      "info": 11,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (11 so v\u1edbi TB 11.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.5",
       "hostname": "192.168.0.5",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 13,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
-      "info": 12
+      "info": 12,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (13 so v\u1edbi TB 13.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.51",
       "hostname": "192.168.0.51",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 215,
       "critical": 0,
       "high": 0,
       "medium": 1,
       "low": 0,
-      "info": 214
+      "info": 214,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (215 so v\u1edbi TB 215.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     },
     {
       "ip": "192.168.0.8",
       "hostname": "192.168.0.8",
       "os": "Windows",
       "device_type": "Server",
-      "first_seen": "2026-09-13T21:57:06.818927",
-      "last_seen": "2026-09-13T21:57:06.818927",
+      "first_seen": "2026-09-09T10:07:46.190379",
+      "last_seen": "2026-09-13T22:44:22.439238",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
-      "info": 13
+      "info": 13,
+      "trust_score": 92,
+      "trust_level": "CRITICAL_ASSET",
+      "trust_basis": {
+        "points_available": 60,
+        "points_possible": 100,
+        "unobservable": [
+          "mac_consistency"
+        ],
+        "components": [
+          {
+            "name": "mac_consistency",
+            "score": 0,
+            "max": 40,
+            "observable": false,
+            "reason": "assets.json kh\u00f4ng mang tr\u01b0\u1eddng MAC"
+          },
+          {
+            "name": "ip_stability",
+            "score": 20,
+            "max": 20,
+            "observable": true,
+            "reason": "IP \u1ed5n \u0111\u1ecbnh"
+          },
+          {
+            "name": "identification",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "Server / Windows"
+          },
+          {
+            "name": "vulnerability_trend",
+            "score": 15,
+            "max": 15,
+            "observable": true,
+            "reason": "\u1ed5n \u0111\u1ecbnh ho\u1eb7c gi\u1ea3m (14 so v\u1edbi TB 14.0)"
+          },
+          {
+            "name": "discovery_consistency",
+            "score": 5,
+            "max": 10,
+            "observable": true,
+            "reason": "3 l\u1ea7n quan s\u00e1t"
+          }
+        ]
+      },
+      "trust_scored_at": "2026-09-13T22:44:22.614099"
     }
-  ]
+  ],
+  "trust_scored_at": "2026-09-13T22:44:22.614099"
 }

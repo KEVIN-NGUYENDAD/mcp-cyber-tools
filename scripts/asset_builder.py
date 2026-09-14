@@ -1,255 +1,300 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
-UNIFIED ASSET SCHEMA & TRUST SCORE ENGINE
-Calculates asset trust_score (0-100) based on:
-- MAC address consistency (40 points)
-- IP stability (20 points)
-- Service stability (15 points)
-- Vulnerability trend (15 points)
-- Discovery consistency (10 points)
+TRUST SCORE ENGINE (Sprint 11: assets.json Consolidation)
+
+Gắn `trust_score` cho từng tài sản trong `state/assets.json`.
+
+Hai thứ đã hỏng trước Sprint 11
+-------------------------------
+1. **Sai lược đồ.** File này đọc khoá `all_assets`; tệp sống dùng khoá `assets`.
+   Nên nó thoát ngay ở dòng đầu với "Error: Invalid assets.json format", và
+   `trust_score` chưa bao giờ tồn tại trong tệp. Nay mọi truy cập đi qua
+   `asset_store.py` — lớp duy nhất biết tệp có hình dạng gì.
+
+2. **Chấm điểm trên những trường không tồn tại.** Kể cả khi lược đồ đúng, bốn
+   trong năm thành phần vẫn hỏng: nó đọc `mac`, `status`, `type`, `risk_score`
+   — không trường nào có trong lược đồ chính thức (`ip`, `hostname`, `os`,
+   `device_type`, `vulnerability_count`, `critical`/`high`/`medium`/`low`).
+
+   Cái này nguy hiểm hơn hỏng số 1. Hỏng số 1 im lặng và không ghi gì. Hỏng số 2
+   thì VẪN RA SỐ: MAC không có -> 0/40 điểm, `status` không có -> 0/10 điểm, và
+   mọi thiết bị hoàn toàn bình thường đều nhận về một điểm tin cậy thấp trông
+   rất thuyết phục. Đây đúng là lỗi mà Sprint 6 đã gặp ở `shadow_asset_detector.py`
+   (lấy MAC từ nơi không có MAC), chỉ đổi chỗ.
+
+Cách sửa: mỗi thành phần tự khai báo có QUAN SÁT ĐƯỢC hay không
+---------------------------------------------------------------
+Thành phần không quan sát được thì rời khỏi CẢ tử số lẫn MẪU SỐ, thay vì âm
+thầm đóng góp 0 điểm. Điểm cuối là phần trăm trên số điểm THỰC SỰ chấm được, và
+`trust_basis` ghi lại chấm được bao nhiêu trên bao nhiêu.
+
+Không quan sát được không phải là điểm xấu. Một chiếc điện thoại bình thường và
+một thiết bị lạ trông giống hệt nhau khi ta chưa nhìn — và cách duy nhất để
+không nhầm hai thứ đó là nói thẳng ra rằng ta chưa nhìn.
 """
+
+from __future__ import print_function
 
 import json
+import os
 import sys
-from pathlib import Path
-from datetime import datetime, timedelta
-from collections import defaultdict
+from datetime import datetime
 
-# Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
-from state_manager import write_state_atomic, read_state_safe
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
+
+from state_manager import write_state_atomic  # noqa: E402
+import asset_store  # noqa: E402
+
+TRUST_HISTORY_FILE = os.path.join(asset_store.STATE_DIR, 'asset_trust_history.json')
+
+# Dưới ngưỡng này thì điểm không đủ cơ sở để mang một nhãn nào cả.
+MIN_BASIS_POINTS = 40
 
 
-class TrustScoreEngine:
-    """Calculate trust score for assets"""
+def _component(name, score, maximum, observable, reason):
+    return {'name': name, 'score': score, 'max': maximum,
+            'observable': observable, 'reason': reason}
+
+
+class TrustScoreEngine(object):
 
     def __init__(self):
-        self.state_dir = Path(__file__).parent.parent / 'state'
-        self.assets_file = self.state_dir / 'assets.json'
-        self.trust_history_file = self.state_dir / 'asset_trust_history.json'
+        self.trust_history_file = TRUST_HISTORY_FILE
 
-    def load_assets(self):
-        """Load current assets from JSON"""
-        if not self.assets_file.exists():
-            return {}
-        try:
-            with open(self.assets_file, 'r') as f:
-                data = json.load(f)
-                return data
-        except Exception as e:
-            print(f"Error loading assets: {e}", file=sys.stderr)
-            return {}
+    # -- lịch sử ----------------------------------------------------------
 
     def load_trust_history(self):
-        """Load historical trust data"""
-        if not self.trust_history_file.exists():
-            return defaultdict(lambda: {'mac_changes': 0, 'ip_changes': 0, 'first_seen': None, 'observations': 0})
+        if not os.path.exists(self.trust_history_file):
+            return {}
         try:
-            with open(self.trust_history_file, 'r') as f:
-                data = json.load(f)
-                return data
-        except Exception:
-            return defaultdict(lambda: {'mac_changes': 0, 'ip_changes': 0, 'first_seen': None, 'observations': 0})
+            with open(self.trust_history_file, 'r') as handle:
+                data = json.load(handle)
+            return data if isinstance(data, dict) else {}
+        except (ValueError, IOError, OSError):
+            # Lịch sử hỏng thì coi như chưa có lịch sử — nhưng KHÔNG im lặng.
+            print('[WARN] asset_trust_history.json không đọc được, '
+                  'chấm lại từ đầu', file=sys.stderr)
+            return {}
 
-    def calculate_mac_consistency_score(self, asset, history):
-        """40 points: MAC address consistency"""
-        ip = asset.get('ip')
-        mac = asset.get('mac', 'Unknown')
+    # -- từng thành phần --------------------------------------------------
 
-        if mac == 'Unknown':
-            return 0  # Unknown MAC = 0 points
+    def mac_consistency(self, asset, entry):
+        """40 điểm: MAC có ổn định không.
 
-        asset_history = history.get(ip, {})
-        mac_changes = asset_history.get('mac_changes', 0)
+        Lược đồ chính thức KHÔNG có trường `mac`. Trả về không-quan-sát-được
+        thay vì 0: một thiết bị không có MAC trong hồ sơ không phải một thiết bị
+        đáng ngờ, nó là một thiết bị ta chưa hỏi đúng nguồn.
+        """
+        mac = (asset.get('mac') or '').strip()
+        if not mac or mac.lower() == 'unknown':
+            return _component('mac_consistency', 0, 40, False,
+                              'assets.json không mang trường MAC')
+        changes = entry.get('mac_changes', 0)
+        if changes == 0:
+            return _component('mac_consistency', 40, 40, True, 'MAC ổn định')
+        if changes == 1:
+            return _component('mac_consistency', 30, 40, True, 'đổi MAC 1 lần')
+        if changes <= 3:
+            return _component('mac_consistency', 20, 40, True,
+                              'đổi MAC %d lần' % changes)
+        return _component('mac_consistency', max(0, 40 - changes * 5), 40, True,
+                          'đổi MAC %d lần' % changes)
 
-        # Penalty for MAC changes
-        if mac_changes == 0:
-            return 40  # Stable MAC
-        elif mac_changes == 1:
-            return 30  # One change (acceptable)
-        elif mac_changes <= 3:
-            return 20  # Few changes
-        else:
-            return max(0, 40 - (mac_changes * 5))  # Multiple changes = lower score
+    def ip_stability(self, asset, entry):
+        """20 điểm: IP có ổn định không. Cần ít nhất 2 lần quan sát mới có nghĩa."""
+        observations = entry.get('observations', 0)
+        if observations < 2:
+            return _component('ip_stability', 0, 20, False,
+                              'mới thấy lần đầu — chưa có gì để so')
+        changes = entry.get('ip_changes', 0)
+        if changes == 0:
+            return _component('ip_stability', 20, 20, True, 'IP ổn định')
+        if changes == 1:
+            return _component('ip_stability', 15, 20, True, 'đổi IP 1 lần')
+        if changes <= 2:
+            return _component('ip_stability', 10, 20, True,
+                              'đổi IP %d lần' % changes)
+        return _component('ip_stability', max(0, 20 - changes * 3), 20, True,
+                          'đổi IP %d lần' % changes)
 
-    def calculate_ip_stability_score(self, asset, history):
-        """20 points: IP address stability"""
-        ip = asset.get('ip')
-        asset_history = history.get(ip, {})
-        ip_changes = asset_history.get('ip_changes', 0)
+    def identification(self, asset, entry):
+        """15 điểm: máy có được nhận dạng rõ không.
 
-        # Penalty for IP changes
-        if ip_changes == 0:
-            return 20  # Stable IP
-        elif ip_changes == 1:
-            return 15  # One change
-        elif ip_changes <= 2:
-            return 10  # Few changes
-        else:
-            return max(0, 20 - (ip_changes * 3))
+        Đọc `device_type` (lược đồ chính thức), không phải `type` (bản cũ đọc
+        trường này và không bao giờ tìm thấy).
+        """
+        device_type = (asset.get('device_type') or '').strip()
+        os_name = (asset.get('os') or '').strip()
+        known_type = device_type and device_type.lower() != 'unknown'
+        known_os = os_name and os_name.lower() != 'unknown'
 
-    def calculate_service_stability_score(self, asset):
-        """15 points: Service/port consistency"""
-        # Based on consistent OS and device type detection
-        asset_type = asset.get('type', 'Unknown')
-        os = asset.get('os', 'Unknown')
+        if not known_type and not known_os:
+            return _component('identification', 0, 15, True,
+                              'không nhận dạng được cả loại lẫn hệ điều hành')
+        if known_type and known_os:
+            return _component('identification', 15, 15, True,
+                              '%s / %s' % (device_type, os_name))
+        return _component('identification', 9, 15, True,
+                          'nhận dạng một phần (%s)' % (device_type or os_name))
 
-        if asset_type == 'Unknown' and os == 'Unknown':
-            return 0  # Unknown device = 0 points
+    def vulnerability_trend(self, asset, entry):
+        """15 điểm: số lỗ hổng đang ổn định hay đang xấu đi.
 
-        if asset_type in ['Windows', 'Linux', 'Camera']:
-            if os and os != 'Unknown':
-                return 15  # Consistent OS = 15 points
-            else:
-                return 10  # Type but unknown OS
-        else:
-            return 5  # Partial identification
+        So sánh với lịch sử CỦA CHÍNH NÓ, không tự tính một điểm rủi ro mới:
+        `calculate_risk_score.py` là nơi duy nhất được phép chấm rủi ro, và repo
+        này đã trả giá ba lần cho việc có hai nơi trả lời cùng một câu hỏi.
+        """
+        history = entry.get('vulnerability_counts', [])
+        if not history:
+            return _component('vulnerability_trend', 0, 15, False,
+                              'chưa có lần quét trước để so')
+        current = asset.get('vulnerability_count', 0) or 0
+        window = history[-10:]
+        average = sum(window) / float(len(window))
+        if current <= average * 1.1:
+            return _component('vulnerability_trend', 15, 15, True,
+                              'ổn định hoặc giảm (%d so với TB %.1f)' % (current, average))
+        if current <= average * 1.5:
+            return _component('vulnerability_trend', 10, 15, True,
+                              'tăng nhẹ (%d so với TB %.1f)' % (current, average))
+        return _component('vulnerability_trend', 3, 15, True,
+                          'tăng mạnh (%d so với TB %.1f)' % (current, average))
 
-    def calculate_vulnerability_trend_score(self, asset, history):
-        """15 points: Vulnerability trend stability"""
-        asset_history = history.get(asset.get('ip'), {})
-        risk_history = asset_history.get('risk_scores', [])
-
-        current_risk = asset.get('risk_score', 0)
-
-        if len(risk_history) == 0:
-            # First observation - neutral
-            return 8
-
-        # Check if risk is stable or improving
-        avg_past_risk = sum(risk_history[-10:]) / len(risk_history[-10:]) if risk_history else 0
-
-        if current_risk <= avg_past_risk * 1.1:  # Within 10% of average
-            return 15  # Stable or improving
-        elif current_risk <= avg_past_risk * 1.5:  # Within 50%
-            return 10  # Some increase
-        else:
-            return max(0, 15 - (current_risk - avg_past_risk))  # Degrading
-
-    def calculate_discovery_consistency_score(self, asset, history):
-        """10 points: Consistent discovery across scans"""
-        ip = asset.get('ip')
-        asset_history = history.get(ip, {})
-        observations = asset_history.get('observations', 1)
-
-        status = asset.get('status', 'UNKNOWN')
-
-        if status != 'ONLINE':
-            return 0  # Offline/unknown = 0 points
-
-        # More observations = higher consistency
+    def discovery_consistency(self, asset, entry):
+        """10 điểm: có được nhìn thấy đều đặn không. Luôn quan sát được."""
+        observations = entry.get('observations', 1)
         if observations >= 10:
-            return 10  # Consistently discovered
-        elif observations >= 5:
-            return 8
-        elif observations >= 3:
-            return 5
-        else:
-            return 2  # Few observations
+            return _component('discovery_consistency', 10, 10, True,
+                              '%d lần quan sát' % observations)
+        if observations >= 5:
+            return _component('discovery_consistency', 8, 10, True,
+                              '%d lần quan sát' % observations)
+        if observations >= 3:
+            return _component('discovery_consistency', 5, 10, True,
+                              '%d lần quan sát' % observations)
+        return _component('discovery_consistency', 2, 10, True,
+                          'mới %d lần quan sát' % observations)
 
-    def calculate_trust_score(self, asset, history):
-        """Calculate overall trust score (0-100)"""
-        score = (
-            self.calculate_mac_consistency_score(asset, history) +
-            self.calculate_ip_stability_score(asset, history) +
-            self.calculate_service_stability_score(asset) +
-            self.calculate_vulnerability_trend_score(asset, history) +
-            self.calculate_discovery_consistency_score(asset, history)
-        )
+    # -- tổng hợp ---------------------------------------------------------
 
-        return min(100, max(0, score))  # Clamp to 0-100
+    def score_asset(self, asset, entry):
+        components = [
+            self.mac_consistency(asset, entry),
+            self.ip_stability(asset, entry),
+            self.identification(asset, entry),
+            self.vulnerability_trend(asset, entry),
+            self.discovery_consistency(asset, entry),
+        ]
+        usable = [c for c in components if c['observable']]
+        basis = sum(c['max'] for c in usable)
+        earned = sum(c['score'] for c in usable)
 
-    def determine_trust_level(self, score):
-        """Convert score to trust level"""
+        if basis == 0:
+            return None, 'UNSCORED', components, basis
+
+        score = int(round(100.0 * earned / basis))
+        # Một điểm 100 chấm trên 10 điểm khả dụng không cùng nghĩa với một điểm
+        # 100 chấm trên 100. Nhãn phải nói ra điều đó, không phải chỉ con số.
+        if basis < MIN_BASIS_POINTS:
+            return score, 'INSUFFICIENT_DATA', components, basis
+        return score, self.trust_level(score), components, basis
+
+    @staticmethod
+    def trust_level(score):
         if score >= 85:
-            return 'CRITICAL_ASSET'  # Known, stable, important
-        elif score >= 70:
+            return 'CRITICAL_ASSET'
+        if score >= 70:
             return 'TRUSTED'
-        elif score >= 50:
+        if score >= 50:
             return 'MONITORED'
-        elif score >= 30:
+        if score >= 30:
             return 'SUSPICIOUS'
-        else:
-            return 'UNKNOWN'
+        return 'UNKNOWN'
 
-    def upgrade_schema(self):
-        """Add trust_score and related fields to assets"""
-        assets_data = self.load_assets()
+    # -- chạy -------------------------------------------------------------
 
-        if not assets_data or 'all_assets' not in assets_data:
-            print("Error: Invalid assets.json format", file=sys.stderr)
+    def run(self):
+        try:
+            assets, meta = asset_store.read_assets()
+        except asset_store.AssetStoreError as error:
+            print('[FAIL] %s' % error, file=sys.stderr)
             return False
+
+        if meta['legacy']:
+            print('[WARN] assets.json vẫn dùng khoá di sản "all_assets"; '
+                  'ghi lại bằng khoá chính thức "assets"', file=sys.stderr)
 
         history = self.load_trust_history()
         now = datetime.now().isoformat()
+        levels = {}
 
-        # Upgrade all_assets
-        for asset in assets_data.get('all_assets', []):
+        for asset in assets:
             ip = asset.get('ip')
+            if not ip:
+                continue
+            entry = history.setdefault(ip, {
+                'mac_changes': 0,
+                'ip_changes': 0,
+                'first_seen': now,
+                'observations': 0,
+                'vulnerability_counts': [],
+            })
+            entry['observations'] = entry.get('observations', 0) + 1
+            entry.setdefault('first_seen', now)
 
-            # Initialize history if needed
-            if ip not in history:
-                history[ip] = {
-                    'mac_changes': 0,
-                    'ip_changes': 0,
-                    'first_seen': now,
-                    'observations': 1,
-                    'risk_scores': [asset.get('risk_score', 0)]
-                }
-            else:
-                history[ip]['observations'] += 1
-                if 'risk_scores' not in history[ip]:
-                    history[ip]['risk_scores'] = []
-                history[ip]['risk_scores'].append(asset.get('risk_score', 0))
+            score, level, components, basis = self.score_asset(asset, entry)
 
-            # Calculate trust score
-            trust_score = self.calculate_trust_score(asset, history)
+            asset['trust_score'] = score
+            asset['trust_level'] = level
+            asset['trust_basis'] = {
+                'points_available': basis,
+                'points_possible': 100,
+                'unobservable': [c['name'] for c in components if not c['observable']],
+                'components': components,
+            }
+            asset['first_seen'] = entry.get('first_seen', now)
+            asset['trust_scored_at'] = now
+            levels[level] = levels.get(level, 0) + 1
 
-            # Add new fields
-            asset['trust_score'] = trust_score
-            asset['trust_level'] = self.determine_trust_level(trust_score)
-            asset['shadow_flag'] = False  # Will be updated by change_detector
-            asset['first_seen'] = history[ip].get('first_seen', now)
-            asset['last_change_time'] = asset.get('last_updated', now)
+            # Ghi lịch sử SAU khi chấm: lần quét này không được tự làm bằng
+            # chứng cho chính nó.
+            counts = entry.setdefault('vulnerability_counts', [])
+            counts.append(asset.get('vulnerability_count', 0) or 0)
+            del counts[:-20]
 
-        # Upgrade assets_by_type
-        for asset_type, assets_list in assets_data.get('assets_by_type', {}).items():
-            for asset in assets_list:
-                ip = asset.get('ip')
-                trust_score = self.calculate_trust_score(asset, history)
-                asset['trust_score'] = trust_score
-                asset['trust_level'] = self.determine_trust_level(trust_score)
-                asset['shadow_flag'] = False
-                asset['first_seen'] = history[ip].get('first_seen', now)
-                asset['last_change_time'] = asset.get('last_updated', now)
-
-        # Save upgraded assets (atomic write for file safety - TD-L3-001, TD-L3-002, TD-L3-003)
         try:
-            write_state_atomic(str(self.assets_file), assets_data, indent=2)
-            print(f"[OK] Upgraded {len(assets_data.get('all_assets', []))} assets with trust_score")
-        except Exception as e:
-            print(f"Error saving assets: {e}", file=sys.stderr)
+            asset_store.write_assets(assets, extra={'trust_scored_at': now})
+        except asset_store.AssetStoreError as error:
+            print('[FAIL] không ghi được assets.json: %s' % error, file=sys.stderr)
             return False
 
-        # Save trust history (atomic write for file safety)
         try:
-            write_state_atomic(str(self.trust_history_file), history, indent=2)
-            print(f"[OK] Saved trust history for {len(history)} assets")
-        except Exception as e:
-            print(f"Error saving trust history: {e}", file=sys.stderr)
+            write_state_atomic(self.trust_history_file, history, indent=2)
+        except Exception as error:  # noqa: BLE001 - báo rồi trả False, không nuốt
+            print('[FAIL] không ghi được lịch sử tin cậy: %s' % error, file=sys.stderr)
             return False
 
+        scored = sum(1 for a in assets if isinstance(a.get('trust_score'), int))
+        print('[OK] Chấm tin cậy cho %d/%d tài sản' % (scored, len(assets)))
+        for level in sorted(levels):
+            print('     %-18s %d' % (level, levels[level]))
+        thin = [a['ip'] for a in assets
+                if (a.get('trust_basis') or {}).get('points_available', 0) < MIN_BASIS_POINTS]
+        if thin:
+            print('     %d tài sản chấm trên dưới %d điểm khả dụng: %s'
+                  % (len(thin), MIN_BASIS_POINTS, ', '.join(thin[:5])
+                     + ('...' if len(thin) > 5 else '')))
         return True
 
 
 def main():
-    engine = TrustScoreEngine()
-    if engine.upgrade_schema():
-        print("\n[SUCCESS] Task 1.1: Schema upgrade complete")
-        sys.exit(0)
-    else:
-        print("\n[FAILED] Schema upgrade failed", file=sys.stderr)
-        sys.exit(1)
+    if TrustScoreEngine().run():
+        return 0
+    return 1
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

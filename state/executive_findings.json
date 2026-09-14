@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T21:57:25.624308",
+  "timestamp": "2026-09-13T22:44:42.471270",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
@@ -18,7 +18,7 @@
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-13T21:57:06.818927"
+      "timestamp": "2026-09-13T22:44:22.614099"
     },
     "shadow_assets.json": {
       "present": true,
@@ -28,37 +28,37 @@
     "incidents.json": {
       "present": true,
       "records": 1,
-      "timestamp": "2026-09-13T21:57:25.266913"
+      "timestamp": "2026-09-13T22:44:42.110026"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T21:57:06.143193"
+      "timestamp": "2026-09-13T22:44:21.716647"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T21:57:06.447907"
+      "timestamp": "2026-09-13T22:44:22.024553"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 96,
-      "timestamp": "2026-09-13T21:57:13.289131"
+      "timestamp": "2026-09-13T22:44:29.213631"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T21:57:24.901939"
+      "timestamp": "2026-09-13T22:44:41.677894"
     },
     "hunting_lateral_movement.json": {
       "present": true,
-      "records": 439,
-      "timestamp": "2026-09-13T21:57:19.254152"
+      "records": 428,
+      "timestamp": "2026-09-13T22:44:35.992791"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
-      "records": 44,
-      "timestamp": "2026-09-13T21:57:16.288634"
+      "records": 65,
+      "timestamp": "2026-09-13T22:44:33.026571"
     }
   },
   "coverage_gaps": [
@@ -70,7 +70,7 @@
     {
       "rule_id": "RULE-3",
       "reason": "NO_DEFENDER_DETECTION",
-      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 44 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
+      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 65 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
     }
   ],
   "findings": [
@@ -101,7 +101,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T21:57:25.624308"
+      "detected_at": "2026-09-13T22:44:42.471270"
     },
     {
       "finding_id": "EF-0002",
@@ -273,7 +273,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T21:57:25.624308"
+      "detected_at": "2026-09-13T22:44:42.471270"
     }
   ]
 }
