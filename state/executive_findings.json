@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T21:27:01.276902",
+  "timestamp": "2026-09-13T21:50:59.589225",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
@@ -18,7 +18,7 @@
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-13T21:26:48.128284"
+      "timestamp": "2026-09-13T21:50:38.901896"
     },
     "shadow_assets.json": {
       "present": true,
@@ -27,51 +27,41 @@
     },
     "incidents.json": {
       "present": true,
-      "records": 0,
-      "timestamp": "2026-09-13T21:27:00.910651"
+      "records": 1,
+      "timestamp": "2026-09-13T21:50:59.196594"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T21:26:47.440822"
+      "timestamp": "2026-09-13T21:50:38.142352"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T21:26:47.728877"
+      "timestamp": "2026-09-13T21:50:38.474478"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 96,
-      "timestamp": "2026-09-13T21:26:54.091307"
+      "timestamp": "2026-09-13T21:50:45.789742"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T21:27:00.481629"
+      "timestamp": "2026-09-13T21:50:58.780694"
     },
     "hunting_lateral_movement.json": {
       "present": true,
-      "records": 220,
-      "timestamp": "2026-09-13T21:26:59.153108"
+      "records": 534,
+      "timestamp": "2026-09-13T21:50:52.730796"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
-      "records": 56,
-      "timestamp": "2026-09-13T21:26:57.366348"
+      "records": 67,
+      "timestamp": "2026-09-13T21:50:49.004161"
     }
   },
   "coverage_gaps": [
-    {
-      "rule_id": "SOURCE",
-      "reason": "NOT_OBSERVABLE",
-      "detail": "hunting_credential_dumping.json: Security event log kh\u00f4ng \u0111\u1ecdc \u0111\u01b0\u1ee3c. Nguy\u00ean nh\u00e2n th\u01b0\u1eddng g\u1eb7p: audit \"Process Creation\" (4688) t\u1eaft m\u1eb7c \u0111\u1ecbnh tr\u00ean Windows Home, v\u00e0/ho\u1eb7c ti\u1ebfn tr\u00ecnh kh\u00f4ng ch\u1ea1y quy\u1ec1n Administrator."
-    },
-    {
-      "rule_id": "SOURCE",
-      "reason": "NOT_OBSERVABLE",
-      "detail": "hunting_lateral_movement.json: Security event log kh\u00f4ng \u0111\u1ecdc \u0111\u01b0\u1ee3c. Kh\u00f4ng th\u1ec3 k\u1ebft lu\u1eadn g\u00ec v\u1ec1 di chuy\u1ec3n ngang: 0 ph\u00e1t hi\u1ec7n \u1edf \u0111\u00e2y l\u00e0 do KH\u00d4NG NH\u00ccN \u0110\u01af\u1ee2C, kh\u00f4ng ph\u1ea3i do s\u1ea1ch."
-    },
     {
       "rule_id": "RULE-1",
       "reason": "NO_SHADOW_ASSETS",
@@ -80,7 +70,7 @@
     {
       "rule_id": "RULE-3",
       "reason": "NO_DEFENDER_DETECTION",
-      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 56 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
+      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 67 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
     }
   ],
   "findings": [
@@ -111,7 +101,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T21:27:01.276902"
+      "detected_at": "2026-09-13T21:50:59.589225"
     },
     {
       "finding_id": "EF-0002",
@@ -283,7 +273,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-13T21:27:01.276902"
+      "detected_at": "2026-09-13T21:50:59.589225"
     }
   ]
 }
