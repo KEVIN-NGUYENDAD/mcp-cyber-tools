@@ -495,10 +495,19 @@ function renderSensorCoverage() {
     const toolLabel = toolsAgeH === null ? 'chua kiem bao gio'
       : (toolsAgeH > 24 ? `CU ${Math.floor(toolsAgeH / 24)} ngay`
         : `${Math.floor(toolsAgeH)}h truoc`);
+    // Sprint 16: nua tool tu lam moi o nen khi qua han. Khi viec do DANG chay,
+    // cau "CU 3 ngay (npm run validate de lam moi)" bao nguoi xem di lam mot
+    // viec da co may lam roi — va lan sau ho se bo qua canh bao that.
+    const refresh = coverage.tools_refresh || null;
+    const running = refresh && (refresh.state === 'started' || refresh.state === 'running');
+    const autoFailed = refresh && refresh.state === 'failed';
+    const hint = running ? ' (dang tu lam moi o nen...)'
+      : (autoFailed ? ' (tu lam moi THAT BAI - chay npm run validate)'
+        : (stale ? ' (npm run validate de lam moi)' : ''));
     meta.textContent = `${s.covered || 0} covered / ${s.partial || 0} partial / ${s.blind || 0} blind`
-      + ` — cam bien: ${probeLabel} · tool: ${toolLabel}`
-      + (stale ? ' (npm run validate de lam moi)' : '');
-    meta.style.color = stale ? '#FFB020' : 'var(--color-text-dim)';
+      + ` — cam bien: ${probeLabel} · tool: ${toolLabel}` + hint;
+    meta.style.color = autoFailed ? '#FF3B5C'
+      : (running ? 'var(--color-text-dim)' : (stale ? '#FFB020' : 'var(--color-text-dim)'));
   }
 
   if (note) {
