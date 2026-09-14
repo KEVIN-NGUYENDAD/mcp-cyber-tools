@@ -2,37 +2,37 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T08:02:15.645655
+Cập nhật: 2026-09-14T08:09:43.463274
 
 ## Sprint vừa xong
 
 | | |
 |---|---|
-| Commit | `e8ba09b` |
+| Commit | `4668b96` |
 | Branch | `develop` |
-| Tiêu đề | Merge pull request #42 from KEVIN-NGUYENDAD/feature/kill-green-defaults |
+| Tiêu đề | Merge pull request #43 from KEVIN-NGUYENDAD/feature/telegram-truth-portal-hardening |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 ## Cổng merge
 
 | | |
 |---|---|
-| PASS | 94 |
-| EMPTY | 5 |
+| PASS | 93 |
+| EMPTY | 6 |
 | BLIND | 0 |
 | FAIL | 0 |
 | Pipeline | 28 stage, 0 thất bại |
-| Toàn vẹn bằng chứng | 0 vi phạm / 602 chỉ báo |
+| Toàn vẹn bằng chứng | 0 vi phạm / 406 chỉ báo |
 
 ## Trạng thái thật (đọc từ state/)
 
 | | |
 |---|---|
-| Risk Score | 10/100 |
+| Risk Score | 3/100 |
 | Risk Level | LOW |
-| Sự cố đang mở | 1 |
+| Sự cố đang mở | 0 |
 | └ CRITICAL | 0 |
-| └ HIGH | 1 |
+| └ HIGH | 0 |
 | Phát hiện cấp điều hành | 2 |
 | └ cảnh báo chất lượng | 0 |
 | Rule không kết luận được | 2 |
@@ -55,7 +55,7 @@ Cập nhật: 2026-09-14T08:02:15.645655
 | **Scheduled Task Execution** | blind |
 | **USB Device Activity** | blind |
 
-_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (0.4 giờ trước)._
+_Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
 
 ## Việc tiếp theo
 

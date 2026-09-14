@@ -124,6 +124,44 @@ def collect(validate=False):
     }
 
 
+# AQ-017. Cổng merge không hề kiểm tuổi của bất kỳ đầu vào nào. `npm run gate`
+# (không có `--validate`) đọc kết quả từ đĩa và tuyên bố "đủ điều kiện merge" dựa
+# trên chúng, dù chúng cũ bao nhiêu.
+#
+# Mỉa mai ở chỗ portal ĐÃ có đúng phép kiểm này (`tools_age_hours > 24` -> cảnh
+# báo vàng). Portal biết dữ liệu validator có thể cũ; cổng merge thì không —
+# nên hai nơi trả lời khác nhau cho cùng một câu hỏi, và nơi có quyền chặn code
+# lại là nơi không biết.
+#
+# Dùng đúng ngưỡng 24 giờ mà portal đang dùng.
+MAX_INPUT_AGE_HOURS = 24
+
+
+def _age_hours(timestamp):
+    if not timestamp:
+        return None
+    try:
+        then = datetime.fromisoformat(str(timestamp).replace('Z', ''))
+    except (ValueError, TypeError):
+        return None
+    return round((datetime.now() - then).total_seconds() / 3600.0, 1)
+
+
+def input_ages(data):
+    """Tuổi từng đầu vào của cổng. None = không khai thời điểm sinh."""
+    report = data.get('report') or {}
+    pipeline = data.get('pipeline') or {}
+    coverage = data.get('coverage') or {}
+    return [
+        ('tool_validation.json', _age_hours(report.get('generated_at'))),
+        ('pipeline_results.json', _age_hours(pipeline.get('timestamp')
+                                             or pipeline.get('generated_at')
+                                             or pipeline.get('started_at'))),
+        ('sensor_coverage.json', _age_hours(coverage.get('probe_generated_at')
+                                            or coverage.get('generated_at'))),
+    ]
+
+
 def evaluate(data):
     """Điều kiện merge, và lý do cụ thể khi không đạt."""
     blockers = []
@@ -140,6 +178,14 @@ def evaluate(data):
             blockers.append('%d tool BLIND' % summary['BLIND'])
         if not summary.get('PASS', 0):
             blockers.append('khong tool nao PASS')
+
+    for name, age in input_ages(data):
+        if age is None:
+            blockers.append('%s khong khai thoi diem sinh — khong biet no cu bao '
+                            'nhieu, nen khong dung lam can cu merge duoc' % name)
+        elif age > MAX_INPUT_AGE_HOURS:
+            blockers.append('%s da %0.1f gio tuoi (nguong %d) — chay lai truoc khi '
+                            'merge' % (name, age, MAX_INPUT_AGE_HOURS))
 
     if not data['tests_ok']:
         blockers.append('bo kiem phat hien truot (%s)' % data['tests_detail'])
@@ -178,9 +224,33 @@ def evaluate(data):
 
     pipeline = data['pipeline'] or {}
     stages = pipeline.get('stages') or pipeline.get('results') or []
-    failed_stages = [s for s in stages if not s.get('success', True)]
+    # AQ-013. Dong nay tung la `not s.get('success', True)`. Bo ghi pipeline
+    # ghi khoa `status`, khong ghi `success` — nen 0/28 stage co truong do va
+    # mac dinh `True` nuot tron su khac biet ten truong. Danh sach that bai
+    # KHONG BAO GIO co the khac rong: con so "0 that bai" in ra suot nhieu sprint
+    # la `len([])`, khong phai mot phep do.
+    #
+    # Day la default xanh nam trong chinh bo phan quyet dinh ma co duoc ship hay
+    # khong — noi duy nhat trong repo ma mot default xanh tuyet doi khong duoc
+    # phep ton tai. Nen o day: thieu du lieu = CHAN.
+    failed_stages = []
+    unknown_stages = []
+    for stage in stages:
+        status = stage.get('status')
+        if status is None:
+            unknown_stages.append(stage.get('name') or '?')
+        elif str(status).lower() not in ('success', 'ok', 'passed', 'skipped'):
+            failed_stages.append(stage)
     if failed_stages:
-        blockers.append('%d stage pipeline that bai' % len(failed_stages))
+        blockers.append('%d stage pipeline that bai (%s)'
+                        % (len(failed_stages),
+                           ', '.join(str(s.get('name')) for s in failed_stages[:3])))
+    if unknown_stages:
+        blockers.append('%d stage khong khai trang thai (%s) — thieu du lieu la '
+                        'CHAN, khong phai dat'
+                        % (len(unknown_stages), ', '.join(unknown_stages[:3])))
+    if not stages:
+        blockers.append('khong co stage pipeline nao trong logs/pipeline_results.json')
 
     return {
         'merge_ready': not blockers,
@@ -188,6 +258,7 @@ def evaluate(data):
         'summary': summary,
         'stages': len(stages),
         'failed_stages': len(failed_stages),
+        'unknown_stages': len(unknown_stages),
     }
 
 
@@ -276,14 +347,20 @@ def write_debt(data, verdict):
     add('| Toàn vẹn bằng chứng | %d vi phạm / %d chỉ báo |'
         % (data['integrity'].get('total_violations', 0),
            data['integrity'].get('total_indicators', 0)))
-    add('| Pipeline | %d stage, %d thất bại |'
-        % (verdict['stages'], verdict['failed_stages']))
+    pipeline_note = '%d stage, %d thất bại%s' % (
+        verdict['stages'], verdict['failed_stages'],
+        '' if not verdict.get('unknown_stages')
+        else ', %d không khai trạng thái' % verdict['unknown_stages'])
+    add('| Pipeline | %s |' % pipeline_note)
     portal_missing = [f for f in (data.get('portal') or [])
                       if f['level'] == 'MISSING']
     add('| Trường portal đọc sai | %d |' % len(portal_missing))
     telegram_missing = [f for f in (data.get('telegram') or [])
                         if f['level'] == 'MISSING']
     add('| Trường Telegram đọc sai | %d |' % len(telegram_missing))
+    for name, age in input_ages(data):
+        add('| Tuổi `%s` | %s |'
+            % (name, 'KHÔNG RÕ' if age is None else '%.1f giờ' % age))
     add('| Biểu thức innerHTML chưa escape | %d |'
         % len([f for f in (data.get('escapes') or [])
                if f['level'] == 'UNESCAPED']))
@@ -372,8 +449,10 @@ def main():
     print('Toàn vẹn bằng chứng: %d vi phạm / %d chỉ báo'
           % (data['integrity'].get('total_violations', 0),
              data['integrity'].get('total_indicators', 0)))
-    print('Pipeline           : %d stage, %d thất bại'
-          % (verdict['stages'], verdict['failed_stages']))
+    print('Pipeline           : %d stage, %d thất bại%s'
+          % (verdict['stages'], verdict['failed_stages'],
+             '' if not verdict.get('unknown_stages')
+             else ', %d không khai trạng thái' % verdict['unknown_stages']))
     portal_missing = [f for f in (data.get('portal') or [])
                       if f['level'] == 'MISSING']
     print('Trường portal      : %d đọc sai / %d truy cập'
@@ -389,6 +468,10 @@ def main():
     escapes = data.get('escapes') or []
     print('Portal escape      : %d chưa escape / %d biểu thức innerHTML'
           % (len([f for f in escapes if f['level'] == 'UNESCAPED']), len(escapes)))
+    print('Tuổi đầu vào       : %s'
+          % ' | '.join('%s %s' % (name.replace('.json', ''),
+                                  'KHONG RO' if age is None else '%.1fh' % age)
+                       for name, age in input_ages(data)))
     print('Nợ kỹ thuật        : %s' % os.path.relpath(path, PROJECT_ROOT))
     print('')
 
