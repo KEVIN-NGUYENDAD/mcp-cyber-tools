@@ -103,6 +103,28 @@ def run():
         suite.check('Van doc duoc lich su cu mang khoa "%s"' % name,
                     ('history.%s' % name) in delivery)
 
+    # -- /executive phải đọc executive_findings ----------------------------
+    # Một lệnh tên "executive" báo cáo mọi thứ TRỪ các phát hiện cấp điều hành
+    # là thứ không ai phát hiện ra bằng mắt: màn hình đầy số, chỉ thiếu đúng cái
+    # đáng lẽ phải ở đó.
+    suite.check('/executive co doc executive_findings.json',
+                'paths.executiveFindings' in bot)
+    findings = state('executive_findings.json') or {}
+    for field in ('findings', 'coverage_gaps'):
+        suite.check('executive_findings.json co khoa "%s"' % field,
+                    field in findings, 'khoa: %s' % sorted(findings.keys())[:8])
+    for field in ('confidence_score', 'evidence_completeness',
+                  'attribution_quality'):
+        suite.check('/executive hien %s' % field, field in bot)
+
+    rows = findings.get('findings') or []
+    if rows:
+        missing = [r for r in rows if 'confidence_score' not in r]
+        suite.check('Moi phat hien mang confidence_score',
+                    not missing, '%d thieu' % len(missing))
+        suite.check('Moi phat hien mang attribution_quality',
+                    not [r for r in rows if not r.get('attribution_quality')])
+
     # -- không còn giá trị xanh viết cứng ----------------------------------
     hardcoded = re.findall(r"'(?:ONLINE|ACTIVE|READY|HEALTHY|SECURE)'", bot)
     suite.check('Chu trang thai viet cung khong duoc dung lam GIA TRI mac dinh',

@@ -13,6 +13,7 @@ Outputs:
 - state/asset_changes.json (new/removed/changed assets)
 """
 
+import hashlib
 import json
 import sys
 import os
@@ -32,6 +33,20 @@ try:
 except ImportError as e:
     print(f'{{"error": "Missing dependencies. Install: pip install requests python-dotenv"}}', file=sys.stderr)
     sys.exit(1)
+
+
+def asset_identifier(ip):
+    """Ma tai san on dinh, suy ra tu IP.
+
+    Suy ra chu khong phat sinh ngau nhien: cung mot IP phai cho cung mot ma o
+    moi lan chay va trong moi tien trinh, neu khong thi hai nua he thong se noi
+    ve cung mot may bang hai cai ten. `ioc_quality.asset_id_for` dung cung cong
+    thuc nay — mot chi bao van tra ra dung ma nay ke ca khi may do chua tung
+    xuat hien trong kho.
+    """
+    if not ip:
+        return None
+    return 'ASSET-%s' % hashlib.sha1(str(ip).encode('utf-8')).hexdigest()[:8].upper()
 
 
 class AssetIntelligence:
@@ -187,9 +202,19 @@ class AssetIntelligence:
                 continue
 
             # Get vulnerability counts from host data
+            # Sprint 17. Truoc day dong nay la `'hostname': ip` — truong
+            # `hostname` cua Nessus chua IP, va no duoc chep sang CA HAI cot. Mot
+            # cot "Hostname" hien 192.168.0.10 trong nhu da phan giai duoc ten,
+            # trong khi no chi la o ben canh chep sang. Moi IOC quy ket ve may do
+            # vi the deu duoc cham la "da biet ten may" — mot diem so duoc thoi
+            # len bang mot phep gan.
+            #
+            # Khong phan giai duoc thi de None, va noi ro vi sao.
             assets_by_ip[ip] = {
                 'ip': ip,
-                'hostname': ip,
+                'asset_id': asset_identifier(ip),
+                'hostname': None,
+                'hostname_source': 'unresolved',
                 'os': '',
                 'device_type': 'Unknown',
                 'first_seen': datetime.now().isoformat(),

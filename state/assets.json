@@ -1,14 +1,16 @@
 {
-  "timestamp": "2026-09-14T07:19:18.438041",
+  "timestamp": "2026-09-14T07:35:21.161078",
   "total_assets": 11,
   "assets": [
     {
       "ip": "192.168.0.1",
-      "hostname": "192.168.0.1",
+      "asset_id": "ASSET-26ED8BBA",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Router",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 39,
       "critical": 0,
       "high": 0,
@@ -57,19 +59,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.10",
-      "hostname": "192.168.0.10",
+      "asset_id": "ASSET-F97FFC3C",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -118,19 +122,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.11",
-      "hostname": "192.168.0.11",
+      "asset_id": "ASSET-C606D1A7",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -179,19 +185,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.12",
-      "hostname": "192.168.0.12",
+      "asset_id": "ASSET-C8F3EB6D",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -240,19 +248,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.21",
-      "hostname": "192.168.0.21",
+      "asset_id": "ASSET-17269A4A",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 48,
       "critical": 0,
       "high": 0,
@@ -301,19 +311,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.233",
-      "hostname": "192.168.0.233",
+      "asset_id": "ASSET-F5235242",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 3,
       "critical": 0,
       "high": 0,
@@ -362,19 +374,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.3",
-      "hostname": "192.168.0.3",
+      "asset_id": "ASSET-6A5549B3",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -423,19 +437,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.4",
-      "hostname": "192.168.0.4",
+      "asset_id": "ASSET-DF7FC5DC",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 11,
       "critical": 0,
       "high": 0,
@@ -484,19 +500,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.5",
-      "hostname": "192.168.0.5",
+      "asset_id": "ASSET-80003D4F",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 13,
       "critical": 0,
       "high": 0,
@@ -545,19 +563,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.51",
-      "hostname": "192.168.0.51",
+      "asset_id": "ASSET-7F083307",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 215,
       "critical": 0,
       "high": 0,
@@ -606,19 +626,21 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     },
     {
       "ip": "192.168.0.8",
-      "hostname": "192.168.0.8",
+      "asset_id": "ASSET-C25010EF",
+      "hostname": null,
+      "hostname_source": "unresolved",
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-14T07:19:18.241951",
+      "last_seen": "2026-09-14T07:35:20.983310",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
@@ -667,12 +689,12 @@
             "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "14 l\u1ea7n quan s\u00e1t"
+            "reason": "15 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-14T07:19:18.438041"
+      "trust_scored_at": "2026-09-14T07:35:21.161078"
     }
   ],
-  "trust_scored_at": "2026-09-14T07:19:18.438041"
+  "trust_scored_at": "2026-09-14T07:35:21.161078"
 }

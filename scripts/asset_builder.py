@@ -46,7 +46,8 @@ if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
 from state_manager import write_state_atomic  # noqa: E402
-import asset_store  # noqa: E402
+import asset_store
+import ioc_quality  # noqa: E402
 
 TRUST_HISTORY_FILE = os.path.join(asset_store.STATE_DIR, 'asset_trust_history.json')
 
@@ -246,6 +247,20 @@ class TrustScoreEngine(object):
             entry.setdefault('first_seen', now)
 
             score, level, components, basis = self.score_asset(asset, entry)
+
+            # Sprint 17: moi tai san phai co mot ma on dinh. Truoc day khong co
+            # truong dinh danh nao ca — moi lop noi ve may bang IP cua no, va
+            # mot IOC quy ket ve "192.168.0.51" khong the noi duoc no dang chi
+            # vao BAN GHI NAO trong kho. Ma suy ra tu IP nen no giong nhau o moi
+            # noi, ke ca voi may chua tung xuat hien trong kho.
+            if not asset.get('asset_id'):
+                asset['asset_id'] = ioc_quality.asset_id_for(asset.get('ip'))
+            # `hostname` bang dung IP la Nessus chep lai IP, khong phai mot ten
+            # da phan giai. Goi thang no la chua phan giai thay vi de mot cot
+            # trong nhu da biet.
+            if asset.get('hostname') and str(asset['hostname']).strip() == str(asset.get('ip') or '').strip():
+                asset['hostname'] = None
+                asset['hostname_source'] = 'unresolved'
 
             asset['trust_score'] = score
             asset['trust_level'] = level

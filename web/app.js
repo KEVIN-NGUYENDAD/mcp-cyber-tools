@@ -51,7 +51,7 @@ async function loadAllData() {
     // Load from public API endpoint or local JSON
     const baseUrl = '/api/state';
 
-    const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses, sensorCoverage] = await Promise.allSettled([
+    const [assets, shadowAssets, incidents, risk, health, defender, firewall, alerts, waap, domain, threatPersistence, threatLateral, threatCredential, threatProcesses, sensorCoverage, executiveFindings] = await Promise.allSettled([
       fetch(`${baseUrl}/assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
       fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ shadows: [] })),
       fetch(`${baseUrl}/incidents.json`).then(r => r.json()).catch(() => ({ incidents: [] })),
@@ -66,7 +66,8 @@ async function loadAllData() {
       fetch(`${baseUrl}/hunting_lateral_movement.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
       fetch(`${baseUrl}/hunting_credential_dumping.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
       fetch(`${baseUrl}/hunting_suspicious_processes.json`).then(r => r.json()).catch(() => ({ indicators: [] })),
-      fetch(`${baseUrl}/sensor_coverage.json`).then(r => r.json()).catch(() => null)
+      fetch(`${baseUrl}/sensor_coverage.json`).then(r => r.json()).catch(() => null),
+      fetch(`${baseUrl}/executive_findings.json`).then(r => r.json()).catch(() => null)
     ]);
 
     stateData.assets = assets.value || { assets: [] };
@@ -84,6 +85,10 @@ async function loadAllData() {
     stateData.threatCredential = threatCredential.value || { indicators: [] };
     stateData.threatProcesses = threatProcesses.value || { indicators: [] };
     stateData.sensorCoverage = sensorCoverage.value || null;
+    // Sprint 17: tep nay ton tai tu lau va KHONG co lop nao doc no — khong
+    // portal, khong Telegram. Mot tep ten "executive_findings" ma khong ai doc
+    // la mot bao cao khong bao gio duoc gui.
+    stateData.executiveFindings = executiveFindings.value || null;
     // stateData.mcp tung duoc viet cung thanh { status: 'ONLINE', tool_count: '90+' ... }.
     // Gio no la ket qua kiem that; null khi chua tung chay tool_validator.py.
     stateData.mcp = stateData.sensorCoverage ? stateData.sensorCoverage.tool_summary || null : null;
@@ -349,6 +354,7 @@ function updateExecutiveSecurityRow(assets) {
     if (execMcpQueue) execMcpQueue.textContent = '0';
 
     renderSensorCoverage();
+    renderExecutiveFindings();
   } catch (error) {
     console.error('[ERROR] updateExecutiveSecurityRow:', error);
   }
@@ -420,6 +426,76 @@ function renderCapabilityCoverage(capabilities) {
       </div>
       ${rows}
     </div>`;
+}
+
+const QUALITY_COLOR = {
+  HIGH: '#00C896', COMPLETE: '#00C896', FULL: '#00C896',
+  MEDIUM: '#FFB020', PARTIAL: '#FFB020',
+  LOW: '#FF3B5C', MISSING: '#FF3B5C', UNATTRIBUTED: '#FF3B5C',
+  UNKNOWN: 'var(--color-text-dim)'
+};
+
+function qualityChip(label, value) {
+  const color = QUALITY_COLOR[value] || 'var(--color-text-dim)';
+  return `<span style="display: inline-block; margin-right: 10px; font-size: 0.74em; font-family: monospace;">
+    <span style="color: var(--color-text-dim);">${escapeHtmlSafe(label)}</span>
+    <strong style="color: ${color};">${escapeHtmlSafe(String(value))}</strong>
+  </span>`;
+}
+
+function renderExecutiveFindings() {
+  const box = document.getElementById('executive-findings');
+  if (!box) return;
+  const meta = document.getElementById('executive-findings-meta');
+  const data = stateData.executiveFindings;
+
+  if (!data) {
+    box.innerHTML = '<div style="color: var(--color-text-dim);">Chua chay correlation_engine.</div>';
+    if (meta) meta.textContent = 'chua co du lieu';
+    return;
+  }
+
+  const findings = data.findings || [];
+  const gaps = (data.coverage_gaps || []).length;
+  if (meta) {
+    // So rule KHONG ket luan duoc phai hien canh so phat hien. "0 phat hien"
+    // tren mot rule khong chay duoc doc y het "0 phat hien" tren mot may sach.
+    meta.textContent = `${findings.length} phat hien · ${data.quality_warnings || 0} canh bao chat luong · ${gaps} rule khong ket luan duoc`;
+    meta.style.color = (data.quality_warnings || 0) > 0 ? '#FFB020' : 'var(--color-text-dim)';
+  }
+
+  if (!findings.length) {
+    box.innerHTML = '<div style="color: var(--color-text-dim);">Khong co phat hien nao tuong quan duoc trong lan chay nay.</div>';
+    return;
+  }
+
+  box.innerHTML = findings.map(f => {
+    const sevColor = SEVERITY_COLOR_SAFE(f.severity);
+    const score = (f.confidence_score === null || f.confidence_score === undefined)
+      ? 'n/a' : `${f.confidence_score}/100`;
+    return `
+      <div style="border: 1px solid var(--color-border, rgba(255,255,255,0.1)); border-left: 4px solid ${sevColor}; border-radius: 6px; padding: 11px 13px; margin-bottom: 10px; background: rgba(255,255,255,0.02);">
+        <div style="display: flex; justify-content: space-between; gap: 10px; align-items: baseline;">
+          <span style="color: var(--color-text); font-size: 0.92em;">${escapeHtmlSafe(f.title || f.rule_name || f.finding_id)}</span>
+          <span style="font-weight: bold; color: ${sevColor}; white-space: nowrap; font-size: 0.82em;">${escapeHtmlSafe(f.severity || '?')}</span>
+        </div>
+        <div style="margin-top: 7px;">
+          ${qualityChip('confidence ', score)}
+          ${qualityChip('evidence ', f.evidence_completeness || 'UNKNOWN')}
+          ${qualityChip('attribution ', f.attribution_quality || 'UNKNOWN')}
+        </div>
+        <div style="margin-top: 6px; font-size: 0.76em; color: var(--color-text-dim); line-height: 1.45;">
+          ${escapeHtmlSafe((f.ioc_quality && f.ioc_quality.basis) || '')}
+        </div>
+        ${f.quality_warning ? `<div style="margin-top: 7px; padding: 8px 10px; border-left: 3px solid #FFB020; background: rgba(255,176,32,0.08); border-radius: 4px; font-size: 0.76em; color: #FFB020;">⚠ ${escapeHtmlSafe(f.quality_warning)}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function SEVERITY_COLOR_SAFE(severity) {
+  return { CRITICAL: '#FF3B5C', HIGH: '#FF6B35', MEDIUM: '#FFB020',
+           LOW: '#00C896', INFO: 'var(--color-text-dim)' }[severity]
+         || 'var(--color-text-dim)';
 }
 
 function renderSensorCoverage() {

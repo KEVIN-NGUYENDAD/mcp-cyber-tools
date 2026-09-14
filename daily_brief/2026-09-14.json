@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T07:19:43.353219",
+  "timestamp": "2026-09-14T07:35:46.881694",
   "date": "2026-09-14",
   "incident_summary": {
     "total_open": 1,
@@ -60,7 +60,7 @@
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 156.7,
+    "scan_age_hours": 157.0,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -93,42 +93,42 @@
   },
   "asset_summary": {
     "total_assets": 11,
-    "known_devices": 11,
-    "unknown_devices": 0,
+    "known_devices": 0,
+    "unknown_devices": 11,
     "new_assets": 0,
     "removed_assets": 0,
     "top_vulnerable_devices": [
       {
         "ip": "192.168.0.51",
-        "hostname": "192.168.0.51",
+        "hostname": null,
         "vulnerability_count": 215,
         "severity_critical": 0,
         "severity_high": 0
       },
       {
         "ip": "192.168.0.21",
-        "hostname": "192.168.0.21",
+        "hostname": null,
         "vulnerability_count": 48,
         "severity_critical": 0,
         "severity_high": 0
       },
       {
         "ip": "192.168.0.1",
-        "hostname": "192.168.0.1",
+        "hostname": null,
         "vulnerability_count": 39,
         "severity_critical": 0,
         "severity_high": 0
       },
       {
         "ip": "192.168.0.10",
-        "hostname": "192.168.0.10",
+        "hostname": null,
         "vulnerability_count": 14,
         "severity_critical": 0,
         "severity_high": 0
       },
       {
         "ip": "192.168.0.11",
-        "hostname": "192.168.0.11",
+        "hostname": null,
         "vulnerability_count": 14,
         "severity_critical": 0,
         "severity_high": 0
@@ -164,6 +164,6 @@
     "high_count": 3,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-14T07:19:38.118131"
+    "generated_at": "2026-09-14T07:35:41.503896"
   }
 }

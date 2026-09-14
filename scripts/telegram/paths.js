@@ -20,6 +20,7 @@ export const paths = {
   socIntelligence: path.join(PROJECT_ROOT, 'state', 'soc_intelligence.json'),
   assets: path.join(PROJECT_ROOT, 'state', 'assets.json'),
   riskScore: path.join(PROJECT_ROOT, 'state', 'risk_score.json'),
+  executiveFindings: path.join(PROJECT_ROOT, 'state', 'executive_findings.json'),
   waapStatus: path.join(PROJECT_ROOT, 'state', 'waap_status.json'),
   domainStatus: path.join(PROJECT_ROOT, 'state', 'domain_status.json'),
   notificationHistory: path.join(PROJECT_ROOT, 'state', 'notification_history.json'),
