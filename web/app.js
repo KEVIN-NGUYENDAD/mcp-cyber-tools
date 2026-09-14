@@ -477,13 +477,27 @@ function renderSensorCoverage() {
     // Coverage khong tu lam moi theo pipeline (tool_validator.py goi that 99
     // tool, co tac dung phu). Nen tuoi cua no phai hien ra: mot ban do vung mu
     // cu ba ngay van doc nhu su that hom nay neu khong ai noi no bao nhieu tuoi.
-    const ageHours = coverage.generated_at
-      ? (Date.now() - new Date(coverage.generated_at).getTime()) / 3600000
-      : null;
-    const stale = ageHours !== null && ageHours > 24;
+    // Sprint 15: tep nay co HAI tuoi khac nhau. Phan cam bien duoc lam moi moi
+    // lan pipeline chay; phan ket qua tool chi doi khi ai do chay tool_validator.
+    // Hien mot con so tuoi duy nhat se lam nua cu tro nen tuoi — dung cai bay ma
+    // viec lam moi tu dong nay de tao ra.
+    const probeAt = coverage.probe_generated_at || coverage.generated_at;
+    const probeAgeH = probeAt
+      ? (Date.now() - new Date(probeAt).getTime()) / 3600000 : null;
+    const toolsAgeH = typeof coverage.tools_age_hours === 'number'
+      ? coverage.tools_age_hours
+      : (coverage.tools_generated_at
+        ? (Date.now() - new Date(coverage.tools_generated_at).getTime()) / 3600000
+        : null);
+    const stale = toolsAgeH === null || toolsAgeH > 24;
+    const probeLabel = probeAgeH === null ? 'chua ro'
+      : (probeAgeH < 1 ? 'vua do' : `${Math.floor(probeAgeH)}h truoc`);
+    const toolLabel = toolsAgeH === null ? 'chua kiem bao gio'
+      : (toolsAgeH > 24 ? `CU ${Math.floor(toolsAgeH / 24)} ngay`
+        : `${Math.floor(toolsAgeH)}h truoc`);
     meta.textContent = `${s.covered || 0} covered / ${s.partial || 0} partial / ${s.blind || 0} blind`
-      + (coverage.generated_at ? ` — ${new Date(coverage.generated_at).toLocaleString()}` : '')
-      + (stale ? ` (CU ${Math.floor(ageHours / 24)} ngay — chay lai tool_validator.py)` : '');
+      + ` — cam bien: ${probeLabel} · tool: ${toolLabel}`
+      + (stale ? ' (npm run validate de lam moi)' : '');
     meta.style.color = stale ? '#FFB020' : 'var(--color-text-dim)';
   }
 

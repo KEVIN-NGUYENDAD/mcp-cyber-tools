@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T06:56:06.113647",
+  "timestamp": "2026-09-14T07:00:31.399219",
   "date": "2026-09-14",
   "incident_summary": {
     "total_open": 1,
@@ -13,17 +13,17 @@
     "top_5": [
       {
         "rank": 1,
-        "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
-        "priority": "HIGH",
-        "time_estimate": "N/A",
-        "reason": "threat_hunting component weak"
-      },
-      {
-        "rank": 2,
         "title": "C\u1ea3i thi\u1ec7n Waap",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
         "reason": "waap component weak"
+      },
+      {
+        "rank": 2,
+        "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
+        "priority": "MEDIUM",
+        "time_estimate": "N/A",
+        "reason": "threat_hunting component weak"
       },
       {
         "rank": 3,
@@ -48,8 +48,8 @@
       }
     ],
     "critical_count": 0,
-    "high_count": 3,
-    "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 3 HIGH"
+    "high_count": 2,
+    "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 2 HIGH"
   },
   "change_summary": {
     "total_changes": 0,
@@ -60,7 +60,7 @@
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 156.3,
+    "scan_age_hours": 156.4,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -164,6 +164,6 @@
     "high_count": 3,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-14T06:56:05.614720"
+    "generated_at": "2026-09-14T07:00:26.498678"
   }
 }

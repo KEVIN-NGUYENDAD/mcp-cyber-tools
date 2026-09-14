@@ -1,15 +1,15 @@
 {
-  "overall_score": 25,
+  "overall_score": 13,
   "risk_level": "LOW",
   "critical_count": 0,
-  "high_count": 7,
+  "high_count": 3,
   "factors": [
     {
       "name": "threat_hunting",
-      "health": 28,
+      "health": 76,
       "weight": 0.25,
-      "risk_contribution": 18.0,
-      "detail": "lateral_movement: 0C/6H"
+      "risk_contribution": 6.0,
+      "detail": "lateral_movement: 0C/2H"
     },
     {
       "name": "waap",
@@ -61,16 +61,16 @@
       "detail": "Defender b\u1eadt, 0 threat"
     }
   ],
-  "generated_at": "2026-09-13T23:33:37.288385",
+  "generated_at": "2026-09-14T06:56:05.614720",
   "engine": "calculate_risk_score",
   "engine_version": "2.0.0",
   "scale": "risk_ascending",
   "scale_description": "overall_score cao = r\u1ee7i ro cao (0 an to\u00e0n nh\u1ea5t, 100 nguy hi\u1ec3m nh\u1ea5t)",
   "notes": [],
-  "timestamp": "2026-09-13T23:33:37.288385",
+  "timestamp": "2026-09-14T06:56:05.614720",
   "threat_level": "LOW",
   "component_scores": {
-    "threat_hunting": 28,
+    "threat_hunting": 76,
     "incidents": 94,
     "asset": 100,
     "waap": 50,

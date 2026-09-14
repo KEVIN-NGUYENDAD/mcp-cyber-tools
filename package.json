@@ -15,7 +15,8 @@
     "gate": "python scripts/sprint_gate.py",
     "gate:full": "python scripts/sprint_gate.py --validate",
     "audit:portal": "python scripts/portal_field_audit.py",
-    "audit:telegram": "python scripts/telegram_field_audit.py"
+    "audit:telegram": "python scripts/telegram_field_audit.py",
+    "coverage": "python scripts/refresh_sensor_coverage.py"
   },
   "keywords": [],
   "author": "",

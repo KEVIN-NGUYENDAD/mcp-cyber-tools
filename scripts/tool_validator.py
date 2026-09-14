@@ -244,9 +244,11 @@ REMAINING_DEBT = [
      'Đây chính là lý do phải có ô ⚠ PARTIAL: một cột hai giá trị sẽ tô xanh '
      'chỗ này. Bật chính sách là thay đổi cấu hình máy, phải do người quyết định.',
      _debt_script_block_partial),
-    ('`state/sensor_coverage.json` không tự làm mới theo pipeline',
-     'tool_validator.py gọi thật 99 tool và có tác dụng phụ (ghi báo cáo, quét). '
-     'Portal hiển thị tuổi của dữ liệu và cảnh báo khi quá 24 giờ.'),
+    ('Phần KẾT QUẢ TOOL trong `sensor_coverage.json` chỉ mới khi có người chạy '
+     '`npm run validate` — phần cảm biến đã tự làm mới mỗi lần chạy pipeline',
+     'tool_validator.py gọi thật 99 tool (~5 phút, có tác dụng phụ) nên không '
+     'đưa vào pipeline được. Sprint 15 tách tệp thành hai mốc thời gian: nửa rẻ '
+     'làm mới liên tục, nửa đắt tự khai tuổi của nó. Portal hiện cả hai.'),
 ]
 
 
