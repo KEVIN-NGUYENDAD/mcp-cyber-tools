@@ -29,6 +29,7 @@ from pathlib import Path
 from state_manager import write_state_atomic
 import ioc_attribution
 from mcp_bridge import McpBridge, McpBridgeError, as_list
+import detection_quality
 
 HUNT_VERSION = '2.0.0'
 
@@ -54,31 +55,13 @@ FIELD_RE = {
     'account': re.compile(r'Account Name:\s*(.+)'),
 }
 
-# Hệ thống giám sát tự quan sát chính nó
-# ---------------------------------------
-# Sprint 9 mở audit 4688. Ngay sau đó cuộc săn này nhảy từ 0 lên 15 chỉ báo
-# CRITICAL, đẩy threat_hunting health xuống 0 và lật máy từ LOW sang HIGH.
+# Bộ lọc tự-quan-sát và luật "evidence phải chứa trigger" nay sống ở
+# `detection_quality.py`. Chúng không phải chuyện riêng của cuộc săn này: bộ máy
+# giám sát là một tiến trình chạy trên chính máy nó giám sát, nên MỌI cuộc săn
+# đọc tiến trình hay dòng lệnh đều nhìn thấy chính mình trong dữ liệu.
 #
-# Không có cái nào là thật. Cả 15 khớp vào dòng lệnh của chính người đang điều
-# tra: mỗi lần ai đó gõ một lệnh có chữ `lsass` để kiểm tra cuộc săn này, 4688
-# ghi lại dòng lệnh đó, và lần chạy sau cuộc săn đọc chính nó rồi kết luận có
-# kẻ đang đánh cắp credentials.
-#
-# Một hệ thống giám sát sinh ra bằng chứng cho chính nó là một vòng lặp khép
-# kín: càng điều tra càng có thêm "phát hiện", và không ai truy ngược được vì
-# phần khớp nằm ngoài đoạn evidence được lưu.
-SELF_OBSERVATION_HINTS = (
-    'hunt_credential_dumping', 'hunt_lateral_movement', 'hunt_persistence',
-    'hunt_suspicious_processes', 'mcp_bridge', 'tool_validator', 'sensor_probe',
-    'run_intelligence_pipeline', 'correlation_engine',
-)
-
-# Dấu hiệu rõ nhất của một chuỗi NHẬN DẠNG đang được truyền đi (chứ không phải
-# một cuộc tấn công): các từ khoá nối với nhau bằng `|` — đó là một regex, và kẻ
-# tấn công không gõ bảng mẫu nhận dạng của người phòng thủ vào dòng lệnh.
-SIGNATURE_RE = re.compile(
-    r'(lsass|mimikatz|ntdsutil|procdump|comsvcs)\s*\|\s*'
-    r'(lsass|mimikatz|ntdsutil|procdump|comsvcs)', re.I)
+# Giữ bản sao ở đây thì cuộc săn thứ hai sẽ dính lại đúng lỗi này, và lần đó sẽ
+# không có ai đang nhìn.
 
 
 class CredentialDumpingHunter(object):
@@ -162,17 +145,11 @@ class CredentialDumpingHunter(object):
         thầm: mọi sự kiện bị loại đều được đếm và báo cáo, vì một bộ lọc không
         ai nhìn thấy là chỗ hoàn hảo để giấu một cuộc tấn công thật.
         """
-        command = (fields.get('command_line') or '').lower()
+        command = fields.get('command_line') or ''
         if not command:
             return None
-        for hint in SELF_OBSERVATION_HINTS:
-            if hint in command:
-                return 'dòng lệnh gọi chính script giám sát ({})'.format(hint)
-        if SIGNATURE_RE.search(command):
-            return ('dòng lệnh chứa các từ khoá nối bằng "|" — đây là một biểu '
-                    'thức nhận dạng đang được truyền đi, không phải một lần gọi '
-                    'công cụ tấn công')
-        return None
+        reason = detection_quality.is_self_observation(command)
+        return ('dòng lệnh ' + reason) if reason else None
 
     @staticmethod
     def _executable(command_line):
@@ -244,9 +221,7 @@ class CredentialDumpingHunter(object):
             # khi mọi lần khớp thật đều nằm sau ký tự 600 — người đọc nhận một
             # kết luận CRITICAL kèm 600 ký tự không hề chứa thứ gây ra nó, và
             # không có cách nào bác bỏ.
-            index = message.lower().find((matched_text or '').lower())
-            start = max(0, index - 200) if index >= 0 else 0
-            excerpt = message[start:start + 600]
+            excerpt = detection_quality.evidence_excerpt(message, matched_text)
 
             self.indicators.append({
                 'type': technique,

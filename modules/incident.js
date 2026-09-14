@@ -220,12 +220,19 @@ export function registerIncidentTools(server) {
         $ErrorActionPreference = 'SilentlyContinue'
         $rows = @(Get-WinEvent -LogName '${logName}' -MaxEvents ${count} -ErrorAction SilentlyContinue |
           ForEach-Object {
+            # Thong diep su kien thi thoang chua ky tu dieu khien tho (0x00-0x1F
+            # ngoai tab/CR/LF). ConvertTo-Json nha chung ra nguyen ven, va
+            # JSON.parse ben Node chet voi "Bad control character in string
+            # literal" — mot tool dang chay tot bong bao FAIL, tuy vao viec trong
+            # 1000 su kien vua lay co dinh mot cai hay khong.
+            $msg = [string]$_.Message
+            if ($msg) { $msg = [regex]::Replace($msg, '[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]', ' ') }
             [PSCustomObject]@{
               TimeCreated = $_.TimeCreated
               Id          = $_.Id
               Level       = [string]$_.LevelDisplayName
               Provider    = [string]$_.ProviderName
-              Message     = [string]$_.Message
+              Message     = $msg
             }
           })
         # Trang thai cau hinh cua log di kem bang chung. Thieu no thi "0 ban ghi"
@@ -307,11 +314,15 @@ export function registerIncidentTools(server) {
 
         function Add-Row($time, $source, $type, $detail) {
           if ($null -eq $time) { return }
+          # Cung ly do nhu collectLogs: ky tu dieu khien tho trong noi dung su
+          # kien lam hong JSON o phia Node.
+          $clean = [string]$detail
+          if ($clean) { $clean = [regex]::Replace($clean, '[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]', ' ') }
           [void]$events.Add([PSCustomObject]@{
             Time = (Get-Date $time).ToString('o')
             Source = $source
             Type = $type
-            Detail = $detail
+            Detail = $clean
           })
         }
 
