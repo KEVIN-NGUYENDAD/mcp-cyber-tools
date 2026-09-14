@@ -114,6 +114,100 @@ def resolve_hunt_scope():
     }
 
 
+# Một chỉ báo có thể chạm tới hai loại hệ thống rất khác nhau, và gộp chúng vào
+# một danh sách phẳng là đánh mất đúng thông tin mà hạ nguồn cần:
+#
+#   LOCAL_HOST   máy đã QUAN SÁT sự kiện. Sự thật kiểm chứng được.
+#   REMOTE_PEER  máy xuất hiện trong nội dung sự kiện. Suy ra, yếu hơn một bậc.
+#
+# Sprint 11.1: `affected_systems` không còn rỗng, nhưng không được phép "hết
+# rỗng" bằng cách bịa. Cách hợp lệ duy nhất là ghi nhận điều vốn đã đúng: mọi
+# chỉ báo LIVE đều được quan sát TRÊN máy này, nên máy này luôn là một hệ thống
+# bị ảnh hưởng. Nói được điều đó mà vẫn giữ nguyên sự khác biệt với "có một máy
+# khác dính líu" thì cần hai nhãn, không phải một danh sách dài hơn.
+SCOPE_LOCAL = 'LOCAL_HOST'
+SCOPE_REMOTE = 'REMOTE_PEER'
+
+
+def classify_systems(remote_ips=None, include_local=True):
+    """Phân loại từng hệ thống bị ảnh hưởng, kèm việc nó có trong kho tài sản không.
+
+    `in_inventory=False` không phải chi tiết phụ: một IOC trỏ vào IP không có
+    trong kho chính là đầu vào của tương quan shadow. Tính ở đây một lần, thay
+    vì để mỗi rule tự tra lại theo cách riêng.
+    """
+    inventory = set(load_inventory_ips())
+    systems = []
+    seen = set()
+
+    if include_local:
+        for ip in (local_host_identity()['ips'] or []):
+            if ip in seen:
+                continue
+            seen.add(ip)
+            systems.append({'ip': ip, 'scope': SCOPE_LOCAL,
+                            'in_inventory': ip in inventory,
+                            'basis': 'sự kiện được quan sát trên chính máy này'})
+
+    for ip in (remote_ips or []):
+        if ip in seen:
+            # Đã có mặt với tư cách máy cục bộ. Không hạ cấp nó xuống REMOTE:
+            # quan sát trực tiếp là bằng chứng mạnh hơn một IP trích từ văn bản.
+            continue
+        seen.add(ip)
+        systems.append({'ip': ip, 'scope': SCOPE_REMOTE,
+                        'in_inventory': ip in inventory,
+                        'basis': 'IP xuất hiện trong nội dung sự kiện'})
+
+    return systems
+
+
+def attribute_observed(remote_ips=None, method=None, reason=None,
+                       include_local=True, data_source=None):
+    """Khối attribution cho một chỉ báo QUAN SÁT ĐƯỢC trên máy này.
+
+    Khác `attribute()` ở chỗ nó không bao giờ trả về affected_systems rỗng khi
+    cuộc săn thật sự đã chạy trên máy này — vì trong trường hợp đó danh sách
+    rỗng là một câu sai, không phải một câu thận trọng.
+    """
+    systems = classify_systems(remote_ips, include_local)
+    ips = [s['ip'] for s in systems]
+    has_remote = any(s['scope'] == SCOPE_REMOTE for s in systems)
+
+    if not ips:
+        # Không xác định được cả IP máy cục bộ (không có route ra ngoài). Hiếm,
+        # nhưng phải nói ra chứ không lặng lẽ trả rỗng như trước.
+        return {
+            'data_source': data_source or SOURCE_LIVE,
+            'affected_systems': [],
+            'attribution': {
+                'method': method or 'host-local observation via MCP',
+                'confidence': 'NONE',
+                'reason': 'Không xác định được IP của chính máy đang chạy cuộc săn',
+                'scope': [],
+                'systems': [],
+            },
+        }
+
+    return {
+        'data_source': data_source or SOURCE_LIVE,
+        'affected_systems': ips,
+        'attribution': {
+            'method': method or 'host-local observation via MCP',
+            # HIGH vì phần chắc chắn nhất — máy cục bộ — là quan sát trực tiếp.
+            # Độ tin của từng REMOTE_PEER nằm trong `systems`, không bị con số
+            # tổng nuốt mất.
+            'confidence': 'HIGH',
+            'reason': reason or ('Quan sát trực tiếp trên %s%s'
+                                 % (local_host_identity()['hostname'],
+                                    '; có máy khác xuất hiện trong sự kiện'
+                                    if has_remote else '')),
+            'scope': sorted(set(s['scope'] for s in systems)),
+            'systems': systems,
+        },
+    }
+
+
 def attribute(data_source, affected_systems=None, method=None,
               confidence=None, reason=None):
     """Khối attribution chuẩn gắn vào mỗi chỉ báo.

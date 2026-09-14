@@ -84,6 +84,57 @@ class AlertDelivery {
     }
   }
 
+  // Sprint 11.3: mot tin nhan cho ca lo, thay vi mot tin moi su co.
+  //
+  // Chong trung van tinh THEO TUNG su co: gop lo khong duoc phep gui lai mot su
+  // co vua bao 10 phut truoc chi vi no di chung chuyen voi sau su co moi.
+  async sendBatchedAlert(incidents) {
+    const fresh = incidents.filter(i => !this.isDeduplicatedAlert(i.incident_id));
+    const skipped = incidents.length - fresh.length;
+    if (skipped) {
+      console.log(`[DEDUP] ${skipped}/${incidents.length} su co da gui trong 30 phut, bo khoi lo`);
+    }
+    if (fresh.length === 0) return null;
+    if (fresh.length === 1) {
+      // Gop mot thu lai khong phai la gop — no chi lam mat cac nut thao tac day
+      // du cua canh bao don le.
+      return this.sendIncidentAlert(fresh[0]);
+    }
+
+    try {
+      const result = await this.telegramBot.sendExecutiveAlert(fresh);
+      if (!result) return null;
+
+      // Ca lo dung chung mot message_id: do la su that, va lich su phai ghi
+      // dung su that do de sau nay con truy nguoc duoc mot canh bao gop.
+      for (const incident of fresh) {
+        this.recordAlertDelivery(incident, result.message_id);
+        this.sentAlerts.set(this.generateHash(incident.incident_id), {
+          timestamp: new Date(),
+          message_id: result.message_id
+        });
+      }
+
+      return {
+        success: true,
+        batched: true,
+        message_id: result.message_id,
+        timestamp: new Date().toISOString(),
+        incident_ids: fresh.map(i => i.incident_id),
+        skipped_duplicates: skipped
+      };
+    } catch (error) {
+      console.error('Error sending executive alert:', error);
+      // Khong danh dau su co nao la da gui: lan chay sau phai thu lai duoc.
+      return {
+        success: false,
+        batched: true,
+        error: error.message,
+        incident_ids: fresh.map(i => i.incident_id)
+      };
+    }
+  }
+
   async sendCriticalAlert(incident) {
     // Send immediately for CRITICAL incidents (bypass dedup for first CRITICAL)
     if (incident.severity === 'CRITICAL') {

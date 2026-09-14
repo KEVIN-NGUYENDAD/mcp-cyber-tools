@@ -157,13 +157,18 @@ class LateralMovementHunter(object):
 
         for indicator in self.indicators:
             ips = indicator.pop('_ips', [])
-            block = ioc_attribution.attribute(
-                ioc_attribution.SOURCE_LIVE,
-                affected_systems=ips,
-                method='IP trích từ nội dung Security event',
-                confidence='MEDIUM' if ips else 'NONE',
+            # Trước Sprint 11.1, chỉ báo không có IP từ xa thì affected_systems
+            # rỗng — 283/428 chỉ báo. Nhưng "không có máy thứ hai dính líu" KHÔNG
+            # có nghĩa là "không có máy nào bị ảnh hưởng": sự kiện đăng nhập cục
+            # bộ vẫn xảy ra TRÊN máy này, và đó là một sự thật đã quan sát được.
+            #
+            # Rỗng ở đây làm correlation Rule 1 không có gì để ghép, và làm mọi
+            # bảng hạ nguồn hiển thị một IOC không thuộc về ai.
+            block = ioc_attribution.attribute_observed(
+                remote_ips=ips,
+                method='quan sát trên máy cục bộ + IP trích từ nội dung Security event',
                 reason=(None if ips else
-                        'Sự kiện không chứa IP từ xa nào để quy kết'))
+                        'Đăng nhập cục bộ: không có máy thứ hai trong sự kiện'))
             indicator['data_source'] = block['data_source']
             indicator['affected_assets'] = block['affected_systems']
             indicator['affected_systems'] = block['affected_systems']
