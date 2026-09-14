@@ -539,7 +539,7 @@ class IntelligencePipeline:
             'Sensor Coverage Refresh',
             self.scripts_dir / 'refresh_sensor_coverage.py',
             'Re-probing which sources can still be read',
-            args=['--auto-validate']
+            args=[]
         )
         success = success and ok
 
