@@ -64,3 +64,4 @@ test_*.sh
 # khien may khac doc duoc mot tien trinh khong ton tai tren may ho.
 state/.tool_validation.lock
 state/logs/tool_validation_auto.log
+.pr_body.md
