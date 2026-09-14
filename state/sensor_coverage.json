@@ -1,0 +1,139 @@
+{
+  "generated_at": "2026-09-13T19:32:40.187249",
+  "version": "1.0.0",
+  "defender": "covered",
+  "firewall": "covered",
+  "security_log": "blind",
+  "event_logs": "covered",
+  "persistence": "covered",
+  "processes": "covered",
+  "network": "covered",
+  "ioc": "covered",
+  "summary": {
+    "covered": 7,
+    "partial": 0,
+    "blind": 1
+  },
+  "event_4688": {
+    "event_id": 4688,
+    "observable": false,
+    "status": "ACCESS_DENIED",
+    "reason": "Kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c log Security: \"Attempted to perform an unauthorized operation.\". Log Security \u0111\u00f2i quy\u1ec1n Administrator, n\u00ean ch\u01b0a th\u1ec3 bi\u1ebft audit 4688 b\u1eadt hay t\u1eaft.",
+    "remediation": "Ch\u1ea1y pipeline d\u01b0\u1edbi quy\u1ec1n Administrator, r\u1ed3i ki\u1ec3m tra l\u1ea1i; n\u1ebfu v\u1eabn tr\u1ed1ng th\u00ec b\u1eadt audit \"Process Creation\".",
+    "is_admin": false,
+    "trap": "Truy v\u1ea5n l\u1ecdc theo Id tr\u00ean log n\u00e0y tr\u1ea3 v\u1ec1 \"No events were found\" thay v\u00ec b\u00e1o t\u1eeb ch\u1ed1i quy\u1ec1n \u2014 m\u1ecdi tool d\u1ef1a v\u00e0o \u0111\u00f3 s\u1ebd tr\u00f4ng nh\u01b0 \"s\u1ea1ch\" trong khi th\u1ef1c ra \u0111ang m\u00f9."
+  },
+  "details": {
+    "defender": {
+      "label": "Defender",
+      "status": "covered",
+      "tools": 6,
+      "pass": 6,
+      "empty": 0,
+      "blind": 0,
+      "fail": 0,
+      "evidence_records": 7,
+      "probes_dead": [],
+      "reason": null
+    },
+    "firewall": {
+      "label": "Firewall",
+      "status": "covered",
+      "tools": 6,
+      "pass": 6,
+      "empty": 0,
+      "blind": 0,
+      "fail": 0,
+      "evidence_records": 254,
+      "probes_dead": [],
+      "reason": null
+    },
+    "security_log": {
+      "label": "Security Event Log",
+      "status": "blind",
+      "tools": 9,
+      "pass": 0,
+      "empty": 1,
+      "blind": 8,
+      "fail": 0,
+      "evidence_records": 0,
+      "probes_dead": [
+        "security_log"
+      ],
+      "reason": "Attempted to perform an unauthorized operation."
+    },
+    "event_logs": {
+      "label": "Event Logs (System/App/PS)",
+      "status": "covered",
+      "tools": 7,
+      "pass": 6,
+      "empty": 1,
+      "blind": 0,
+      "fail": 0,
+      "evidence_records": 460,
+      "probes_dead": [],
+      "reason": null
+    },
+    "persistence": {
+      "label": "Persistence",
+      "status": "covered",
+      "tools": 20,
+      "pass": 20,
+      "empty": 0,
+      "blind": 0,
+      "fail": 0,
+      "evidence_records": 1102,
+      "probes_dead": [],
+      "reason": null
+    },
+    "processes": {
+      "label": "Processes",
+      "status": "covered",
+      "tools": 12,
+      "pass": 12,
+      "empty": 0,
+      "blind": 0,
+      "fail": 0,
+      "evidence_records": 1129,
+      "probes_dead": [],
+      "reason": null
+    },
+    "network": {
+      "label": "Network",
+      "status": "covered",
+      "tools": 12,
+      "pass": 12,
+      "empty": 0,
+      "blind": 0,
+      "fail": 0,
+      "evidence_records": 625,
+      "probes_dead": [],
+      "reason": null
+    },
+    "ioc": {
+      "label": "IOC / Filesystem",
+      "status": "covered",
+      "tools": 11,
+      "pass": 8,
+      "empty": 3,
+      "blind": 0,
+      "fail": 0,
+      "evidence_records": 2461,
+      "probes_dead": [],
+      "reason": null
+    }
+  },
+  "tool_summary": {
+    "status": "VERIFIED",
+    "tool_count": 99,
+    "pass": 84,
+    "empty": 7,
+    "blind": 8,
+    "fail": 0,
+    "evidence_records": 6118,
+    "threat_hunting_active": true,
+    "dfir_active": true,
+    "event_hub_active": true,
+    "last_sync": "2026-09-13T19:32:40.187249"
+  }
+}

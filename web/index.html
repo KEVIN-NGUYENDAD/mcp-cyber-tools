@@ -745,22 +745,26 @@
           <!-- MCP INTELLIGENCE CARD -->
           <div class="kpi-card" style="border-left: 4px solid #8B5CF6; border-top: 2px solid #8B5CF6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);">
             <div class="kpi-label">🤖 MCP Intelligence Center</div>
+            <!-- Các giá trị dưới đây từng được viết cứng là ONLINE / 90+ /
+                 ACTIVE. Một bảng điều khiển tự nói mình đang hoạt động thì
+                 không phải là bảng điều khiển. Nay chúng đọc từ kết quả kiểm
+                 thật trong state/sensor_coverage.json. -->
             <div style="margin-top: 15px;">
               <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
-                <span style="color: var(--color-text-dim);">STATUS</span>
-                <span style="color: #00ff88; font-weight: bold;">ONLINE</span>
+                <span style="color: var(--color-text-dim);">TOOLS VERIFIED</span>
+                <span style="color: var(--color-accent); font-weight: bold;" id="exec-mcp-tools">-</span>
               </div>
               <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
-                <span style="color: var(--color-text-dim);">TOOL COUNT</span>
-                <span style="color: var(--color-accent); font-weight: bold;">90+</span>
+                <span style="color: var(--color-text-dim);">✅ PASS</span>
+                <span style="color: #00ff88; font-weight: bold;" id="exec-mcp-pass">-</span>
               </div>
               <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
-                <span style="color: var(--color-text-dim);">THREAT HUNTING</span>
-                <span style="color: #00ff88; font-weight: bold;">ACTIVE</span>
+                <span style="color: var(--color-text-dim);">❌ BLIND</span>
+                <span style="color: var(--color-critical); font-weight: bold;" id="exec-mcp-blind">-</span>
               </div>
               <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
-                <span style="color: var(--color-text-dim);">DFIR TOOLS</span>
-                <span style="color: #00ff88; font-weight: bold;">ACTIVE</span>
+                <span style="color: var(--color-text-dim);">🔴 FAIL</span>
+                <span style="font-weight: bold;" id="exec-mcp-fail">-</span>
               </div>
               <div style="display: flex; justify-content: space-between; margin: 10px 0; font-size: 0.9em;">
                 <span style="color: var(--color-text-dim);">INVESTIGATION QUEUE</span>
@@ -769,6 +773,20 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- SENSOR COVERAGE — nguồn nào đang nhìn thấy, nguồn nào đang mù.
+           Không phải tab riêng: nó phải nằm cạnh các con số mà nó điều kiện
+           hoá, nếu không thì "0 phát hiện" vẫn đọc như "an toàn". -->
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+          <h2 class="card-title">🛰️ Sensor Coverage</h2>
+          <span style="font-size: 0.8em; color: var(--color-text-dim);" id="sensor-coverage-meta">-</span>
+        </div>
+        <div id="sensor-coverage-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-top: 12px;">
+          <div style="color: var(--color-text-dim);">Loading...</div>
+        </div>
+        <div id="sensor-coverage-note" style="margin-top: 14px; font-size: 0.85em; color: var(--color-text-dim); line-height: 1.5;"></div>
       </div>
 
       <!-- KPI CARDS -->

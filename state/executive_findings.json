@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T16:15:23.115700",
+  "timestamp": "2026-09-13T19:30:06.956875",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
@@ -12,7 +12,7 @@
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-13T16:15:10.193733"
+      "timestamp": "2026-09-13T19:29:53.049073"
     },
     "shadow_assets.json": {
       "present": true,
@@ -21,38 +21,38 @@
     },
     "incidents.json": {
       "present": true,
-      "records": 0,
-      "timestamp": "2026-09-13T16:15:22.722594"
+      "records": 1,
+      "timestamp": "2026-09-13T19:30:06.631413"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T16:15:09.421196"
+      "timestamp": "2026-09-13T19:29:52.327737"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T16:15:09.712151"
+      "timestamp": "2026-09-13T19:29:52.631332"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 96,
-      "timestamp": "2026-09-13T16:15:16.585804"
+      "timestamp": "2026-09-13T19:29:59.566116"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T16:15:22.295370"
+      "timestamp": "2026-09-13T19:30:05.404786"
     },
     "hunting_lateral_movement.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-13T16:15:20.938115"
+      "timestamp": "2026-09-13T19:30:04.155632"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
-      "records": 47,
-      "timestamp": "2026-09-13T16:15:19.516674"
+      "records": 58,
+      "timestamp": "2026-09-13T19:30:02.755415"
     }
   },
   "coverage_gaps": [
@@ -79,7 +79,7 @@
     {
       "rule_id": "RULE-3",
       "reason": "NO_DEFENDER_DETECTION",
-      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 47 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
+      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 58 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
     }
   ],
   "findings": []

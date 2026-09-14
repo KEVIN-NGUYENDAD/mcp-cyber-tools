@@ -118,6 +118,25 @@ không có gì, `exit 0` khi cuộc săn thực sự đã chạy.
 `hunt_credential_dumping` và `hunt_lateral_movement` **dò riêng** (`securityLogs`)
 để biết log có đọc được không, vì bản thân tool trả `[]` trong cả hai trường hợp.
 
+> **Đính chính (Sprint 8).** Dòng `reason` ở trên — *"audit Process Creation tắt
+> mặc định trên Windows Home, và/hoặc tiến trình không chạy quyền
+> Administrator"* — **sai một nửa, và nửa sai là nửa quan trọng**.
+>
+> Dò trực tiếp bằng `scripts/sensor_probe.py` cho thấy log Security **không mở
+> được**: `Get-WinEvent -LogName 'Security'` trả về *"Attempted to perform an
+> unauthorized operation."* Khi đã không mở được log thì **không thể biết** audit
+> 4688 đang bật hay tắt — mệnh đề "audit tắt" là một suy đoán, không phải quan sát.
+>
+> Vì sao Sprint 7 kết luận nhầm: `Get-WinEvent -FilterHashtable @{LogName='Security';
+> Id=4688}` trên **cùng máy, cùng quyền** lại báo *"No events were found that match
+> the specified selection criteria."* Thông báo đó đọc như "máy sạch" nhưng thực ra
+> là cùng một sự từ chối quyền, chỉ đội một thông báo khác. Mọi truy vấn lọc theo
+> Id trên log Security đều rơi vào bẫy này.
+>
+> Nguyên nhân đúng: **ACCESS_DENIED** (thiếu quyền Administrator). Chạy lại dưới
+> quyền Administrator rồi mới có cơ sở kết luận về audit policy. Xem
+> `docs/project/TOOL_VALIDATION_REPORT.md`.
+
 ---
 
 ## 4. Quy kết thật

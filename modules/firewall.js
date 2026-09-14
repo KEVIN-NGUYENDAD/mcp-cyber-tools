@@ -26,7 +26,7 @@ export function registerFirewallTools(server) {
     },
     async ({ limit = 100 }) => {
       const result = runPowerShell(`
-        Get-NetFirewallRule -Enabled $true |
+        Get-NetFirewallRule -Enabled True |
         Select-Object Name, DisplayName, Direction, Action, Enabled, @{Name='Protocol';Expression={($_.Protocol -join ',')}} |
         Select-Object -First ${limit} |
         ConvertTo-Json
@@ -44,7 +44,7 @@ export function registerFirewallTools(server) {
     },
     async ({ limit = 50 }) => {
       const result = runPowerShell(`
-        Get-NetFirewallRule -Direction Inbound -Enabled $true |
+        Get-NetFirewallRule -Direction Inbound -Enabled True |
         Select-Object Name, DisplayName, Action, Enabled |
         Select-Object -First ${limit} |
         ConvertTo-Json
@@ -62,7 +62,7 @@ export function registerFirewallTools(server) {
     },
     async ({ limit = 50 }) => {
       const result = runPowerShell(`
-        Get-NetFirewallRule -Direction Outbound -Enabled $true |
+        Get-NetFirewallRule -Direction Outbound -Enabled True |
         Select-Object Name, DisplayName, Action, Enabled |
         Select-Object -First ${limit} |
         ConvertTo-Json
@@ -80,7 +80,7 @@ export function registerFirewallTools(server) {
     },
     async ({ limit = 50 }) => {
       const result = runPowerShell(`
-        Get-NetFirewallRule -Enabled $false |
+        Get-NetFirewallRule -Enabled False |
         Select-Object Name, DisplayName, Direction, Action |
         Select-Object -First ${limit} |
         ConvertTo-Json

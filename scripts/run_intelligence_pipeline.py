@@ -6,6 +6,7 @@ Runs all collectors and intelligence extractors in sequence
 Outputs: Comprehensive state/ updates and daily brief
 """
 
+import io
 import json
 import sys
 import os
@@ -505,7 +506,30 @@ class IntelligencePipeline:
         return 0 if success else 1
 
 
+def _force_utf8_stdout():
+    """Giu stdout o UTF-8 ke ca khi no bi chuyen huong ra file.
+
+    Tren Windows, stdout gan vao console dung UTF-8, nhung stdout bi chuyen
+    huong lai dung cp1252. Dong log dau tien cua pipeline co mot emoji, nen
+    `python run_intelligence_pipeline.py > pipeline.log` chet ngay o dong log
+    dau tien voi UnicodeEncodeError — truoc khi chay bat ky stage nao. Moi lan
+    chay theo lich (ghi log ra file) deu roi vao duong nay.
+    """
+    for stream_name in ('stdout', 'stderr'):
+        stream = getattr(sys, stream_name, None)
+        encoding = (getattr(stream, 'encoding', '') or '').lower()
+        if stream is None or encoding.replace('-', '') == 'utf8':
+            continue
+        try:
+            setattr(sys, stream_name, io.TextIOWrapper(
+                stream.buffer, encoding='utf-8', errors='replace',
+                line_buffering=True))
+        except (AttributeError, ValueError):
+            pass
+
+
 def main():
+    _force_utf8_stdout()
     pipeline = IntelligencePipeline()
     exit_code = pipeline.run()
     sys.exit(exit_code)

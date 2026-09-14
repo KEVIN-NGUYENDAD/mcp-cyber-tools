@@ -19,7 +19,11 @@ export function registerPersistenceTools(server) {
     "List files in startup folders",
     {},
     async () => {
-      const result = runPowerShell(`$commonStartup = @("$env:PROGRAMDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup","$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"); foreach ($folder in $commonStartup) { if (Test-Path $folder) { Get-ChildItem $folder -Recurse | Select-Object FullName, LastWriteTime } } | ConvertTo-Json -Depth 5`);
+      // `foreach (...) { ... } | ConvertTo-Json` là lỗi cú pháp PowerShell
+      // ("An empty pipe element is not allowed"): câu lệnh foreach không phải
+      // một phần tử pipeline. ForEach-Object thì có. @(...) bọc ngoài để một
+      // kết quả đơn vẫn ra mảng thay vì object, giữ đúng một hợp đồng JSON.
+      const result = runPowerShell(`@(@("$env:PROGRAMDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup","$env:APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup") | ForEach-Object { if (Test-Path $_) { Get-ChildItem $_ -Recurse -File -ErrorAction SilentlyContinue | Select-Object FullName, LastWriteTime } }) | ConvertTo-Json -Depth 3`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -43,7 +47,11 @@ export function registerPersistenceTools(server) {
     "List Registry Run keys",
     {},
     async () => {
-      const result = runPowerShell(`@('HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run','HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run') | ForEach-Object { if (Test-Path $_) { Get-ItemProperty $_ | ConvertTo-Json -Depth 5 } }`);
+      // Get-ItemProperty trả về PSCustomObject có mang PSProvider, và
+      // ConvertTo-Json -Depth 5 đi xuyên PSProvider.Drives: MỘT khoá Run sinh
+      // ~75MB JSON, đủ để spawnSync chết với ENOBUFS. Chỉ đọc đúng tên và giá
+      // trị thật của khoá.
+      const result = runPowerShell(`@(@('HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run','HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Run') | ForEach-Object { $hive = $_; if (Test-Path $hive) { $item = Get-Item $hive; foreach ($valueName in $item.GetValueNames()) { [PSCustomObject]@{ Hive = $hive; Name = $valueName; Value = [string]$item.GetValue($valueName) } } } }) | ConvertTo-Json -Depth 3`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -54,7 +62,8 @@ export function registerPersistenceTools(server) {
     "List Registry RunOnce keys",
     {},
     async () => {
-      const result = runPowerShell(`@('HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce','HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce') | ForEach-Object { if (Test-Path $_) { Get-ItemProperty $_ | ConvertTo-Json -Depth 5 } }`);
+      // Cùng cái bẫy ConvertTo-Json/PSProvider như registryRunKeys ở trên.
+      const result = runPowerShell(`@(@('HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce','HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce') | ForEach-Object { $hive = $_; if (Test-Path $hive) { $item = Get-Item $hive; foreach ($valueName in $item.GetValueNames()) { [PSCustomObject]@{ Hive = $hive; Name = $valueName; Value = [string]$item.GetValue($valueName) } } } }) | ConvertTo-Json -Depth 3`);
       return formatResponse(result.success, result.data, result.error);
     }
   );
