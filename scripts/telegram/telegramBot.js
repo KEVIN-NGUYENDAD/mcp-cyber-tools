@@ -6,6 +6,28 @@ import { paths } from './paths.js';
 
 dotenv.config();
 
+// WAAP score chi duoc tinh o MOT noi.
+//
+// `/executive` doc `waap.health_score` — truong khong ton tai trong
+// waap_status.json — nen no luon undefined, va `undefined >= 60` luon false:
+// lenh do bao WAAP mau do vinh vien. `/analytics` thi tu cong diem tu
+// security_summary va ra so that. Hai lenh, mot so lieu, mot duong hong.
+function waapScoreFrom(waap) {
+  const summary = (waap && waap.security_summary) || {};
+  return (summary.ssl_valid ? 60 : 0)
+    + (summary.waf_active ? 15 : 0)
+    + (summary.cdn_active ? 15 : 0)
+    + (summary.protection_active ? 10 : 0);
+}
+
+// Lich su canh bao da tung mang BA ten cho cung mot mang: `notifications` (noi
+// doc), `alerts` (noi ghi), `sent_alerts` (thu that nam trong tep). Dung ten
+// chinh thuc la `sent_alerts`, van chap nhan doc hai ten cu.
+function sentAlerts(history) {
+  if (!history) return [];
+  return history.sent_alerts || history.alerts || history.notifications || [];
+}
+
 class TelegramCommandCenter {
   constructor() {
     console.log('[INIT] Loading Telegram Bot Token...');
@@ -218,7 +240,7 @@ Score: *${score}/100*
       let assets = { total_assets: 0 };
       let incidents = { total_incidents: 0, by_severity: { CRITICAL: 0, HIGH: 0 } };
       let risk = { overall_score: 0 };
-      let waap = { health_score: 0, ssl_status: 'UNKNOWN', days_until_expiry: 0 };
+      let waap = { security_summary: {}, ssl_status: 'UNKNOWN', days_until_expiry: 0 };
       let domain = { dns_health: 'N/A' };
 
       // Read all metrics
@@ -247,7 +269,7 @@ Score: *${score}/100*
 
       if (fs.existsSync(paths.waapStatus)) {
         waap = JSON.parse(fs.readFileSync(paths.waapStatus, 'utf8'));
-        console.log('[EXEC-WAAP] Loaded:', { health: waap.health_score, summary: waap.security_summary });
+        console.log('[EXEC-WAAP] Loaded:', { score: waapScoreFrom(waap), summary: waap.security_summary });
       } else {
         console.log('[EXEC-ERROR] WAAP file not found at:', paths.waapStatus);
       }
@@ -271,7 +293,7 @@ Score: *${score}/100*
         critical: incidents.by_severity?.CRITICAL,
         high: incidents.by_severity?.HIGH,
         riskScore: risk.overall_score,
-        waapScore: waap.health_score,
+        waapScore: waapScoreFrom(waap),
         dnsHealth: dnsHealthPercent
       });
 
@@ -281,7 +303,8 @@ Score: *${score}/100*
         (score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW');
       const scoreEmoji = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢' }[scoreLevel] || '⚪';
 
-      const waapEmoji = waap.health_score >= 80 ? '✅' : waap.health_score >= 60 ? '⚠️' : '🔴';
+      const execWaapScore = waapScoreFrom(waap);
+      const waapEmoji = execWaapScore >= 80 ? '✅' : execWaapScore >= 60 ? '⚠️' : '🔴';
       const dnsEmoji = dnsHealthPercent >= 90 ? '✅' : dnsHealthPercent >= 60 ? '⚠️' : '🔴';
 
       // CAPTURE ACTUAL RUNTIME VALUES IMMEDIATELY BEFORE MESSAGE BUILD
@@ -455,7 +478,7 @@ ${dnsEmoji} DNS Health: ${dnsHealthPercent}%
       let incidents = { total_incidents: 0, by_severity: { CRITICAL: 0, HIGH: 0 } };
       let assets = { total_assets: 0, assets: [] };
       let risk = { overall_score: 0 };
-      let waap = { health_score: 0, security_summary: {} };
+      let waap = { security_summary: {} };
       let domain = { dns_complete: {} };
 
       // Read data
@@ -484,7 +507,7 @@ ${dnsEmoji} DNS Health: ${dnsHealthPercent}%
 
       if (fs.existsSync(paths.waapStatus)) {
         waap = JSON.parse(fs.readFileSync(paths.waapStatus, 'utf8'));
-        console.log('[ANALYTICS-WAAP] Loaded:', { health: waap.health_score, summary: waap.security_summary });
+        console.log('[ANALYTICS-WAAP] Loaded:', { score: waapScoreFrom(waap), summary: waap.security_summary });
       } else {
         console.log('[ANALYTICS-ERROR] WAAP file not found at:', paths.waapStatus);
       }
@@ -503,12 +526,7 @@ ${dnsEmoji} DNS Health: ${dnsHealthPercent}%
       console.log('[ANALYTICS-VULNS] Calculated:', { total: totalVulnerabilities });
 
       // Calculate WAAP score
-      const waapScore = (
-        (waap.security_summary?.ssl_valid ? 60 : 0) +
-        (waap.security_summary?.waf_active ? 15 : 0) +
-        (waap.security_summary?.cdn_active ? 15 : 0) +
-        (waap.security_summary?.protection_active ? 10 : 0)
-      );
+      const waapScore = waapScoreFrom(waap);
 
       console.log('[ANALYTICS-WAAP-SCORE] Calculated:', { score: waapScore });
 
@@ -719,12 +737,12 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
     try {
       // Load notification history for evidence/reports
       console.log('[DATA] Loading evidence data...');
-      let notificationHistory = { notifications: [] };
+      let notificationHistory = { sent_alerts: [] };
       let timeline = { events: [] };
 
       if (fs.existsSync(paths.notificationHistory)) {
         notificationHistory = JSON.parse(fs.readFileSync(paths.notificationHistory, 'utf8'));
-        console.log('[DATA] notification history loaded:', { count: notificationHistory.notifications?.length });
+        console.log('[DATA] notification history loaded:', { count: sentAlerts(notificationHistory).length });
       } else {
         console.log('[DATA] notification history file not found');
       }
@@ -737,7 +755,9 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
       }
 
       // Extract latest reports/evidence
-      const allNotifications = notificationHistory.notifications || [];
+      // Bản cũ đọc `notifications` — khoá tệp này chưa bao giờ có. `/evidence`
+      // vì thế luôn báo 0 báo cáo, kể cả khi đã gửi cảnh báo thật.
+      const allNotifications = sentAlerts(notificationHistory);
       const latestNotifications = allNotifications
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
         .slice(0, 3);

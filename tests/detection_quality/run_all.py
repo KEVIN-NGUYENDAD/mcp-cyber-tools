@@ -35,6 +35,13 @@ MODULES = [
     'test_live_state',
 ]
 
+# Bo kiem ngoai thu muc nay, nap theo duong dan. Telegram Truth song rieng vi no
+# kiem mot lop khac, nhung no phai chay cung mot lenh — mot cong chan chia lam
+# hai lenh la mot cong chan se co lan chi chay mot nua.
+EXTRA_SUITES = [
+    ('telegram_truth', 'test_telegram_fields'),
+]
+
 
 def main():
     suites = []
@@ -46,6 +53,15 @@ def main():
         except Exception as error:  # noqa: BLE001
             # Một tệp kiểm vỡ KHÔNG được phép đọc như "không có ca nào trượt".
             # Đó là cách một cổng chặn lặng lẽ ngừng chặn.
+            broken.append((name, '%s: %s' % (type(error).__name__, error)))
+
+    for folder, name in EXTRA_SUITES:
+        folder_path = os.path.join(os.path.dirname(TESTS_DIR), folder)
+        if folder_path not in sys.path:
+            sys.path.insert(0, folder_path)
+        try:
+            suites.append(__import__(name).run())
+        except Exception as error:  # noqa: BLE001
             broken.append((name, '%s: %s' % (type(error).__name__, error)))
 
     code = harness.render(suites)

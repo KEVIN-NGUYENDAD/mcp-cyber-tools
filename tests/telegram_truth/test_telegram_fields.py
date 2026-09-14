@@ -1,0 +1,118 @@
+# -*- coding: utf-8 -*-
+"""
+Telegram Truth — mỗi lệnh phải nói đúng thứ có trong state.
+
+Khác portal ở một điểm quyết định: một ô sai trên portal còn nằm cạnh chín ô
+đúng để người xem đối chiếu. Một tin nhắn Telegram đi tới điện thoại một mình,
+giữa đêm, không có gì để so.
+
+Hai lỗi đã tìm thấy ở Sprint 14, cả hai đều im lặng:
+
+    /executive   doc `waap.health_score` -> undefined -> WAAP luon mau do
+    /evidence    doc `notificationHistory.notifications` -> luon 0 bao cao
+"""
+
+import io
+import json
+import os
+import re
+import sys
+
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(TESTS_DIR))
+SCRIPTS_DIR = os.path.join(PROJECT_ROOT, 'scripts')
+for path in (SCRIPTS_DIR, os.path.join(PROJECT_ROOT, 'tests', 'detection_quality')):
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+from harness import Suite  # noqa: E402
+import telegram_field_audit as tfa  # noqa: E402
+
+BOT_JS = os.path.join(SCRIPTS_DIR, 'telegram', 'telegramBot.js')
+DELIVERY_JS = os.path.join(SCRIPTS_DIR, 'telegram', 'alertDelivery.js')
+
+
+def read(path):
+    with io.open(path, encoding='utf-8') as handle:
+        return handle.read()
+
+
+def state(filename):
+    path = os.path.join(PROJECT_ROOT, 'state', filename)
+    try:
+        with io.open(path, encoding='utf-8') as handle:
+            return json.load(handle)
+    except (ValueError, IOError, OSError):
+        return None
+
+
+def run():
+    suite = Suite('telegram truth')
+    bot = read(BOT_JS)
+    delivery = read(DELIVERY_JS)
+
+    # -- bộ kiểm trường, chạy trên mã thật ---------------------------------
+    findings = tfa.audit()
+    missing = [f for f in findings if f['level'] == 'MISSING']
+    suite.check('Khong con truong doc tu state khong ton tai',
+                not missing,
+                '; '.join('%s:%s' % (f['file'], f['field']) for f in missing[:4]))
+    suite.check('Bo kiem co quet duoc gi do (khong phai 0 truy cap)',
+                len(findings) >= 10, '%d truy cap' % len(findings))
+
+    # -- WAAP: một cách tính duy nhất --------------------------------------
+    # Bỏ dòng bình luận khi đếm: chính lời giải thích về lỗi cũ cũng chứa tên
+    # trường đó, và một bộ kiểm bắt nhầm lời giải thích sẽ ép người ta xoá lời
+    # giải thích — tức là xoá đúng thứ đáng giữ nhất.
+    bot_code = '\n'.join(line for line in bot.splitlines()
+                         if not line.strip().startswith('//'))
+    suite.check('Khong con doc waap.health_score',
+                'health_score' not in bot_code,
+                'van con %d lan' % bot_code.count('health_score'))
+    suite.check('Co ham waapScoreFrom dung chung',
+                'function waapScoreFrom(' in bot)
+    suite.check('/executive va /analytics deu goi cung ham do',
+                bot.count('waapScoreFrom(waap)') >= 3,
+                '%d lan goi' % bot.count('waapScoreFrom(waap)'))
+
+    waap = state('waap_status.json') or {}
+    summary = waap.get('security_summary') or {}
+    expected = ((60 if summary.get('ssl_valid') else 0)
+                + (15 if summary.get('waf_active') else 0)
+                + (15 if summary.get('cdn_active') else 0)
+                + (10 if summary.get('protection_active') else 0))
+    # Neu diem that > 0 thi ban cu (undefined) chac chan da noi sai.
+    suite.check('WAAP score tinh tu state that ra so co nghia',
+                expected > 0, 'diem=%d, summary=%s' % (expected, summary))
+
+    # -- lịch sử cảnh báo: một tên duy nhất --------------------------------
+    history = state('notification_history.json') or {}
+    suite.check('notification_history dung khoa sent_alerts',
+                'sent_alerts' in history, 'khoa: %s' % sorted(history.keys()))
+    suite.check('Khong con doc notificationHistory.notifications',
+                'notificationHistory.notifications' not in bot)
+    suite.check('Co ham sentAlerts dung chung trong bot',
+                'function sentAlerts(' in bot)
+    suite.check('alertDelivery ghi vao sent_alerts',
+                "const ALERT_LIST_KEY = 'sent_alerts'" in delivery)
+    suite.check('alertDelivery khong con push thang vao history.alerts',
+                'history.alerts.push(' not in delivery)
+
+    # Doc van phai chap nhan ten cu, neu khong lich su da gui se bien mat.
+    for name in ('alerts', 'notifications'):
+        suite.check('Van doc duoc lich su cu mang khoa "%s"' % name,
+                    ('history.%s' % name) in delivery)
+
+    # -- không còn giá trị xanh viết cứng ----------------------------------
+    hardcoded = re.findall(r"'(?:ONLINE|ACTIVE|READY|HEALTHY|SECURE)'", bot)
+    suite.check('Chu trang thai viet cung khong duoc dung lam GIA TRI mac dinh',
+                'health_score: 0' not in bot and 'tool_count: \'90+\'' not in bot,
+                '%d chuoi trang thai xuat hien (phan lon la nhan hien thi)'
+                % len(hardcoded))
+
+    return suite
+
+
+if __name__ == '__main__':
+    from harness import render
+    sys.exit(render([run()]))
