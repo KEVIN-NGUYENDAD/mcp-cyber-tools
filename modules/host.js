@@ -130,11 +130,19 @@ export function registerHostTools(server) {
     "List all user profiles on system",
     {},
     async () => {
+      // Các SID là KHOÁ CON của ProfileList. Get-ItemProperty trên chính
+      // ProfileList trả về đúng một object có PSChildName = 'ProfileList', nên
+      // bộ lọc 'S-1-5-21*' không bao giờ khớp và tool luôn trả về rỗng — trông
+      // hệt như "máy không có profile nào". Phải duyệt khoá con.
       const result = runPowerShell(`
-        Get-ItemProperty 'HKLM:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList' |
-        Where-Object { $_.PSChildName -like 'S-1-5-21*' } |
-        Select-Object @{Name='SID';Expression={$_.PSChildName}}, @{Name='ProfilePath';Expression={$_.ProfilePath}} |
-        ConvertTo-Json
+        @(Get-ChildItem 'HKLM:\\Software\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList' -ErrorAction SilentlyContinue |
+          Where-Object { $_.PSChildName -like 'S-1-5-21*' } |
+          ForEach-Object {
+            [PSCustomObject]@{
+              SID = $_.PSChildName
+              ProfilePath = (Get-ItemProperty -Path $_.PSPath -Name ProfilePath -ErrorAction SilentlyContinue).ProfilePath
+            }
+          }) | ConvertTo-Json -Depth 3
       `);
       return formatResponse(result.success, result.data, result.error);
     }
@@ -146,8 +154,19 @@ export function registerHostTools(server) {
     "Get currently logged on users",
     {},
     async () => {
+      // quser.exe không có trên Windows Home — lệnh cũ luôn ném
+      // CommandNotFoundException nên tool này chưa bao giờ trả về gì trên máy
+      // Home. Win32_LoggedOnUser có ở mọi bản Windows.
       const result = runPowerShell(`
-        quser 2>$null | ConvertFrom-String | Select-Object P1, P2, P3, P4 | ConvertTo-Json
+        @(Get-CimInstance -ClassName Win32_LoggedOnUser -ErrorAction SilentlyContinue |
+          ForEach-Object {
+            [PSCustomObject]@{
+              Domain  = $_.Antecedent.Domain
+              User    = $_.Antecedent.Name
+              LogonId = $_.Dependent.LogonId
+            }
+          } |
+          Sort-Object Domain, User -Unique) | ConvertTo-Json -Depth 3
       `);
       return formatResponse(result.success, result.data, result.error);
     }

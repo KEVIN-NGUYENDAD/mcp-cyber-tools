@@ -71,7 +71,8 @@ function sendStateFile(filename, res) {
     'hunting_credential_dumping.json',
     'hunting_suspicious_processes.json',
     'timeline.json',
-    'alert_queue.json'
+    'alert_queue.json',
+    'sensor_coverage.json'
   ];
 
   if (!allowedFiles.includes(filename)) {
