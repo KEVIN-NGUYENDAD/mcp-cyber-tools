@@ -84,99 +84,143 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       0
+    ],
+    "vulnerability_counts": [
+      11,
+      11
     ]
   },
   "192.168.0.5": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       1
+    ],
+    "vulnerability_counts": [
+      13,
+      13
     ]
   },
   "192.168.0.8": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       1
+    ],
+    "vulnerability_counts": [
+      14,
+      14
     ]
   },
   "192.168.0.3": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       1
+    ],
+    "vulnerability_counts": [
+      14,
+      14
     ]
   },
   "192.168.0.12": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       1
+    ],
+    "vulnerability_counts": [
+      14,
+      14
     ]
   },
   "192.168.0.11": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       1
+    ],
+    "vulnerability_counts": [
+      14,
+      14
     ]
   },
   "192.168.0.10": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       1
+    ],
+    "vulnerability_counts": [
+      14,
+      14
     ]
   },
   "192.168.0.51": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       3
+    ],
+    "vulnerability_counts": [
+      215,
+      215
     ]
   },
   "192.168.0.1": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       5
+    ],
+    "vulnerability_counts": [
+      39,
+      39
     ]
   },
   "192.168.0.233": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       0
+    ],
+    "vulnerability_counts": [
+      3,
+      3
     ]
   },
   "192.168.0.21": {
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 1,
+    "observations": 3,
     "risk_scores": [
       7
+    ],
+    "vulnerability_counts": [
+      48,
+      48
     ]
   },
   "192.168.0.16": {

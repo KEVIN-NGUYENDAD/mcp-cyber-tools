@@ -246,9 +246,6 @@ REMAINING_DEBT = [
     ('`state/sensor_coverage.json` không tự làm mới theo pipeline',
      'tool_validator.py gọi thật 99 tool và có tác dụng phụ (ghi báo cáo, quét). '
      'Portal hiển thị tuổi của dữ liệu và cảnh báo khi quá 24 giờ.'),
-    ('`assets.json` có hai người ghi: asset_builder.py ghi `all_assets`, '
-     'extract_asset_intelligence.py ghi `assets`',
-     'Tồn tại từ trước Sprint 8, đã ghi nhận, chưa gộp.'),
 ]
 
 

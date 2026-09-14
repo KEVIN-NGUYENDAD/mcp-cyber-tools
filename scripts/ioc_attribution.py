@@ -22,6 +22,7 @@ Chỉ báo `SIMULATED` có hunt_scope nhưng affected_systems rỗng — và đ�
 
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 # Nguồn gốc dữ liệu của một chỉ báo
@@ -38,19 +39,22 @@ STATE_DIR = Path(__file__).parent.parent / 'state'
 
 
 def load_inventory_ips():
-    """Danh sách IP trong kho tài sản (schema sống: khoá 'assets')."""
-    fp = STATE_DIR / 'assets.json'
-    if not fp.exists():
-        return []
-    try:
-        with open(fp, encoding='utf-8') as f:
-            data = json.load(f)
-    except (ValueError, OSError):
+    """Danh sách IP trong kho tài sản, đọc qua asset_store.
+
+    Sprint 11 bỏ nhánh `data.get('assets') or data.get('all_assets')` từng nằm
+    ở đây. Nó là một miếng vá đúng ở thời điểm nó được viết — lúc đó thật sự có
+    hai lược đồ — nhưng giữ nó lại sau khi đã hợp nhất chính là chừa sẵn chỗ cho
+    lược đồ thứ hai quay lại mà không ai phát hiện.
+    """
+    import asset_store
+
+    assets, _meta, error = asset_store.read_assets_safe()
+    if error:
+        # Kho rỗng làm mọi IOC thành "không quy được về tài sản nào". Đó là một
+        # kết luận, nên nó không được phép sinh ra từ một lần đọc hỏng.
+        print('[WARN] ioc_attribution: %s' % error, file=sys.stderr)
         return []
 
-    # Chấp nhận cả hai schema đang tồn tại trong repo. Đây không phải là chỗ để
-    # sửa chuyện đó, nhưng cũng không phải chỗ để chết vì nó.
-    assets = data.get('assets') or data.get('all_assets') or []
     ips = []
     for asset in assets:
         ip = asset.get('ip')
