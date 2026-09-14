@@ -186,12 +186,80 @@ class CorrelationEngine:
         ips |= extract_ips(incident.get('evidence'))
         return ips
 
+    def incidents_for_ip(self, ip):
+        """Sự cố đang ghi nhận cùng một IP.
+
+        Sprint 11.2 dùng nó để nối vế thứ ba: Shadow + IOC là một giả thuyết;
+        thêm một incident đang mở thì đó là việc đang diễn ra và đã có người
+        nhìn thấy từ hướng khác.
+        """
+        data = self.state.get('incidents.json') or {}
+        incidents = data.get('incidents')
+        if not isinstance(incidents, list):
+            return []
+        return [incident for incident in incidents
+                if ip in self.incident_ips(incident)]
+
     # ------------------------------------------------------------------
     # RULE 1 - COMPROMISED SHADOW
     # ------------------------------------------------------------------
 
+    # Sprint 11.2: một thiết bị lạ có thể lộ ra theo HAI đường, và trước đây
+    # rule này chỉ nhìn một.
+    #
+    #   ARP  thiết bị trả lời arp -a nhưng không có trong kho tài sản.
+    #   IOC  một IP xuất hiện với vai trò REMOTE_PEER trong chỉ báo, và IP đó
+    #        không có trong kho tài sản.
+    #
+    # Đường thứ hai không phải phiên bản yếu hơn của đường thứ nhất — nó thấy
+    # được thứ ARP không bao giờ thấy. `arp -a` chỉ nhìn được phân đoạn L2 cục
+    # bộ và chỉ những thiết bị vừa hoạt động; một máy ở subnet khác xác thực vào
+    # đây lúc 3 giờ sáng sẽ không có mặt trong bảng ARP lúc quét, nhưng nó nằm
+    # rành rành trong Security log.
+    IOC_STAGES = [
+        ('hunting_credential_dumping.json', 'Credential Dumping'),
+        ('hunting_persistence.json', 'Persistence'),
+        ('hunting_lateral_movement.json', 'Lateral Movement'),
+        ('hunting_suspicious_processes.json', 'Suspicious Process'),
+    ]
+
+    def unknown_peers(self):
+        """IP đóng vai REMOTE_PEER trong IOC mà kho tài sản không biết tới.
+
+        Đọc `attribution.systems` do Sprint 11.1 dựng, chứ không tự đoán lại từ
+        affected_systems: danh sách phẳng đó giờ luôn chứa cả máy cục bộ, và máy
+        cục bộ thì không bao giờ là thiết bị lạ.
+        """
+        peers = {}
+        for filename, stage in self.IOC_STAGES:
+            for indicator in self.indicators(filename):
+                if self.is_simulated(indicator):
+                    continue
+                systems = (indicator.get('attribution') or {}).get('systems') or []
+                for system in systems:
+                    if system.get('scope') != 'REMOTE_PEER':
+                        continue
+                    if system.get('in_inventory'):
+                        continue
+                    ip = system.get('ip')
+                    if not ip:
+                        continue
+                    entry = peers.setdefault(ip, {
+                        'ip': ip,
+                        'hostname': 'Unknown',
+                        'type': 'Unknown',
+                        'discovered_by': 'IOC',
+                        'discovered_in': set(),
+                        'reason': ('Xuất hiện trong nội dung sự kiện bảo mật '
+                                   'nhưng không có trong kho tài sản'),
+                    })
+                    entry['discovered_in'].add(stage)
+        for entry in peers.values():
+            entry['discovered_in'] = sorted(entry['discovered_in'])
+        return peers
+
     def rule_compromised_shadow(self):
-        """Shadow asset đồng thời xuất hiện trong Credential Dumping hoặc Persistence IOC.
+        """Thiết bị lạ đồng thời mang IOC — và, nếu có, gắn với incident đang mở.
 
         Ý nghĩa: một thiết bị không được quản lý đang có dấu hiệu bị khai thác
         nhiều giai đoạn - đây là chuỗi xâm nhập, không phải cảnh báo rời rạc.
@@ -200,29 +268,42 @@ class CorrelationEngine:
         rule_name = 'Compromised Shadow'
 
         shadow_data = self.state.get('shadow_assets.json') or {}
-        shadows = shadow_data.get('shadows')
-        shadows = shadows if isinstance(shadows, list) else []
-
-        if not shadows:
-            self.add_gap(rule_id, 'NO_SHADOW_ASSETS',
-                         'state/shadow_assets.json không có mục shadows nào để tương quan.')
-            return
+        arp_shadows = shadow_data.get('shadows')
+        arp_shadows = arp_shadows if isinstance(arp_shadows, list) else []
 
         shadow_by_ip = {}
-        for shadow in shadows:
+        for shadow in arp_shadows:
             ip = shadow.get('ip')
             if ip:
-                shadow_by_ip[ip] = shadow
+                entry = dict(shadow)
+                entry['discovered_by'] = 'ARP'
+                entry['discovered_in'] = ['arp -a']
+                shadow_by_ip[ip] = entry
 
-        # Gom IOC theo IP, kèm nguồn để giải thích được kết luận.
-        ioc_stages = [
-            ('hunting_credential_dumping.json', 'Credential Dumping'),
-            ('hunting_persistence.json', 'Persistence'),
-        ]
+        ioc_derived = self.unknown_peers()
+        for ip, entry in ioc_derived.items():
+            if ip in shadow_by_ip:
+                # Cả hai đường cùng chỉ vào một IP: bằng chứng mạnh hơn hẳn,
+                # phải giữ lại chứ không để đường này ghi đè đường kia.
+                shadow_by_ip[ip]['discovered_by'] = 'ARP+IOC'
+                shadow_by_ip[ip]['discovered_in'] = (
+                    shadow_by_ip[ip]['discovered_in'] + entry['discovered_in'])
+            else:
+                shadow_by_ip[ip] = entry
+
+        if not shadow_by_ip:
+            self.add_gap(
+                rule_id, 'NO_SHADOW_ASSETS',
+                'Không có thiết bị lạ nào để tương quan: arp -a thấy {} thiết bị '
+                'và tất cả đều có trong kho tài sản; {} IOC không chứa REMOTE_PEER '
+                'nào ngoài kho. Đây là kết quả ĐÃ KIỂM, không phải rule im lặng.'
+                .format(shadow_data.get('arp_devices_seen', '?'),
+                        sum(len(self.indicators(f)) for f, _ in self.IOC_STAGES)))
+            return
 
         attributed = 0
         hits = {}
-        for filename, stage in ioc_stages:
+        for filename, stage in self.IOC_STAGES:
             for indicator in self.indicators(filename):
                 ips = self.indicator_ips(indicator)
                 if ips:
@@ -231,25 +312,59 @@ class CorrelationEngine:
                     if ip in shadow_by_ip:
                         hits.setdefault(ip, []).append((stage, indicator))
 
+        # Một thiết bị lạ do chính IOC phát hiện KHÔNG được lấy đúng IOC đó làm
+        # bằng chứng nó bị xâm nhập — đó là lập luận vòng tròn: "IP này đáng ngờ
+        # vì nó nằm trong một chỉ báo, và chỉ báo đó chứng minh nó đáng ngờ".
+        # Nó phải được chứng thực bởi một giai đoạn KHÁC giai đoạn đã phát hiện.
+        circular = []
+        for ip in list(hits):
+            shadow = shadow_by_ip[ip]
+            if shadow.get('discovered_by') != 'IOC':
+                continue
+            # Thiết bị này lộ ra CHÍNH VÌ nó nằm trong IOC, nên mọi giai đoạn
+            # phát hiện nó đều nằm sẵn trong `discovered_in`. Không thể đòi một
+            # giai đoạn "ngoài" tập đó — sẽ không bao giờ có. Điều kiện đúng là
+            # số giai đoạn PHÂN BIỆT: xuất hiện ở đúng một giai đoạn thì bằng
+            # chứng duy nhất ta có chính là lý do ta biết tới nó; xuất hiện ở hai
+            # giai đoạn khác nhau thì giai đoạn này chứng thực cho giai đoạn kia.
+            distinct_stages = set(stage for stage, _ in hits[ip])
+            if len(distinct_stages) < 2:
+                circular.append(ip)
+                del hits[ip]
+
+        if circular:
+            self.add_gap(
+                rule_id, 'IOC_SELF_REFERENCE',
+                '{} IP ({}) lộ ra qua IOC nhưng chỉ xuất hiện trong đúng giai đoạn '
+                'đã phát hiện chúng, nên chưa đủ để kết luận bị xâm nhập. Chúng vẫn '
+                'là thiết bị ngoài kho tài sản và cần được xác minh.'
+                .format(len(circular), ', '.join(sorted(circular))))
+
         if not hits:
-            total_iocs = sum(len(self.indicators(f)) for f, _ in ioc_stages)
+            total_iocs = sum(len(self.indicators(f)) for f, _ in self.IOC_STAGES)
             if attributed == 0 and total_iocs > 0:
-                _, simulated = self.simulated_counts([f for f, _ in ioc_stages])
+                _, simulated = self.simulated_counts([f for f, _ in self.IOC_STAGES])
                 if simulated == total_iocs:
                     self.add_gap(
                         rule_id, 'IOC_SIMULATED',
-                        'Toàn bộ {} IOC credential-dumping/persistence mang '
-                        'data_source=SIMULATED (hardcode trong script hunting), '
-                        'nên không được quy kết cho {} shadow asset. Rule 1 im '
-                        'lặng ở đây là ĐÚNG: quy kết chỉ báo giả vào IP thật sẽ '
-                        'tạo bằng chứng xâm nhập không có thật.'
+                        'Toàn bộ {} IOC mang data_source=SIMULATED (hardcode trong '
+                        'script hunting), nên không được quy kết cho {} thiết bị lạ. '
+                        'Rule 1 im lặng ở đây là ĐÚNG: quy kết chỉ báo giả vào IP '
+                        'thật sẽ tạo bằng chứng xâm nhập không có thật.'
                         .format(total_iocs, len(shadow_by_ip)))
                 else:
                     self.add_gap(
                         rule_id, 'IOC_NOT_IP_ATTRIBUTED',
-                        '{} IOC credential-dumping/persistence không mang IP nào '
-                        '(affected_systems rỗng), nên không thể ghép với {} shadow asset.'
+                        '{} IOC không mang IP nào (affected_systems rỗng), nên không '
+                        'thể ghép với {} thiết bị lạ.'
                         .format(total_iocs, len(shadow_by_ip)))
+            elif not circular:
+                self.add_gap(
+                    rule_id, 'NO_IOC_ON_SHADOW',
+                    '{} thiết bị lạ ({}) không xuất hiện trong IOC nào. Chúng vẫn '
+                    'nằm ngoài kho tài sản và cần xác minh, nhưng chưa có dấu hiệu '
+                    'bị khai thác.'
+                    .format(len(shadow_by_ip), ', '.join(sorted(shadow_by_ip))))
             return
 
         for ip in sorted(hits):
@@ -263,28 +378,54 @@ class CorrelationEngine:
                     indicator.get('description', '')))
 
             multi_stage = len(stages) > 1
+
+            # Sprint 11.2: gắn thêm incident đang mở cho cùng IP. Một thiết bị lạ
+            # mang IOC là một giả thuyết; cũng thiết bị đó đã có incident mở là
+            # một việc đang diễn ra mà ai đó đã nhìn thấy từ hướng khác.
+            related = self.incidents_for_ip(ip)
+            if related:
+                evidence.append('[Incident] {} sự cố đang ghi nhận cùng IP: {}'.format(
+                    len(related),
+                    ', '.join(i.get('incident_id', '?') for i in related[:5])))
+
+            # Hai đường phát hiện độc lập cùng chỉ vào một IP đáng tin hơn hẳn
+            # một đường; và incident đang mở lại nâng thêm một bậc nữa.
+            dual_discovery = shadow.get('discovered_by') == 'ARP+IOC'
+            if related or (multi_stage and dual_discovery):
+                # Hai đường phát hiện độc lập + nhiều giai đoạn tấn công đã đủ
+                # mạnh mà không cần incident: ARP và Security log không thể cùng
+                # sai theo cùng một cách.
+                confidence = 'HIGH'
+            elif multi_stage or dual_discovery or related:
+                confidence = 'MEDIUM'
+            else:
+                confidence = 'LOW'
+
             self.add_finding(
                 rule_id=rule_id,
                 rule_name=rule_name,
                 severity='CRITICAL',
                 title='Thiết bị {} có dấu hiệu bị xâm nhập chuỗi (Multi-stage Compromise)'.format(ip),
                 summary=(
-                    'IP {} đang bị gắn cờ Shadow Asset (trust_score={}, lý do: {}) '
-                    'và đồng thời xuất hiện trong {} IOC thuộc {}. '
+                    'IP {} là thiết bị ngoài kho tài sản (phát hiện qua {}: {}) '
+                    'và đồng thời xuất hiện trong {} IOC thuộc {}{}. '
                     'Thiết bị không được quản lý đang bị khai thác{}.'
                 ).format(
                     ip,
-                    shadow.get('trust_score', 'n/a'),
-                    shadow.get('reason', 'n/a'),
+                    shadow.get('discovered_by', 'ARP'),
+                    ', '.join(shadow.get('discovered_in') or ['n/a']),
                     len(hits[ip]),
                     ' + '.join(stages),
+                    '' if not related else ', và có {} sự cố đang mở cùng IP'.format(len(related)),
                     ' qua nhiều giai đoạn' if multi_stage else ''),
                 entities={
                     'ip': ip,
                     'hostname': shadow.get('hostname'),
                     'type': shadow.get('type'),
-                    'trust_score': shadow.get('trust_score'),
+                    'discovered_by': shadow.get('discovered_by'),
+                    'discovered_in': shadow.get('discovered_in'),
                     'stages': stages,
+                    'incidents': [i.get('incident_id') for i in related],
                 },
                 evidence=evidence,
                 recommended_action=(
@@ -292,8 +433,9 @@ class CorrelationEngine:
                     '2. Thu thập memory + timeline trước khi tắt máy | '
                     '3. Reset toàn bộ credentials đã dùng trên thiết bị này'
                 ).format(ip),
-                confidence='HIGH' if multi_stage else 'MEDIUM',
-                sources=[f for f, _ in ioc_stages] + ['shadow_assets.json'],
+                confidence=confidence,
+                sources=([f for f, _ in self.IOC_STAGES]
+                         + ['shadow_assets.json', 'incidents.json']),
             )
 
     # ------------------------------------------------------------------

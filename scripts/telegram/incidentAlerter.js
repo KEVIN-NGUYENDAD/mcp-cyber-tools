@@ -53,44 +53,77 @@ class IncidentAlerter {
         return (severityOrder[a.severity] || 999) - (severityOrder[b.severity] || 999);
       });
 
-      // Send alerts
+      // Sprint 11.3: mot lo su co -> MOT tin nhan.
+      //
+      // Vong lap cu gui mot tin cho moi su co. Bay su co thanh bay thong bao,
+      // va nguoi truc ca cuon qua ca bay — ket qua la khong cai nao duoc doc ky.
+      // Do khong phai loi cua Telegram: bay canh bao cung luc khong con la bay
+      // tin hieu, no la mot tin hieu bi chia lam bay manh.
+      //
+      // Mot su co van di duong cu: gop mot thu lai khong phai gop, va no chi lam
+      // mat cac nut thao tac day du cua canh bao don le.
       const results = [];
-      for (const incident of newIncidents) {
-        try {
-          console.log(`[ALERT] Processing new incident: ${incident.incident_id}`);
+      if (newIncidents.length > 1) {
+        console.log(`[ALERT] Gop ${newIncidents.length} su co thanh 1 Executive Alert`);
+        const result = await this.alertDelivery.sendBatchedAlert(newIncidents);
+        const ok = !!(result && result.success);
+        for (const incident of newIncidents) {
+          // Chi danh dau da xu ly khi gui THANH CONG. Danh dau khi that bai se
+          // lam lo su co do bien mat vinh vien khoi moi lan chay sau.
+          if (ok) this.processedIncidents.add(incident.incident_id);
+          results.push({
+            incident_id: incident.incident_id,
+            threat_name: incident.title,
+            severity: incident.severity,
+            alerted: ok,
+            batched: true,
+            message_id: ok ? result.message_id : undefined,
+            timestamp: ok ? result.timestamp : undefined,
+            error: ok ? undefined : (result && result.error) || 'Khong gui duoc'
+          });
+        }
+        if (ok) {
+          console.log(`[SUCCESS] Executive Alert: msg_id=${result.message_id}, `
+            + `${result.incident_ids.length} su co, ${result.skipped_duplicates || 0} trung bi bo`);
+        }
+      } else {
+        for (const incident of newIncidents) {
+          try {
+            console.log(`[ALERT] Processing new incident: ${incident.incident_id}`);
 
-          const result = await this.alertDelivery.sendIncidentAlert(incident);
+            const result = await this.alertDelivery.sendIncidentAlert(incident);
 
-          if (result && result.success) {
-            this.processedIncidents.add(incident.incident_id);
+            if (result && result.success) {
+              this.processedIncidents.add(incident.incident_id);
+              results.push({
+                incident_id: incident.incident_id,
+                threat_name: incident.title,
+                severity: incident.severity,
+                alerted: true,
+                message_id: result.message_id,
+                timestamp: result.timestamp
+              });
+              console.log(`[SUCCESS] Alert sent for ${incident.incident_id}: msg_id=${result.message_id}`);
+            } else if (result) {
+              results.push({
+                incident_id: incident.incident_id,
+                threat_name: incident.title,
+                severity: incident.severity,
+                alerted: false,
+                error: result.error || 'Unknown error'
+              });
+              console.log(`[DEDUP] Alert already sent for ${incident.incident_id}`);
+            }
+          } catch (error) {
+            console.error(`Error alerting incident ${incident.incident_id}:`, error);
             results.push({
-              incident_id: incident.id,
-              threat_name: incident.title,
-              severity: incident.severity,
-              alerted: true,
-              message_id: result.message_id,
-              timestamp: result.timestamp
-            });
-            console.log(`[SUCCESS] Alert sent for ${incident.incident_id}: msg_id=${result.message_id}`);
-          } else if (result) {
-            results.push({
-              incident_id: incident.id,
+              incident_id: incident.incident_id,
               threat_name: incident.title,
               severity: incident.severity,
               alerted: false,
-              error: result.error || 'Unknown error'
+              error: error.message
             });
-            console.log(`[DEDUP] Alert already sent for ${incident.incident_id}`);
           }
-        } catch (error) {
-          console.error(`Error alerting incident ${incident.incident_id}:`, error);
-          results.push({
-            incident_id: incident.id,
-            threat_name: incident.title,
-            severity: incident.severity,
-            alerted: false,
-            error: error.message
-          });
         }
       }
 

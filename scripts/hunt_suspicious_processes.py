@@ -199,11 +199,12 @@ class SuspiciousProcessHunter(object):
 
         local_ips = scope['local_host']['ips']
         for indicator in self.indicators:
-            block = ioc_attribution.attribute(
-                ioc_attribution.SOURCE_LIVE,
-                affected_systems=local_ips,
+            # Sprint 11.1: qua attribute_observed de moi chi bao mang cung mot
+            # cach phan loai he thong (LOCAL_HOST / REMOTE_PEER, in_inventory).
+            # Truoc day moi cuoc san tu rap khoi nay theo cach rieng, nen tuong
+            # quan phai doan xem mot IP trong affected_systems nghia la gi.
+            block = ioc_attribution.attribute_observed(
                 method='host-local observation via MCP',
-                confidence='HIGH' if local_ips else 'LOW',
                 reason='Quan sát trực tiếp trên máy {}'.format(
                     scope['local_host']['hostname']))
             indicator['data_source'] = block['data_source']
