@@ -46,6 +46,7 @@ import detection_quality  # noqa: E402
 import portal_field_audit  # noqa: E402
 import telegram_field_audit  # noqa: E402
 import pipeline_field_audit  # noqa: E402
+import portal_escape_audit  # noqa: E402
 import tool_validator  # noqa: E402
 
 
@@ -103,6 +104,10 @@ def collect(validate=False):
     # mot cach nhat quan. Ca hai bo audit truoc chi soi JavaScript, va do dung la
     # ly do `waap.get('score', 50)` song sot qua nhieu sprint voi gate xanh.
     pipeline_fields = pipeline_field_audit.audit()
+    # AQ-009. Portal DFIR hien ten tien trinh, dong lenh va duong dan tep thu tu
+    # may DANG BI THEO DOI. Neu may do bi xam nhap thi ke tan cong kiem soat noi
+    # dung cac truong do, va dashboard cua nguoi truc ca la noi chung duoc render.
+    escapes = portal_escape_audit.audit()
     pipeline = _read_json(os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json'))
 
     return {
@@ -115,6 +120,7 @@ def collect(validate=False):
         'portal': portal,
         'telegram': telegram,
         'pipeline_fields': pipeline_fields,
+        'escapes': escapes,
     }
 
 
@@ -162,6 +168,13 @@ def evaluate(data):
                         % (len(fabricated),
                            ', '.join('%s:%s' % (f['file'], f['field'])
                                      for f in fabricated[:3])))
+
+    unescaped = [f for f in (data.get('escapes') or [])
+                 if f['level'] == 'UNESCAPED']
+    if unescaped:
+        blockers.append('%d bieu thuc chua escape di vao innerHTML (%s)'
+                        % (len(unescaped),
+                           ', '.join(f['expression'][:24] for f in unescaped[:3])))
 
     pipeline = data['pipeline'] or {}
     stages = pipeline.get('stages') or pipeline.get('results') or []
@@ -271,6 +284,9 @@ def write_debt(data, verdict):
     telegram_missing = [f for f in (data.get('telegram') or [])
                         if f['level'] == 'MISSING']
     add('| Trường Telegram đọc sai | %d |' % len(telegram_missing))
+    add('| Biểu thức innerHTML chưa escape | %d |'
+        % len([f for f in (data.get('escapes') or [])
+               if f['level'] == 'UNESCAPED']))
     add('| Số liệu giả trong pipeline Python | %d |'
         % len([f for f in (data.get('pipeline_fields') or [])
                if f['level'] == 'FABRICATED']))
@@ -370,6 +386,9 @@ def main():
     fabricated = [f for f in pipeline_fields if f['level'] == 'FABRICATED']
     print('Trường Python      : %d số liệu giả / %d truy cập lần được'
           % (len(fabricated), len(pipeline_fields)))
+    escapes = data.get('escapes') or []
+    print('Portal escape      : %d chưa escape / %d biểu thức innerHTML'
+          % (len([f for f in escapes if f['level'] == 'UNESCAPED']), len(escapes)))
     print('Nợ kỹ thuật        : %s' % os.path.relpath(path, PROJECT_ROOT))
     print('')
 

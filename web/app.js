@@ -268,9 +268,9 @@ function renderOverviewPage() {
     const activityHtml = recentIncidents.length > 0
       ? recentIncidents.map(inc => `
           <div style="padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 0.9em;">
-            <span class="badge ${getBadgeClass(inc?.severity)}">${inc?.severity || 'UNKNOWN'}</span>
-            <span style="margin-left: 10px; color: var(--color-accent);">${inc?.incident_id || 'N/A'}</span>
-            <div style="color: var(--color-text-dim); margin-top: 5px;">${inc?.title || 'N/A'}</div>
+            <span class="badge ${getBadgeClass(inc?.severity)}">${escapeHtmlSafe(inc?.severity || 'UNKNOWN')}</span>
+            <span style="margin-left: 10px; color: var(--color-accent);">${escapeHtmlSafe(inc?.incident_id || 'N/A')}</span>
+            <div style="color: var(--color-text-dim); margin-top: 5px;">${escapeHtmlSafe(inc?.title || 'N/A')}</div>
           </div>
         `).join('')
       : '<div style="color: var(--color-text-dim);">No recent incidents</div>';
@@ -424,7 +424,7 @@ function renderCapabilityCoverage(capabilities) {
       <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 9px 12px;">
         <span style="font-size: 0.85em; color: var(--color-text); letter-spacing: 0.04em;">NANG LUC PHAT HIEN</span>
         <span style="font-size: 0.75em; color: var(--color-text-dim); font-family: monospace;">
-          ✅ ${s.covered} covered &middot; ⚠ ${s.partial} partial &middot; ❌ ${s.blind} blind
+          ✅ ${escapeHtmlSafe(s.covered)} covered &middot; ⚠ ${escapeHtmlSafe(s.partial)} partial &middot; ❌ ${escapeHtmlSafe(s.blind)} blind
         </span>
       </div>
       ${rows}
@@ -463,7 +463,7 @@ function renderExecutiveFindings() {
   if (meta) {
     // So rule KHONG ket luan duoc phai hien canh so phat hien. "0 phat hien"
     // tren mot rule khong chay duoc doc y het "0 phat hien" tren mot may sach.
-    meta.textContent = `${findings.length} phat hien · ${data.quality_warnings || 0} canh bao chat luong · ${gaps} rule khong ket luan duoc`;
+    meta.textContent = `${findings.length} phat hien · ${escapeHtmlSafe(data.quality_warnings || 0)} canh bao chat luong · ${escapeHtmlSafe(gaps)} rule khong ket luan duoc`;
     meta.style.color = (data.quality_warnings || 0) > 0 ? '#FFB020' : 'var(--color-text-dim)';
   }
 
@@ -475,7 +475,7 @@ function renderExecutiveFindings() {
   box.innerHTML = findings.map(f => {
     const sevColor = SEVERITY_COLOR_SAFE(f.severity);
     const score = (f.confidence_score === null || f.confidence_score === undefined)
-      ? 'n/a' : `${f.confidence_score}/100`;
+      ? 'n/a' : `${escapeHtmlSafe(f.confidence_score)}/100`;
     return `
       <div style="border: 1px solid var(--color-border, rgba(255,255,255,0.1)); border-left: 4px solid ${sevColor}; border-radius: 6px; padding: 11px 13px; margin-bottom: 10px; background: rgba(255,255,255,0.02);">
         <div style="display: flex; justify-content: space-between; gap: 10px; align-items: baseline;">
@@ -541,11 +541,11 @@ function renderSensorCoverage() {
     return `
       <div style="border: 1px solid ${color}; border-left: 4px solid ${color}; border-radius: 6px; padding: 10px 12px; background: rgba(255,255,255,0.02);">
         <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px;">
-          <span style="font-size: 0.9em; color: var(--color-text);">${d.label}</span>
-          <span style="font-weight: bold; color: ${color}; white-space: nowrap;">${icon} ${d.status.toUpperCase()}</span>
+          <span style="font-size: 0.9em; color: var(--color-text);">${escapeHtmlSafe(d.label)}</span>
+          <span style="font-weight: bold; color: ${color}; white-space: nowrap;">${icon} ${escapeHtmlSafe(String(d.status).toUpperCase())}</span>
         </div>
         <div style="margin-top: 6px; font-size: 0.78em; color: var(--color-text-dim); font-family: monospace;">
-          ${d.pass} pass &middot; ${d.empty} empty &middot; ${d.blind} blind &middot; ${d.fail} fail
+          ${escapeHtmlSafe(d.pass)} pass &middot; ${escapeHtmlSafe(d.empty)} empty &middot; ${escapeHtmlSafe(d.blind)} blind &middot; ${escapeHtmlSafe(d.fail)} fail
         </div>
         ${d.reason ? `<div style="margin-top: 5px; font-size: 0.75em; color: ${color};">${escapeHtmlSafe(d.reason)}</div>` : ''}
       </div>`;
@@ -704,27 +704,27 @@ function renderMCPCommandCenter() {
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13px; font-family: monospace;">
         <div>
           <div style="color: #a0a0a0;">Status</div>
-          <div style="color: #00C896; font-weight: bold; font-size: 16px;">● ${mcpStatus}</div>
+          <div style="color: #00C896; font-weight: bold; font-size: 16px;">● ${escapeHtmlSafe(mcpStatus)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Tool Count</div>
-          <div style="color: #8B5CF6; font-weight: bold; font-size: 16px;">${mcpToolCount}</div>
+          <div style="color: #8B5CF6; font-weight: bold; font-size: 16px;">${escapeHtmlSafe(mcpToolCount)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Threat Hunting</div>
-          <div style="color: ${mcpThreatHunting === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${mcpThreatHunting}</div>
+          <div style="color: ${mcpThreatHunting === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${escapeHtmlSafe(mcpThreatHunting)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">DFIR</div>
-          <div style="color: ${mcpDfir === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${mcpDfir}</div>
+          <div style="color: ${mcpDfir === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${escapeHtmlSafe(mcpDfir)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Event Hub</div>
-          <div style="color: ${mcpEventHub === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${mcpEventHub}</div>
+          <div style="color: ${mcpEventHub === 'ACTIVE' ? '#00C896' : '#FF3B5C'}; font-weight: bold;">${escapeHtmlSafe(mcpEventHub)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Last Sync</div>
-          <div style="color: #8B5CF6; font-weight: bold;">${mcpLastSync}</div>
+          <div style="color: #8B5CF6; font-weight: bold;">${escapeHtmlSafe(mcpLastSync)}</div>
         </div>
       </div>
     </div>
@@ -746,23 +746,23 @@ function renderWAAPCommandCenter() {
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13px; font-family: monospace;">
         <div style="grid-column: 1/-1;">
           <div style="color: #a0a0a0; margin-bottom: 10px;">Security Score</div>
-          <div style="font-size: 28px; font-weight: bold; color: ${waapScore >= 80 ? '#00C896' : waapScore >= 60 ? '#FFD93D' : '#FF3B5C'};">${waapScore}/100</div>
+          <div style="font-size: 28px; font-weight: bold; color: ${waapScore >= 80 ? '#00C896' : waapScore >= 60 ? '#FFD93D' : '#FF3B5C'};">${escapeHtmlSafe(waapScore)}/100</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">SSL</div>
-          <div style="font-weight: bold; font-size: 14px;">${sslStatus}</div>
+          <div style="font-weight: bold; font-size: 14px;">${escapeHtmlSafe(sslStatus)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">WAF</div>
-          <div style="font-weight: bold; font-size: 14px;">${wafStatus}</div>
+          <div style="font-weight: bold; font-size: 14px;">${escapeHtmlSafe(wafStatus)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">CDN</div>
-          <div style="font-weight: bold; font-size: 14px;">${cdnStatus}</div>
+          <div style="font-weight: bold; font-size: 14px;">${escapeHtmlSafe(cdnStatus)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Protection</div>
-          <div style="font-weight: bold; font-size: 14px;">${stateData.waap?.security_summary?.protection_active ? '✅' : '⚠️'}</div>
+          <div style="font-weight: bold; font-size: 14px;">${stateData.waap?.security_summary?.protection_active === true ? '✅' : '⚠️'}</div>
         </div>
       </div>
     </div>
@@ -791,27 +791,27 @@ function renderVulnerabilityCenter() {
       <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; gap: 10px; font-size: 12px; font-family: monospace;">
         <div>
           <div style="color: #a0a0a0;">Total</div>
-          <div style="color: #F97316; font-weight: bold; font-size: 18px;">${totalVulns}</div>
+          <div style="color: #F97316; font-weight: bold; font-size: 18px;">${escapeHtmlSafe(totalVulns)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Critical</div>
-          <div style="color: #FF3B5C; font-weight: bold; font-size: 18px;">${critVulns}</div>
+          <div style="color: #FF3B5C; font-weight: bold; font-size: 18px;">${escapeHtmlSafe(critVulns)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">High</div>
-          <div style="color: #FFB347; font-weight: bold; font-size: 18px;">${highVulns}</div>
+          <div style="color: #FFB347; font-weight: bold; font-size: 18px;">${escapeHtmlSafe(highVulns)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Medium</div>
-          <div style="color: #FFD93D; font-weight: bold; font-size: 18px;">${medVulns}</div>
+          <div style="color: #FFD93D; font-weight: bold; font-size: 18px;">${escapeHtmlSafe(medVulns)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Low</div>
-          <div style="color: #22ff22; font-weight: bold; font-size: 18px;">${lowVulns}</div>
+          <div style="color: #22ff22; font-weight: bold; font-size: 18px;">${escapeHtmlSafe(lowVulns)}</div>
         </div>
         <div>
           <div style="color: #a0a0a0;">Info</div>
-          <div style="color: #888888; font-weight: bold; font-size: 18px;">${infoVulns}</div>
+          <div style="color: #888888; font-weight: bold; font-size: 18px;">${escapeHtmlSafe(infoVulns)}</div>
         </div>
       </div>
     </div>
@@ -851,7 +851,7 @@ function renderExecutiveActionCenter() {
 
       <div>
         <div style="color: #FF3B5C; font-weight: bold; margin-bottom: 10px;">🔴 IMMEDIATE ACTIONS</div>
-        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Investigate ${criticalCount} Critical Incidents</div>
+        <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Investigate ${escapeHtmlSafe(criticalCount)} Critical Incidents</div>
         <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Analyze WMI Persistence</div>
         <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Review Lateral Movement</div>
         <div style="color: #a0a0a0; font-size: 12px; margin-left: 20px;">Check LSASS Activity</div>
@@ -931,7 +931,7 @@ function drawSecurityTopology(incidents) {
   html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
   html += `<div style="color: #06B6D4; font-weight: bold;">🛡️ WAAP DEFENSE</div>`;
-  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">Score: ${waapScore}/100</div>`;
+  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">Score: ${escapeHtmlSafe(waapScore)}/100</div>`;
   html += `<div style="text-align: center; color: #8B5CF6; margin: 10px 0;">↓</div>`;
 
   html += `<div style="color: #F97316; font-weight: bold;">🚪 GATEWAY</div>`;
@@ -952,7 +952,7 @@ function drawSecurityTopology(incidents) {
   html += `<div style="color: #8B5CF6; font-weight: bold;">🤖 MCP INTELLIGENCE</div>`;
   const mcpToolCount = stateData.mcp?.tool_count ?? '?';
   const mcpStatus = stateData.mcp?.status || 'UNVERIFIED';
-  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">${mcpToolCount} Tools | ${mcpStatus}</div>`;
+  html += `<div style="color: #a0a0a0; margin-left: 20px; font-size: 12px;">${escapeHtmlSafe(mcpToolCount)} Tools | ${escapeHtmlSafe(mcpStatus)}</div>`;
 
   html += `</div>`;
   container.innerHTML = html;
@@ -984,19 +984,19 @@ function showDevicePanel(element, hostname, ip, vulns) {
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
       <div>
         <div style="color: var(--color-text-dim); font-size: 0.9em; margin-bottom: 5px;">HOSTNAME</div>
-        <div style="font-size: 1.2em; font-weight: bold; color: var(--color-accent);">${hostname}</div>
+        <div style="font-size: 1.2em; font-weight: bold; color: var(--color-accent);">${escapeHtmlSafe(hostname)}</div>
       </div>
       <div>
         <div style="color: var(--color-text-dim); font-size: 0.9em; margin-bottom: 5px;">IP ADDRESS</div>
-        <div style="font-size: 1.2em; font-weight: bold; color: var(--color-text);">${ip}</div>
+        <div style="font-size: 1.2em; font-weight: bold; color: var(--color-text);">${escapeHtmlSafe(ip)}</div>
       </div>
       <div>
         <div style="color: var(--color-text-dim); font-size: 0.9em; margin-bottom: 5px;">VULNERABILITIES</div>
-        <div style="font-size: 1.2em; font-weight: bold; color: var(--color-accent);">${vulns}</div>
+        <div style="font-size: 1.2em; font-weight: bold; color: var(--color-accent);">${escapeHtmlSafe(vulns)}</div>
       </div>
       <div>
         <div style="color: var(--color-text-dim); font-size: 0.9em; margin-bottom: 5px;">RISK LEVEL</div>
-        <div style="font-size: 1.2em; font-weight: bold; color: ${riskColor};">${riskLevel}</div>
+        <div style="font-size: 1.2em; font-weight: bold; color: ${riskColor};">${escapeHtmlSafe(riskLevel)}</div>
       </div>
     </div>
 
@@ -1066,11 +1066,11 @@ function renderIncidentCard(incident) {
   const severityClass = incident.severity.toLowerCase();
   return `
     <div class="incident-card ${severityClass}">
-      <div class="incident-id">${incident.incident_id}</div>
-      <div class="incident-title">${incident.title}</div>
+      <div class="incident-id">${escapeHtmlSafe(incident.incident_id)}</div>
+      <div class="incident-title">${escapeHtmlSafe(incident.title)}</div>
       <div class="incident-meta">
         <span>Evidence: ${incident.evidence?.length || 0}</span>
-        <span class="badge ${getBadgeClass(incident.severity)}">${incident.severity}</span>
+        <span class="badge ${getBadgeClass(incident.severity)}">${escapeHtmlSafe(incident.severity)}</span>
       </div>
     </div>
   `;
@@ -1113,11 +1113,11 @@ function renderAnalytics() {
     const sslStatus = stateData.waap?.ssl_status ? stateData.waap.ssl_status.toUpperCase() : 'UNKNOWN';
     const waapHtml = `
       <div style="font-size: 0.9em;">
-        <div style="margin: 10px 0;">Health Score: <span style="color: var(--color-accent); font-weight: bold;">${waapScore || '-'}/100</span></div>
-        <div style="margin: 10px 0;">SSL Status: <span>${sslStatus}</span></div>
-        <div style="margin: 10px 0;">Days to Renewal: <span style="color: var(--color-accent);">${stateData.waap?.days_until_expiry || '-'}</span></div>
-        <div style="margin: 10px 0;">WAF Active: <span>${stateData.waap?.security_summary?.waf_active ? 'YES' : 'NO'}</span></div>
-        <div style="margin: 10px 0;">CDN Active: <span>${stateData.waap?.security_summary?.cdn_active ? 'YES' : 'NO'}</span></div>
+        <div style="margin: 10px 0;">Health Score: <span style="color: var(--color-accent); font-weight: bold;">${escapeHtmlSafe(waapScore || '-')}/100</span></div>
+        <div style="margin: 10px 0;">SSL Status: <span>${escapeHtmlSafe(sslStatus)}</span></div>
+        <div style="margin: 10px 0;">Days to Renewal: <span style="color: var(--color-accent);">${escapeHtmlSafe(stateData.waap?.days_until_expiry || '-')}</span></div>
+        <div style="margin: 10px 0;">WAF Active: <span>${stateData.waap?.security_summary?.waf_active === true ? 'YES' : 'NO'}</span></div>
+        <div style="margin: 10px 0;">CDN Active: <span>${stateData.waap?.security_summary?.cdn_active === true ? 'YES' : 'NO'}</span></div>
       </div>
     `;
     const waapEl = document.getElementById('waap-assessment');
@@ -1139,7 +1139,7 @@ function renderAnalytics() {
     const domainHtml = `
       <div style="font-size: 0.9em;">
         <div style="margin: 10px 0;">DNS Health: <span style="color: var(--color-accent); font-weight: bold;">${dnsPercent !== '-' ? dnsPercent + '%' : '-'}</span></div>
-        <div style="margin: 10px 0;">Domain: <span>${stateData.domain?.domain || 'UNKNOWN'}</span></div>
+        <div style="margin: 10px 0;">Domain: <span>${escapeHtmlSafe(stateData.domain?.domain || 'UNKNOWN')}</span></div>
         <div style="margin: 10px 0;">SSL Expiry: <span style="color: var(--color-accent);">${
           // Doc `stateData.domain.days_until_expiry` — truong chua bao gio ton
           // tai trong domain_status.json. Dong nay luon in "- days", va dau gach
@@ -1454,6 +1454,36 @@ function riskView(risk) {
 
 const UNKNOWN_COLOR = '#9B8AFB';
 
+const SEVERITY_RANK = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1, INFO: 0 };
+
+// AQ-009. `escapeHtmlSafe` co tu Sprint 17 nhung phai nho goi dung cho — va
+// "nho goi dung cho" la thu that bai deu dan: 25/26 sink con lai khong goi.
+//
+// `h` la template co the: MOI bieu thuc `${...}` di qua no deu duoc escape, tu
+// dong, khong phai nho. Cai gi that su la HTML thi phai NOI RA bang raw() —
+// mot ngoai le phai viet ra thi la mot ngoai le doc duoc khi review.
+//
+// Du lieu o day den tu tien trinh, dong lenh, tac vu theo lich va duong dan tep
+// tren may DANG BI THEO DOI. Neu may do da bi xam nhap thi ke tan cong kiem
+// soat noi dung cac truong nay, va dashboard cua nguoi truc ca la noi chung
+// duoc render.
+const RAW_MARK = '__rawHtml';
+
+function raw(html) {
+  return { [RAW_MARK]: true, html: String(html == null ? '' : html) };
+}
+
+function h(strings, ...values) {
+  let out = strings[0];
+  for (let i = 0; i < values.length; i += 1) {
+    const value = values[i];
+    if (value && typeof value === 'object' && value[RAW_MARK]) out += value.html;
+    else out += escapeHtmlSafe(value);
+    out += strings[i + 1];
+  }
+  return out;
+}
+
 // `null + '/100'` ra chuoi "null/100". Mot man hinh bao "null" con trung thuc
 // hon bao "0", nhung van la mot loi hien thi — nen moi cho in diem rui ro di
 // qua dung mot ham nay.
@@ -1579,8 +1609,8 @@ function renderAssetCommandCenter() {
         const live = arpSeen.has(asset?.ip);
         return `
         <tr style="border-bottom: 1px solid var(--color-border);">
-          <td style="padding: 10px;">${asset?.ip || 'N/A'}</td>
-          <td style="padding: 10px;">${kind}</td>
+          <td style="padding: 10px;">${escapeHtmlSafe(asset?.ip || 'N/A')}</td>
+          <td style="padding: 10px;">${escapeHtmlSafe(kind)}</td>
           <td style="padding: 10px; color: var(--color-accent);">${trustCell}</td>
           <td style="padding: 10px;">${live ? '🟢 Tra loi ARP' : '<span style="color: var(--color-text-dim);">⚪ Chua xac minh</span>'}</td>
         </tr>`;
@@ -1600,18 +1630,33 @@ function renderAssetCommandCenter() {
 
 function renderThreatIntelligence() {
   try {
-    const persistence = stateData.threatPersistence?.indicators || [];
-    const lateral = stateData.threatLateral?.indicators || [];
-    const credential = stateData.threatCredential?.indicators || [];
-    const processes = stateData.threatProcesses?.indicators || [];
+    // AQ-010. Bon mang nay duoc gop lai va dem thang, khong loc `suppressed`.
+    // 227 trong so 602 chi bao la lan dang nhap nen cua Windows ma CHINH he
+    // thong da danh dau la tieng on o Sprint 17 — roi o day chung duoc dem lai
+    // nhu phat hien. Con so 602 khong sai ve so hoc; no sai ve nghia.
+    const kept = list => (list || []).filter(i => !i?.suppressed);
+    const noiseOf = list => (list || []).length - kept(list).length;
+
+    const persistence = kept(stateData.threatPersistence?.indicators);
+    const lateral = kept(stateData.threatLateral?.indicators);
+    const credential = kept(stateData.threatCredential?.indicators);
+    const processes = kept(stateData.threatProcesses?.indicators);
+
+    const noise = noiseOf(stateData.threatPersistence?.indicators)
+      + noiseOf(stateData.threatLateral?.indicators)
+      + noiseOf(stateData.threatCredential?.indicators)
+      + noiseOf(stateData.threatProcesses?.indicators);
 
     const allIndicators = [...persistence, ...lateral, ...credential, ...processes];
     const critical = allIndicators.filter(i => i?.severity === 'CRITICAL').length;
     const high = allIndicators.filter(i => i?.severity === 'HIGH').length;
 
-    // Update KPIs
+    // Update KPIs. So tieng on hien canh so that: giau han no di cung la mot
+    // kieu noi doi khac — 227 muc do co that, chung chi khong phai phat hien.
     const els = {
-      'threats-total': allIndicators.length,
+      'threats-total': noise > 0
+        ? `${allIndicators.length} (+${escapeHtmlSafe(noise)} noise)`
+        : String(allIndicators.length),
       'threats-critical': critical,
       'threats-high': high,
       'threats-categories': new Set([...persistence.map(i => 'Persistence'), ...lateral.map(i => 'Lateral'), ...credential.map(i => 'Credential'), ...processes.map(i => 'Process')]).size
@@ -1623,17 +1668,34 @@ function renderThreatIntelligence() {
     });
 
     // Render threat categories
+    // AQ-010. `.slice(0, 10)` tren mang CHUA SAP XEP. Hai chi bao HIGH that nam
+    // o vi tri bat ky trong 455 phan tu, nen bang nay gan nhu chac chan hien
+    // muoi muc INFO va giau ca hai muc HIGH — dung nguoc voi viec no sinh ra de
+    // lam.
+    //
+    // AQ-009. `ind.process` va `ind.command_line` den tu tien trinh va tac vu
+    // tren may DUOC GIAM SAT. Do la dau vao KHONG dang tin theo dung dinh nghia:
+    // mot tien trinh dat ten `<img src=x onerror=...>` se thuc thi trong dashboard
+    // cua nguoi truc ca. `escapeHtmlSafe` co tu Sprint 17 nhung chi duoc ap cho
+    // mot panel moi — mot ham escape ton tai ma khong duoc dung la bang chung
+    // rang doi da biet rui ro, khong phai rang rui ro da het.
     const renderThreatList = (indicators, containerId) => {
       const el = document.getElementById(containerId);
-      if (el) {
-        const html = indicators.slice(0, 10).map(ind => `
+      if (!el) return;
+      const ranked = [...indicators].sort(
+        (a, b) => (SEVERITY_RANK[b?.severity] || 0) - (SEVERITY_RANK[a?.severity] || 0)
+      );
+      const html = ranked.slice(0, 10).map(ind => {
+        const severity = ind?.severity || 'MEDIUM';
+        const label = ind?.type || ind?.process || ind?.pattern || 'Unknown';
+        return `
           <div style="padding: 8px; border-bottom: 1px solid var(--color-border); font-size: 0.85em;">
-            <span class="badge badge-${ind?.severity?.toLowerCase() || 'medium'}">${ind?.severity || 'MEDIUM'}</span>
-            <div style="color: var(--color-text-dim); margin-top: 4px;">${ind?.type || ind?.process || ind?.pattern || 'Unknown'}</div>
+            <span class="badge badge-${escapeHtmlSafe(String(severity).toLowerCase())}">${escapeHtmlSafe(severity)}</span>
+            <div style="color: var(--color-text-dim); margin-top: 4px;">${escapeHtmlSafe(label)}</div>
           </div>
-        `).join('');
-        el.innerHTML = html || '<div style="padding: 10px; color: var(--color-text-dim);">No indicators detected</div>';
-      }
+        `;
+      }).join('');
+      el.innerHTML = html || '<div style="padding: 10px; color: var(--color-text-dim);">No indicators detected</div>';
     };
 
     renderThreatList(persistence, 'threats-persistence');
@@ -1655,7 +1717,7 @@ async function loadBriefArchive() {
 
   try {
     const res = await fetch('/api/daily-brief/list');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error(`HTTP ${escapeHtmlSafe(res.status)}`);
 
     const data = await res.json();
     const briefs = data.briefs || [];
@@ -1671,8 +1733,8 @@ async function loadBriefArchive() {
 }
 
 async function fetchBrief(date) {
-  const res = await fetch(`/api/daily-brief/${date}`);
-  if (!res.ok) throw new Error(`Brief ${date} unavailable (HTTP ${res.status})`);
+  const res = await fetch(`/api/daily-brief/${escapeHtmlSafe(date)}`);
+  if (!res.ok) throw new Error(`Brief ${escapeHtmlSafe(date)} unavailable (HTTP ${escapeHtmlSafe(res.status)})`);
   return res.json();
 }
 
@@ -1703,7 +1765,7 @@ function renderDailyBriefArchive() {
       const highCount = incidents.filter(i => i?.severity === 'HIGH').length;
       const recommendations = [];
 
-      if (criticalCount > 0) recommendations.push(`Investigate ${criticalCount} critical incidents`);
+      if (criticalCount > 0) recommendations.push(`Investigate ${escapeHtmlSafe(criticalCount)} critical incidents`);
       if (highCount > 0) recommendations.push(`Review ${highCount} high-priority issues`);
       // Risk-ascending: a HIGH score is the alarming case, not a low one.
       const rv = riskView(risk);
@@ -1729,7 +1791,7 @@ function renderDailyBriefArchive() {
           <div class="timeline-marker"></div>
           <div class="timeline-content">
             <div class="timeline-time">${new Date(inc?.created_at).toLocaleTimeString()}</div>
-            <div class="timeline-event">${inc?.title || 'Incident'} <span class="badge badge-${inc?.severity?.toLowerCase()}">${inc?.severity}</span></div>
+            <div class="timeline-event">${inc?.title || 'Incident'} <span class="badge badge-${escapeHtmlSafe(String(inc?.severity || '').toLowerCase())}">${escapeHtmlSafe(inc?.severity)}</span></div>
           </div>
         </div>
       `).join('');

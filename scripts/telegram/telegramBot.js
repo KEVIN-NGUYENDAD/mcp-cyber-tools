@@ -20,6 +20,57 @@ dotenv.config();
 // thoai luc nua dem, mot minh, khong co gi de doi chieu.
 //
 // Thieu du lieu tu day tra ve UNKNOWN.
+// AQ-006. Bon dong "Top Risks" trong /analytics la bon hang so viet cung, dat
+// ngay duoi risk score that va WAAP score that, dinh dang giong het chung —
+// nen khong co gi phan biet duoc so do voi so kia. Mot trong bon muc la
+// "Privilege Escalation (14%)", va repo nay KHONG CO cuoc san nao ten nhu vay.
+//
+// `telegram_field_audit` ve cau truc khong the bat lop loi nay: no kiem cac
+// TRUONG duoc doc. Mot dong bia dat khong doc truong nao ca, nen mot tin nhan
+// hoan toan bia dat dat diem audit tuyet doi.
+//
+// Ham nay tinh phan bo that tu chinh cac tep hunting, va bo qua muc da bi ha
+// xuong tieng on — neu khong, 227 lan dang nhap nen cua Windows se thanh
+// "rui ro hang dau".
+function topRisks(fs, paths, path) {
+  const sources = [
+    ['Credential Access', 'hunting_credential_dumping.json'],
+    ['Lateral Movement', 'hunting_lateral_movement.json'],
+    ['Persistence', 'hunting_persistence.json'],
+    ['Suspicious Processes', 'hunting_suspicious_processes.json']
+  ];
+  const counts = [];
+  let total = 0;
+  let missing = 0;
+
+  for (const [label, filename] of sources) {
+    const file = path.join(paths.stateDir, filename);
+    if (!fs.existsSync(file)) { missing += 1; continue; }
+    let data;
+    try { data = JSON.parse(fs.readFileSync(file, 'utf8')); }
+    catch (error) { missing += 1; continue; }
+    const kept = (data.indicators || []).filter(i => !i.suppressed);
+    counts.push({ label, count: kept.length });
+    total += kept.length;
+  }
+
+  if (!counts.length) {
+    return { lines: ['• Khong doc duoc tep hunting nao'], total: 0, missing };
+  }
+  if (total === 0) {
+    // 0 tren mot nguon doc duoc la mot cau tra loi that: da nhin, khong co gi.
+    return { lines: ['• 0 chi bao sau khi loc tieng on (da nhin, khong co gi)'],
+             total: 0, missing };
+  }
+
+  counts.sort((a, b) => b.count - a.count);
+  const lines = counts
+    .filter(c => c.count > 0)
+    .map(c => `• ${c.label}: ${c.count} (${Math.round(c.count * 100 / total)}%)`);
+  if (missing > 0) lines.push(`• (${missing} nguon khong doc duoc)`);
+  return { lines, total, missing };
+}
+
 function riskView(risk) {
   const raw = risk && risk.overall_score;
   const known = typeof raw === 'number' && Number.isFinite(raw);
@@ -617,6 +668,8 @@ ${findingLines}
         high: analyticsHigh
       }, null, 2));
 
+      const risks = topRisks(fs, paths, path);
+
       const analytics = `*📊 SECURITY ANALYTICS*
 
 *Vulnerability Assessment*
@@ -638,11 +691,8 @@ DNS Health: ${dnsHealthPercent}%
 
 ${'─'.repeat(32)}
 
-Top Risks:
-• Persistence Mechanisms (23%)
-• Lateral Movement (18%)
-• Credential Access (15%)
-• Privilege Escalation (14%)`;
+Top Risks (${risks.total} chi bao, da loc tieng on):
+${risks.lines.join('\n')}`;
 
       console.error('[ANALYTICS-MESSAGE]', analytics);
       await this.bot.sendMessage(msg.chat.id, analytics, { parse_mode: 'Markdown' });
@@ -817,28 +867,66 @@ _Last updated: ${new Date().toISOString().substring(0, 19)}_`;
         .map((notif, idx) => `${idx + 1}. ${notif.title || notif.event_type} (${notif.timestamp?.substring(0, 10) || 'Unknown'})`)
         .join('\n');
 
-      // Calculate chain of custody status
-      const reportCount = allNotifications.length;
-      const custodyValid = reportCount > 0;
+      // AQ-006. Ban cu tinh chain of custody bang DUNG mot phep so:
+      //
+      //     const custodyValid = reportCount > 0;
+      //
+      // roi tu do in ra "Hash Verification: PASSED", "Tamper-proof container"
+      // va "Digital signature verified". Khong mot ham bam nao duoc tinh o bat
+      // cu dau trong repo; khong mot chu ky nao duoc xac minh. `reportCount`
+      // con dem nham ca nguon: no dem CANH BAO, khong dem hien vat bang chung.
+      //
+      // Chain of custody la thu quyet dinh mot bang chung co dung duoc hay
+      // khong. Noi doi o day khong chi sai — no sai dung cho nguoi doc tin
+      // tuong nhat va it co kha nang tu kiem nhat.
+      //
+      // Gio moi con so den tu `state/evidence_manifest.json`: SHA-256 that,
+      // tinh tren hien vat that, so voi moc ghi lan dau. Va thu KHONG co —
+      // chu ky so — duoc noi thang ra thay vi de mot dau tick noi ho.
+      let manifest = null;
+      if (fs.existsSync(paths.evidenceManifest)) {
+        manifest = JSON.parse(fs.readFileSync(paths.evidenceManifest, 'utf8'));
+      }
 
-      // Build response
-      const evidenceMessage = `📋 *EVIDENCE CHAIN OF CUSTODY*
+      let custodyBlock;
+      if (!manifest) {
+        custodyBlock = `*Status*: ⚪ CHUA DO
 
-*Status*: ${custodyValid ? 'VERIFIED ✅' : '⚠️ PENDING'}
+Chua chay \`npm run evidence:manifest\` — khong co moc bam nao de so.
+Khong ket luan duoc gi ve tinh toan ven cua hien vat.`;
+      } else if (!manifest.readable) {
+        custodyBlock = `*Status*: ⚪ KHONG CO HIEN VAT
+
+${manifest.reason || 'Khong doc duoc thu muc hien vat.'}`;
+      } else {
+        const changed = (manifest.changed || []).length;
+        const missing = (manifest.missing || []).length;
+        const clean = changed === 0 && missing === 0;
+        const statusLine = changed > 0
+          ? `🔴 ${changed} hien vat DOI NOI DUNG ke tu lan ghi nhan dau`
+          : (missing > 0 ? `🟠 ${missing} hien vat BIEN MAT` : '✅ Khop het');
+
+        custodyBlock = `*Status*: ${clean ? '✅ TOAN VEN' : '⚠️ CO SAI LECH'}
 
 *Evidence Collection*
-📁 Reports Collected: ${reportCount} artifacts
-🔐 Hash Verification: ${custodyValid ? 'PASSED' : 'PENDING'}
-⏰ Last Updated: ${new Date().toISOString().substring(0, 19)}
+📁 Hien vat: ${manifest.total} tep (${Math.round((manifest.total_bytes || 0) / 1024)} KB)
+🔐 SHA-256 khop: ${manifest.verified} · moi ghi nhan: ${manifest.new}
+${statusLine}
+⏰ Do luc: ${(manifest.generated_at || '').substring(0, 19)}
 
-*Latest Reports*:
-${evidenceList || '• No evidence collected'}
+*Pham vi loi khang dinh*
+${manifest.integrity_scope || ''}
 
-*Chain of Custody*
-${custodyValid ? '✅ Tamper-proof container' : '⚠️ Containers pending'}
-${custodyValid ? '✅ Digital signature verified' : '⚠️ Signatures pending'}
-${custodyValid ? '✅ Collection log complete' : '⚠️ Logs incomplete'}
-${custodyValid ? '✅ Ready for analysis' : '⚠️ Incomplete'}`;
+*Chu ky so*
+⚪ ${manifest.signature_status} — khong co khoa ky, khong co gi de xac minh`;
+      }
+
+      const evidenceMessage = `📋 *EVIDENCE CHAIN OF CUSTODY*
+
+${custodyBlock}
+
+*Canh bao da gui gan day*:
+${evidenceList || '• Chua gui canh bao nao'}`;
 
       console.log('[RESP] evidence response sent');
       await this.bot.sendMessage(msg.chat.id, evidenceMessage, { parse_mode: 'Markdown' });
