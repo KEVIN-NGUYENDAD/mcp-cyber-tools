@@ -40,6 +40,7 @@ MODULES = [
 # hai lenh la mot cong chan se co lan chi chay mot nua.
 EXTRA_SUITES = [
     ('telegram_truth', 'test_telegram_fields'),
+    ('sensor_coverage', 'test_coverage_refresh'),
 ]
 
 
