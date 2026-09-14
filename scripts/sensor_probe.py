@@ -125,6 +125,33 @@ PROBES = [
      "@(Get-ChildItem -Path $env:USERPROFILE -Force -ErrorAction Stop).Count"),
     ('audit_policy',
      "(auditpol /get /subcategory:'Process Creation' 2>&1 | Out-String).Trim()"),
+    # Ba probe chính sách dưới đây trả lời câu hỏi mà việc "đọc được log" KHÔNG
+    # trả lời: nguồn có đang GHI thứ ta cần hay không.
+    #
+    # Một log mở toang và một log mở toang nhưng tính năng sinh ra bản ghi đang
+    # tắt đọc y hệt nhau: cả hai đều trả về 0 bản ghi khớp. Đây đúng là bẫy
+    # EMPTY-vs-BLIND, chỉ dịch lên một tầng — từ "mở được log không" sang "log
+    # này có bao giờ chứa thứ ta đang tìm không".
+    #
+    # Đọc HKLM chỉ cần quyền đọc thường, không cần nâng quyền.
+    ('script_block_policy',
+     "$p = 'HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging'; "
+     "$v = (Get-ItemProperty -Path $p -Name EnableScriptBlockLogging "
+     "-ErrorAction SilentlyContinue).EnableScriptBlockLogging; "
+     "if ($null -eq $v) { 'absent' } else { [string][int]$v }"),
+    ('module_logging_policy',
+     "$p = 'HKLM:\\SOFTWARE\\Policies\\Microsoft\\Windows\\PowerShell\\ModuleLogging'; "
+     "$v = (Get-ItemProperty -Path $p -Name EnableModuleLogging "
+     "-ErrorAction SilentlyContinue).EnableModuleLogging; "
+     "if ($null -eq $v) { 'absent' } else { [string][int]$v }"),
+    # 4688 có thể bật mà KHÔNG kèm dòng lệnh. Khi đó ta biết "có tiến trình được
+    # tạo" nhưng không biết nó chạy gì — nửa bằng chứng, và nửa thiếu chính là
+    # nửa mà mọi cuộc săn cần. Đây là định nghĩa của PARTIAL.
+    ('process_cmdline_policy',
+     "$p = 'HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\\Audit'; "
+     "$v = (Get-ItemProperty -Path $p -Name ProcessCreationIncludeCmdLine_Enabled "
+     "-ErrorAction SilentlyContinue).ProcessCreationIncludeCmdLine_Enabled; "
+     "if ($null -eq $v) { 'absent' } else { [string][int]$v }"),
     # Các log thay thế ĐỌC ĐƯỢC mà không cần nâng quyền. Chúng không thay được
     # log Security, nhưng chúng là thứ duy nhất đang thực sự nhìn thấy gì đó khi
     # log Security đóng — và trước Sprint 9 không nguồn nào trong pipeline dùng.
@@ -499,6 +526,200 @@ def fallback_summary(probes):
     return out
 
 
+# --------------------------------------------------------------------------
+# Năng lực phát hiện (khác với "đọc được nguồn")
+# --------------------------------------------------------------------------
+#
+# `sensor_coverage` trả lời: "tôi có mở được nguồn này không?".
+# Khối dưới đây trả lời một câu khác hẳn: "nguồn này có đang GHI thứ tôi cần
+# không?". Hai câu đó tách nhau, và một hệ thống chỉ hỏi câu đầu sẽ tự chấm cho
+# mình điểm cao hơn thực tế.
+#
+# Ví dụ cụ thể trên chính máy này: log `Microsoft-Windows-PowerShell/Operational`
+# ĐỌC ĐƯỢC — nên nguồn `event_logs` hiện ✅ COVERED. Nhưng nếu chính sách Script
+# Block Logging đang tắt thì log đó chỉ ghi những khối lệnh mà PowerShell tự cho
+# là đáng ngờ, không ghi phần còn lại. Đọc được toàn bộ một cuốn sổ ghi chép có
+# chọn lọc không phải là nhìn thấy mọi thứ.
+
+CAP_COVERED = 'covered'
+CAP_PARTIAL = 'partial'
+CAP_BLIND = 'blind'
+
+
+def _policy_on(probes, key):
+    """Giá trị chính sách trong registry: True / False / None (không đọc được).
+
+    'absent' nghĩa là khoá không tồn tại — với cả ba chính sách ở đây, không có
+    khoá nghĩa là mặc định TẮT, chứ không phải "không biết".
+    """
+    entry = probes.get(key) or {}
+    if not entry.get('readable'):
+        return None
+    value = (entry.get('value') or '').strip().lower()
+    if value == 'absent':
+        return False
+    return value not in ('', '0')
+
+
+def _records(probes, key):
+    raw = (probes.get(key) or {}).get('log_records')
+    try:
+        return int(str(raw).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def _capability_security_log(probes):
+    entry = probes.get('security_log') or {}
+    records = _records(probes, 'security_log')
+    if not entry.get('readable'):
+        diagnosis = access_diagnosis(probes)
+        return {
+            'status': CAP_BLIND,
+            'reason': 'Không mở được log Security (%s). %s'
+                      % (entry.get('reason') or 'unknown', diagnosis['reason']),
+            'action': diagnosis['action'],
+            'fixable_here': diagnosis['can_fix'],
+        }
+    if records == 0:
+        return {
+            'status': CAP_PARTIAL,
+            'reason': 'Log mở được nhưng đang rỗng — chưa có gì để đối chiếu.',
+            'action': 'Đợi hoạt động mới, hoặc kiểm tra chính sách lưu giữ của log.',
+        }
+    return {
+        'status': CAP_COVERED,
+        'reason': 'Log Security mở được, %s bản ghi.'
+                  % (records if records is not None else 'có'),
+    }
+
+
+def _capability_process_creation(probes):
+    """Event ID 4688 — và dòng lệnh đi kèm, thứ quyết định nó có dùng được không."""
+    base = probes.get('security_log') or {}
+    seen_4688 = (probes.get('security_4688') or {}).get('readable')
+    cmdline = _policy_on(probes, 'process_cmdline_policy')
+
+    if not base.get('readable'):
+        diagnosis = access_diagnosis(probes)
+        return {
+            'status': CAP_BLIND,
+            'reason': ('Log Security không mở được, nên chưa thể biết audit '
+                       '"Process Creation" bật hay tắt. Truy vấn lọc Id=4688 trả '
+                       'về "No events were found" — đó là từ chối quyền đội lốt '
+                       'bằng chứng vắng mặt.'),
+            'action': diagnosis['action'],
+            'fixable_here': diagnosis['can_fix'],
+        }
+    if not seen_4688:
+        return {
+            'status': CAP_BLIND,
+            'reason': ('Log Security mở được nhưng không có sự kiện 4688 nào: '
+                       'chính sách audit "Process Creation" đang tắt. Không có '
+                       'bản ghi vì chưa ai ghi, không phải vì không có gì xảy ra.'),
+            'action': 'auditpol /set /subcategory:"Process Creation" /success:enable '
+                      '(cần Administrator — có trong enable_security_log_access.ps1 '
+                      'với cờ -EnableProcessAuditing)',
+        }
+    if cmdline is not True:
+        return {
+            'status': CAP_PARTIAL,
+            'reason': ('Có sự kiện 4688 nhưng KHÔNG kèm dòng lệnh '
+                       '(ProcessCreationIncludeCmdLine_Enabled = %s). Biết tiến '
+                       'trình nào được tạo, không biết nó chạy gì — nửa thiếu ấy '
+                       'chính là nửa mà mọi cuộc săn cần.'
+                       % ((probes.get('process_cmdline_policy') or {}).get('value')
+                          or 'không đọc được')),
+            'action': 'Bật "Include command line in process creation events" '
+                      '(Computer Configuration > Administrative Templates > System '
+                      '> Audit Process Creation).',
+        }
+    return {
+        'status': CAP_COVERED,
+        'reason': 'Có sự kiện 4688 và dòng lệnh được ghi kèm.',
+    }
+
+
+def _capability_script_block(probes):
+    """Event ID 4104 — nội dung khối lệnh PowerShell đã chạy.
+
+    Điểm tinh tế đáng giá nhất ở đây: PowerShell vẫn ghi 4104 cho những khối lệnh
+    mà NÓ tự cho là đáng ngờ, kể cả khi chính sách tắt. Nên "có 4104" KHÔNG đồng
+    nghĩa "đang ghi đầy đủ". Thấy vài bản ghi rồi kết luận đã phủ sóng là cách tự
+    cấp cho mình một tấm chứng chỉ chưa đạt.
+    """
+    entry = probes.get('event_log_ps_operational') or {}
+    enabled = entry.get('log_enabled')
+    records = _records(probes, 'event_log_ps_operational')
+    policy = _policy_on(probes, 'script_block_policy')
+    module = _policy_on(probes, 'module_logging_policy')
+
+    if enabled is False:
+        return {
+            'status': CAP_BLIND,
+            'reason': 'Log Microsoft-Windows-PowerShell/Operational đang TẮT.',
+            'action': 'wevtutil sl Microsoft-Windows-PowerShell/Operational /e:true '
+                      '(cần Administrator)',
+        }
+    if entry.get('reason') == REASON_ACCESS_DENIED:
+        return {
+            'status': CAP_BLIND,
+            'reason': 'Không mở được log PowerShell/Operational: %s'
+                      % (entry.get('error') or '')[:120],
+            'action': 'Thêm tài khoản vào nhóm "Event Log Readers".',
+        }
+    if policy is True:
+        return {
+            'status': CAP_COVERED,
+            'reason': ('Chính sách Script Block Logging đang BẬT — mọi khối lệnh '
+                       'PowerShell đều được ghi (%s bản ghi trong log).'
+                       % (records if records is not None else '?')),
+            'module_logging': module,
+        }
+    if entry.get('readable'):
+        return {
+            'status': CAP_PARTIAL,
+            'reason': ('Có sự kiện 4104 nhưng chính sách Script Block Logging '
+                       'đang TẮT. PowerShell chỉ tự ghi những khối lệnh nó cho là '
+                       'đáng ngờ — phần còn lại không được ghi. Thấy bản ghi ở đây '
+                       'KHÔNG có nghĩa là đang ghi đầy đủ.'),
+            'action': 'Bật EnableScriptBlockLogging tại HKLM:\\SOFTWARE\\Policies'
+                      '\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging '
+                      '(cần Administrator).',
+            'module_logging': module,
+        }
+    return {
+        'status': CAP_BLIND,
+        'reason': ('Không có sự kiện 4104 nào và chính sách Script Block Logging '
+                   'đang TẮT — nội dung lệnh PowerShell không được ghi ở đâu cả.'),
+        'action': 'Bật EnableScriptBlockLogging tại HKLM:\\SOFTWARE\\Policies'
+                  '\\Microsoft\\Windows\\PowerShell\\ScriptBlockLogging '
+                  '(cần Administrator).',
+        'module_logging': module,
+    }
+
+
+DETECTION_CAPABILITIES = [
+    ('security_log', 'Security Log', 'Log Security thô — nền của mọi thứ dưới đây',
+     _capability_security_log),
+    ('process_creation', 'Process Creation', 'Event ID 4688 + dòng lệnh',
+     _capability_process_creation),
+    ('script_block_logging', 'Script Block Logging',
+     'Event ID 4104 — nội dung lệnh PowerShell đã chạy',
+     _capability_script_block),
+]
+
+
+def capability_summary(probes):
+    """Ba năng lực phát hiện được hỏi tên: Covered / Partial / Blind."""
+    out = []
+    for key, label, detail, resolve in DETECTION_CAPABILITIES:
+        row = {'key': key, 'label': label, 'detail': detail}
+        row.update(resolve(probes))
+        out.append(row)
+    return out
+
+
 def main():
     probes = probe_all()
     print(json.dumps({
@@ -506,6 +727,7 @@ def main():
         'event_4688': security_log_summary(probes),
         'access_diagnosis': access_diagnosis(probes),
         'fallback_sources': fallback_summary(probes),
+        'detection_capabilities': capability_summary(probes),
     }, indent=2, ensure_ascii=False))
     return 0
 
