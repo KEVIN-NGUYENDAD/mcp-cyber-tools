@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-09-14T07:35:17.860164",
+  "timestamp": "2026-09-14T07:53:41.152707",
   "stages": [
     {
       "name": "Nessus Collector",
       "status": "success",
-      "duration": 0.475217342376709,
+      "duration": 0.45061397552490234,
       "output": {
-        "timestamp": "2026-09-14T07:35:18.108916",
+        "timestamp": "2026-09-14T07:53:41.407494",
         "nessus_url": "https://localhost:8834",
         "nessus_endpoint": "https://localhost:8834",
         "scanner_status": "running",
         "last_scan": "2026-09-07T18:35:32",
         "scan_name": "Home Network Discovery",
-        "scan_age_hours": 157.0,
+        "scan_age_hours": 157.3,
         "critical": 0,
         "high": 0,
         "medium": 3,
@@ -24,15 +24,15 @@
     {
       "name": "Domain Collector",
       "status": "success",
-      "duration": 0.9107110500335693,
+      "duration": 0.9041428565979004,
       "output": {
-        "timestamp": "2026-09-14T07:35:18.728453",
+        "timestamp": "2026-09-14T07:53:41.981007",
         "domain": "sentinelops.fyi",
         "nameservers": [
+          "salvador.ns.porkbun.com.",
           "curitiba.ns.porkbun.com.",
           "fortaleza.ns.porkbun.com.",
-          "maceio.ns.porkbun.com.",
-          "salvador.ns.porkbun.com."
+          "maceio.ns.porkbun.com."
         ],
         "a_records": [
           "216.24.57.15",
@@ -58,9 +58,9 @@
     {
       "name": "WAAP Collector",
       "status": "success",
-      "duration": 0.7044270038604736,
+      "duration": 0.724041223526001,
       "output": {
-        "timestamp": "2026-09-14T07:35:19.537602",
+        "timestamp": "2026-09-14T07:53:42.817607",
         "domain": "sentinelops.fyi",
         "ssl_status": "valid",
         "expiration_date": "2026-12-02T19:50:51+00:00",
@@ -81,7 +81,7 @@
     {
       "name": "System Health",
       "status": "success",
-      "duration": 0.16357707977294922,
+      "duration": 0.16243314743041992,
       "output": {
         "status": "success",
         "cpu": 45,
@@ -92,7 +92,7 @@
     {
       "name": "Defender Status",
       "status": "success",
-      "duration": 0.1531999111175537,
+      "duration": 0.15523862838745117,
       "output": {
         "status": "success",
         "defender_enabled": true,
@@ -102,7 +102,7 @@
     {
       "name": "Firewall Status",
       "status": "success",
-      "duration": 0.1565241813659668,
+      "duration": 0.1549220085144043,
       "output": {
         "status": "success",
         "firewall_enabled": true,
@@ -112,7 +112,7 @@
     {
       "name": "Security Events",
       "status": "success",
-      "duration": 0.17227649688720703,
+      "duration": 0.14909720420837402,
       "output": {
         "status": "success",
         "failed_logons": 3,
@@ -122,10 +122,10 @@
     {
       "name": "Asset Intelligence",
       "status": "success",
-      "duration": 0.3982264995574951,
+      "duration": 0.37827014923095703,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-14T07:35:20.986840",
+        "timestamp": "2026-09-14T07:53:44.226014",
         "total_assets": 11,
         "new_assets": 0,
         "removed_assets": 0,
@@ -135,12 +135,12 @@
     {
       "name": "Asset Trust Scoring",
       "status": "success",
-      "duration": 0.16501998901367188
+      "duration": 0.209212064743042
     },
     {
       "name": "Shadow Asset Detection",
       "status": "success",
-      "duration": 0.21679306030273438,
+      "duration": 0.18728923797607422,
       "output": {
         "status": "success",
         "total_assets": 11,
@@ -153,10 +153,10 @@
     {
       "name": "Service Intelligence",
       "status": "success",
-      "duration": 0.5798051357269287,
+      "duration": 0.422771692276001,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-14T07:35:21.957550",
+        "timestamp": "2026-09-14T07:53:45.044007",
         "total_services": 10,
         "top_services": [
           {
@@ -205,10 +205,10 @@
     {
       "name": "Crypto Inventory",
       "status": "success",
-      "duration": 0.4462404251098633,
+      "duration": 0.40409040451049805,
       "output": {
         "status": "success",
-        "timestamp": "2026-09-14T07:35:22.404761",
+        "timestamp": "2026-09-14T07:53:45.450777",
         "crypto_score": 100,
         "critical_findings": 0,
         "total_findings": 19
@@ -217,9 +217,9 @@
     {
       "name": "WAAP Score",
       "status": "success",
-      "duration": 1.040299415588379,
+      "duration": 1.026050090789795,
       "output": {
-        "timestamp": "2026-09-14T07:35:22.844958",
+        "timestamp": "2026-09-14T07:53:45.894838",
         "domain": "sentinelops.fyi",
         "checks": {
           "ssl_valid": true,
@@ -264,7 +264,7 @@
     {
       "name": "Recommended Actions",
       "status": "success",
-      "duration": 0.22736597061157227,
+      "duration": 0.22774624824523926,
       "output": {
         "status": "success",
         "total_actions": 0
@@ -273,7 +273,7 @@
     {
       "name": "Timeline Events",
       "status": "success",
-      "duration": 0.19017934799194336,
+      "duration": 0.21145415306091309,
       "output": {
         "status": "success",
         "total_events": 0,
@@ -284,7 +284,7 @@
     {
       "name": "Persistence Hunting",
       "status": "success",
-      "duration": 3.949610471725464,
+      "duration": 4.115329265594482,
       "output": {
         "status": "success",
         "hunting_type": "Persistence Indicators",
@@ -299,13 +299,13 @@
     {
       "name": "Suspicious Process Hunting",
       "status": "success",
-      "duration": 3.407512903213501,
+      "duration": 3.311948776245117,
       "output": {
         "status": "success",
         "hunting_type": "Suspicious Processes",
         "data_source": "LIVE_OBSERVED",
         "observable": true,
-        "total_indicators": 51,
+        "total_indicators": 45,
         "critical": 0,
         "high": 0,
         "errors": []
@@ -314,14 +314,14 @@
     {
       "name": "Lateral Movement Hunting",
       "status": "success",
-      "duration": 3.4465043544769287,
+      "duration": 3.2561111450195312,
       "output": {
         "status": "success",
         "hunting_type": "Lateral Movement",
         "data_source": "LIVE_OBSERVED",
         "observable": true,
         "coverage_reason": "\u0110\u00e3 \u0111\u1ecdc \u0111\u01b0\u1ee3c ngu\u1ed3n",
-        "total_indicators": 455,
+        "total_indicators": 436,
         "critical": 0,
         "high": 2,
         "errors": []
@@ -330,7 +330,7 @@
     {
       "name": "Credential Dumping Hunting",
       "status": "success",
-      "duration": 5.90271782875061,
+      "duration": 5.780967712402344,
       "output": {
         "status": "success",
         "hunting_type": "Credential Dumping",
@@ -346,22 +346,22 @@
     {
       "name": "IOC Quality",
       "status": "success",
-      "duration": 0.3091108798980713,
+      "duration": 0.33062076568603516,
       "output": {
         "status": "success",
-        "total": 602,
-        "kept": 375,
-        "suppressed": 227,
+        "total": 577,
+        "kept": 369,
+        "suppressed": 208,
         "by_confidence": {
-          "HIGH": 375
+          "HIGH": 369
         },
         "by_attribution": {
-          "FULL": 373,
+          "FULL": 367,
           "PARTIAL": 2
         },
         "by_evidence": {
-          "COMPLETE": 285,
-          "PARTIAL": 90
+          "COMPLETE": 281,
+          "PARTIAL": 88
         },
         "average_score": 97.5,
         "report": "docs\\project\\IOC_QUALITY_REPORT.md"
@@ -370,7 +370,7 @@
     {
       "name": "Priority Queue",
       "status": "success",
-      "duration": 0.17348504066467285,
+      "duration": 0.1788015365600586,
       "output": {
         "status": "success",
         "total_analyzed": 6,
@@ -381,7 +381,7 @@
     {
       "name": "Incident Detection",
       "status": "success",
-      "duration": 0.23755621910095215,
+      "duration": 0.23175406455993652,
       "output": {
         "status": "success",
         "total_incidents": 1,
@@ -393,10 +393,10 @@
     {
       "name": "Risk Score",
       "status": "success",
-      "duration": 0.20011687278747559,
+      "duration": 0.2244725227355957,
       "output": {
         "status": "success",
-        "overall_score": 13,
+        "overall_score": 10,
         "risk_level": "LOW",
         "critical_count": 0,
         "high_count": 3,
@@ -406,12 +406,13 @@
     {
       "name": "Correlation Engine",
       "status": "success",
-      "duration": 0.22613835334777832,
+      "duration": 0.20181584358215332,
       "output": {
         "status": "success",
         "total_findings": 2,
         "by_severity": {
-          "HIGH": 2
+          "HIGH": 1,
+          "LOW": 1
         },
         "by_rule": {
           "RULE-2": 2
@@ -426,7 +427,7 @@
     {
       "name": "Sensor Coverage Refresh",
       "status": "success",
-      "duration": 4.838653564453125,
+      "duration": 4.894213438034058,
       "output": {
         "status": "success",
         "coverage": {
@@ -447,10 +448,10 @@
           "usb_device_activity": "blind"
         },
         "event_4688": true,
-        "tools_age_hours": 0.2,
+        "tools_age_hours": 0.3,
         "tools_refresh": {
           "state": "fresh",
-          "age_hours": 0.2,
+          "age_hours": 0.3,
           "note": "K\u1ebft qu\u1ea3 tool c\u00f2n trong ng\u01b0\u1ee1ng 20 gi\u1edd."
         }
       }
@@ -458,14 +459,14 @@
     {
       "name": "Detection Quality",
       "status": "success",
-      "duration": 0.15307831764221191
+      "duration": 0.1576862335205078
     },
     {
       "name": "Daily Brief",
       "status": "success",
-      "duration": 0.22155308723449707,
+      "duration": 0.24330711364746094,
       "output": {
-        "timestamp": "2026-09-14T07:35:46.881694",
+        "timestamp": "2026-09-14T07:54:09.780573",
         "date": "2026-09-14",
         "incident_summary": {
           "total_open": 1,
@@ -479,17 +480,17 @@
           "top_5": [
             {
               "rank": 1,
-              "title": "C\u1ea3i thi\u1ec7n Waap",
-              "priority": "MEDIUM",
-              "time_estimate": "N/A",
-              "reason": "waap component weak"
-            },
-            {
-              "rank": 2,
               "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
               "priority": "MEDIUM",
               "time_estimate": "N/A",
               "reason": "threat_hunting component weak"
+            },
+            {
+              "rank": 2,
+              "title": "C\u1ea3i thi\u1ec7n Waap",
+              "priority": "MEDIUM",
+              "time_estimate": "N/A",
+              "reason": "waap component weak"
             },
             {
               "rank": 3,
@@ -526,7 +527,7 @@
         },
         "vulnerability_summary": {
           "scan_name": "Home Network Discovery",
-          "scan_age_hours": 157.0,
+          "scan_age_hours": 157.3,
           "total_findings": 64,
           "critical": 0,
           "high": 0,
@@ -618,10 +619,10 @@
         },
         "risk_assessment": {
           "risk_level": "LOW",
-          "risk_score": 13,
+          "risk_score": 10,
           "risk_factors": [
             "threat_hunting: lateral_movement: 0C/2H (+6.0 \u0111i\u1ec3m r\u1ee7i ro)",
-            "waap: WAAP score 50 (+5.0 \u0111i\u1ec3m r\u1ee7i ro)",
+            "waap: WAAP health_score 80 (+2.0 \u0111i\u1ec3m r\u1ee7i ro)",
             "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 1 HIGH \u0111ang m\u1edf (+1.5 \u0111i\u1ec3m r\u1ee7i ro)",
             "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.52 \u0111i\u1ec3m r\u1ee7i ro)",
             "firewall: Firewall b\u1eadt (+0.4 \u0111i\u1ec3m r\u1ee7i ro)"
@@ -630,7 +631,7 @@
           "high_count": 3,
           "scale": "risk_ascending",
           "source": "state/risk_score.json",
-          "generated_at": "2026-09-14T07:35:41.503896"
+          "generated_at": "2026-09-14T07:54:04.358450"
         }
       }
     }
@@ -643,6 +644,6 @@
     "waap_score": 0,
     "risk_level": "LOW"
   },
-  "duration": 29.097594738006592,
-  "end_time": "2026-09-14T07:35:46.962749"
+  "duration": 28.718802452087402,
+  "end_time": "2026-09-14T07:54:09.875240"
 }

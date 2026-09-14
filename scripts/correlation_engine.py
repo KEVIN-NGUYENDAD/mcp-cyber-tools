@@ -67,6 +67,7 @@ class CorrelationEngine:
         self.project_root = Path(__file__).parent.parent
         self.state_dir = self.project_root / 'state'
         self.output_file = self.state_dir / 'executive_findings.json'
+        self.suppressed_excluded = {}
 
         self.state = {}
         self.sources = {}
@@ -98,10 +99,29 @@ class CorrelationEngine:
                 'timestamp': data.get('timestamp') if isinstance(data, dict) else None,
             }
 
-    def indicators(self, filename):
+    def indicators(self, filename, include_suppressed=False):
+        """Chỉ báo dùng được để dựng kết luận.
+
+        AQ-005. Trước đây hàm này trả về tất cả, nên 227 chỉ báo mà CHÍNH hệ
+        thống đã đánh dấu `suppressed: true` / `ROUTINE_OS_ACTIVITY` vẫn được
+        dùng để dựng một finding HIGH. Đánh dấu một thứ là tiếng ồn rồi vẫn kết
+        luận từ nó là giữ lại đúng phần tệ nhất của cả hai cách làm: mang tiếng
+        đã lọc, mà vẫn chịu hậu quả của việc không lọc.
+
+        Số bị loại được ghi lại — một bộ lọc im lặng là chỗ tốt nhất để giấu
+        một phát hiện thật.
+        """
         data = self.state.get(filename) or {}
         items = data.get('indicators')
-        return items if isinstance(items, list) else []
+        if not isinstance(items, list):
+            return []
+        if include_suppressed:
+            return items
+        kept = [i for i in items if not i.get('suppressed')]
+        dropped = len(items) - len(kept)
+        if dropped:
+            self.suppressed_excluded[filename] = dropped
+        return kept
 
     # ------------------------------------------------------------------
     # HELPERS
@@ -111,22 +131,88 @@ class CorrelationEngine:
         self._seq += 1
         return 'EF-{:04d}'.format(self._seq)
 
+    SEVERITY_RANK = {'INFO': 0, 'LOW': 1, 'MEDIUM': 2, 'HIGH': 3, 'CRITICAL': 4}
+    RANK_SEVERITY = {0: 'INFO', 1: 'LOW', 2: 'MEDIUM', 3: 'HIGH', 4: 'CRITICAL'}
+
+    @classmethod
+    def severity_ceiling(cls, indicators):
+        """Mức cao nhất mà bằng chứng đầu vào cho phép kết luận.
+
+        AQ-005. `'CRITICAL' if critical else 'HIGH'` cho ra HIGH cho MỌI thứ
+        không phải CRITICAL — kể cả khi toàn bộ 453 đầu vào đều là INFO. Gộp
+        nhiều quan sát bình thường lại không tạo ra một quan sát nghiêm trọng;
+        nó tạo ra một quan sát bình thường được lặp nhiều lần.
+
+        Tương quan VẪN được nâng một bậc so với trần đầu vào — đó chính là giá
+        trị của tương quan: hai đường độc lập cùng chỉ một chỗ đáng chú ý hơn
+        một đường. Nhưng một bậc, không phải ba.
+        """
+        if not indicators:
+            return 'INFO'
+        top = max(cls.SEVERITY_RANK.get(i.get('severity'), 0) for i in indicators)
+        return cls.RANK_SEVERITY[min(4, top + 1)]
+
+    @staticmethod
+    def dedup_evidence(evidence):
+        """Gộp dòng bằng chứng trùng lặp, GIỮ số đếm.
+
+        AQ-005. `EF-0002` mang 456 dòng evidence với 11 dòng duy nhất — 445 bản
+        sao nguyên văn. Một mảng như thế không phải bằng chứng dày hơn, nó là
+        cùng một câu nói 445 lần. Nhưng xoá trùng mà mất số đếm cũng sai: "gặp
+        445 lần" là một sự thật đáng giữ.
+        """
+        counts = {}
+        order = []
+        for line in evidence or []:
+            key = str(line)
+            if key not in counts:
+                order.append(key)
+            counts[key] = counts.get(key, 0) + 1
+        return ['%s  (x%d)' % (line, counts[line]) if counts[line] > 1 else line
+                for line in order]
+
     def add_finding(self, rule_id, rule_name, severity, title, summary,
                     entities, evidence, recommended_action, confidence, sources,
-                    evidence_quality='REAL'):
+                    evidence_quality='REAL', indicators=None):
         # evidence_quality tách "mức nghiêm trọng nếu có thật" khỏi "có thật hay
         # không". Người trực ca cần thấy cả hai trước khi đi cô lập một thiết bị.
+        ceiling = self.severity_ceiling(indicators) if indicators else None
+        capped = None
+        if ceiling and (self.SEVERITY_RANK.get(severity, 0)
+                        > self.SEVERITY_RANK.get(ceiling, 4)):
+            capped = (severity, ceiling)
+            severity = ceiling
+
         self.findings.append({
             'finding_id': self.next_finding_id(),
             'rule_id': rule_id,
             'rule_name': rule_name,
             'severity': severity,
+            'severity_ceiling': ceiling,
+            'severity_capped_from': capped[0] if capped else None,
+            'severity_basis': (
+                'Mức đầu vào cao nhất là %s; tương quan nâng một bậc lên %s%s'
+                % (self.RANK_SEVERITY[max(
+                    self.SEVERITY_RANK.get(i.get('severity'), 0)
+                    for i in indicators)] if indicators else 'không rõ',
+                   ceiling,
+                   ('. Rule đề nghị %s, đã hạ xuống trần.' % capped[0])
+                   if capped else '')
+                if indicators else 'Rule không khai đầu vào để suy trần mức'),
             'title': title,
             'summary': summary,
             'entities': entities,
-            'evidence': evidence,
+            'evidence': self.dedup_evidence(evidence),
             'recommended_action': recommended_action,
-            'confidence': confidence,
+            # AQ-004. Day la phan doan cua RULE, khong phai do tin cay da do.
+            # Truoc day no duoc ghi thang vao `confidence` — dung truong ma
+            # portal va Telegram doc — trong khi `attach_ioc_quality()` chay sau
+            # do tinh duoc 49/100 va ghi "LOW" vao mot khoa khac. Engine biet
+            # finding do la LOW, roi ship HIGH ra dung cho nguoi ta nhin.
+            #
+            # Gio `confidence` duoc dien o attach_ioc_quality tu diem da do. Phan
+            # doan cua rule van duoc giu, duoi dung ten cua no.
+            'rule_confidence': confidence,
             'evidence_quality': evidence_quality,
             'sources': sources,
             'detected_at': datetime.now().isoformat(),
@@ -405,6 +491,7 @@ class CorrelationEngine:
                 rule_id=rule_id,
                 rule_name=rule_name,
                 severity='CRITICAL',
+                indicators=[ind for _stage, ind in hits[ip]],
                 title='Thiết bị {} có dấu hiệu bị xâm nhập chuỗi (Multi-stage Compromise)'.format(ip),
                 summary=(
                     'IP {} là thiết bị ngoài kho tài sản (phát hiện qua {}: {}) '
@@ -519,7 +606,12 @@ class CorrelationEngine:
                     '2. Chặn SMB/WinRM/RDP từ nguồn lạ | '
                     '3. Reset mật khẩu các tài khoản bị dò'
                 ).format(ip),
-                confidence='HIGH' if ip in known_assets else 'MEDIUM',
+                # AQ-004. Truoc day day la `'HIGH' if ip in known_assets` — do
+                # tin cay suy tu viec IP co trong kho tai san hay khong, tuc la
+                # mot thuoc tinh cua KHO, khong phai cua bang chung. Mot IP quen
+                # thuoc khong lam cho quan sat ve no chac chan hon.
+                confidence='MEDIUM',
+                indicators=indicators,
                 sources=['hunting_lateral_movement.json', 'security_events.json'],
             )
 
@@ -569,6 +661,7 @@ class CorrelationEngine:
                 rule_id=rule_id,
                 rule_name=rule_name,
                 severity=severity,
+                indicators=lateral,
                 evidence_quality=quality,
                 title=title,
                 summary=summary,
@@ -634,6 +727,7 @@ class CorrelationEngine:
             rule_id=rule_id,
             rule_name=rule_name,
             severity='CRITICAL',
+            indicators=cluster,
             title='Cụm rủi ro cao: mã độc Defender đi kèm {} tiến trình chạy ẩn'.format(len(cluster)),
             summary=(
                 'Defender ghi nhận {} threat và {} mục cách ly, đồng thời có {} tiến trình '
@@ -743,6 +837,11 @@ class CorrelationEngine:
             quality['matched_by'] = ('ip + technique' if techniques else 'ip')
             finding['ioc_quality'] = quality
             finding['confidence_score'] = quality['confidence_score']
+            # AQ-004. MOT truong confidence duy nhat, va no la truong da do.
+            # Khi khong khop duoc chi bao nao thi noi UNKNOWN — khong muon tam
+            # phan doan cua rule de lap cho trong, vi do dung la cach mot phan
+            # doan bien thanh mot so do.
+            finding['confidence'] = quality.get('confidence') or 'UNKNOWN'
             finding['attribution_quality'] = quality['attribution_quality']
             # `evidence_quality` da ton tai voi nghia "REAL / SIMULATED". Khong
             # ghi de no: hai truong noi hai chuyen khac nhau, va gop lai se lam
@@ -804,6 +903,9 @@ class CorrelationEngine:
                                      if f.get('quality_warning')]),
             'sources': self.sources,
             'coverage_gaps': self.coverage_gaps,
+            # Mot bo loc im lang la cho tot nhat de giau mot phat hien that.
+            # So bi loai phai di kem ket qua, khong nam trong log.
+            'suppressed_excluded': self.suppressed_excluded,
             'findings': self.findings,
         }
 
