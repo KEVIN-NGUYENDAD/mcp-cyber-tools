@@ -8,6 +8,7 @@ Read-only against the Daily Brief Store -- does not call reset_daily_brief(),
 so a failed or duplicate run never loses today's data.
 """
 import json
+from pathlib import Path
 import os
 import sys
 import traceback
@@ -27,7 +28,7 @@ def run() -> int:
 
         # Save JSON brief to daily_brief/YYYY-MM-DD.json
         today = datetime.now(timezone.utc).date().isoformat()
-        daily_brief_dir = r"C:\GitHub\mcp-cyber-tools\daily_brief"
+        daily_brief_dir = str(Path(__file__).resolve().parent.parent / "daily_brief")
         os.makedirs(daily_brief_dir, exist_ok=True)
 
         brief_path = os.path.join(daily_brief_dir, f"{today}.json")

@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T13:26:11.455574
+Cập nhật: 2026-09-14T13:29:40.078930
 
 ## Sprint vừa xong
 
 | | |
 |---|---|
-| Commit | `484f00b` |
-| Branch | `develop` |
-| Tiêu đề | Merge pull request #45 from KEVIN-NGUYENDAD/feature/self-observation-and-scoring |
+| Commit | `f0b8ba7` |
+| Branch | `feature/invalidation-and-run-isolation` |
+| Tiêu đề | fix(truth): cut the incidents<->risk feedback loop, stamp every state file with its run |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 ## Cổng merge

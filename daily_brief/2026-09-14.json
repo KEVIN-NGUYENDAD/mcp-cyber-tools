@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T13:25:56.002041",
+  "timestamp": "2026-09-14T13:29:36.366576",
   "date": "2026-09-14",
   "incident_summary": {
     "total_open": 1,
@@ -193,6 +193,6 @@
     "source": "state/risk_score.json",
     "generated_at": "2026-09-14T13:25:31.423462"
   },
-  "run_id": "RUN-20260914T132454-cb565f",
-  "run_scope": "PIPELINE"
+  "run_id": null,
+  "run_scope": "STANDALONE"
 }
