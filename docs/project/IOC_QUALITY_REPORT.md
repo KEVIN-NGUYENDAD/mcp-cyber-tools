@@ -2,7 +2,7 @@
 
 Sinh tự động bởi `scripts/ioc_quality.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T13:52:25.929241
+Cập nhật: 2026-09-14T13:53:49.167749
 
 > **`confidence_score` KHÔNG phải mức độ nguy hiểm.** Nó trả lời một câu hẹp hơn nhiều: *quan sát này có đúng như nó tự nói không*. Một lần đăng nhập nền của Windows hoàn toàn có thể đạt 100 điểm tin cậy — đó là một quan sát chắc chắn về một việc hoàn toàn bình thường. Đọc một con số cao ở đây thành "nguy hiểm" là cách nhanh nhất để biến bảng này thành thứ ngược lại với mục đích của nó.
 
@@ -10,13 +10,13 @@ Cập nhật: 2026-09-14T13:52:25.929241
 
 | | |
 |---|---|
-| Tổng chỉ báo | **574** |
-| Còn lại sau lọc tiếng ồn | **372** |
+| Tổng chỉ báo | **570** |
+| Còn lại sau lọc tiếng ồn | **368** |
 | Bị hạ xuống tiếng ồn | 202 |
-| HIGH confidence | 372 |
+| HIGH confidence | 368 |
 | MEDIUM confidence | 0 |
 | LOW confidence | 0 |
-| Quy kết FULL | 370 |
+| Quy kết FULL | 366 |
 | Quy kết PARTIAL | 2 |
 | Quy kết UNATTRIBUTED | 0 |
 | Kho tài sản đọc được | 11 máy |
@@ -28,15 +28,15 @@ Cập nhật: 2026-09-14T13:52:25.929241
 | `credential_dumping` | 0 | 0 | None | H 0 / M 0 / L 0 |
 | `persistence` | 96 | 0 | 100.0 | H 96 / M 0 / L 0 |
 | `lateral_movement` | 428 | 202 | 96.3 | H 226 / M 0 / L 0 |
-| `suspicious_processes` | 50 | 0 | 97.7 | H 50 / M 0 / L 0 |
+| `suspicious_processes` | 46 | 0 | 97.5 | H 46 / M 0 / L 0 |
 
-## High Confidence (≥ 75) — 372 chỉ báo
+## High Confidence (≥ 75) — 368 chỉ báo
 
 | Điểm | Số | Cuộc săn | Loại | Mức | Lớp bằng chứng | Bằng chứng | Quy kết |
 |---|---|---|---|---|---|---|---|
 | 100 | 143 | `lateral_movement` | Logon Activity | INFO | EVENT_LOG | COMPLETE | FULL |
 | 100 | 80 | `persistence` | Persistence: ScheduledTask | INFO | SCHEDULED_TASK | COMPLETE | FULL |
-| 100 | 38 | `suspicious_processes` | Network Connection | INFO | PROCESS_TABLE | COMPLETE | FULL |
+| 100 | 34 | `suspicious_processes` | Network Connection | INFO | PROCESS_TABLE | COMPLETE | FULL |
 | 100 | 16 | `persistence` | Persistence: RunKey | INFO | REGISTRY | COMPLETE | FULL |
 | 100 | 3 | `suspicious_processes` | Living Off The Land Binary | INFO | PROCESS_TABLE | COMPLETE | FULL |
 | 90 | 81 | `lateral_movement` | Logon Activity | INFO | EVENT_LOG | PARTIAL | FULL |
@@ -73,8 +73,8 @@ Một thang 0–100 mà mọi bản ghi đều rơi vào một ô thì không đ
 
 | Khoảng điểm | Số chỉ báo |  |
 |---|---|---|
-| 100–109 | 280 | ██████████████████████████████ |
-| 90–99 | 83 | ████████ |
+| 100–109 | 276 | ██████████████████████████████ |
+| 90–99 | 83 | █████████ |
 | 80–89 | 9 | █ |
 
 ## Cách tính điểm

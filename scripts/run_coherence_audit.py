@@ -95,6 +95,41 @@ def audit_runs():
     distinct = set(v['run_id'] for v in present if v['run_id'])
     unstamped = [k for k, v in stamps.items() if v['present'] and not v['run_id']]
 
+    # AQ-044. Bộ này từng trả `0 vi phạm` cho hai tình huống khác hẳn nhau:
+    # vòng 9 đo `0/7 tệp có dấu` và vòng 10–11 đo `7/7` — **cùng mã, cùng kết
+    # luận, dữ liệu ngược nhau.** Một bộ audit chỉ biết nói "không thấy vi phạm"
+    # thì không phân biệt được "đã soi, sạch" với "không soi được gì".
+    #
+    # Đó là nửa còn lại của AQ-043: nếu `state_manager` mất dấu lần chạy thì
+    # mọi tệp đều không dấu, phép so `distinct > 1` không bao giờ kích hoạt, và
+    # cổng xanh vì đúng cái lý do lẽ ra phải chặn nó.
+    #
+    # `UNEVALUABLE` không phải mức nghiêm trọng hơn — nó là một loại câu trả lời
+    # KHÁC: bộ audit khai rằng nó không ở vị thế kết luận.
+    if not present:
+        findings.append({
+            'level': 'UNEVALUABLE', 'file': 'state/', 'field': 'run_id',
+            'detail': 'khong tep state nao trong tap gan ket doc duoc — khong '
+                      'ket luan duoc gi ve tinh gan ket, va "0 vi pham" o day '
+                      'se doc nhu mot loi bao dam',
+        })
+    elif len(unstamped) == len(present):
+        findings.append({
+            'level': 'UNEVALUABLE', 'file': 'state/', 'field': 'run_id',
+            'detail': '%d/%d tep khong mang dau lan chay nao — phep so "cung mot '
+                      'lan chay" khong co gi de so. Kiem tra run_context/'
+                      'state_manager (AQ-043).' % (len(unstamped), len(present)),
+        })
+    elif unstamped:
+        # Trộn dấu và không dấu: phần có dấu vẫn so được, nhưng phần không dấu
+        # không truy nguyên được và phải nói ra chứ không lặng lẽ rơi khỏi mẫu số.
+        findings.append({
+            'level': 'UNSTAMPED', 'file': 'state/', 'field': 'run_id',
+            'detail': '%d/%d tep khong co run_id (%s) — chung khong truy nguoc '
+                      'duoc ve lan chay nao'
+                      % (len(unstamped), len(present), ', '.join(sorted(unstamped)[:3])),
+        })
+
     if len(distinct) > 1:
         # Đây là lỗi thật sự nguy hiểm: mọi kết luận rút ra từ tập này đang
         # trộn hai lần quan sát khác nhau, và không ai biết dòng nào thuộc đâu.

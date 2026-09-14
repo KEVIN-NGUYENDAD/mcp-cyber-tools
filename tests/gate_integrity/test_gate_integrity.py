@@ -314,6 +314,66 @@ def run():
     else:
         suite.check('Khong con nang luc mu -> khong can san nang muc', True)
 
+    # -- AQ-043 / AQ-044: bo audit khong chay duoc PHAI noi ra ---------------
+    # Vong 9 do `0/7 tep co dau` va vong 10-11 do `7/7`; ca hai lan
+    # `run_coherence_audit` deu ket luan "0 vi pham". Cung ma, cung ket luan, du
+    # lieu nguoc nhau — vi bo do chi biet noi "khong thay vi pham", va cau do
+    # khong phan biet duoc "da soi, sach" voi "khong soi duoc gi".
+    #
+    # Nua con lai nam o `state_manager`: `except ImportError: pass` bo dau lan
+    # chay im lang, nen import hong -> moi tep khong dau -> phep so khong kich
+    # hoat -> cong xanh vi dung cai ly do le ra phai chan no.
+    import run_coherence_audit
+
+    unstamped_state = {name: {'present': True, 'run_id': None}
+                       for name in ('risk_score.json', 'incidents.json')}
+    real_run_ids = run_coherence_audit.run_ids
+    try:
+        run_coherence_audit.run_ids = lambda: unstamped_state
+        findings, _ = run_coherence_audit.audit_runs()
+    finally:
+        run_coherence_audit.run_ids = real_run_ids
+    levels = [f['level'] for f in findings]
+    suite.check('Moi tep deu KHONG dau -> UNEVALUABLE, khong phai "0 vi pham"',
+                'UNEVALUABLE' in levels, str(levels))
+
+    mixed_state = {'risk_score.json': {'present': True, 'run_id': 'RUN-A'},
+                   'incidents.json': {'present': True, 'run_id': None}}
+    try:
+        run_coherence_audit.run_ids = lambda: mixed_state
+        findings, _ = run_coherence_audit.audit_runs()
+    finally:
+        run_coherence_audit.run_ids = real_run_ids
+    suite.check('Mot phan khong dau -> UNSTAMPED, khong lang le roi khoi mau so',
+                'UNSTAMPED' in [f['level'] for f in findings])
+
+    try:
+        run_coherence_audit.run_ids = lambda: {}
+        findings, _ = run_coherence_audit.audit_runs()
+    finally:
+        run_coherence_audit.run_ids = real_run_ids
+    suite.check('Khong doc duoc tep nao -> UNEVALUABLE',
+                'UNEVALUABLE' in [f['level'] for f in findings])
+
+    # Ca hai muc do phai CHAN merge, khong chi hien ra bang.
+    for level in ('UNEVALUABLE', 'UNSTAMPED'):
+        data = base_data()
+        data['coherence'] = [{'level': level, 'file': 'state/',
+                              'field': 'run_id', 'detail': 'gia lap'}]
+        data['coherence_scope'] = {}
+        suite.check('%s -> BI CHAN' % level,
+                    any(level in b for b in sprint_gate.evaluate(data)['blockers']),
+                    str(sprint_gate.evaluate(data)['blockers'])[:90])
+
+    # AQ-043: mat dau lan chay phai duoc GHI VAO TEP, khong duoc nuot.
+    manager_src = read('state_manager.py')
+    manager_code = '\n'.join(l for l in manager_src.splitlines()
+                             if not l.strip().startswith('#'))
+    suite.check('state_manager khong con nuot ImportError bang `pass`',
+                'except ImportError:\n        pass' not in manager_code)
+    suite.check('  -> va khai `UNSTAMPED` thay vi im lang',
+                "'UNSTAMPED'" in manager_code)
+
     return suite
 
 

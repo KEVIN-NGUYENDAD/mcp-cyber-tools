@@ -65,9 +65,25 @@ def write_state_atomic(
         import run_context
         data = run_context.stamp(data)
     except ImportError:
-        # state_manager được import từ nhiều thư mục; thiếu run_context thì ghi
-        # state vẫn phải chạy — mất dấu lần chạy, không mất dữ liệu.
-        pass
+        # AQ-043. Dòng này từng là `pass`, kèm lời biện hộ "mất dấu lần chạy,
+        # không mất dữ liệu". Lời biện hộ đó đúng về dữ liệu và sai về hậu quả:
+        # `run_coherence_audit` đếm tệp CÓ dấu và báo vi phạm khi các dấu lệch
+        # nhau — nên một tệp KHÔNG dấu nào cả lặng lẽ rơi khỏi phép đếm, và cổng
+        # xanh. Import hỏng → mất dấu → coherence `0 vi phạm` → merge được.
+        #
+        # Đây đúng là lớp lỗi hàng đợi này đã đóng hai mươi lần ở chỗ khác, và
+        # tôi vừa viết lại nó ở đây. Một `except: pass` trên đường ghi state là
+        # một default xanh, bất kể lời bình luận cạnh nó nói gì.
+        #
+        # Nên: khai vắng mặt, đừng nuốt. `UNSTAMPED` khác `STANDALONE` — cái
+        # sau là chạy tay có chủ ý, cái này là một sự cố hạ tầng.
+        if isinstance(data, dict):
+            data.setdefault('run_id', None)
+            data.setdefault('run_scope', 'UNSTAMPED')
+            data.setdefault(
+                'run_scope_reason',
+                'khong import duoc run_context tu state_manager — tep nay khong '
+                'truy nguoc duoc ve mot lan chay')
 
     try:
         # Ensure parent directory exists
