@@ -2,37 +2,37 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T08:09:43.463274
+Cập nhật: 2026-09-14T08:16:20.018034
 
 ## Sprint vừa xong
 
 | | |
 |---|---|
-| Commit | `4668b96` |
+| Commit | `ba86908` |
 | Branch | `develop` |
-| Tiêu đề | Merge pull request #43 from KEVIN-NGUYENDAD/feature/telegram-truth-portal-hardening |
+| Tiêu đề | Merge pull request #44 from KEVIN-NGUYENDAD/feature/gate-integrity |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 ## Cổng merge
 
 | | |
 |---|---|
-| PASS | 93 |
-| EMPTY | 6 |
+| PASS | 94 |
+| EMPTY | 5 |
 | BLIND | 0 |
 | FAIL | 0 |
 | Pipeline | 28 stage, 0 thất bại |
-| Toàn vẹn bằng chứng | 0 vi phạm / 406 chỉ báo |
+| Toàn vẹn bằng chứng | 0 vi phạm / 434 chỉ báo |
 
 ## Trạng thái thật (đọc từ state/)
 
 | | |
 |---|---|
-| Risk Score | 3/100 |
+| Risk Score | 6/100 |
 | Risk Level | LOW |
-| Sự cố đang mở | 0 |
+| Sự cố đang mở | 2 |
 | └ CRITICAL | 0 |
-| └ HIGH | 0 |
+| └ HIGH | 2 |
 | Phát hiện cấp điều hành | 2 |
 | └ cảnh báo chất lượng | 0 |
 | Rule không kết luận được | 2 |

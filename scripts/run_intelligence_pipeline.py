@@ -159,13 +159,17 @@ class IntelligencePipeline:
         asset_count = len(assets.get('assets', [])) if isinstance(assets, dict) else 0
         service_count = len(services.get('services', [])) if isinstance(services, dict) else 0
 
-        crypto_score = 0
-        if isinstance(crypto, dict) and 'findings' in crypto:
-            # Crypto score based on absence of findings
-            critical_count = sum(1 for f in crypto.get('findings', []) if f.get('severity') == 'CRITICAL')
-            crypto_score = max(0, 100 - (critical_count * 10))
-        elif isinstance(crypto, dict):
-            crypto_score = crypto.get('score', 0)
+        # AQ-020. Ba dong duoi tung la mot phep cham crypto THU HAI, song song
+        # voi `crypto_inventory.score`: `100 - critical*10`. Moi phat hien tren
+        # may nay deu la INFO, nen bieu thuc do luon ra dung 100 — mot hang so
+        # deo nhan phep do, va no khong bao gio bang diem chinh thuc neu hai ben
+        # bat dong.
+        #
+        # Cung mot loi voi WAAP o AQ-016: hai phep do khac nhau, cung ten, hien
+        # canh nhau. Chi doc nguon chinh thuc.
+        crypto_score = None
+        if isinstance(crypto, dict):
+            crypto_score = crypto.get('score')
 
         # AQ-014. `score` khong ton tai; ten that la `health_score`. Dong
         # log van hanh in "WAAP Score: 0" suot nhieu sprint trong khi diem that

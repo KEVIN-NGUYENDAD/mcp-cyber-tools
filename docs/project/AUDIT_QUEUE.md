@@ -1986,3 +1986,286 @@ AQ-033 → AQ-030/007 → AQ-034.
 
 *Vòng 5, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only: không code, không commit,
 không push, không merge.*
+
+
+---
+---
+
+# VÒNG 6 — 2026-09-14 08:13 · PR #44 `gate-integrity` + working tree
+
+HEAD `ba86908`. Auditor READ ONLY.
+
+---
+
+## ĐÃ TRẢ — kiểm chứng được
+
+| Mục | Bằng chứng |
+|---|---|
+| **AQ-013 / AQ-026** | `sprint_gate.py:239` đọc `status`; `status is None` → **BLOCKER** (`"thiếu dữ liệu là CHẶN, không phải đạt"`); `not stages` → BLOCKER. `generate_handoff.py:119` cũng đọc `status`. Đúng y đề xuất |
+| **AQ-019 / AQ-031** | `ioc_quality.py:329-341` — `DEV_HINTS` vẫn miễn trừ HIGH (phỏng đoán theo tên), `ROUTINE_HINTS` nay áp ở **mọi mức** kèm lý do ghi rõ `"(mức %s do Event ID, nhưng chủ thể là tài khoản hệ thống)"`. Đây là phân biệt đúng, không phải nới lỏng |
+| **AQ-023** | `analyze_firewall` chấm theo 3 profile; `enabled is None` → None chứ không đoán. Live: `health=100, "Firewall bật, 3/3 profile bật"` — hằng số 90 đã hết |
+| **AQ-021** (một nửa) | `ASSET_SCAN_STALE_HOURS = 48`; live note: *"bản quét Nessus 158 giờ tuổi (ngưỡng 48): \"0 CRITICAL\" là phát biểu về lúc quét, không phải về hôm nay"* |
+
+Bốn mục, bốn bản sửa đúng gốc. `sprint_gate.py` giờ **có khả năng nói không** — lần đầu tiên kể từ vòng 2.
+
+---
+
+## AQ-035 · Risk Consistency · Truth Gap
+
+**Issue:**
+`state/` không có ranh giới giữa các lần chạy pipeline. Ngay lúc audit,
+`risk_score.json` công bố **Risk 31 / HIGH** với lý do `credential_dumping: 6C/0H`,
+trong khi `hunting_credential_dumping.json` — chính tệp nó trích dẫn — chứa **0 chỉ
+báo**. Hai tệp thuộc hai lần chạy khác nhau và không có gì nói ra điều đó.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+Pipeline ghi thẳng vào `state/` theo từng stage, không có ảnh chụp nguyên tử và không
+đóng dấu `run_id` lên tệp nào. Khi lần chạy N+1 bắt đầu trong lúc lần N vừa xong, các
+tệp bị ghi đè **lệch pha**: hunt (stage sớm) đã là N+1, risk (stage muộn) vẫn là N.
+
+Thứ tự stage trong `run_intelligence_pipeline.py` là đúng
+(`hunt_credential_dumping` :430 → `ioc_quality` :444 → `generate_incidents` :472 →
+`calculate_risk_score` :486 → `correlation_engine` :500). Vấn đề không phải thứ tự —
+mà là **không có gì ngăn hai lần chạy chồng lên nhau**, và không có gì cho phép người
+đọc phát hiện ra.
+
+**Evidence:**
+
+    Dấu thời gian trong state/ lúc audit:
+      hunting_persistence.json          08:11:34
+      hunting_suspicious_processes.json 08:11:37
+      hunting_lateral_movement.json     08:11:39
+      incidents.json                    08:11:47
+      executive_findings.json           08:11:47
+      risk_score.json                   08:11:54   <- lần chạy N
+      hunting_credential_dumping.json   08:12:27   <- lần chạy N+1, MUỘN HƠN 33 GIÂY
+
+    logs/pipeline_results.json : end_time 08:11:54, status success, 28 stage
+    tasklist -> 2 tiến trình python đang chạy (lần N+1 đang bay)
+
+    state/risk_score.json  (đang phục vụ mọi consumer)
+      overall_score  31      risk_level HIGH
+      threat_hunting health 0   contribution 25.0   detail "credential_dumping: 6C/0H"
+
+    state/hunting_credential_dumping.json (08:12:27)
+      n_indicators = 0     by_severity = {}     errors = []
+      tools_used: huntCredentialDumping ok, 17 bản ghi
+
+`25.0 / 31 = 81%` điểm rủi ro đang trích dẫn 6 chỉ báo mà tệp được trích dẫn không còn
+chứa. Không có `run_id`, không có ảnh chụp, không có cảnh báo lệch pha. Portal,
+Telegram, `HANDOFF.md`, daily brief đều đang đọc hỗn hợp hai lần chạy.
+
+Thêm: `state/history/` **không có** `hunting_credential_dumping.json.prev`, nên bằng
+chứng của 6 chỉ báo đó đã mất khỏi `state/`. Chỉ còn lại trong
+`docs/project/IOC_QUALITY_REPORT.md` — một tài liệu, không phải state.
+
+**Suggested Sprint:** SPRINT RUN-ISOLATION —
+(1) Mỗi lần chạy sinh `run_id`; mọi tệp state mang `run_id` + `pipeline_started_at`.
+(2) Consumer (portal, Telegram, handoff, gate) kiểm `run_id` đồng nhất; lệch pha là
+cảnh báo hiển thị, không phải im lặng.
+(3) Khoá chạy (lock file): lần chạy thứ hai từ chối khởi động khi lần trước chưa xong.
+(4) `sprint_gate.py` thêm blocker: state chứa nhiều hơn một `run_id`.
+
+---
+
+## AQ-036 · Correlation Integrity · Truth Gap
+
+**Issue:**
+Sáu chỉ báo **CRITICAL "LSASS Memory Access"** xuất hiện ở một lần chạy và biến mất
+hoàn toàn ở lần chạy kế tiếp, **33 giây sau**, không có thay đổi mã và không có lỗi thu
+thập. Chúng đưa Risk từ **3 lên 31 (LOW → HIGH)**.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+Cùng lớp bất ổn đã ghi ở AQ-031, nay ở mức CRITICAL và ở thành phần chi phối. Nguồn là
+Security log — một cửa sổ trượt. Cuộc săn đọc "những gì còn trong log lúc đọc", không
+đọc "những gì đã xảy ra trong khoảng thời gian X". Không có mốc con trỏ (bookmark /
+last_record_id), nên hai lần đọc cách nhau 33 giây trả về hai tập sự kiện khác nhau và
+cả hai đều được ghi là `LIVE_OBSERVED, errors: []`.
+
+**Evidence:**
+
+    docs/project/IOC_QUALITY_REPORT.md (lần chạy N)
+      | credential_dumping | 6 | 0 | 100.0 | H 6 / M 0 / L 0 |
+      | 100 | 6 | credential_dumping | LSASS Memory Access | CRITICAL | EVENT_LOG | COMPLETE | FULL |
+
+    state/history/risk_score.json.prev
+      overall 31   threat_hunting health 0   "credential_dumping: 6C/0H"
+
+    state/hunting_credential_dumping.json (33 giây sau)
+      n = 0    by_severity = {}    data_source LIVE_OBSERVED    errors []
+      tools_used: huntCredentialDumping ok, 17 bản ghi, 5.05s
+
+    state/history/hunting_credential_dumping.json.prev -> KHÔNG TỒN TẠI
+
+    git diff HEAD -- scripts/hunt_credential_dumping.py -> không nằm trong danh sách sửa
+
+Diễn biến Risk trong ~4 giờ, cùng một máy, không đổi cấu hình:
+
+    10  ->  3  ->  31  ->  (?)
+    nguyên nhân: 2 chỉ báo 4648 biến mất, rồi 6 chỉ báo LSASS xuất hiện rồi biến mất
+
+**Business Impact:**
+Một trong hai điều đúng, và cả hai đều nghiêm trọng:
+
+- **6 chỉ báo đó là thật** — LSASS Memory Access CRITICAL, confidence 100, bằng chứng
+  COMPLETE, quy kết FULL. Vậy hệ thống vừa phát hiện một sự kiện truy cập bộ nhớ LSASS
+  rồi **tự xoá bằng chứng** 33 giây sau, không lưu `.prev`, không mở incident nào tồn
+  tại qua lần chạy kế. Một phát hiện credential dumping không tái lập được là một phát
+  hiện không dùng được.
+- **6 chỉ báo đó là dương tính giả** — thì Risk đã nhảy LOW → HIGH và `severity floor`
+  đã kích hoạt (*"7 phát hiện CRITICAL nâng risk_level từ LOW lên HIGH"*) trên cơ sở sai.
+
+Không có cách nào phân biệt hai khả năng từ state hiện tại, vì bằng chứng đã mất. Đó
+chính là vấn đề.
+
+**Suggested Sprint:** SPRINT HUNT-REPRODUCIBILITY —
+(1) Cuộc săn đọc log theo **khoảng thời gian khai báo** (`from`/`to`), không theo "còn
+gì trong log lúc đọc"; ghi khoảng đó vào `hunt_scope`.
+(2) Mốc con trỏ bền (last_record_id) để hai lần chạy liên tiếp không bỏ sót sự kiện.
+(3) Mọi tệp hunting phải có `.prev` — `state/history/` hiện thiếu credential_dumping.
+(4) Bộ kiểm hồi quy bằng **fixture** (đã đề xuất ở AQ-031, vẫn chưa làm): chạy hai lần
+trên cùng fixture phải cho cùng kết quả. Chỉ fixture mới tách được "đã sửa" khỏi "hôm
+nay dữ liệu khác" — và vòng này chứng minh điều đó áp dụng cho cả chiều ngược lại.
+(5) Chỉ báo CRITICAL biến mất giữa hai lần chạy phải sinh cảnh báo, không im lặng.
+
+---
+
+## AQ-037 · Truth Gap
+
+**Issue:**
+`HANDOFF.md` công bố **Risk Score 3/100 · LOW**. State công bố **31 · HIGH**. Chênh
+một bậc mức độ, trên tệp mà quy trình audit đọc đầu tiên mỗi vòng.
+
+**Severity:** HIGH
+
+**Root Cause:**
+AQ-033 chưa trả. `generate_handoff.py` chạy thủ công, không phải stage, nên mỗi lần
+pipeline sinh state mới nó lại trễ. Vòng này trễ thêm một mức: không chỉ trễ một sprint
+(`4668b96` vs HEAD `ba86908`) mà trễ cả **phân loại rủi ro**.
+
+Phần chỉ số đã khá hơn: `406 chỉ báo` và `Risk 3` là số ĐÚNG của lần chạy trước — cache
+`tool_validation.json` không còn là nguyên nhân. Nguyên nhân còn lại thuần là thời điểm
+chạy.
+
+**Evidence:**
+
+    docs/project/HANDOFF.md (Cập nhật 08:09:43)
+      | Commit     | 4668b96 |        HEAD thật: ba86908
+      | Risk Score | 3/100   |        state thật: 31
+      | Risk Level | LOW     |        state thật: HIGH
+
+Một người đọc HANDOFF lúc 08:13 thấy "LOW, 3/100". `risk_score.json` cùng lúc đó nói
+"HIGH, 31", kèm note *"Severity floor áp dụng: 7 phát hiện CRITICAL nâng risk_level từ
+LOW lên HIGH"*. Đây là khoảng cách tồi nhất có thể: tài liệu nói an toàn đúng lúc state
+nói nguy hiểm.
+
+**Suggested Sprint:** SPRINT HANDOFF-LIVE (AQ-033, chưa làm) — `generate_handoff.py`
+thành stage cuối của pipeline. Bất biến CI: `HANDOFF.md` khai `risk_level` khác
+`state/risk_score.json` là blocker. Gộp với AQ-035: handoff cũng phải in `run_id`.
+
+---
+
+## AQ-038 · Schema Drift · Truth Gap
+
+**Issue:**
+AQ-020 và AQ-034 chưa trả, và cả hai nay đứng cạnh những mục đã trả — nên trông như đã
+xong. `crypto_score` vẫn là hằng số 100; độ phủ audit pipeline vẫn **17.3%** in ra thành
+`0` trần.
+
+**Severity:** HIGH
+
+**Root Cause:**
+Không đổi so với vòng 3 và vòng 5. `collect_crypto_inventory.py:137` ghi khoá số nguyên,
+dòng 147-149 đọc khoá chuỗi. `TECHNICAL_DEBT.md:25` in kết quả bộ audit không kèm mẫu số.
+
+**Evidence:**
+
+    state/crypto_inventory.json
+      total_findings = 19      severity values = {0: 17, 2: 2}
+      severity_breakdown tổng = 0        score = 100   (đúng: 90)
+
+    state/risk_score.json   crypto health 100, contribution 0.0
+
+    scripts/pipeline_field_audit.py
+      TONG: 107 truy cap | 0 so lieu gia
+      PHAM VI: 107 / 617 loi goi (17.3%) — 510 loi goi KHONG thay
+
+    docs/project/TECHNICAL_DEBT.md:25   | Số liệu giả trong pipeline Python | 0 |
+
+Lưu ý quan trọng cho việc xếp ưu tiên: **không một mục nào trong AQ-035, AQ-036, AQ-020,
+AQ-021 thuộc dạng `.get(key, default)`.** Kể cả đạt 100% độ phủ, `pipeline_field_audit.py`
+cũng không bắt được chúng. Hàng `Số liệu giả trong pipeline Python` đang hứa nhiều hơn
+phép đo của nó — và bốn số liệu giả nghiêm trọng nhất đang nằm ngoài nó.
+
+Đối chiếu: `assets.json` cộng ra **399** lỗ hổng, `nessus_status.json` nói **64** —
+AQ-021 nửa còn lại, chưa chạm.
+
+**Suggested Sprint:** SPRINT KILL-GREEN-DEFAULTS (phần cuối) + SPRINT AUDIT-THE-AUDIT —
+(1) Ánh xạ severity Nessus int→tên ở một chỗ dùng chung.
+(2) Bất biến `sum(severity_breakdown.values()) == total_findings` (bắt AQ-020 và AQ-021
+cùng lúc).
+(3) `TECHNICAL_DEBT.md` in `0 / 107 kiểm / 617 lời gọi (17.3%)`; đổi tên hàng thành
+*"Khoá thiếu có mặc định"* — đúng thứ nó đo.
+(4) Phép kiểm khác cho lớp còn lại: đảo đầu vào từng thành phần điểm, khẳng định điểm
+đổi. Đó là cách duy nhất lộ ra hằng số và hàm chỉ-một-giá-trị.
+
+---
+
+## TỒN ĐỌNG SAU VÒNG 6
+
+| Mục | Hạng | Trạng thái |
+|---|---|---|
+| AQ-035 | CRITICAL | 🆕 state trộn hai lần chạy; risk 31 trích dẫn 6 chỉ báo không còn tồn tại |
+| AQ-036 | CRITICAL | 🆕 6 CRITICAL LSASS xuất hiện/biến mất trong 33 giây; bằng chứng đã mất |
+| AQ-020 / AQ-032 / AQ-038 | CRITICAL | ❌ `crypto_score` hằng số 100 |
+| AQ-021 | CRITICAL | 🔶 staleness đã thêm; 399 vs 64 vẫn nguyên |
+| AQ-002 | CRITICAL | ❌ attribution FULL vs hostname `unresolved` |
+| AQ-007 / AQ-030 | HIGH | ❌ Deployment Truth, 5 vòng chưa chạm |
+| AQ-033 / AQ-037 | HIGH | ❌ HANDOFF: LOW 3 vs state HIGH 31 |
+| AQ-016 | HIGH | ❌ 5 giá trị "WAAP Score" |
+| AQ-017 | HIGH | ❌ cổng merge không kiểm tuổi đầu vào |
+| AQ-018 | HIGH | ❌ `protection_status: unknown` → `false` |
+| AQ-024 | HIGH | 🔶 `\|\| 'MEDIUM'` vẫn bịa severity |
+| AQ-034 / AQ-038 | HIGH | ❌ độ phủ 17.3%, tiêu đề `0` trần |
+
+**Đang mở: 12 (5 CRITICAL, 7 HIGH). Đã trả tích luỹ: 19.**
+
+---
+
+## NHẬN ĐỊNH VÒNG 6
+
+PR #44 sửa đúng gốc bốn mục, trong đó `sprint_gate.py` lần đầu **có khả năng nói không**
+kể từ vòng 2 — `status is None` là BLOCKER, danh sách stage rỗng là BLOCKER. Bản sửa
+`ROUTINE_HINTS` giữ đúng phân biệt giữa phỏng đoán theo tên và sự thật về chủ thể, thay
+vì nới lỏng toàn bộ miễn trừ. Đó là đọc kỹ chứ không phải làm cho xong.
+
+Nhưng vòng này lộ ra một lớp vấn đề chưa từng thấy trong năm vòng trước, và nó lớn hơn
+mọi mục còn lại trong hàng đợi:
+
+**Hệ thống không có ranh giới giữa các lần chạy.** Ngay lúc audit, `state/` chứa tệp của
+hai lần chạy khác nhau, và con số quan trọng nhất — `Risk 31 HIGH` — đang trích dẫn 6
+chỉ báo mà tệp được trích dẫn không còn chứa. Không `run_id`, không ảnh chụp nguyên tử,
+không khoá chạy, không cảnh báo lệch pha.
+
+**Và các cuộc săn không tái lập được.** Risk đã đi `10 → 3 → 31` trong bốn giờ trên một
+máy không đổi cấu hình, mỗi lần vì một tập chỉ báo khác nhau xuất hiện rồi biến mất khỏi
+cửa sổ Security log. Sáu chỉ báo CRITICAL "LSASS Memory Access" sống đúng 33 giây và
+không để lại `.prev`.
+
+Điều này định lại thứ tự ưu tiên. Vòng 5 đã cảnh báo *"không thể dùng Risk để đo tiến
+bộ"*; vòng 6 cho thấy hệ quả mạnh hơn: **không thể đóng bất kỳ mục nào dựa trên một con
+số đọc từ `state/`**, vì không ai biết con số đó thuộc lần chạy nào. Điều đó áp cho cả
+Builder lẫn Auditor — kể cả bảng tồn đọng ở trên.
+
+`run_id` + fixture là điều kiện cần trước mọi việc khác.
+
+**Thứ tự vòng tới:** AQ-035 → AQ-036 (kèm fixture) → AQ-020/038 → AQ-021 → AQ-037 →
+AQ-030/007 → AQ-034.
+
+---
+
+*Vòng 6, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*

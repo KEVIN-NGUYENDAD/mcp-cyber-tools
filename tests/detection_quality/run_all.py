@@ -46,6 +46,7 @@ EXTRA_SUITES = [
     ('green_defaults', 'test_green_defaults'),
     ('portal_hardening', 'test_portal_hardening'),
     ('gate_integrity', 'test_gate_integrity'),
+    ('fixtures', 'test_scoring_fixtures'),
 ]
 
 
