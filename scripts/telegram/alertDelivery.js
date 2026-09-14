@@ -3,6 +3,19 @@ import fs from 'fs';
 import path from 'path';
 import { paths } from './paths.js';
 
+// Lich su canh bao tung mang ba ten cho cung mot mang: `sent_alerts` nam trong
+// tep, `alerts` la noi lop nay ghi vao, `notifications` la noi bot doc ra. Ba
+// ten thi hai trong ba luon rong — va mot lich su canh bao rong doc y het mot he
+// thong chua tung canh bao gi.
+//
+// Ten chinh thuc: `sent_alerts`. Doc van chap nhan ca ba de lich su cu khong mat.
+const ALERT_LIST_KEY = 'sent_alerts';
+
+function alertList(history) {
+  if (!history) return [];
+  return history[ALERT_LIST_KEY] || history.alerts || history.notifications || [];
+}
+
 class AlertDelivery {
   constructor(telegramBot) {
     this.telegramBot = telegramBot;
@@ -16,8 +29,8 @@ class AlertDelivery {
       const historyPath = paths.notificationHistory;
       if (fs.existsSync(historyPath)) {
         const history = JSON.parse(fs.readFileSync(historyPath, 'utf8'));
-        if (history.alerts) {
-          history.alerts.forEach(alert => {
+        {
+          alertList(history).forEach(alert => {
             const hash = this.generateHash(alert.incident_id);
             this.sentAlerts.set(hash, {
               timestamp: new Date(alert.timestamp),
@@ -148,7 +161,7 @@ class AlertDelivery {
       const historyPath = paths.notificationHistory;
       let history = {
         total_alerts_sent: 0,
-        alerts: []
+        [ALERT_LIST_KEY]: []
       };
 
       if (fs.existsSync(historyPath)) {
@@ -165,8 +178,12 @@ class AlertDelivery {
         risk_score: incident.risk_score || 0
       };
 
-      history.alerts.push(alertEntry);
-      history.total_alerts_sent = history.alerts.length;
+      const list = alertList(history);
+      list.push(alertEntry);
+      history[ALERT_LIST_KEY] = list;
+      delete history.alerts;
+      delete history.notifications;
+      history.total_alerts_sent = list.length;
       history.last_alert = alertEntry;
 
       fs.writeFileSync(historyPath, JSON.stringify(history, null, 2), 'utf8');
@@ -245,8 +262,8 @@ class AlertDelivery {
         last_alert: history.last_alert || null
       };
 
-      if (history.alerts) {
-        history.alerts.forEach(alert => {
+      {
+        alertList(history).forEach(alert => {
           if (alert.severity && stats.by_severity[alert.severity] !== undefined) {
             stats.by_severity[alert.severity]++;
           }

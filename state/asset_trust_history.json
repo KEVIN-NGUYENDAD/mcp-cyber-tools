@@ -84,11 +84,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       0
     ],
     "vulnerability_counts": [
+      11,
       11,
       11,
       11,
@@ -105,11 +106,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       1
     ],
     "vulnerability_counts": [
+      13,
       13,
       13,
       13,
@@ -126,11 +128,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       1
     ],
     "vulnerability_counts": [
+      14,
       14,
       14,
       14,
@@ -147,11 +150,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       1
     ],
     "vulnerability_counts": [
+      14,
       14,
       14,
       14,
@@ -168,11 +172,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       1
     ],
     "vulnerability_counts": [
+      14,
       14,
       14,
       14,
@@ -189,11 +194,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       1
     ],
     "vulnerability_counts": [
+      14,
       14,
       14,
       14,
@@ -210,11 +216,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       1
     ],
     "vulnerability_counts": [
+      14,
       14,
       14,
       14,
@@ -231,11 +238,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       3
     ],
     "vulnerability_counts": [
+      215,
       215,
       215,
       215,
@@ -252,11 +260,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       5
     ],
     "vulnerability_counts": [
+      39,
       39,
       39,
       39,
@@ -273,11 +282,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       0
     ],
     "vulnerability_counts": [
+      3,
       3,
       3,
       3,
@@ -294,11 +304,12 @@
     "mac_changes": 0,
     "ip_changes": 0,
     "first_seen": "2026-09-09T10:07:46.190379",
-    "observations": 11,
+    "observations": 12,
     "risk_scores": [
       7
     ],
     "vulnerability_counts": [
+      48,
       48,
       48,
       48,

@@ -14,7 +14,8 @@
     "audit:detection": "python scripts/detection_quality.py",
     "gate": "python scripts/sprint_gate.py",
     "gate:full": "python scripts/sprint_gate.py --validate",
-    "audit:portal": "python scripts/portal_field_audit.py"
+    "audit:portal": "python scripts/portal_field_audit.py",
+    "audit:telegram": "python scripts/telegram_field_audit.py"
   },
   "keywords": [],
   "author": "",
