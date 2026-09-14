@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T23:01:53.494706",
+  "timestamp": "2026-09-13T23:16:28.547293",
   "question": "Cái gì quan trọng nhất hôm nay?",
   "total_items_analyzed": 6,
   "top_5_critical": [
@@ -10,7 +10,7 @@
       "category": "Risk Management",
       "priority": "HIGH",
       "description": "threat_hunting score chỉ 28/100",
-      "impact": "Ảnh hưởng đến Risk Score: 28",
+      "impact": "Ảnh hưởng đến Risk Score: 25",
       "reason": "threat_hunting component weak",
       "affected_assets": [],
       "steps": [
@@ -26,7 +26,7 @@
       "category": "Risk Management",
       "priority": "MEDIUM",
       "description": "waap score chỉ 50/100",
-      "impact": "Ảnh hưởng đến Risk Score: 28",
+      "impact": "Ảnh hưởng đến Risk Score: 25",
       "reason": "waap component weak",
       "affected_assets": [],
       "steps": [
@@ -37,13 +37,13 @@
     },
     {
       "source": "risk",
-      "priority_score": 18,
-      "title": "Cải thiện Incidents",
+      "priority_score": 13,
+      "title": "Cải thiện Security Events",
       "category": "Risk Management",
       "priority": "MEDIUM",
-      "description": "incidents score chỉ 82/100",
-      "impact": "Ảnh hưởng đến Risk Score: 28",
-      "reason": "incidents component weak",
+      "description": "security_events score chỉ 87/100",
+      "impact": "Ảnh hưởng đến Risk Score: 25",
+      "reason": "security_events component weak",
       "affected_assets": [],
       "steps": [
         "Phân tích chi tiết",
