@@ -23,6 +23,7 @@ from pathlib import Path
 
 from state_manager import write_state_atomic
 import ioc_attribution
+import detection_quality
 from mcp_bridge import McpBridge, McpBridgeError, as_list
 
 HUNT_VERSION = '2.0.0'
@@ -49,6 +50,7 @@ class PersistenceHunter(object):
         self.errors = []
         self.observable = False
         self.tools_used = []
+        self.self_log = detection_quality.SelfObservationLog()
 
     # -- thu thập ---------------------------------------------------------
 
@@ -108,6 +110,14 @@ class PersistenceHunter(object):
         for record in records:
             kind, name, location, command = self.describe(record)
             severity, reason = self.classify(record)
+
+            # Mot scheduled task hoac Run-key goi chinh pipeline giam sat la bo
+            # may nay dang duoc lap dat, khong phai ke tan cong dang tru chan.
+            # Khong loai thi moi lan ai do dat lich chay pipeline se sinh ra mot
+            # chi bao persistence ton tai mai mai.
+            if self.self_log.check('{} {}'.format(command or '', location or ''),
+                                   kind=kind, name=name):
+                continue
 
             self.indicators.append({
                 'type': 'Persistence: {}'.format(kind),
@@ -173,6 +183,8 @@ class PersistenceHunter(object):
             'errors': self.errors,
             'question': 'Có chỉ báo persistence nào trong hệ thống không?',
             'total_indicators': len(self.indicators),
+            'self_observation': self.self_log.report(
+                'tac vu/khoa Run goi chinh pipeline giam sat'),
             'by_severity': {},
             'by_status': {},
             'indicators': self.indicators,

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T23:16:09.644510",
+  "timestamp": "2026-09-13T23:28:10.424651",
   "total_assets": 11,
   "assets": [
     {
@@ -8,14 +8,14 @@
       "os": "Windows",
       "device_type": "Router",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.221361",
       "vulnerability_count": 39,
       "critical": 0,
       "high": 0,
       "medium": 1,
       "low": 2,
       "info": 36,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -54,14 +54,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.10",
@@ -69,14 +69,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.221361",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
       "info": 13,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -115,14 +115,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.11",
@@ -130,14 +130,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.221361",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
       "info": 13,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -176,14 +176,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.12",
@@ -191,14 +191,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.222365",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
       "info": 13,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -237,14 +237,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.21",
@@ -252,14 +252,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.222365",
       "vulnerability_count": 48,
       "critical": 0,
       "high": 0,
       "medium": 2,
       "low": 1,
       "info": 45,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -298,14 +298,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.233",
@@ -313,14 +313,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.222365",
       "vulnerability_count": 3,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 0,
       "info": 3,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -359,14 +359,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.3",
@@ -374,14 +374,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.221361",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
       "info": 13,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -420,14 +420,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.4",
@@ -435,14 +435,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.221361",
       "vulnerability_count": 11,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 0,
       "info": 11,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -481,14 +481,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.5",
@@ -496,14 +496,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.221361",
       "vulnerability_count": 13,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
       "info": 12,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -542,14 +542,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.51",
@@ -557,14 +557,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.222365",
       "vulnerability_count": 215,
       "critical": 0,
       "high": 0,
       "medium": 1,
       "low": 0,
       "info": 214,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -603,14 +603,14 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     },
     {
       "ip": "192.168.0.8",
@@ -618,14 +618,14 @@
       "os": "Windows",
       "device_type": "Server",
       "first_seen": "2026-09-09T10:07:46.190379",
-      "last_seen": "2026-09-13T23:16:09.463806",
+      "last_seen": "2026-09-13T23:28:10.221361",
       "vulnerability_count": 14,
       "critical": 0,
       "high": 0,
       "medium": 0,
       "low": 1,
       "info": 13,
-      "trust_score": 97,
+      "trust_score": 100,
       "trust_level": "CRITICAL_ASSET",
       "trust_basis": {
         "points_available": 60,
@@ -664,15 +664,15 @@
           },
           {
             "name": "discovery_consistency",
-            "score": 8,
+            "score": 10,
             "max": 10,
             "observable": true,
-            "reason": "9 l\u1ea7n quan s\u00e1t"
+            "reason": "10 l\u1ea7n quan s\u00e1t"
           }
         ]
       },
-      "trust_scored_at": "2026-09-13T23:16:09.644510"
+      "trust_scored_at": "2026-09-13T23:28:10.424651"
     }
   ],
-  "trust_scored_at": "2026-09-13T23:16:09.644510"
+  "trust_scored_at": "2026-09-13T23:28:10.424651"
 }

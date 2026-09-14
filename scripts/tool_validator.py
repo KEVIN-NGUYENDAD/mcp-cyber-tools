@@ -46,6 +46,7 @@ if SCRIPT_DIR not in sys.path:
 
 from mcp_bridge import McpBridge, McpBridgeError, as_list  # noqa: E402
 import sensor_probe  # noqa: E402
+import detection_quality  # noqa: E402
 
 try:
     from state_manager import write_state_atomic
@@ -554,6 +555,11 @@ def validate(verbose=True):
         'fallback_sources': sensor_probe.fallback_summary(probes),
         'detection_capabilities': sensor_probe.capability_summary(probes),
         'results': rows,
+        # TASK 2: toan ven bang chung la mot dieu kien PHAN QUYET, khong phai
+        # mot bao cao rieng ai nho thi doc. Mot chi bao ket luan dieu ma bang
+        # chung cua no khong chung minh duoc thi ky kiem dinh nay KHONG dat, du
+        # ca 99 tool deu chay tot.
+        'detection_integrity': detection_quality.audit_state(),
         'summary': _summarize(rows),
     }
 
@@ -676,8 +682,14 @@ def _tool_summary(report):
     def any_pass(module):
         return any(r['status'] == STATUS_PASS for r in by_module.get(module, []))
 
+    integrity = report.get('detection_integrity') or {}
+    integrity_ok = integrity.get('ok', True)
+
     return {
-        'status': 'VERIFIED' if summary[STATUS_FAIL] == 0 else 'DEGRADED',
+        'status': ('VERIFIED' if (summary[STATUS_FAIL] == 0 and integrity_ok)
+                   else 'DEGRADED'),
+        'detection_integrity_ok': integrity_ok,
+        'detection_integrity_violations': integrity.get('total_violations', 0),
         'tool_count': report['tools_registered'],
         'pass': summary[STATUS_PASS],
         'empty': summary[STATUS_EMPTY],
@@ -946,6 +958,10 @@ def main():
     # ĐƯỢC; dòng này nói nguồn nào đang GHI thứ ta cần. Trên máy này hai dòng đó
     # mâu thuẫn nhau (event_logs=covered, script_block=partial) — và chính chỗ
     # mâu thuẫn là chỗ đáng đọc.
+    integrity = report.get('detection_integrity') or {}
+    print('Toàn vẹn bằng chứng: %s (%d vi phạm trên %d chỉ báo)' % (
+        'ĐẠT' if integrity.get('ok') else 'KHÔNG ĐẠT',
+        integrity.get('total_violations', 0), integrity.get('total_indicators', 0)))
     print('Năng lực: %s' % ' | '.join(
         '%s=%s' % (c['key'], c['status'])
         for c in (report.get('detection_capabilities') or [])))
