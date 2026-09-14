@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T15:02:52.271124
+Cập nhật: 2026-09-14T15:08:19.913131
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `f20e0f1` |
+| Commit lúc chạy | `9f03cf0` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | fix: Sprint 15 — remove auto-validate flag from stage 18A to eliminate daily defenderQuickScan side effect |
+| Tiêu đề | docs: LOOP MODE V4 final status report — Sprint 15 complete, system green |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
@@ -19,11 +19,9 @@ cổng chạy trước khi commit — không phải một con số trễ.
 
 ## Cổng merge
 
-> **Chưa biết cổng có cho merge hay không.** Tệp này được sinh ngoài
-> một lần chạy cổng, nên không có kết luận nào để chép lại. Các con số
-> dưới đây là của lần đo gần nhất, không phải một phán quyết.
->
-> Chạy `npm run gate` để có kết luận.
+| | |
+|---|---|
+| **Đủ điều kiện merge** | **CÓ** |
 
 | | |
 |---|---|
@@ -86,7 +84,7 @@ _Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
 
 1. Đọc `docs/project/AUDIT_QUEUE.md` — còn CRITICAL/HIGH thì sửa trước.
 2. Đọc `docs/project/TECHNICAL_DEBT.md` — nợ đo được và nợ ghi nhận.
-3. `npm run gate` — tệp này chưa biết cổng có cho merge không.
+3. `npm run gate` trước khi mở PR.
 
 ## Tài liệu handoff viết tay
 
