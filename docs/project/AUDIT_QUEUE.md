@@ -2972,3 +2972,244 @@ AQ-042/AQ-007 → AQ-037 → AQ-034.
 ---
 
 *Vòng 9, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
+
+
+---
+---
+
+# VÒNG 10 — 2026-09-14 13:29 · commit `f0b8ba7` + working tree
+
+HEAD `f0b8ba7` *"cut the incidents<->risk feedback loop, stamp every state file with its run"*.
+Working tree: `render.yaml`, `web/server.js`, **`web-server.js` ĐÃ XOÁ**,
+`scripts/deploy_truth_audit.py` (mới), 5 script daily_brief, `sprint_gate.py`.
+Auditor READ ONLY.
+
+---
+
+## ĐÃ TRẢ
+
+### AQ-007 / AQ-030 / AQ-042 ✅ — Deployment Truth, sau **8 vòng**
+
+    render.yaml:  startCommand: npm start        (từng là `node web-server.js`)
+    web-server.js: ĐÃ XOÁ
+    web/server.js:279  app.get('/latest', ...)   — route không mất
+    scripts/deploy_truth_audit.py (mới, nối vào gate)
+      PHAM VI: render.yaml -> 'npm start' | package.json -> 'node web/server.js'
+               | diem vao web/server.js | 5 route doi chieu
+      TONG: 0 vi pham
+
+Chỗ làm đúng nhất là **không ghi lại đường dẫn** trong `render.yaml`:
+
+    # "Không ghi lại đường dẫn ở đây: ghi hai lần thì trôi lần nữa. `npm start`
+    #  để `package.json` là chỗ duy nhất nói đâu là điểm vào."
+
+Đó là chẩn đoán đúng gốc: vấn đề không phải giá trị sai, mà **hai nơi cùng khai một sự
+thật**. Kiểm lại: `/latest` vẫn được phục vụ, không có route nào mất khi xoá server cũ.
+
+### AQ-034 / AQ-038 ✅ — mẫu số đã có ở mọi hàng
+
+`docs/project/TECHNICAL_DEBT.md` nay in:
+
+    | Trường portal đọc từ state không tồn tại      | 0 / 28 truy cập soi được |
+    | Trường Telegram đọc từ state không tồn tại    | 0 / 15 truy cập soi được |
+    | Biểu thức innerHTML chưa escape               | 0 / 85 biểu thức trong sink |
+    | `.get(khoá, mặc định)` bịa số trong Python    | 0 / 106 lời gọi lần được |
+    | State cùng một lần chạy                       | 7 / 7 tệp có dấu |
+    | Sự cố đang mở truy nguợc được về quan sát     | 1 / 1 |
+    | Tuổi `tool_validation.json`                   | 5.2 giờ |
+
+Không còn một con số `0` trần nào. Đây là mục đã nêu ở vòng 1, 4, 5, 8 và 9 — đóng trọn.
+
+### AQ-040 ✅ lan truyền xong
+
+    state/risk_score.json   run_id RUN-20260914T132454-cb565f   run_scope PIPELINE
+    run_coherence_audit:    7/7 tệp có dấu, 1 sự cố truy nguợc được, 0 vi phạm
+
+---
+
+## AQ-045 · Risk Consistency · Truth Gap
+
+**Issue:**
+**82% điểm rủi ro hiện tại (18.0 / 22) đến từ 6 chỉ báo mà chính hệ thống đã đánh dấu
+`suppressed: true`, `noise_class: ROUTINE_OS_ACTIVITY`.** Bộ lọc tiếng ồn chạy đúng; bộ
+chấm rủi ro không đọc kết quả của nó.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+`by_severity` được tổng kết **trước** khi lọc tiếng ồn, và `calculate_risk_score.py:275`
+đọc đúng bảng tổng kết đó thay vì đọc mảng `indicators`:
+
+    calculate_risk_score.py:155   # `by_severity` do stage trước tổng kết.
+    calculate_risk_score.py:275   by_severity = data.get('by_severity') or {}
+
+Đây là AQ-005 tái xuất ở một consumer khác. Vòng 6 đã sửa `correlation_engine.indicators()`
+để lọc `suppressed`. Không ai sửa **nơi sinh ra `by_severity`**, nên mọi consumer đọc
+bảng tổng kết vẫn thấy con số trước lọc — và bộ chấm rủi ro là một trong số đó.
+
+Bản sửa AQ-019 ở vòng 6 hoạt động đúng: cả 6 chỉ báo đều được nhận ra là hoạt động nền
+của Windows. Nhưng nhận ra rồi không dùng đến.
+
+**Evidence:**
+
+    state/hunting_lateral_movement.json  (run_id RUN-20260914T132454-cb565f)
+      tổng 425   suppressed 199   kept 226
+
+      by_severity CÔNG BỐ        : {'INFO': 419, 'HIGH': 6}
+      by_severity nếu chỉ tính kept: {'INFO': 226}
+      HIGH trong kept             : 0          <- KHÔNG CÓ chỉ báo HIGH nào sống sót
+
+    Cả 6 chỉ báo HIGH:
+      type        Explicit Credential Logon
+      suppressed  True
+      noise_class ROUTINE_OS_ACTIVITY
+      scope       ['LOCAL_HOST']
+      evidence chứa 'S-1-5-18' và 'localhost'
+
+    state/risk_score.json
+      threat_hunting  health 28   contribution 18.0   "lateral_movement: 0C/6H"
+      overall_score   22
+
+Phép tính: `health = 100 − 6 × 12 = 28` · `contribution = 0.25 × 72 = 18.0` ·
+`18.0 / 22 = 82%`.
+
+Nếu `by_severity` tính sau lọc: `health 100`, `contribution 0.0`, **Risk = 4**.
+
+**Business Impact:**
+Risk đã đi `10 → 3 → 22` trong một ngày trên một máy không đổi cấu hình, và lần này
+nguyên nhân không phải nhiễu thu thập mà là **một lỗi nhất quán**: cứ mỗi lần chủ máy
+đăng nhập vào tài khoản Microsoft, thêm một sự kiện 4648, thêm 12 điểm sức khoẻ bị trừ.
+Điểm rủi ro tăng tuyến tính theo số lần người dùng đăng nhập vào máy của họ.
+
+Nghiêm trọng hơn dạng cũ: trước đây bộ lọc không nhận ra chúng, nay nhận ra và vẫn tính.
+Hệ thống có đủ thông tin để đúng và vẫn công bố sai — đúng mô tả trong commit message
+của PR #42: *"the number then travels to portal, Telegram, reports and the debt table,
+all showing the same wrong value consistently, and therefore convincingly."*
+
+**Suggested Sprint:** SPRINT SUPPRESSED-AT-SOURCE —
+(1) `by_severity` tính **sau** lọc tiếng ồn; giữ số trước lọc ở khoá riêng
+(`by_severity_including_noise`) đúng kỷ luật `*_all` đã áp cho `average_score` ở AQ-001.
+(2) `analyze_threat_hunting` đọc mảng `indicators` đã lọc, không đọc bảng tổng kết —
+hoặc `by_severity` phải bảo đảm đã lọc, một trong hai, không để mơ hồ.
+(3) Rà mọi consumer khác của `by_severity`: portal KPI, Telegram, daily brief.
+(4) Bất biến trong gate: `sum(by_severity.values()) == len([i for i in indicators
+if not i.suppressed])`. Bất biến này bắt được lớp lỗi ở mọi tệp hunting cùng lúc.
+
+---
+
+## AQ-044 · Green Default — chưa sửa cấu trúc
+
+**Issue:**
+`run_coherence_audit` nay báo `7/7 tệp có dấu, 0 vi phạm` — **nhưng vì dữ liệu đã lan
+truyền, không phải vì mã đã sửa.** Không có trạng thái `UNEVALUABLE`.
+
+**Severity:** HIGH *(hạ từ CRITICAL: mẫu số nay hiện trong `TECHNICAL_DEBT.md`)*
+
+**Root Cause:**
+`grep -n "UNEVALUABLE\|unevaluable" scripts/run_coherence_audit.py scripts/sprint_gate.py`
+→ **không kết quả**. Nhánh "không đánh giá được" chưa tồn tại. Vòng 9 đo `0/7 → 0 vi
+phạm`; vòng 10 đo `7/7 → 0 vi phạm`. Cùng một mã, hai đầu vào.
+
+Theo đúng quy tắc bước 3 của vòng lặp này: **đây là "hôm nay dữ liệu khác", không phải
+"đã sửa mã"** — nên mục ở lại.
+
+**Evidence:**
+
+    Vòng 9: PHAM VI 0/7 tep co dau lan chay  ->  TONG: 0 vi pham
+    Vòng 10: PHAM VI 7/7 tep co dau lan chay ->  TONG: 0 vi pham
+
+    UNEVALUABLE trong mã: không có
+
+Giảm nhẹ có thật: `TECHNICAL_DEBT.md` nay in `7 / 7 tệp có dấu` cạnh kết quả, nên người
+đọc thấy mẫu số. Nếu tụt về `0 / 7` thì bảng sẽ nói ra — con số không còn trần. Đó là lý
+do hạ xuống HIGH.
+
+Nhưng **cổng merge vẫn pass** ở trạng thái `0/7`, và với AQ-043 (`except ImportError:
+pass`) thì đường từ hỏng-âm-thầm tới merge-được vẫn liền.
+
+**Suggested Sprint:** SPRINT RUN-ISOLATION (phần cuối, gộp AQ-043) — ba trạng thái
+`COHERENT` / `INCOHERENT` / `UNEVALUABLE`; `UNEVALUABLE` là blocker; `except ImportError`
+ghi `run_scope: 'UNSTAMPED'` thay vì im lặng.
+
+---
+
+## AQ-041 · Schema Drift — KHÔNG ĐỔI, vòng thứ sáu
+
+**Issue:** Ba số liệu sai, đo lại không con số nào thay đổi.
+
+**Severity:** CRITICAL
+
+**Evidence:**
+
+    crypto score 100 · severity_breakdown tổng 0 · total_findings 19    (đúng: 90)
+    assets vuln tổng 399   |   nessus_status.total 64                    (chênh 6.2 lần)
+    hostname_source {unresolved: 11}  ·  attribution {FULL: 423, PARTIAL: 2}
+
+Ghi chú: `TECHNICAL_DEBT.md` vòng này thêm bảy hàng mẫu số mới, không hàng nào chạm ba
+số liệu này. Bộ kiểm đang phủ ngày càng rộng lớp lỗi *"đọc trường không tồn tại"* trong
+khi ba lỗi *"hai lược đồ không khớp"* đứng yên từ vòng 3.
+
+**Suggested Sprint:** SPRINT SCHEMA-RECONCILE — ba bất biến so tổng (nêu từ vòng 7), giờ
+thêm bất biến thứ tư từ AQ-045: `sum(by_severity) == len(kept indicators)`. Bốn bất biến
+cùng một hình dạng — **so tổng giữa nguồn và dẫn xuất** — nên chúng là một sprint, và là
+lớp kiểm còn thiếu duy nhất trong bảng nợ.
+
+---
+
+## TỒN ĐỌNG SAU VÒNG 10
+
+| Mục | Hạng | Tuổi |
+|---|---|---|
+| AQ-045 | CRITICAL | 🆕 82% điểm rủi ro từ 6 chỉ báo đã đánh dấu là tiếng ồn |
+| AQ-020 / AQ-041 | CRITICAL | ❌ 6 vòng |
+| AQ-021 / AQ-041 | CRITICAL | ❌ 8 vòng |
+| AQ-002 / AQ-041 | CRITICAL | ❌ 10 vòng |
+| AQ-044 | HIGH | 🔶 hạ từ CRITICAL; chưa có `UNEVALUABLE` |
+| AQ-043 | HIGH | ❌ 3 vòng |
+| AQ-033 / AQ-037 | HIGH | 🔶 HANDOFF `f0b8ba7` = HEAD; Risk 22 = 22 — **khớp lần đầu** |
+
+**Đang mở: 6 (4 CRITICAL, 2–3 HIGH). Đã trả tích luỹ: 31.**
+
+Ghi nhận AQ-037: `HANDOFF.md` vòng này khai `Commit f0b8ba7` = HEAD, `Risk 22/100` =
+state. Lần đầu trong bảy vòng nó khớp. Nhưng `generate_handoff.py` vẫn chưa là stage của
+pipeline, nên đây có thể lại là thời điểm chạy trùng nhau — giữ 🔶 tới khi thấy nó khớp
+qua một lần merge nữa.
+
+---
+
+## NHẬN ĐỊNH VÒNG 10
+
+Vòng tốt nhất từ đầu cuộc audit về khối lượng đóng: Deployment Truth sau **8 vòng**, và
+mẫu số ở mọi hàng của bảng nợ sau **5 vòng** nhắc lại. Cả hai đều đóng đúng gốc —
+`npm start` bỏ hẳn nguồn sự thật thứ hai thay vì sửa giá trị; bảng nợ không còn một con
+số `0` trần nào.
+
+Nhưng phát hiện chính vòng này là loại nguy hiểm nhất mà hàng đợi từng ghi: **hệ thống
+đã có đủ thông tin để đúng, và vẫn công bố sai.**
+
+Sáu chỉ báo 4648 được nhận diện chính xác là hoạt động nền của Windows —
+`suppressed: true`, `noise_class: ROUTINE_OS_ACTIVITY`, `scope: LOCAL_HOST`. Bản sửa
+AQ-019 ở vòng 6 làm đúng việc của nó. Nhưng `by_severity` được tổng kết **trước** khi
+lọc, và bộ chấm rủi ro đọc bảng tổng kết đó. Kết quả: `health 28`, `contribution 18.0`,
+**82% điểm rủi ro đến từ chính những bản ghi hệ thống đã gắn nhãn tiếng ồn.**
+
+Hệ quả vận hành đáng nói: điểm rủi ro nay tăng **tuyến tính theo số lần chủ máy đăng
+nhập vào tài khoản Microsoft của họ**. Không phải nhiễu như vòng 5 và 6 — đây là một lỗi
+nhất quán, lặp lại được, và vì thế thuyết phục hơn nhiều.
+
+Đây là AQ-005 tái xuất ở consumer khác: vòng 6 sửa `correlation_engine.indicators()`,
+không ai sửa nơi **sinh ra** `by_severity`. Cùng hình dạng với AQ-014, nơi một lần đổi
+khoá làm hỏng năm consumer và sprint sửa được một. Bài học đó đã được viết vào
+`state_manager.py` ở vòng 8 (*"sửa từng script là cách đã chứng minh không scale"*) —
+nhưng chưa được áp cho lớp tổng kết.
+
+Và AQ-041 nay đã đứng yên 6, 8 và 10 vòng. Bảng nợ vòng này thêm **bảy** hàng mẫu số
+mới; không hàng nào chạm ba số liệu đó. Bốn bất biến so tổng — gồm bất biến mới từ
+AQ-045 — là lớp kiểm còn thiếu duy nhất, và là một sprint.
+
+**Thứ tự vòng tới:** AQ-045 → AQ-041 (bốn bất biến, cùng sprint) → AQ-044 + AQ-043 →
+AQ-037 (xác nhận qua một merge nữa).
+
+---
+
+*Vòng 10, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*

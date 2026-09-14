@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-14T13:25:38.345177",
+  "generated_at": "2026-09-14T13:31:52.509728",
   "version": "2.0.0",
   "defender": "covered",
   "firewall": "covered",
@@ -132,7 +132,7 @@
     "threat_hunting_active": true,
     "dfir_active": true,
     "event_hub_active": true,
-    "last_sync": "2026-09-14T13:25:38.345177"
+    "last_sync": "2026-09-14T13:31:52.509728"
   },
   "access_diagnosis": {
     "can_fix": true,
@@ -178,7 +178,7 @@
       "probe": "event_log_ps_operational",
       "log": "Microsoft-Windows-PowerShell/Operational",
       "readable": true,
-      "records": "2487",
+      "records": "623",
       "covers": "Script block logging (4104): nội dung lệnh PowerShell đã chạy — che được phần PowerShell của vùng mù 4688, không che phần còn lại",
       "used_by": [
         "huntEncodedPowerShell"
@@ -191,7 +191,7 @@
       "label": "Security Log",
       "detail": "Log Security thô — nền của mọi thứ dưới đây",
       "status": "covered",
-      "reason": "Log Security mở được, 13263 bản ghi."
+      "reason": "Log Security mở được, 13471 bản ghi."
     },
     {
       "key": "process_creation",
@@ -205,7 +205,7 @@
       "label": "Script Block Logging",
       "detail": "Event ID 4104 — nội dung lệnh PowerShell đã chạy",
       "status": "covered",
-      "reason": "Chính sách Script Block Logging đang BẬT — mọi khối lệnh PowerShell đều được ghi (2487 bản ghi trong log).",
+      "reason": "Chính sách Script Block Logging đang BẬT — mọi khối lệnh PowerShell đều được ghi (623 bản ghi trong log).",
       "module_logging": false
     },
     {
@@ -232,14 +232,14 @@
     "partial": 0,
     "blind": 2
   },
-  "probe_generated_at": "2026-09-14T13:25:38.345177",
+  "probe_generated_at": "2026-09-14T13:31:52.509728",
   "tools_generated_at": "2026-09-14T08:15:51.297087",
-  "tools_age_hours": 5.2,
+  "tools_age_hours": 5.3,
   "refreshed_by": "refresh_sensor_coverage",
-  "freshness_note": "Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (5.2 giờ trước).",
+  "freshness_note": "Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (5.3 giờ trước).",
   "tools_refresh": {
     "state": "fresh",
-    "age_hours": 5.2,
+    "age_hours": 5.3,
     "note": "Kết quả tool còn trong ngưỡng 20 giờ."
   }
 }

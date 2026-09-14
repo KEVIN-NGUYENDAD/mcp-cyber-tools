@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T13:29:36.366576",
+  "timestamp": "2026-09-14T13:31:53.078216",
   "date": "2026-09-14",
   "incident_summary": {
     "total_open": 1,
@@ -13,24 +13,24 @@
     "top_5": [
       {
         "rank": 1,
+        "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
+        "priority": "HIGH",
+        "time_estimate": "N/A",
+        "reason": "threat_hunting component weak"
+      },
+      {
+        "rank": 2,
         "title": "C\u1ea3i thi\u1ec7n Waap",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
         "reason": "waap component weak"
       },
       {
-        "rank": 2,
+        "rank": 3,
         "title": "C\u1ea3i thi\u1ec7n Security Events",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
         "reason": "security_events component weak"
-      },
-      {
-        "rank": 3,
-        "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
-        "priority": "MEDIUM",
-        "time_estimate": "N/A",
-        "reason": "threat_hunting component weak"
       },
       {
         "rank": 4,
@@ -48,23 +48,19 @@
       }
     ],
     "critical_count": 0,
-    "high_count": 2,
-    "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 2 HIGH"
+    "high_count": 3,
+    "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 3 HIGH"
   },
   "change_summary": {
-    "total_changes": 1,
-    "changes_by_category": {
-      "Risk": 1
-    },
-    "changes_by_severity": {
-      "LOW": 1
-    },
+    "total_changes": 0,
+    "changes_by_category": {},
+    "changes_by_severity": {},
     "critical_incidents": [],
-    "summary_text": "1 thay \u0111\u1ed5i b\u00ecnh th\u01b0\u1eddng"
+    "summary_text": "Kh\u00f4ng c\u00f3 thay \u0111\u1ed5i"
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 162.8,
+    "scan_age_hours": 162.9,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -163,27 +159,29 @@
     ]
   },
   "crypto_summary": {
-    "health_score": 100,
+    "health_score": 90,
     "total_findings": 19,
     "certificate_findings": 4,
     "weak_cipher_count": 0,
     "severity_breakdown": {
       "CRITICAL": 0,
       "HIGH": 0,
-      "MEDIUM": 0,
+      "MEDIUM": 2,
       "LOW": 0,
-      "INFO": 0
+      "INFO": 17,
+      "UNKNOWN": 0
     },
     "newly_expired_certs": 0,
     "new_weak_ciphers": 0
   },
   "risk_assessment": {
     "risk_level": "LOW",
-    "risk_score": 22,
+    "risk_score": 23,
     "risk_factors": [
       "threat_hunting: lateral_movement: 0C/6H (+18.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "waap: WAAP health_score 80 (+2.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 1 HIGH \u0111ang m\u1edf (2 b\u1ea3n ghi \u0111\u00e3 \u0111\u00f3ng/thu h\u1ed3i, kh\u00f4ng t\u00ednh \u0111i\u1ec3m) (+1.5 \u0111i\u1ec3m r\u1ee7i ro)",
+      "crypto: crypto inventory score 90 (+0.6 \u0111i\u1ec3m r\u1ee7i ro)",
       "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.52 \u0111i\u1ec3m r\u1ee7i ro)",
       "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 163 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay."
     ],
@@ -191,8 +189,8 @@
     "high_count": 7,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-14T13:25:31.423462"
+    "generated_at": "2026-09-14T13:31:47.643358"
   },
-  "run_id": null,
-  "run_scope": "STANDALONE"
+  "run_id": "RUN-20260914T133123-283f8f",
+  "run_scope": "PIPELINE"
 }

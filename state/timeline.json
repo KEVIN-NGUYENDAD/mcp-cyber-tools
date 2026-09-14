@@ -1,29 +1,11 @@
 {
-  "timestamp": "2026-09-14T13:25:02.932745",
-  "period": "24 gi\u1edd g\u1ea7n nh\u1ea5t (2026-09-13T13:25:02.932745)",
-  "total_events": 1,
-  "by_category": {
-    "Risk": 1
-  },
-  "by_severity": {
-    "LOW": 1
-  },
+  "timestamp": "2026-09-14T13:31:29.607334",
+  "period": "24 gi\u1edd g\u1ea7n nh\u1ea5t (2026-09-13T13:31:29.607334)",
+  "total_events": 0,
+  "by_category": {},
+  "by_severity": {},
   "skipped_checks": [],
-  "events": [
-    {
-      "timestamp": "2026-09-14T13:25:02.876922",
-      "category": "Risk",
-      "type": "Level Change",
-      "severity": "LOW",
-      "description": "M\u1ee9c r\u1ee7i ro thay \u0111\u1ed5i: HIGH \u2192 LOW",
-      "details": {
-        "previous_level": "HIGH",
-        "current_level": "LOW",
-        "previous_score": 31,
-        "current_score": 3
-      }
-    }
-  ],
-  "run_id": "RUN-20260914T132454-cb565f",
+  "events": [],
+  "run_id": "RUN-20260914T133123-283f8f",
   "run_scope": "PIPELINE"
 }

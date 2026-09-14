@@ -149,6 +149,31 @@ class NessusCollector:
                 'info': 0
             }
 
+            # AQ-021 / AQ-041, ba vòng chưa trả: `assets.json` cộng lại ra 399
+            # lỗ hổng, `nessus_status.json` khai `total: 64`, trên cùng một bản
+            # quét. Chênh 6.2 lần, và ba vòng audit đọc nó như một con số sai.
+            #
+            # Không con số nào sai. Chúng đếm hai ĐƠN VỊ khác nhau:
+            #
+            #   `vulnerabilities[]` của Nessus đã gộp theo plugin — mỗi phần tử
+            #   là một plugin kèm `count` = số host dính. 64 = số plugin riêng
+            #   biệt.
+            #
+            #   `assets[].vulnerability_count` cộng severity theo từng host, nên
+            #   nó đếm lượt (host × plugin). 399 = số lượt.
+            #
+            # Lỗi thật nằm ở chỗ cả hai cùng mang tên `total`, và không tệp nào
+            # nói mình đếm gì. Nên đây không phải bài toán sửa một phép đếm —
+            # mà là bài toán đặt tên cho đơn vị, rồi ghi cả hai để còn đối chiếu
+            # được. Sửa một trong hai con số cho "khớp" sẽ phá đúng cái thông
+            # tin mà nó đang mang.
+            instances = 0
+            for vuln in vulnerabilities:
+                try:
+                    instances += max(1, int(vuln.get('count') or 1))
+                except (TypeError, ValueError):
+                    instances += 1
+
             for vuln in vulnerabilities:
                 severity = vuln.get('severity', -1)
                 if severity == 4:
@@ -176,7 +201,14 @@ class NessusCollector:
                 'medium': severity_counts['medium'],
                 'low': severity_counts['low'],
                 'info': severity_counts['info'],
-                'total': len(vulnerabilities)
+                # `total` giữ nguyên nghĩa cũ để không consumer nào đổi nghĩa
+                # dưới chân, nhưng từ đây nó đi kèm nhãn đơn vị của chính mình.
+                'total': len(vulnerabilities),
+                'total_unit': 'distinct_plugins',
+                'distinct_plugins': len(vulnerabilities),
+                # Đơn vị mà `assets[].vulnerability_count` đang cộng. Có trường
+                # này thì hai tệp mới đối chiếu được bằng một phép so tổng.
+                'total_instances': instances,
             }
 
         except Exception as e:
@@ -227,7 +259,10 @@ class NessusCollector:
                 'medium': 0,
                 'low': 0,
                 'info': 0,
-                'total': 0
+                'total': 0,
+                'total_unit': 'distinct_plugins',
+                'distinct_plugins': 0,
+                'total_instances': 0,
             })
 
         return output

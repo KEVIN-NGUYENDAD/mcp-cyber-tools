@@ -1,5 +1,5 @@
 {
-  "overall_score": 22,
+  "overall_score": 23,
   "risk_level": "LOW",
   "critical_count": 0,
   "high_count": 7,
@@ -29,6 +29,14 @@
       "measurable": true
     },
     {
+      "name": "crypto",
+      "health": 90,
+      "weight": 0.06,
+      "risk_contribution": 0.6,
+      "detail": "crypto inventory score 90",
+      "measurable": true
+    },
+    {
       "name": "security_events",
       "health": 87,
       "weight": 0.04,
@@ -42,14 +50,6 @@
       "weight": 0.2,
       "risk_contribution": 0.0,
       "detail": "0 l\u1ed7 h\u1ed5ng CRITICAL, 0 HIGH tr\u00ean 11 t\u00e0i s\u1ea3n \u2014 b\u1ea3n qu\u00e9t 163 gi\u1edd tu\u1ed5i",
-      "measurable": true
-    },
-    {
-      "name": "crypto",
-      "health": 100,
-      "weight": 0.06,
-      "risk_contribution": 0.0,
-      "detail": "crypto inventory score 100",
       "measurable": true
     },
     {
@@ -69,7 +69,7 @@
       "measurable": true
     }
   ],
-  "generated_at": "2026-09-14T13:25:31.423462",
+  "generated_at": "2026-09-14T13:31:47.643358",
   "engine": "calculate_risk_score",
   "engine_version": "2.0.0",
   "scale": "risk_ascending",
@@ -77,14 +77,14 @@
   "notes": [
     "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 163 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay."
   ],
-  "timestamp": "2026-09-14T13:25:31.423462",
+  "timestamp": "2026-09-14T13:31:47.643358",
   "threat_level": "LOW",
   "component_scores": {
     "threat_hunting": 28,
     "incidents": 94,
     "asset": 100,
     "waap": 80,
-    "crypto": 100,
+    "crypto": 90,
     "defender": 100,
     "firewall": 100,
     "security_events": 87
@@ -99,6 +99,6 @@
     "firewall": 0.04,
     "security_events": 0.04
   },
-  "run_id": "RUN-20260914T132454-cb565f",
+  "run_id": "RUN-20260914T133123-283f8f",
   "run_scope": "PIPELINE"
 }

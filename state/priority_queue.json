@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-09-14T13:25:30.986675",
+  "timestamp": "2026-09-14T13:31:47.225662",
   "question": "Cái gì quan trọng nhất hôm nay?",
   "total_items_analyzed": 6,
   "top_5_critical": [
     {
       "source": "risk",
-      "priority_score": 20,
-      "title": "Cải thiện Waap",
+      "priority_score": 72,
+      "title": "Cải thiện Threat Hunting",
       "category": "Risk Management",
-      "priority": "MEDIUM",
-      "description": "waap score chỉ 80/100",
-      "impact": "Ảnh hưởng đến Risk Score: 3",
-      "reason": "waap component weak",
+      "priority": "HIGH",
+      "description": "threat_hunting score chỉ 28/100",
+      "impact": "Ảnh hưởng đến Risk Score: 22",
+      "reason": "threat_hunting component weak",
       "affected_assets": [],
       "steps": [
         "Phân tích chi tiết",
@@ -21,13 +21,13 @@
     },
     {
       "source": "risk",
-      "priority_score": 13,
-      "title": "Cải thiện Security Events",
+      "priority_score": 20,
+      "title": "Cải thiện Waap",
       "category": "Risk Management",
       "priority": "MEDIUM",
-      "description": "security_events score chỉ 87/100",
-      "impact": "Ảnh hưởng đến Risk Score: 3",
-      "reason": "security_events component weak",
+      "description": "waap score chỉ 80/100",
+      "impact": "Ảnh hưởng đến Risk Score: 22",
+      "reason": "waap component weak",
       "affected_assets": [],
       "steps": [
         "Phân tích chi tiết",
@@ -37,13 +37,13 @@
     },
     {
       "source": "risk",
-      "priority_score": 0,
-      "title": "Cải thiện Threat Hunting",
+      "priority_score": 13,
+      "title": "Cải thiện Security Events",
       "category": "Risk Management",
       "priority": "MEDIUM",
-      "description": "threat_hunting score chỉ 100/100",
-      "impact": "Ảnh hưởng đến Risk Score: 3",
-      "reason": "threat_hunting component weak",
+      "description": "security_events score chỉ 87/100",
+      "impact": "Ảnh hưởng đến Risk Score: 22",
+      "reason": "security_events component weak",
       "affected_assets": [],
       "steps": [
         "Phân tích chi tiết",
@@ -94,7 +94,7 @@
   ],
   "summary": {
     "critical_count": 0,
-    "high_count": 2,
+    "high_count": 3,
     "sources": {
       "risk": 3,
       "asset": 2

@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T13:29:40.078930
+Cập nhật: 2026-09-14T13:32:03.615960
 
 ## Sprint vừa xong
 
 | | |
 |---|---|
-| Commit | `f0b8ba7` |
+| Commit | `58f01a5` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | fix(truth): cut the incidents<->risk feedback loop, stamp every state file with its run |
+| Tiêu đề | chore: keep scratch PR body out of the repo |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 ## Cổng merge
@@ -28,7 +28,7 @@ Cập nhật: 2026-09-14T13:29:40.078930
 
 | | |
 |---|---|
-| Risk Score | 22/100 |
+| Risk Score | 23/100 |
 | Risk Level | LOW |
 | Sự cố đang mở | 1 |
 | └ CRITICAL | 0 |
@@ -55,7 +55,7 @@ Cập nhật: 2026-09-14T13:29:40.078930
 | **Scheduled Task Execution** | blind |
 | **USB Device Activity** | blind |
 
-_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (5.2 giờ trước)._
+_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (5.3 giờ trước)._
 
 ## Việc tiếp theo
 
