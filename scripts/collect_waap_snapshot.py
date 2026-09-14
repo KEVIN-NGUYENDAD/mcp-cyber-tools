@@ -198,12 +198,81 @@ class WAAPCollector:
         else:
             output['protection_status'] = 'unknown'
 
+        # AQ-018. `protection_status` co BA gia tri: active / inactive /
+        # unknown. Dong cu gap ca ba xuong mot boolean, nen "chua do duoc" bien
+        # thanh `false` — va moi consumer phia sau hien dau do, tru 10 diem, cho
+        # mot thuoc tinh ma he thong TU KHAI la chua do duoc.
+        #
+        # Day la mat trai cua cung mot loi: AQ-015 la chua-biet hien thanh xanh,
+        # cho nay la chua-biet hien thanh do. Ca hai deu la chua-biet bi ep thanh
+        # mot ket luan.
+        #
+        # Chinh repo nay da lam dung chuyen do o cho khac: `sensor_coverage`
+        # phan biet ro BLIND (chua nhin) voi EMPTY (da nhin, khong co gi). Ky
+        # luat da co; no chua duoc ap cho WAAP.
+        def tri_state(value, true_when=None):
+            """True / False / None. None nghia la CHUA BIET, khong phai 'khong'."""
+            if value is None:
+                return None
+            if true_when is not None:
+                if str(value).lower() in ('unknown', 'unavailable', ''):
+                    return None
+                return value == true_when
+            if isinstance(value, bool):
+                return value
+            if str(value).lower() in ('unknown', 'unavailable', ''):
+                return None
+            return bool(value)
+
         output['security_summary'] = {
-            'ssl_valid': output.get('ssl_status') == 'valid',
-            'waf_active': output.get('waf_enabled', False),
-            'cdn_active': output.get('cdn_enabled', False),
-            'protection_active': output.get('protection_status') == 'active'
+            'ssl_valid': tri_state(output.get('ssl_status'), true_when='valid'),
+            'waf_active': tri_state(output.get('waf_enabled')),
+            'cdn_active': tri_state(output.get('cdn_enabled')),
+            'protection_active': tri_state(output.get('protection_status'),
+                                           true_when='active'),
         }
+        # AQ-016. Cong thuc 60/15/15/10 duoc sao chep NGUYEN VAN sau lan (nam
+        # trong web/app.js, mot trong telegramBot.js) va duoc goi la "WAAP Score
+        # /100" — CUNG TEN voi `calculate_waap_score.health_score`, von cham sau
+        # thanh phan khac han tu mot tep khac. Hai phep do khac nhau, cung ten,
+        # cung don vi, hien canh nhau.
+        #
+        # Day khong phai hai trong so khac nhau cua mot phep do. Nen no duoc dat
+        # TEN RIENG, tinh o DUNG MOT CHO, va cac lop hien thi doc no.
+        #
+        # Thanh phan chua do duoc roi khoi CA tu so lan mau so — dung ky luat
+        # `points_available` ma asset_builder dang dung.
+        weights = {'ssl_valid': 60, 'waf_active': 15, 'cdn_active': 15,
+                   'protection_active': 10}
+        earned = 0
+        basis = 0
+        unmeasured = []
+        for key, weight in weights.items():
+            value = output['security_summary'].get(key)
+            if value is None:
+                unmeasured.append(key)
+                continue
+            basis += weight
+            if value:
+                earned += weight
+        output['protection_coverage'] = {
+            'score': None if basis == 0 else int(round(100.0 * earned / basis)),
+            'points_earned': earned,
+            'points_available': basis,
+            'points_possible': sum(weights.values()),
+            'unmeasured': sorted(unmeasured),
+            'note': ('Do PHAM VI BAO VE (SSL/WAF/CDN/protection). KHONG phai '
+                     '`waap_score.health_score` — do la mot phep do khac, tren '
+                     'sau thanh phan khac, tu mot tep khac. Hai con so nay khong '
+                     'duoc dung thay nhau.'),
+        }
+
+        unknown = sorted(k for k, v in output['security_summary'].items()
+                         if v is None)
+        output['security_summary_note'] = (
+            'Moi truong co ba gia tri: true / false / null. `null` la CHUA DO '
+            'DUOC — no khong duoc cong diem lan tru diem.'
+            + ('' if not unknown else ' Chua do duoc: %s.' % ', '.join(unknown)))
 
         return output
 

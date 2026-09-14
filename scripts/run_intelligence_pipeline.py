@@ -167,7 +167,12 @@ class IntelligencePipeline:
         elif isinstance(crypto, dict):
             crypto_score = crypto.get('score', 0)
 
-        waap_score_val = waap_score.get('score', 0) if isinstance(waap_score, dict) else 0
+        # AQ-014. `score` khong ton tai; ten that la `health_score`. Dong
+        # log van hanh in "WAAP Score: 0" suot nhieu sprint trong khi diem that
+        # la 80.
+        waap_score_val = None
+        if isinstance(waap_score, dict):
+            waap_score_val = waap_score.get('health_score', waap_score.get('score'))
 
         # Risk level đọc từ engine chuẩn, không tự tính lại.
         #

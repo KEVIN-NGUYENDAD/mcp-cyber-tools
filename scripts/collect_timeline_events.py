@@ -27,6 +27,9 @@ class TimelineEventCollector:
         self.timeline_file = self.state_dir / 'timeline.json'
         self.history_dir.mkdir(exist_ok=True)
         self.events = []
+        # Phep so khong chay duoc phai di kem ket qua. "Khong co su kien" tren
+        # mot phep so chua chay doc y het "khong co thay doi".
+        self.skipped = []
 
     def load_state(self, filename):
         fp = self.state_dir / filename
@@ -106,10 +109,20 @@ class TimelineEventCollector:
         current = self.load_state('waap_score.json')
         previous = self.load_previous_state('waap_score.json')
 
-        current_score = current.get('score', 0)
-        previous_score = previous.get('score', 0)
+        # AQ-014. Ban cu doc `score` — khoa khong ton tai trong
+        # waap_score.json; ten that la `health_score`. Ca hai bien deu ve 0, va
+        # `if previous_score` tren 0 luon False, nen nhanh nay KHONG BAO GIO
+        # chay: WAAP roi tu 80 xuong 10 cung khong sinh mot su kien nao.
+        current_score = current.get('health_score', current.get('score'))
+        previous_score = previous.get('health_score', previous.get('score'))
 
-        if previous_score and current_score != previous_score:
+        if current_score is None or previous_score is None:
+            # Chua co moc de so. Noi ra thay vi im lang — "khong co su kien"
+            # tren mot phep so chua chay duoc doc y het "khong co thay doi".
+            self.skipped.append(
+                'WAAP: thieu health_score o ban hien tai hoac ban truoc, '
+                'chua so sanh duoc.')
+        elif current_score != previous_score:
             delta = current_score - previous_score
             if abs(delta) >= 10:
                 severity = 'HIGH' if delta < -20 else 'MEDIUM' if delta < 0 else 'LOW'
@@ -252,6 +265,7 @@ class TimelineEventCollector:
             'total_events': len(self.events),
             'by_category': {},
             'by_severity': {},
+            'skipped_checks': self.skipped,
             'events': self.events
         }
 

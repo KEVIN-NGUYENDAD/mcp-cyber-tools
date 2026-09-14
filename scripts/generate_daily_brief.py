@@ -144,9 +144,30 @@ class DailyBriefGenerator:
         if not services_data:
             return None
 
+        # AQ-015. Ban cu doc `service_count` va `service_inventory` — khong
+        # truong nao ton tai trong services.json. Ca hai `.get(..., 0)` tra ve
+        # 0, va brief in ra "0 dich vu" voi dung dinh dang cua mot con so da do,
+        # trong khi state co 10 dich vu.
+        #
+        # Doc dung ten that: `total_services` va mang `services`.
+        services = services_data.get('services')
+        if not isinstance(services, list):
+            # Khong doc duoc thi BO HAN muc nay khoi brief, kem ly do. In so 0
+            # la cach mot muc hong tiep tuc song: no van chiem cho, van trong
+            # nhu du lieu, va khong ai di kiem lai mot con so binh thuong.
+            return {'unavailable': True,
+                    'reason': 'services.json khong co mang "services" (co: %s)'
+                              % ', '.join(sorted(services_data.keys()))}
+
+        types = {}
+        for service in services:
+            kind = service.get('service_type') or service.get('plugin_family')
+            if kind:
+                types[kind] = types.get(kind, 0) + 1
+
         summary = {
-            'total_services': services_data.get('service_count', 0),
-            'service_types': len(services_data.get('service_inventory', {})),
+            'total_services': services_data.get('total_services', len(services)),
+            'service_types': len(types),
             'new_services': 0,
             'closed_services': 0,
             'top_services': []
@@ -157,21 +178,18 @@ class DailyBriefGenerator:
             summary['new_services'] = len(changes_data.get('new_services', []))
             summary['closed_services'] = len(changes_data.get('closed_services', []))
 
-        # Top services
-        inventory = services_data.get('service_inventory', {})
-        top_services = sorted(
-            inventory.items(),
-            key=lambda x: x[1].get('host_count', 0),
-            reverse=True
-        )[:5]
-
+        # Top services: dem tu chinh mang `services`, khong tu mot `inventory`
+        # chua bao gio ton tai.
+        ranked = sorted(types.items(), key=lambda kv: -kv[1])[:5]
         summary['top_services'] = [
             {
                 'name': name,
-                'host_count': data.get('host_count', 0),
-                'finding_count': data.get('finding_count', 0)
+                'host_count': count,
+                'finding_count': sum(
+                    (svc.get('vulnerability_count') or 0) for svc in services
+                    if (svc.get('service_type') or svc.get('plugin_family')) == name),
             }
-            for name, data in top_services
+            for name, count in ranked
         ]
 
         return summary
@@ -184,11 +202,34 @@ class DailyBriefGenerator:
         if not crypto_data:
             return None
 
+        # AQ-015. Bon truong cu — health_score, certificate_count,
+        # cipher_suite_count, weak_cipher_count — khong truong nao ton tai trong
+        # crypto_inventory.json. Ca bon tra ve 0.
+        #
+        # `weak_cipher_count: 0` la default xanh dien hinh: brief noi voi nguoi
+        # doc rang KHONG CO cipher yeu nao, trong khi truong do chua tung duoc
+        # doc. `health_score: 0` thi sai nguoc lai — bao dong gia tren mot he
+        # thong dang 100.
+        findings = crypto_data.get('findings')
+        score = crypto_data.get('score')
+        if not isinstance(findings, list) or score is None:
+            return {'unavailable': True,
+                    'reason': 'crypto_inventory.json thieu "findings" hoac '
+                              '"score" (co: %s)'
+                              % ', '.join(sorted(crypto_data.keys()))}
+
+        breakdown = crypto_data.get('severity_breakdown') or {}
+        weak = (breakdown.get('CRITICAL', 0) or 0) + (breakdown.get('HIGH', 0) or 0)
+        certificates = len([f for f in findings
+                            if 'cert' in str(f.get('type', '')).lower()
+                            or 'cert' in str(f.get('plugin_name', '')).lower()])
+
         summary = {
-            'health_score': crypto_data.get('health_score', 0),
-            'certificate_count': crypto_data.get('certificate_count', 0),
-            'cipher_suite_count': crypto_data.get('cipher_suite_count', 0),
-            'weak_cipher_count': crypto_data.get('weak_cipher_count', 0),
+            'health_score': score,
+            'total_findings': crypto_data.get('total_findings', len(findings)),
+            'certificate_findings': certificates,
+            'weak_cipher_count': weak,
+            'severity_breakdown': breakdown,
             'newly_expired_certs': 0,
             'new_weak_ciphers': 0
         }

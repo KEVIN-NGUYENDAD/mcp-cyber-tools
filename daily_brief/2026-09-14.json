@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-09-14T08:01:52.655071",
+  "timestamp": "2026-09-14T08:06:34.796131",
   "date": "2026-09-14",
   "incident_summary": {
-    "total_open": 1,
+    "total_open": 0,
     "critical": 0,
-    "high": 1,
+    "high": 0,
     "medium": 0,
     "low": 0,
-    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 1 HIGH"
+    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 0 HIGH"
   },
   "priority_summary": {
     "top_5": [
@@ -60,7 +60,7 @@
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 157.4,
+    "scan_age_hours": 157.5,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -136,34 +136,55 @@
     ]
   },
   "service_summary": {
-    "total_services": 0,
-    "service_types": 0,
+    "total_services": 10,
+    "service_types": 3,
     "new_services": 0,
     "closed_services": 0,
-    "top_services": []
+    "top_services": [
+      {
+        "name": "Network Service",
+        "host_count": 8,
+        "finding_count": 57
+      },
+      {
+        "name": "Web Server",
+        "host_count": 1,
+        "finding_count": 5
+      },
+      {
+        "name": "DNS",
+        "host_count": 1,
+        "finding_count": 2
+      }
+    ]
   },
   "crypto_summary": {
-    "health_score": 0,
-    "certificate_count": 0,
-    "cipher_suite_count": 0,
+    "health_score": 100,
+    "total_findings": 19,
+    "certificate_findings": 4,
     "weak_cipher_count": 0,
+    "severity_breakdown": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 0,
+      "LOW": 0,
+      "INFO": 0
+    },
     "newly_expired_certs": 0,
     "new_weak_ciphers": 0
   },
   "risk_assessment": {
     "risk_level": "LOW",
-    "risk_score": 10,
+    "risk_score": 3,
     "risk_factors": [
-      "threat_hunting: lateral_movement: 0C/2H (+6.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "waap: WAAP health_score 80 (+2.0 \u0111i\u1ec3m r\u1ee7i ro)",
-      "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 1 HIGH \u0111ang m\u1edf (+1.5 \u0111i\u1ec3m r\u1ee7i ro)",
       "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.52 \u0111i\u1ec3m r\u1ee7i ro)",
       "firewall: Firewall b\u1eadt (+0.4 \u0111i\u1ec3m r\u1ee7i ro)"
     ],
     "critical_count": 0,
-    "high_count": 3,
+    "high_count": 0,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-14T08:01:46.392153"
+    "generated_at": "2026-09-14T08:06:29.238083"
   }
 }
