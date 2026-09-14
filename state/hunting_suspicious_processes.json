@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T19:30:02.755415",
+  "timestamp": "2026-09-13T21:17:04.144820",
   "hunting_type": "Suspicious Processes",
   "hunt_version": "2.0.0",
   "data_source": "LIVE_OBSERVED",
@@ -48,40 +48,40 @@
       "tool": "huntLivingOffTheLand",
       "ok": true,
       "records": 8,
-      "duration": 0.39,
+      "duration": 0.37,
       "error": null
     },
     {
       "tool": "huntNetworkBeacons",
       "ok": true,
-      "records": 72,
-      "duration": 1.63,
+      "records": 83,
+      "duration": 1.78,
       "error": null
     },
     {
       "tool": "huntIndicators",
       "ok": true,
       "records": 0,
-      "duration": 0.79,
+      "duration": 0.67,
       "error": null
     }
   ],
   "errors": [],
   "question": "C\u00f3 quy tr\u00ecnh b\u1ea5t th\u01b0\u1eddng n\u00e0o \u0111ang ch\u1ea1y kh\u00f4ng?",
-  "total_detections": 58,
-  "total_indicators": 58,
+  "total_detections": 62,
+  "total_indicators": 62,
   "by_severity": {
-    "INFO": 58
+    "INFO": 62
   },
   "by_category": {
     "Living Off The Land Binary": 5,
-    "Network Connection": 53
+    "Network Connection": 57
   },
   "indicators": [
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "cmd",
       "category": "Living Off The Land Binary",
       "description": "Ti\u1ebfn tr\u00ecnh cmd (PID 5556) \u0111ang ch\u1ea1y",
@@ -113,7 +113,7 @@
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "cmd",
       "category": "Living Off The Land Binary",
       "description": "Ti\u1ebfn tr\u00ecnh cmd (PID 24320) \u0111ang ch\u1ea1y",
@@ -145,7 +145,7 @@
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "powershell",
       "category": "Living Off The Land Binary",
       "description": "Ti\u1ebfn tr\u00ecnh powershell (PID 27376) \u0111ang ch\u1ea1y",
@@ -177,21 +177,21 @@
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "powershell",
       "category": "Living Off The Land Binary",
-      "description": "Ti\u1ebfn tr\u00ecnh powershell (PID 43216) \u0111ang ch\u1ea1y",
+      "description": "Ti\u1ebfn tr\u00ecnh powershell (PID 45888) \u0111ang ch\u1ea1y",
       "evidence": [
         "Path=C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-        "PID=43216",
-        "StartTime=2026-09-13T19:29:59.9186016-07:00"
+        "PID=45888",
+        "StartTime=2026-09-13T21:17:01.2948502-07:00"
       ],
       "assessment": "LOLBin th\u00f4ng d\u1ee5ng, ch\u1ea1y t\u1eeb v\u1ecb tr\u00ed h\u1ec7 th\u1ed1ng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
       "command_line": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-      "pid": 43216,
+      "pid": 45888,
       "occurrences": 2,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -209,7 +209,7 @@
     {
       "type": "Living Off The Land Binary",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "rundll32",
       "category": "Living Off The Land Binary",
       "description": "Ti\u1ebfn tr\u00ecnh rundll32 (PID 10324) \u0111ang ch\u1ea1y",
@@ -241,157 +241,21 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2001:67c:4e8:f004::9:443",
-      "evidence": [
-        "RemoteAddress=2001:67c:4e8:f004::9",
-        "RemotePort=443",
-        "LocalPort=61521",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2001:67c:4e8:f004::9",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 3,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "servicehost",
-      "category": "Network Connection",
-      "description": "servicehost k\u1ebft n\u1ed1i t\u1edbi 2600:1405:8400:13::17de:3e7:443",
-      "evidence": [
-        "RemoteAddress=2600:1405:8400:13::17de:3e7",
-        "RemotePort=443",
-        "LocalPort=61400",
-        "Path=n/a"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2600:1405:8400:13::17de:3e7",
-      "remote_port": 443,
-      "pid": 29928,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "claude",
-      "category": "Network Connection",
-      "description": "claude k\u1ebft n\u1ed1i t\u1edbi 2600:1901:0:5ae7:::443",
-      "evidence": [
-        "RemoteAddress=2600:1901:0:5ae7::",
-        "RemotePort=443",
-        "LocalPort=61398",
-        "Path=C:\\Program Files\\WindowsApps\\Claude_1.52386.6.0_x64__pzs8sxrjxfjjc\\app\\claude.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2600:1901:0:5ae7::",
-      "remote_port": 443,
-      "pid": 58036,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "claude",
-      "category": "Network Connection",
-      "description": "claude k\u1ebft n\u1ed1i t\u1edbi 2607:6bc0::10:443",
-      "evidence": [
-        "RemoteAddress=2607:6bc0::10",
-        "RemotePort=443",
-        "LocalPort=61309",
-        "Path=C:\\Users\\tamng\\AppData\\Roaming\\Claude\\claude-code\\2.1.270\\claude.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2607:6bc0::10",
-      "remote_port": 443,
-      "pid": 60896,
-      "occurrences": 9,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "GoogleDriveFS",
       "category": "Network Connection",
-      "description": "GoogleDriveFS k\u1ebft n\u1ed1i t\u1edbi 2001:4860:4841:400:::443",
+      "description": "GoogleDriveFS k\u1ebft n\u1ed1i t\u1edbi 2001:4860:4840:400:::443",
       "evidence": [
-        "RemoteAddress=2001:4860:4841:400::",
+        "RemoteAddress=2001:4860:4840:400::",
         "RemotePort=443",
-        "LocalPort=58615",
+        "LocalPort=64332",
         "Path=C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2001:4860:4841:400::",
+      "remote_address": "2001:4860:4840:400::",
       "remote_port": 443,
       "pid": 26440,
       "occurrences": 1,
@@ -411,23 +275,23 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "mscopilot",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "msedge",
       "category": "Network Connection",
-      "description": "mscopilot k\u1ebft n\u1ed1i t\u1edbi 2606:4700::6812:16de:443",
+      "description": "msedge k\u1ebft n\u1ed1i t\u1edbi 2a04:4e42:66::347:443",
       "evidence": [
-        "RemoteAddress=2606:4700::6812:16de",
+        "RemoteAddress=2a04:4e42:66::347",
         "RemotePort=443",
-        "LocalPort=57465",
-        "Path=C:\\Program Files (x86)\\Microsoft\\Copilot\\Application\\mscopilot.exe"
+        "LocalPort=63051",
+        "Path=C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2606:4700::6812:16de",
+      "remote_address": "2a04:4e42:66::347",
       "remote_port": 443,
-      "pid": 34832,
+      "pid": 46424,
       "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -445,7 +309,143 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "browser",
+      "category": "Network Connection",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2600:1405:8400:12::173e:e283:443",
+      "evidence": [
+        "RemoteAddress=2600:1405:8400:12::173e:e283",
+        "RemotePort=443",
+        "LocalPort=59221",
+        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2600:1405:8400:12::173e:e283",
+      "remote_port": 443,
+      "pid": 18396,
+      "occurrences": 3,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "msedgewebview2",
+      "category": "Network Connection",
+      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1061:10::13:443",
+      "evidence": [
+        "RemoteAddress=2603:1061:10::13",
+        "RemotePort=443",
+        "LocalPort=57946",
+        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2603:1061:10::13",
+      "remote_port": 443,
+      "pid": 20784,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "browser",
+      "category": "Network Connection",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2001:67c:4e8:f004::9:443",
+      "evidence": [
+        "RemoteAddress=2001:67c:4e8:f004::9",
+        "RemotePort=443",
+        "LocalPort=56585",
+        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2001:67c:4e8:f004::9",
+      "remote_port": 443,
+      "pid": 18396,
+      "occurrences": 2,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "msedgewebview2",
+      "category": "Network Connection",
+      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:9::19c:443",
+      "evidence": [
+        "RemoteAddress=2603:1063:9::19c",
+        "RemotePort=443",
+        "LocalPort=55544",
+        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2603:1063:9::19c",
+      "remote_port": 443,
+      "pid": 20784,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2001:b28:f23d:8005:7:0:109:338:443",
@@ -479,23 +479,57 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "claude",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2606:4700:10::ac42:948c:443",
+      "description": "claude k\u1ebft n\u1ed1i t\u1edbi 2607:6bc0::10:443",
       "evidence": [
-        "RemoteAddress=2606:4700:10::ac42:948c",
+        "RemoteAddress=2607:6bc0::10",
         "RemotePort=443",
-        "LocalPort=53536",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+        "LocalPort=53654",
+        "Path=C:\\Program Files\\WindowsApps\\Claude_1.52386.6.0_x64__pzs8sxrjxfjjc\\app\\claude.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2606:4700:10::ac42:948c",
+      "remote_address": "2607:6bc0::10",
       "remote_port": 443,
-      "pid": 18396,
+      "pid": 58036,
+      "occurrences": 9,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "GoogleDriveFS",
+      "category": "Network Connection",
+      "description": "GoogleDriveFS k\u1ebft n\u1ed1i t\u1edbi 2001:4860:4843:400:::443",
+      "evidence": [
+        "RemoteAddress=2001:4860:4843:400::",
+        "RemotePort=443",
+        "LocalPort=53033",
+        "Path=C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2001:4860:4843:400::",
+      "remote_port": 443,
+      "pid": 26440,
       "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -513,7 +547,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "svchost",
       "category": "Network Connection",
       "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 2603:1030:40c:e::2:443",
@@ -547,21 +581,21 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "browser",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2606:4700:10::6814:14bd:443",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2001:4998:28:800::4001:443",
       "evidence": [
-        "RemoteAddress=2606:4700:10::6814:14bd",
+        "RemoteAddress=2001:4998:28:800::4001",
         "RemotePort=443",
-        "LocalPort=48707",
+        "LocalPort=46463",
         "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2606:4700:10::6814:14bd",
+      "remote_address": "2001:4998:28:800::4001",
       "remote_port": 443,
       "pid": 18396,
       "occurrences": 1,
@@ -581,75 +615,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2001:578:3f::30:443",
-      "evidence": [
-        "RemoteAddress=2001:578:3f::30",
-        "RemotePort=443",
-        "LocalPort=46306",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2001:578:3f::30",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "claude",
-      "category": "Network Connection",
-      "description": "claude k\u1ebft n\u1ed1i t\u1edbi 2600:1901:0:9e23:::443",
-      "evidence": [
-        "RemoteAddress=2600:1901:0:9e23::",
-        "RemotePort=443",
-        "LocalPort=44679",
-        "Path=C:\\Users\\tamng\\AppData\\Roaming\\Claude\\claude-code\\2.1.270\\claude.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2600:1901:0:9e23::",
-      "remote_port": 443,
-      "pid": 60896,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "msedgewebview2",
       "category": "Network Connection",
       "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:30:10d::365:7ea3:443",
@@ -683,24 +649,24 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "ms-teams",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "GoogleDriveFS",
       "category": "Network Connection",
-      "description": "ms-teams k\u1ebft n\u1ed1i t\u1edbi 2603:1063:24::6b:443",
+      "description": "GoogleDriveFS k\u1ebft n\u1ed1i t\u1edbi 2001:4860:4844:400:::443",
       "evidence": [
-        "RemoteAddress=2603:1063:24::6b",
+        "RemoteAddress=2001:4860:4844:400::",
         "RemotePort=443",
-        "LocalPort=43827",
-        "Path=C:\\Program Files\\WindowsApps\\MSTeams_26213.1006.5014.9784_x64__8wekyb3d8bbwe\\ms-teams.exe"
+        "LocalPort=37072",
+        "Path=C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1063:24::6b",
+      "remote_address": "2001:4860:4844:400::",
       "remote_port": 443,
-      "pid": 20388,
-      "occurrences": 1,
+      "pid": 26440,
+      "occurrences": 3,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
         "192.168.0.51"
@@ -717,82 +683,14 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "msedgewebview2",
-      "category": "Network Connection",
-      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:30:10b::365:7ea3:443",
-      "evidence": [
-        "RemoteAddress=2603:1063:30:10b::365:7ea3",
-        "RemotePort=443",
-        "LocalPort=42800",
-        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1063:30:10b::365:7ea3",
-      "remote_port": 443,
-      "pid": 20784,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "msedgewebview2",
-      "category": "Network Connection",
-      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:30:122::365:7ea3:443",
-      "evidence": [
-        "RemoteAddress=2603:1063:30:122::365:7ea3",
-        "RemotePort=443",
-        "LocalPort=41417",
-        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1063:30:122::365:7ea3",
-      "remote_port": 443,
-      "pid": 20784,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "node",
       "category": "Network Connection",
       "description": "node k\u1ebft n\u1ed1i t\u1edbi 2001:67c:4e8:f004::9:443",
       "evidence": [
         "RemoteAddress=2001:67c:4e8:f004::9",
         "RemotePort=443",
-        "LocalPort=37907",
+        "LocalPort=36743",
         "Path=n/a"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
@@ -819,7 +717,75 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "msedge",
+      "category": "Network Connection",
+      "description": "msedge k\u1ebft n\u1ed1i t\u1edbi 2620:1ec:33::11:443",
+      "evidence": [
+        "RemoteAddress=2620:1ec:33::11",
+        "RemotePort=443",
+        "LocalPort=34551",
+        "Path=C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2620:1ec:33::11",
+      "remote_port": 443,
+      "pid": 46424,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "browser",
+      "category": "Network Connection",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2001:578:3f::30:443",
+      "evidence": [
+        "RemoteAddress=2001:578:3f::30",
+        "RemotePort=443",
+        "LocalPort=33734",
+        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2001:578:3f::30",
+      "remote_port": 443,
+      "pid": 18396,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "OneDrive",
       "category": "Network Connection",
       "description": "OneDrive k\u1ebft n\u1ed1i t\u1edbi 2603:1030:a07:a::400:443",
@@ -853,23 +819,23 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "msedgewebview2",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "mscopilot",
       "category": "Network Connection",
-      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:30:105::365:7ea3:443",
+      "description": "mscopilot k\u1ebft n\u1ed1i t\u1edbi 2606:4700::6812:17de:443",
       "evidence": [
-        "RemoteAddress=2603:1063:30:105::365:7ea3",
+        "RemoteAddress=2606:4700::6812:17de",
         "RemotePort=443",
-        "LocalPort=28692",
-        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
+        "LocalPort=29936",
+        "Path=C:\\Program Files (x86)\\Microsoft\\Copilot\\Application\\mscopilot.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1063:30:105::365:7ea3",
+      "remote_address": "2606:4700::6812:17de",
       "remote_port": 443,
-      "pid": 17880,
+      "pid": 34832,
       "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -887,7 +853,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "msedgewebview2",
       "category": "Network Connection",
       "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1030:803:8::d2:443",
@@ -921,23 +887,23 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "msedgewebview2",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2606:4700::6812:bf8:443",
+      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:30:11b::365:7ea3:443",
       "evidence": [
-        "RemoteAddress=2606:4700::6812:bf8",
+        "RemoteAddress=2603:1063:30:11b::365:7ea3",
         "RemotePort=443",
-        "LocalPort=24591",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+        "LocalPort=26177",
+        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2606:4700::6812:bf8",
+      "remote_address": "2603:1063:30:11b::365:7ea3",
       "remote_port": 443,
-      "pid": 18396,
+      "pid": 17880,
       "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -955,7 +921,211 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "svchost",
+      "category": "Network Connection",
+      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 2600:1405:8400:385::21cc:80",
+      "evidence": [
+        "RemoteAddress=2600:1405:8400:385::21cc",
+        "RemotePort=80",
+        "LocalPort=24974",
+        "Path=n/a"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2600:1405:8400:385::21cc",
+      "remote_port": 80,
+      "pid": 3760,
+      "occurrences": 2,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "svchost",
+      "category": "Network Connection",
+      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 2600:1405:8400:8::17d1:549a:80",
+      "evidence": [
+        "RemoteAddress=2600:1405:8400:8::17d1:549a",
+        "RemotePort=80",
+        "LocalPort=24972",
+        "Path=n/a"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2600:1405:8400:8::17d1:549a",
+      "remote_port": 80,
+      "pid": 3760,
+      "occurrences": 2,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "svchost",
+      "category": "Network Connection",
+      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 2607:f8b0:4023:200d::5e:80",
+      "evidence": [
+        "RemoteAddress=2607:f8b0:4023:200d::5e",
+        "RemotePort=80",
+        "LocalPort=24970",
+        "Path=n/a"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2607:f8b0:4023:200d::5e",
+      "remote_port": 80,
+      "pid": 3760,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "svchost",
+      "category": "Network Connection",
+      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 2620:149:a0d:f000::138:80",
+      "evidence": [
+        "RemoteAddress=2620:149:a0d:f000::138",
+        "RemotePort=80",
+        "LocalPort=24969",
+        "Path=n/a"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2620:149:a0d:f000::138",
+      "remote_port": 80,
+      "pid": 3760,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "svchost",
+      "category": "Network Connection",
+      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 2600:1406:4e00:605::17d3:b145:80",
+      "evidence": [
+        "RemoteAddress=2600:1406:4e00:605::17d3:b145",
+        "RemotePort=80",
+        "LocalPort=23737",
+        "Path=n/a"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2600:1406:4e00:605::17d3:b145",
+      "remote_port": 80,
+      "pid": 3760,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "msedgewebview2",
+      "category": "Network Connection",
+      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:30:127::365:7ea3:443",
+      "evidence": [
+        "RemoteAddress=2603:1063:30:127::365:7ea3",
+        "RemotePort=443",
+        "LocalPort=23336",
+        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2603:1063:30:127::365:7ea3",
+      "remote_port": 443,
+      "pid": 20784,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2607:6bc0::10:443",
@@ -989,23 +1159,23 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "msedgewebview2",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "claude",
       "category": "Network Connection",
-      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:27:1::14:443",
+      "description": "claude k\u1ebft n\u1ed1i t\u1edbi 2600:1901:0:5ae7:::443",
       "evidence": [
-        "RemoteAddress=2603:1063:27:1::14",
+        "RemoteAddress=2600:1901:0:5ae7::",
         "RemotePort=443",
-        "LocalPort=19262",
-        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
+        "LocalPort=21089",
+        "Path=C:\\Program Files\\WindowsApps\\Claude_1.52386.6.0_x64__pzs8sxrjxfjjc\\app\\claude.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1063:27:1::14",
+      "remote_address": "2600:1901:0:5ae7::",
       "remote_port": 443,
-      "pid": 17880,
+      "pid": 58036,
       "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -1023,21 +1193,123 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "Zalo",
+      "category": "Network Connection",
+      "description": "Zalo k\u1ebft n\u1ed1i t\u1edbi 2600:1406:5e00:388::1aca:443",
+      "evidence": [
+        "RemoteAddress=2600:1406:5e00:388::1aca",
+        "RemotePort=443",
+        "LocalPort=19251",
+        "Path=C:\\Users\\tamng\\AppData\\Local\\Programs\\Zalo\\Zalo-26.8.20\\Zalo.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2600:1406:5e00:388::1aca",
+      "remote_port": 443,
+      "pid": 25072,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "Zalo",
+      "category": "Network Connection",
+      "description": "Zalo k\u1ebft n\u1ed1i t\u1edbi 2405:4800:ae00:1b01::636:443",
+      "evidence": [
+        "RemoteAddress=2405:4800:ae00:1b01::636",
+        "RemotePort=443",
+        "LocalPort=19246",
+        "Path=C:\\Users\\tamng\\AppData\\Local\\Programs\\Zalo\\Zalo-26.8.20\\Zalo.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2405:4800:ae00:1b01::636",
+      "remote_port": 443,
+      "pid": 25072,
+      "occurrences": 2,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "GoogleDriveFS",
+      "category": "Network Connection",
+      "description": "GoogleDriveFS k\u1ebft n\u1ed1i t\u1edbi 2001:4860:4842:400:::443",
+      "evidence": [
+        "RemoteAddress=2001:4860:4842:400::",
+        "RemotePort=443",
+        "LocalPort=19240",
+        "Path=C:\\Program Files\\Google\\Drive File Stream\\131.0.2.0\\GoogleDriveFS.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "2001:4860:4842:400::",
+      "remote_port": 443,
+      "pid": 26440,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "msedgewebview2",
       "category": "Network Connection",
-      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1063:9::19c:443",
+      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1061:1600:2b26::365:c0:443",
       "evidence": [
-        "RemoteAddress=2603:1063:9::19c",
+        "RemoteAddress=2603:1061:1600:2b26::365:c0",
         "RemotePort=443",
-        "LocalPort=16783",
+        "LocalPort=16779",
         "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1063:9::19c",
+      "remote_address": "2603:1061:1600:2b26::365:c0",
       "remote_port": 443,
       "pid": 20784,
       "occurrences": 1,
@@ -1057,89 +1329,21 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "mscopilot",
-      "category": "Network Connection",
-      "description": "mscopilot k\u1ebft n\u1ed1i t\u1edbi 2603:1036:30c:5::2:443",
-      "evidence": [
-        "RemoteAddress=2603:1036:30c:5::2",
-        "RemotePort=443",
-        "LocalPort=15166",
-        "Path=C:\\Program Files (x86)\\Microsoft\\Copilot\\Application\\mscopilot.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1036:30c:5::2",
-      "remote_port": 443,
-      "pid": 34832,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "msedgewebview2",
-      "category": "Network Connection",
-      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 2603:1061:1600:2b06::365:c0:443",
-      "evidence": [
-        "RemoteAddress=2603:1061:1600:2b06::365:c0",
-        "RemotePort=443",
-        "LocalPort=14388",
-        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2603:1061:1600:2b06::365:c0",
-      "remote_port": 443,
-      "pid": 20784,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "browser",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2606:4700:10::ac42:ab85:443",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2607:f8b0:4023:200b::11:443",
       "evidence": [
-        "RemoteAddress=2606:4700:10::ac42:ab85",
+        "RemoteAddress=2607:f8b0:4023:200b::11",
         "RemotePort=443",
-        "LocalPort=10997",
+        "LocalPort=11442",
         "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "2606:4700:10::ac42:ab85",
+      "remote_address": "2607:f8b0:4023:200b::11",
       "remote_port": 443,
       "pid": 18396,
       "occurrences": 1,
@@ -1159,109 +1363,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2001:4998:28:800::4001:443",
-      "evidence": [
-        "RemoteAddress=2001:4998:28:800::4001",
-        "RemotePort=443",
-        "LocalPort=9657",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2001:4998:28:800::4001",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "msedge",
-      "category": "Network Connection",
-      "description": "msedge k\u1ebft n\u1ed1i t\u1edbi 2a04:4e42:66::347:443",
-      "evidence": [
-        "RemoteAddress=2a04:4e42:66::347",
-        "RemotePort=443",
-        "LocalPort=6604",
-        "Path=C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2a04:4e42:66::347",
-      "remote_port": 443,
-      "pid": 46424,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 2600:1405:8400:12::173e:e288:443",
-      "evidence": [
-        "RemoteAddress=2600:1405:8400:12::173e:e288",
-        "RemotePort=443",
-        "LocalPort=3549",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "2600:1405:8400:12::173e:e288",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "explorer",
       "category": "Network Connection",
       "description": "explorer k\u1ebft n\u1ed1i t\u1edbi 2603:1063:2001:2b11::365:ff1:443",
@@ -1295,23 +1397,23 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "mscopilot",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 35.212.166.55:443",
+      "description": "mscopilot k\u1ebft n\u1ed1i t\u1edbi 52.168.117.171:443",
       "evidence": [
-        "RemoteAddress=35.212.166.55",
+        "RemoteAddress=52.168.117.171",
         "RemotePort=443",
-        "LocalPort=65030",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+        "LocalPort=62115",
+        "Path=C:\\Program Files (x86)\\Microsoft\\Copilot\\Application\\mscopilot.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "35.212.166.55",
+      "remote_address": "52.168.117.171",
       "remote_port": 443,
-      "pid": 18396,
+      "pid": 34832,
       "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -1329,21 +1431,55 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "M365Copilot",
+      "category": "Network Connection",
+      "description": "M365Copilot k\u1ebft n\u1ed1i t\u1edbi 20.42.73.28:443",
+      "evidence": [
+        "RemoteAddress=20.42.73.28",
+        "RemotePort=443",
+        "LocalPort=52385",
+        "Path=C:\\Program Files\\WindowsApps\\Microsoft.MicrosoftOfficeHub_19.2609.37021.0_x64__8wekyb3d8bbwe\\M365Copilot.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "20.42.73.28",
+      "remote_port": 443,
+      "pid": 20460,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "browser",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 199.232.153.44:443",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 162.247.241.14:443",
       "evidence": [
-        "RemoteAddress=199.232.153.44",
+        "RemoteAddress=162.247.241.14",
         "RemotePort=443",
-        "LocalPort=62086",
+        "LocalPort=49668",
         "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "199.232.153.44",
+      "remote_address": "162.247.241.14",
       "remote_port": 443,
       "pid": 18396,
       "occurrences": 2,
@@ -1363,150 +1499,14 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "MsMpEng",
-      "category": "Network Connection",
-      "description": "MsMpEng k\u1ebft n\u1ed1i t\u1edbi 172.178.160.19:443",
-      "evidence": [
-        "RemoteAddress=172.178.160.19",
-        "RemotePort=443",
-        "LocalPort=61399",
-        "Path=n/a"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "172.178.160.19",
-      "remote_port": 443,
-      "pid": 6808,
-      "occurrences": 2,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 149.154.167.99:443",
-      "evidence": [
-        "RemoteAddress=149.154.167.99",
-        "RemotePort=443",
-        "LocalPort=58941",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "149.154.167.99",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 2,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 34.149.118.179:443",
-      "evidence": [
-        "RemoteAddress=34.149.118.179",
-        "RemotePort=443",
-        "LocalPort=55785",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "34.149.118.179",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 35.212.17.176:443",
-      "evidence": [
-        "RemoteAddress=35.212.17.176",
-        "RemotePort=443",
-        "LocalPort=55451",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "35.212.17.176",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "browser",
       "category": "Network Connection",
       "description": "browser k\u1ebft n\u1ed1i t\u1edbi 216.24.57.6:443",
       "evidence": [
         "RemoteAddress=216.24.57.6",
         "RemotePort=443",
-        "LocalPort=51031",
+        "LocalPort=42685",
         "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
@@ -1533,279 +1533,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 140.82.113.25:443",
-      "evidence": [
-        "RemoteAddress=140.82.113.25",
-        "RemotePort=443",
-        "LocalPort=49764",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "140.82.113.25",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "chrome",
-      "category": "Network Connection",
-      "description": "chrome k\u1ebft n\u1ed1i t\u1edbi 185.199.108.133:443",
-      "evidence": [
-        "RemoteAddress=185.199.108.133",
-        "RemotePort=443",
-        "LocalPort=48924",
-        "Path=C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "185.199.108.133",
-      "remote_port": 443,
-      "pid": 34040,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "svchost",
-      "category": "Network Connection",
-      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 72.154.7.112:443",
-      "evidence": [
-        "RemoteAddress=72.154.7.112",
-        "RemotePort=443",
-        "LocalPort=46309",
-        "Path=n/a"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "72.154.7.112",
-      "remote_port": 443,
-      "pid": 25412,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "svchost",
-      "category": "Network Connection",
-      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 23.62.134.41:443",
-      "evidence": [
-        "RemoteAddress=23.62.134.41",
-        "RemotePort=443",
-        "LocalPort=46308",
-        "Path=n/a"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "23.62.134.41",
-      "remote_port": 443,
-      "pid": 25412,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "svchost",
-      "category": "Network Connection",
-      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 72.154.7.114:443",
-      "evidence": [
-        "RemoteAddress=72.154.7.114",
-        "RemotePort=443",
-        "LocalPort=46307",
-        "Path=n/a"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "72.154.7.114",
-      "remote_port": 443,
-      "pid": 25412,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
-      "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 104.18.25.18:443",
-      "evidence": [
-        "RemoteAddress=104.18.25.18",
-        "RemotePort=443",
-        "LocalPort=44913",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "104.18.25.18",
-      "remote_port": 443,
-      "pid": 18396,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "OneDrive",
-      "category": "Network Connection",
-      "description": "OneDrive k\u1ebft n\u1ed1i t\u1edbi 13.89.179.15:443",
-      "evidence": [
-        "RemoteAddress=13.89.179.15",
-        "RemotePort=443",
-        "LocalPort=44704",
-        "Path=C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "13.89.179.15",
-      "remote_port": 443,
-      "pid": 23504,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "OneDrive",
-      "category": "Network Connection",
-      "description": "OneDrive k\u1ebft n\u1ed1i t\u1edbi 20.184.175.23:443",
-      "evidence": [
-        "RemoteAddress=20.184.175.23",
-        "RemotePort=443",
-        "LocalPort=44703",
-        "Path=C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe"
-      ],
-      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
-      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
-      "status": "DETECTED",
-      "detection_method": "MCP live process/network observation",
-      "remote_address": "20.184.175.23",
-      "remote_port": 443,
-      "pid": 23920,
-      "occurrences": 1,
-      "data_source": "LIVE_OBSERVED",
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "host-local observation via MCP",
-        "confidence": "HIGH",
-        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ]
-    },
-    {
-      "type": "Network Connection",
-      "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "mscopilot",
       "category": "Network Connection",
       "description": "mscopilot k\u1ebft n\u1ed1i t\u1edbi 74.179.65.112:443",
@@ -1839,7 +1567,177 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "browser",
+      "category": "Network Connection",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 18.97.36.74:443",
+      "evidence": [
+        "RemoteAddress=18.97.36.74",
+        "RemotePort=443",
+        "LocalPort=34512",
+        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "18.97.36.74",
+      "remote_port": 443,
+      "pid": 18396,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "OneDrive",
+      "category": "Network Connection",
+      "description": "OneDrive k\u1ebft n\u1ed1i t\u1edbi 51.11.192.51:443",
+      "evidence": [
+        "RemoteAddress=51.11.192.51",
+        "RemotePort=443",
+        "LocalPort=33411",
+        "Path=C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "51.11.192.51",
+      "remote_port": 443,
+      "pid": 23920,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "OneDrive",
+      "category": "Network Connection",
+      "description": "OneDrive k\u1ebft n\u1ed1i t\u1edbi 4.150.223.112:443",
+      "evidence": [
+        "RemoteAddress=4.150.223.112",
+        "RemotePort=443",
+        "LocalPort=33410",
+        "Path=C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "4.150.223.112",
+      "remote_port": 443,
+      "pid": 23504,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "browser",
+      "category": "Network Connection",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 104.17.208.240:443",
+      "evidence": [
+        "RemoteAddress=104.17.208.240",
+        "RemotePort=443",
+        "LocalPort=33409",
+        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "104.17.208.240",
+      "remote_port": 443,
+      "pid": 18396,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "browser",
+      "category": "Network Connection",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 149.154.167.99:443",
+      "evidence": [
+        "RemoteAddress=149.154.167.99",
+        "RemotePort=443",
+        "LocalPort=31492",
+        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "149.154.167.99",
+      "remote_port": 443,
+      "pid": 18396,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "Zalo",
       "category": "Network Connection",
       "description": "Zalo k\u1ebft n\u1ed1i t\u1edbi 49.213.95.30:443",
@@ -1873,21 +1771,21 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "browser",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 162.247.243.29:443",
+      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 140.82.113.25:443",
       "evidence": [
-        "RemoteAddress=162.247.243.29",
+        "RemoteAddress=140.82.113.25",
         "RemotePort=443",
-        "LocalPort=25374",
+        "LocalPort=25704",
         "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "162.247.243.29",
+      "remote_address": "140.82.113.25",
       "remote_port": 443,
       "pid": 18396,
       "occurrences": 1,
@@ -1907,23 +1805,57 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "MsMpEng",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 18.97.36.65:443",
+      "description": "MsMpEng k\u1ebft n\u1ed1i t\u1edbi 172.178.160.22:443",
       "evidence": [
-        "RemoteAddress=18.97.36.65",
+        "RemoteAddress=172.178.160.22",
         "RemotePort=443",
-        "LocalPort=17669",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+        "LocalPort=23436",
+        "Path=n/a"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "18.97.36.65",
+      "remote_address": "172.178.160.22",
       "remote_port": 443,
-      "pid": 18396,
+      "pid": 6808,
+      "occurrences": 3,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "OneDrive.Sync.Service",
+      "category": "Network Connection",
+      "description": "OneDrive.Sync.Service k\u1ebft n\u1ed1i t\u1edbi 20.60.58.225:443",
+      "evidence": [
+        "RemoteAddress=20.60.58.225",
+        "RemotePort=443",
+        "LocalPort=19250",
+        "Path=C:\\Program Files\\Microsoft OneDrive\\26.158.0816.0003\\OneDrive.Sync.Service.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "20.60.58.225",
+      "remote_port": 443,
+      "pid": 13192,
       "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -1941,23 +1873,23 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
-      "process": "browser",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "ms-teams",
       "category": "Network Connection",
-      "description": "browser k\u1ebft n\u1ed1i t\u1edbi 35.212.120.65:443",
+      "description": "ms-teams k\u1ebft n\u1ed1i t\u1edbi 4.207.44.68:443",
       "evidence": [
-        "RemoteAddress=35.212.120.65",
+        "RemoteAddress=4.207.44.68",
         "RemotePort=443",
-        "LocalPort=14938",
-        "Path=C:\\Program Files\\CocCoc\\Browser\\Application\\browser.exe"
+        "LocalPort=19249",
+        "Path=C:\\Program Files\\WindowsApps\\MSTeams_26213.1006.5014.9784_x64__8wekyb3d8bbwe\\ms-teams.exe"
       ],
       "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
       "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
       "status": "DETECTED",
       "detection_method": "MCP live process/network observation",
-      "remote_address": "35.212.120.65",
+      "remote_address": "4.207.44.68",
       "remote_port": 443,
-      "pid": 18396,
+      "pid": 20388,
       "occurrences": 1,
       "data_source": "LIVE_OBSERVED",
       "affected_systems": [
@@ -1975,7 +1907,211 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "OneDrive.Sync.Service",
+      "category": "Network Connection",
+      "description": "OneDrive.Sync.Service k\u1ebft n\u1ed1i t\u1edbi 4.150.223.115:443",
+      "evidence": [
+        "RemoteAddress=4.150.223.115",
+        "RemotePort=443",
+        "LocalPort=19235",
+        "Path=C:\\Program Files\\Microsoft OneDrive\\26.158.0816.0003\\OneDrive.Sync.Service.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "4.150.223.115",
+      "remote_port": 443,
+      "pid": 13192,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "OneDrive.Sync.Service",
+      "category": "Network Connection",
+      "description": "OneDrive.Sync.Service k\u1ebft n\u1ed1i t\u1edbi 52.178.17.235:443",
+      "evidence": [
+        "RemoteAddress=52.178.17.235",
+        "RemotePort=443",
+        "LocalPort=19234",
+        "Path=C:\\Program Files\\Microsoft OneDrive\\26.158.0816.0003\\OneDrive.Sync.Service.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "52.178.17.235",
+      "remote_port": 443,
+      "pid": 13192,
+      "occurrences": 2,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "OneDrive.Sync.Service",
+      "category": "Network Connection",
+      "description": "OneDrive.Sync.Service k\u1ebft n\u1ed1i t\u1edbi 20.60.59.33:443",
+      "evidence": [
+        "RemoteAddress=20.60.59.33",
+        "RemotePort=443",
+        "LocalPort=19232",
+        "Path=C:\\Program Files\\Microsoft OneDrive\\26.158.0816.0003\\OneDrive.Sync.Service.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "20.60.59.33",
+      "remote_port": 443,
+      "pid": 13192,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "OneDrive.Sync.Service",
+      "category": "Network Connection",
+      "description": "OneDrive.Sync.Service k\u1ebft n\u1ed1i t\u1edbi 168.62.216.242:443",
+      "evidence": [
+        "RemoteAddress=168.62.216.242",
+        "RemotePort=443",
+        "LocalPort=19231",
+        "Path=C:\\Program Files\\Microsoft OneDrive\\26.158.0816.0003\\OneDrive.Sync.Service.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "168.62.216.242",
+      "remote_port": 443,
+      "pid": 13192,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "svchost",
+      "category": "Network Connection",
+      "description": "svchost k\u1ebft n\u1ed1i t\u1edbi 20.190.190.130:443",
+      "evidence": [
+        "RemoteAddress=20.190.190.130",
+        "RemotePort=443",
+        "LocalPort=19229",
+        "Path=n/a"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "20.190.190.130",
+      "remote_port": 443,
+      "pid": 50936,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
+      "process": "msedgewebview2",
+      "category": "Network Connection",
+      "description": "msedgewebview2 k\u1ebft n\u1ed1i t\u1edbi 52.168.117.171:443",
+      "evidence": [
+        "RemoteAddress=52.168.117.171",
+        "RemotePort=443",
+        "LocalPort=9597",
+        "Path=C:\\Program Files (x86)\\Microsoft\\EdgeWebView\\Application\\152.0.4191.66\\msedgewebview2.exe"
+      ],
+      "assessment": "K\u1ebft n\u1ed1i ra c\u1ed5ng th\u00f4ng d\u1ee5ng t\u1eeb ti\u1ebfn tr\u00ecnh th\u00f4ng th\u01b0\u1eddng",
+      "recommendation": "Kh\u00f4ng c\u1ea7n h\u00e0nh \u0111\u1ed9ng",
+      "status": "DETECTED",
+      "detection_method": "MCP live process/network observation",
+      "remote_address": "52.168.117.171",
+      "remote_port": 443,
+      "pid": 20784,
+      "occurrences": 1,
+      "data_source": "LIVE_OBSERVED",
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "host-local observation via MCP",
+        "confidence": "HIGH",
+        "reason": "Quan s\u00e1t tr\u1ef1c ti\u1ebfp tr\u00ean m\u00e1y kevin"
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ]
+    },
+    {
+      "type": "Network Connection",
+      "severity": "INFO",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "hp-one-agent-service",
       "category": "Network Connection",
       "description": "hp-one-agent-service k\u1ebft n\u1ed1i t\u1edbi 34.160.89.58:443",
@@ -2009,7 +2145,7 @@
     {
       "type": "Network Connection",
       "severity": "INFO",
-      "timestamp": "2026-09-13T19:30:02.724401",
+      "timestamp": "2026-09-13T21:17:04.112792",
       "process": "ms-teams",
       "category": "Network Connection",
       "description": "ms-teams k\u1ebft n\u1ed1i t\u1edbi 13.91.62.11:443",

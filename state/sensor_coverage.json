@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-13T19:32:40.187249",
-  "version": "1.0.0",
+  "generated_at": "2026-09-13T21:16:48.015617",
+  "version": "2.0.0",
   "defender": "covered",
   "firewall": "covered",
   "security_log": "blind",
@@ -18,8 +18,10 @@
     "event_id": 4688,
     "observable": false,
     "status": "ACCESS_DENIED",
-    "reason": "Kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c log Security: \"Attempted to perform an unauthorized operation.\". Log Security \u0111\u00f2i quy\u1ec1n Administrator, n\u00ean ch\u01b0a th\u1ec3 bi\u1ebft audit 4688 b\u1eadt hay t\u1eaft.",
-    "remediation": "Ch\u1ea1y pipeline d\u01b0\u1edbi quy\u1ec1n Administrator, r\u1ed3i ki\u1ec3m tra l\u1ea1i; n\u1ebfu v\u1eabn tr\u1ed1ng th\u00ec b\u1eadt audit \"Process Creation\".",
+    "reason": "Kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c log Security: \"Attempted to perform an unauthorized operation.\". T\u00e0i kho\u1ea3n C\u00d3 trong nh\u00f3m Administrators nh\u01b0ng ti\u1ebfn tr\u00ecnh ch\u01b0a n\u00e2ng quy\u1ec1n (Mandatory Label\\Medium Mandatory Level). UAC l\u1ecdc token th\u00e0nh \"deny only\", n\u00ean quy\u1ec1n c\u00f3 m\u00e0 kh\u00f4ng d\u00f9ng \u0111\u01b0\u1ee3c. V\u00ec log kh\u00f4ng m\u1edf \u0111\u01b0\u1ee3c n\u00ean ch\u01b0a th\u1ec3 bi\u1ebft audit 4688 b\u1eadt hay t\u1eaft.",
+    "remediation": "Ch\u1ea1y `scripts/enable_security_log_access.ps1` M\u1ed8T L\u1ea6N d\u01b0\u1edbi quy\u1ec1n Administrator. N\u00f3 th\u00eam t\u00e0i kho\u1ea3n v\u00e0o nh\u00f3m \"Event Log Readers\" \u2014 sau \u0111\u00f3 m\u1ecdi l\u1ea7n ch\u1ea1y pipeline b\u00ecnh th\u01b0\u1eddng (kh\u00f4ng n\u00e2ng quy\u1ec1n) \u0111\u1ec1u \u0111\u1ecdc \u0111\u01b0\u1ee3c log Security.",
+    "fixable_here": true,
+    "situation": "HAS_RIGHTS_NOT_ELEVATED",
     "is_admin": false,
     "trap": "Truy v\u1ea5n l\u1ecdc theo Id tr\u00ean log n\u00e0y tr\u1ea3 v\u1ec1 \"No events were found\" thay v\u00ec b\u00e1o t\u1eeb ch\u1ed1i quy\u1ec1n \u2014 m\u1ecdi tool d\u1ef1a v\u00e0o \u0111\u00f3 s\u1ebd tr\u00f4ng nh\u01b0 \"s\u1ea1ch\" trong khi th\u1ef1c ra \u0111ang m\u00f9."
   },
@@ -52,11 +54,11 @@
       "label": "Security Event Log",
       "status": "blind",
       "tools": 9,
-      "pass": 0,
+      "pass": 3,
       "empty": 1,
-      "blind": 8,
+      "blind": 5,
       "fail": 0,
-      "evidence_records": 0,
+      "evidence_records": 243,
       "probes_dead": [
         "security_log"
       ],
@@ -94,7 +96,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 1129,
+      "evidence_records": 1141,
       "probes_dead": [],
       "reason": null
     },
@@ -106,7 +108,7 @@
       "empty": 0,
       "blind": 0,
       "fail": 0,
-      "evidence_records": 625,
+      "evidence_records": 591,
       "probes_dead": [],
       "reason": null
     },
@@ -126,14 +128,65 @@
   "tool_summary": {
     "status": "VERIFIED",
     "tool_count": 99,
-    "pass": 84,
+    "pass": 87,
     "empty": 7,
-    "blind": 8,
+    "blind": 5,
     "fail": 0,
-    "evidence_records": 6118,
+    "evidence_records": 6339,
     "threat_hunting_active": true,
     "dfir_active": true,
     "event_hub_active": true,
-    "last_sync": "2026-09-13T19:32:40.187249"
-  }
+    "last_sync": "2026-09-13T21:16:48.015617"
+  },
+  "access_diagnosis": {
+    "can_fix": true,
+    "situation": "HAS_RIGHTS_NOT_ELEVATED",
+    "reason": "T\u00e0i kho\u1ea3n C\u00d3 trong nh\u00f3m Administrators nh\u01b0ng ti\u1ebfn tr\u00ecnh ch\u01b0a n\u00e2ng quy\u1ec1n (Mandatory Label\\Medium Mandatory Level). UAC l\u1ecdc token th\u00e0nh \"deny only\", n\u00ean quy\u1ec1n c\u00f3 m\u00e0 kh\u00f4ng d\u00f9ng \u0111\u01b0\u1ee3c.",
+    "action": "Ch\u1ea1y `scripts/enable_security_log_access.ps1` M\u1ed8T L\u1ea6N d\u01b0\u1edbi quy\u1ec1n Administrator. N\u00f3 th\u00eam t\u00e0i kho\u1ea3n v\u00e0o nh\u00f3m \"Event Log Readers\" \u2014 sau \u0111\u00f3 m\u1ecdi l\u1ea7n ch\u1ea1y pipeline b\u00ecnh th\u01b0\u1eddng (kh\u00f4ng n\u00e2ng quy\u1ec1n) \u0111\u1ec1u \u0111\u1ecdc \u0111\u01b0\u1ee3c log Security.",
+    "event_log_readers_members": "(tr\u1ed1ng)",
+    "note": "N\u00e2ng quy\u1ec1n ch\u1ec9 s\u1eeda cho m\u1ed9t l\u1ea7n ch\u1ea1y. Th\u00e0nh vi\u00ean nh\u00f3m s\u1eeda v\u0129nh vi\u1ec5n \u2014 v\u00e0 pipeline ch\u1ea1y theo l\u1ecbch th\u00ec kh\u00f4ng ai b\u1ea5m UAC \u0111\u01b0\u1ee3c."
+  },
+  "fallback_sources": [
+    {
+      "probe": "rdp_session_log",
+      "log": "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational",
+      "readable": true,
+      "records": "1514",
+      "covers": "Phi\u00ean RDP: \u0111\u0103ng nh\u1eadp, \u0111\u0103ng xu\u1ea5t, k\u1ebft n\u1ed1i l\u1ea1i (ID 21/22/23/24/25/39/40)",
+      "used_by": [
+        "rdpLogs",
+        "huntRemoteDesktop"
+      ]
+    },
+    {
+      "probe": "ntlm_log",
+      "log": "Microsoft-Windows-NTLM/Operational",
+      "readable": true,
+      "records": "197",
+      "covers": "X\u00e1c th\u1ef1c NTLM \u0111i v\u00e0 \u0111\u1ebfn \u2014 t\u00edn hi\u1ec7u di chuy\u1ec3n ngang",
+      "used_by": [
+        "huntLateralMovement"
+      ]
+    },
+    {
+      "probe": "winrm_log",
+      "log": "Microsoft-Windows-WinRM/Operational",
+      "readable": true,
+      "records": "1642",
+      "covers": "Th\u1ef1c thi t\u1eeb xa qua WinRM/PowerShell Remoting",
+      "used_by": [
+        "huntLateralMovement"
+      ]
+    },
+    {
+      "probe": "event_log_ps_operational",
+      "log": "Microsoft-Windows-PowerShell/Operational",
+      "readable": true,
+      "records": "444",
+      "covers": "Script block logging (4104): n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y \u2014 che \u0111\u01b0\u1ee3c ph\u1ea7n PowerShell c\u1ee7a v\u00f9ng m\u00f9 4688, kh\u00f4ng che ph\u1ea7n c\u00f2n l\u1ea1i",
+      "used_by": [
+        "huntEncodedPowerShell"
+      ]
+    }
+  ]
 }

@@ -5,7 +5,9 @@
   "main": "web/server.js",
   "scripts": {
     "start": "node web/server.js",
-    "dev": "node web/server.js"
+    "dev": "node web/server.js",
+    "probe": "python scripts/sensor_probe.py",
+    "validate": "python scripts/tool_validator.py"
   },
   "keywords": [],
   "author": "",
