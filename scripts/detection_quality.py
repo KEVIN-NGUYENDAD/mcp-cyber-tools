@@ -86,6 +86,43 @@ def is_self_observation(text, extra_hints=()):
     return None
 
 
+class SelfObservationLog(object):
+    """Sổ ghi những gì đã bị loại vì là dấu chân của chính bộ máy giám sát.
+
+    Mỗi cuộc săn giữ một sổ. Ba dòng lặp lại ở mọi cuộc săn (danh sách, bộ đếm,
+    khối báo cáo) nằm ở đây một lần, để cuộc săn tiếp theo không phải nhớ viết
+    lại chúng — quên viết chính là cách lỗi này lọt vào lần đầu.
+
+    Không có chế độ "lọc im lặng". `check()` luôn ghi lại thứ nó loại.
+    """
+
+    def __init__(self, extra_hints=()):
+        self.extra_hints = tuple(extra_hints)
+        self.entries = []
+
+    def check(self, text, **context):
+        """True nếu đây là tự quan sát (và đã được ghi sổ)."""
+        reason = is_self_observation(text, self.extra_hints)
+        if not reason:
+            return False
+        entry = {'reason': reason, 'sample': (text or '')[:200]}
+        entry.update(context)
+        self.entries.append(entry)
+        return True
+
+    def report(self, subject):
+        """Khối gắn vào báo cáo hunting. Luôn có mặt, kể cả khi không loại gì."""
+        return {
+            'self_observed_excluded': len(self.entries),
+            'self_observation_note': (
+                '{} mục bị loại vì do chính bộ máy giám sát sinh ra ({}). '
+                'Không loại thì mỗi lần chạy lại tự tạo thêm bằng chứng cho lần '
+                'sau.'.format(len(self.entries), subject)
+                if self.entries else None),
+            'self_observed_samples': self.entries[:5],
+        }
+
+
 # --------------------------------------------------------------------------
 # 2. Bằng chứng phải chứa trigger
 # --------------------------------------------------------------------------
@@ -195,11 +232,20 @@ def audit_state(state_dir=None):
                     'problem': problem,
                 })
 
+        # Khối tự-quan-sát nằm lồng trong `self_observation` (dạng chuẩn từ
+        # SelfObservationLog) hoặc phẳng ở gốc (dạng đầu tiên, còn sót). Đọc cả
+        # hai, vì "thiếu trường" phải nghĩa là CHƯA CÓ BỘ LỌC — không phải "đặt
+        # ở chỗ khác".
+        nested = data.get('self_observation') or {}
+        excluded = nested.get('self_observed_excluded')
+        if excluded is None:
+            excluded = data.get('self_observed_excluded')
+
         report['files'].append({
             'file': os.path.basename(path),
             'indicators': len(indicators),
             'violations': violations,
-            'self_observed_excluded': data.get('self_observed_excluded'),
+            'self_observed_excluded': excluded,
         })
         report['total_indicators'] += len(indicators)
         report['total_violations'] += len(violations)
