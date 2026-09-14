@@ -620,6 +620,15 @@
       color: var(--color-healthy);
       border: 1px solid var(--color-healthy);
     }
+
+    /* AQ-024. "Chưa đánh giá được" phải trông khác mọi mức đã đánh giá — viền
+       đứt, không màu cảnh báo. Nó không phải một mức nhẹ hơn CRITICAL; nó là
+       một câu trả lời khác loại. */
+    .badge-unknown {
+      background: transparent;
+      color: var(--color-text-dim);
+      border: 1px dashed var(--color-text-dim);
+    }
   </style>
 </head>
 <body>

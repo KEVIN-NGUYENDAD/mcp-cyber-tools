@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T08:13:19.990013",
+  "timestamp": "2026-09-14T13:25:31.661962",
   "engine": "correlation_engine",
   "version": "1.0.0",
   "question": "Nhi\u1ec1u ngu\u1ed3n c\u00f9ng ch\u1ec9 v\u1ec1 m\u1ed9t thi\u1ebft b\u1ecb n\u00e0o kh\u00f4ng?",
@@ -22,7 +22,7 @@
     "assets.json": {
       "present": true,
       "records": 11,
-      "timestamp": "2026-09-14T08:13:00.877017"
+      "timestamp": "2026-09-14T13:24:59.265826"
     },
     "shadow_assets.json": {
       "present": true,
@@ -31,54 +31,54 @@
     },
     "incidents.json": {
       "present": true,
-      "records": 2,
-      "timestamp": "2026-09-14T08:13:19.613226"
+      "records": 3,
+      "timestamp": "2026-09-14T13:25:31.221550"
     },
     "defender_status.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-14T08:12:59.914276"
+      "timestamp": "2026-09-14T13:24:58.050326"
     },
     "security_events.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-14T08:13:00.227206"
+      "timestamp": "2026-09-14T13:24:58.452898"
     },
     "hunting_persistence.json": {
       "present": true,
       "records": 96,
-      "timestamp": "2026-09-14T08:13:07.385615"
+      "timestamp": "2026-09-14T13:25:13.009760"
     },
     "hunting_credential_dumping.json": {
       "present": true,
       "records": 0,
-      "timestamp": "2026-09-14T08:13:18.988674"
+      "timestamp": "2026-09-14T13:25:30.456091"
     },
     "hunting_lateral_movement.json": {
       "present": true,
-      "records": 260,
-      "timestamp": "2026-09-14T08:13:13.176099"
+      "records": 425,
+      "timestamp": "2026-09-14T13:25:24.183061"
     },
     "hunting_suspicious_processes.json": {
       "present": true,
-      "records": 78,
-      "timestamp": "2026-09-14T08:13:11.045249"
+      "records": 97,
+      "timestamp": "2026-09-14T13:25:20.630338"
     }
   },
   "coverage_gaps": [
     {
       "rule_id": "RULE-1",
       "reason": "NO_SHADOW_ASSETS",
-      "detail": "Kh\u00f4ng c\u00f3 thi\u1ebft b\u1ecb l\u1ea1 n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan: arp -a th\u1ea5y 3 thi\u1ebft b\u1ecb v\u00e0 t\u1ea5t c\u1ea3 \u0111\u1ec1u c\u00f3 trong kho t\u00e0i s\u1ea3n; 400 IOC kh\u00f4ng ch\u1ee9a REMOTE_PEER n\u00e0o ngo\u00e0i kho. \u0110\u00e2y l\u00e0 k\u1ebft qu\u1ea3 \u0110\u00c3 KI\u1ec2M, kh\u00f4ng ph\u1ea3i rule im l\u1eb7ng."
+      "detail": "Kh\u00f4ng c\u00f3 thi\u1ebft b\u1ecb l\u1ea1 n\u00e0o \u0111\u1ec3 t\u01b0\u01a1ng quan: arp -a th\u1ea5y 3 thi\u1ebft b\u1ecb v\u00e0 t\u1ea5t c\u1ea3 \u0111\u1ec1u c\u00f3 trong kho t\u00e0i s\u1ea3n; 419 IOC kh\u00f4ng ch\u1ee9a REMOTE_PEER n\u00e0o ngo\u00e0i kho. \u0110\u00e2y l\u00e0 k\u1ebft qu\u1ea3 \u0110\u00c3 KI\u1ec2M, kh\u00f4ng ph\u1ea3i rule im l\u1eb7ng."
     },
     {
       "rule_id": "RULE-3",
       "reason": "NO_DEFENDER_DETECTION",
-      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 78 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
+      "detail": "Defender b\u00e1o 0 threat / 0 quarantine (status=ACTIVE), n\u00ean 97 ti\u1ebfn tr\u00ecnh b\u1ea5t th\u01b0\u1eddng ch\u01b0a \u0111\u1ee7 c\u01a1 s\u1edf \u0111\u1ec3 k\u1ebft lu\u1eadn c\u1ee5m r\u1ee7i ro cao."
     }
   ],
   "suppressed_excluded": {
-    "hunting_lateral_movement.json": 34
+    "hunting_lateral_movement.json": 199
   },
   "findings": [
     {
@@ -110,7 +110,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-14T08:13:19.985505",
+      "detected_at": "2026-09-14T13:25:31.657968",
       "ioc_quality": {
         "confidence_score": 90,
         "confidence": "HIGH",
@@ -162,7 +162,7 @@
         "hunting_lateral_movement.json",
         "security_events.json"
       ],
-      "detected_at": "2026-09-14T08:13:19.985505",
+      "detected_at": "2026-09-14T13:25:31.657968",
       "ioc_quality": {
         "confidence_score": 90,
         "confidence": "HIGH",
@@ -178,5 +178,7 @@
       "attribution_quality": "PARTIAL",
       "evidence_completeness": "PARTIAL"
     }
-  ]
+  ],
+  "run_id": "RUN-20260914T132454-cb565f",
+  "run_scope": "PIPELINE"
 }

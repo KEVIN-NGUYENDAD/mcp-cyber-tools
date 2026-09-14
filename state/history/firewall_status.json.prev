@@ -1,9 +1,11 @@
 {
-  "timestamp": "2026-09-14T08:13:00.079615",
+  "timestamp": "2026-09-14T13:24:58.249468",
   "enabled": true,
   "domain_profile": true,
   "private_profile": true,
   "public_profile": true,
   "blocked_connections": 42,
-  "status": "ACTIVE"
+  "status": "ACTIVE",
+  "run_id": "RUN-20260914T132454-cb565f",
+  "run_scope": "PIPELINE"
 }

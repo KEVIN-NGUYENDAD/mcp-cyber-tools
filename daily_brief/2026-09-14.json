@@ -1,55 +1,55 @@
 {
-  "timestamp": "2026-09-14T08:13:25.363617",
+  "timestamp": "2026-09-14T13:25:56.002041",
   "date": "2026-09-14",
   "incident_summary": {
-    "total_open": 2,
+    "total_open": 1,
     "critical": 0,
-    "high": 2,
+    "high": 1,
     "medium": 0,
     "low": 0,
-    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 2 HIGH"
+    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 1 HIGH"
   },
   "priority_summary": {
     "top_5": [
       {
         "rank": 1,
-        "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
-        "priority": "HIGH",
-        "time_estimate": "N/A",
-        "reason": "threat_hunting component weak"
-      },
-      {
-        "rank": 2,
-        "title": "X\u1eed l\u00fd: Level Change",
-        "priority": "CRITICAL",
-        "time_estimate": "1-2 hours",
-        "reason": "Level Change"
-      },
-      {
-        "rank": 3,
         "title": "C\u1ea3i thi\u1ec7n Waap",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
         "reason": "waap component weak"
       },
       {
-        "rank": 4,
-        "title": "C\u1ea3i thi\u1ec7n Incidents",
+        "rank": 2,
+        "title": "C\u1ea3i thi\u1ec7n Security Events",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
-        "reason": "incidents component weak"
+        "reason": "security_events component weak"
+      },
+      {
+        "rank": 3,
+        "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
+        "priority": "MEDIUM",
+        "time_estimate": "N/A",
+        "reason": "threat_hunting component weak"
+      },
+      {
+        "rank": 4,
+        "title": "Patch 192.168.0.1 (Router)",
+        "priority": "HIGH",
+        "time_estimate": "4-8 hours",
+        "reason": "High vulnerability count"
       },
       {
         "rank": 5,
-        "title": "Patch 192.168.0.1 (Router)",
+        "title": "Patch 192.168.0.10 (Server)",
         "priority": "HIGH",
         "time_estimate": "4-8 hours",
         "reason": "High vulnerability count"
       }
     ],
-    "critical_count": 1,
+    "critical_count": 0,
     "high_count": 2,
-    "summary_text": "\u01afu ti\u00ean: 1 CRITICAL, 2 HIGH"
+    "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 2 HIGH"
   },
   "change_summary": {
     "total_changes": 1,
@@ -57,28 +57,14 @@
       "Risk": 1
     },
     "changes_by_severity": {
-      "CRITICAL": 1
+      "LOW": 1
     },
-    "critical_incidents": [
-      {
-        "timestamp": "2026-09-14T08:13:03.369773",
-        "category": "Risk",
-        "type": "Level Change",
-        "severity": "CRITICAL",
-        "description": "M\u1ee9c r\u1ee7i ro thay \u0111\u1ed5i: LOW \u2192 HIGH",
-        "details": {
-          "previous_level": "LOW",
-          "current_level": "HIGH",
-          "previous_score": 3,
-          "current_score": 31
-        }
-      }
-    ],
-    "summary_text": "1 s\u1ef1 ki\u1ec7n CRITICAL, 0 s\u1ef1 ki\u1ec7n HIGH"
+    "critical_incidents": [],
+    "summary_text": "1 thay \u0111\u1ed5i b\u00ecnh th\u01b0\u1eddng"
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 157.6,
+    "scan_age_hours": 162.8,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -103,7 +89,7 @@
   "waap_summary": {
     "domain": "sentinelops.fyi",
     "ssl_status": "valid",
-    "days_until_expiry": 79,
+    "days_until_expiry": 78,
     "health_score": 80,
     "grade": "B",
     "status": "healthy",
@@ -193,17 +179,20 @@
   },
   "risk_assessment": {
     "risk_level": "LOW",
-    "risk_score": 6,
+    "risk_score": 22,
     "risk_factors": [
-      "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 2 HIGH \u0111ang m\u1edf (+3.0 \u0111i\u1ec3m r\u1ee7i ro)",
+      "threat_hunting: lateral_movement: 0C/6H (+18.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "waap: WAAP health_score 80 (+2.0 \u0111i\u1ec3m r\u1ee7i ro)",
+      "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 1 HIGH \u0111ang m\u1edf (2 b\u1ea3n ghi \u0111\u00e3 \u0111\u00f3ng/thu h\u1ed3i, kh\u00f4ng t\u00ednh \u0111i\u1ec3m) (+1.5 \u0111i\u1ec3m r\u1ee7i ro)",
       "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.52 \u0111i\u1ec3m r\u1ee7i ro)",
-      "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 158 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay."
+      "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 163 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay."
     ],
     "critical_count": 0,
-    "high_count": 2,
+    "high_count": 7,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-14T08:13:19.795089"
-  }
+    "generated_at": "2026-09-14T13:25:31.423462"
+  },
+  "run_id": "RUN-20260914T132454-cb565f",
+  "run_scope": "PIPELINE"
 }

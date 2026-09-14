@@ -1171,10 +1171,20 @@ function renderAnalytics() {
     if (chartLow) chartLow.textContent = lowVulns;
 
     // WAAP Radar
-    const sslValid = stateData.waap?.security_summary?.ssl_valid ? '✓' : '✗';
-    const wafActive = stateData.waap?.security_summary?.waf_active ? '✓' : '✗';
-    const cdnActive = stateData.waap?.security_summary?.cdn_active ? '✓' : '✗';
-    const protActive = stateData.waap?.security_summary?.protection_active ? '✓' : '✗';
+    // AQ-018, nua con lai. `security_summary` gio giu ba gia tri (true / false /
+    // null), va `null` nghia la "chua do duoc" — mot cau tra loi khac han voi
+    // "da do, khong co bao ve".
+    //
+    // `? :` tren gia tri tho khong phan biet duoc hai dieu do: `null` la falsy,
+    // nen no hien ✗ y het mot he thong that su khong duoc bao ve. Dong :765 da
+    // sua bang `=== true`; dong nay thi chua, nen mot nua portal noi "chua biet"
+    // con nua kia noi "khong co".
+    const triMark = (value) => (value === true ? '✓' : value === false ? '✗' : '?');
+    const summary = stateData.waap?.security_summary;
+    const sslValid = triMark(summary?.ssl_valid);
+    const wafActive = triMark(summary?.waf_active);
+    const cdnActive = triMark(summary?.cdn_active);
+    const protActive = triMark(summary?.protection_active);
 
     const radarSsl = document.getElementById('radar-ssl');
     const radarWaf = document.getElementById('radar-waf');
@@ -1700,7 +1710,14 @@ function renderThreatIntelligence() {
         (a, b) => (SEVERITY_RANK[b?.severity] || 0) - (SEVERITY_RANK[a?.severity] || 0)
       );
       const html = ranked.slice(0, 10).map(ind => {
-        const severity = ind?.severity || 'MEDIUM';
+        // AQ-024. Dong nay tung la `ind?.severity || 'MEDIUM'`. Mot chi bao
+        // khong khai severity thi portal TU DAT cho no mot muc — va 'MEDIUM'
+        // doc len giong het mot muc da duoc danh gia.
+        //
+        // Khong doc duoc thi noi la khong doc duoc. Huy hieu 'UNKNOWN' xau hon
+        // ve thi giac, va do dung la dieu can: no moi nguoi di tim, con
+        // 'MEDIUM' thi khong.
+        const severity = ind?.severity || 'UNKNOWN';
         const label = ind?.type || ind?.process || ind?.pattern || 'Unknown';
         return `
           <div style="padding: 8px; border-bottom: 1px solid var(--color-border); font-size: 0.85em;">

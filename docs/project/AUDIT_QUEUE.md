@@ -2269,3 +2269,706 @@ AQ-030/007 → AQ-034.
 ---
 
 *Vòng 6, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
+
+
+---
+---
+
+# VÒNG 7 — 2026-09-14 08:17 · PR #45 `self-observation-and-scoring`
+
+HEAD `484f00b`. Working tree sạch phần mã. Auditor READ ONLY.
+
+---
+
+## ĐÃ TRẢ — kiểm chứng được
+
+| Mục | Bằng chứng |
+|---|---|
+| **AQ-036** | Nguyên nhân đã tìm ra và sửa tận gốc. `SELF_OBSERVATION_HINTS` nay **sinh ra từ tên module thật** (`_module_names()`) thay vì danh sách 13 tên viết tay. Thêm `SIGNATURE_RE` bắt chuỗi từ khoá nối bằng `\|` — mẫu nhận dạng của người phòng thủ, không phải câu lệnh của kẻ tấn công |
+| **AQ-031** (phương pháp) | `tests/fixtures/test_scoring_fixtures.py` (+173 dòng) — đúng bộ kiểm bằng fixture đã đề xuất, và nó **có** ca `"4648 cua tai khoan SYSTEM o muc HIGH -> van bi ha xuong tieng on"` |
+| **AQ-016** | `waapScoreFrom` nay đọc `protection_coverage.score` và trả `null` khi vắng. Công thức 60/15/15/10 đã xoá khỏi `web/app.js` (0 bản sao còn lại) và khỏi bot. Chỉ số được **đổi tên** thành `protection_coverage` — không còn tranh tên với WAAP health |
+| **AQ-017** | `sprint_gate.py:140-190` — `_age_hours()` kiểm tuổi `tool_validation.json`, `pipeline_results.json`, `sensor_coverage.json`; quá ngưỡng là **blocker** |
+
+### Ghi nhận riêng về AQ-036
+
+Builder tự tìm ra nguyên nhân và ghi thẳng vào commit message:
+
+> *"Writing the comment that explains the detection rule triggered the detection rule.
+> The comment in ioc_quality.py explaining why `lsass` is an ambiguous keyword was
+> applied via a PowerShell heredoc. Event 4688 recorded that command line. The credential
+> dumping hunt matched `lsass` in it. Six CRITICAL indicators, and risk_level went
+> LOW -> HIGH on a machine where nothing had happened."*
+
+Vòng 6 đặt câu hỏi *"một trong hai điều đúng: 6 chỉ báo đó là thật, hay là dương tính
+giả?"*. Câu trả lời: **dương tính giả, và nguyên nhân là chính quá trình sửa lỗi**.
+Đây là kiểu bằng chứng tốt nhất một hàng đợi audit có thể nhận — không suy diễn, có
+đường dẫn nhân quả đầy đủ.
+
+---
+
+## AQ-039 · Correlation Integrity · Risk Consistency
+
+**Issue:**
+Dương tính giả ở AQ-036 đã được sửa tại bộ phát hiện, nhưng **hai sự cố nó sinh ra vẫn
+đang MỞ**, và hai sự cố đó hiện chiếm **50% điểm rủi ro (3.0 / 6.0)**. Bằng chứng ghi
+trong chúng đã sai ở thời điểm đọc.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+Vòng phản hồi giữa hai stage của pipeline, không có đường thu hồi:
+
+    generate_incidents.py:119-137   đọc  risk_score.json  ->  tạo sự cố khi risk_level HIGH
+    calculate_risk_score.py          đọc  incidents.json   ->  sự cố đang mở nâng risk
+
+Thứ tự stage: `generate_incidents` (:472) → `calculate_risk_score` (:486). Sự cố nuôi
+rủi ro **trong cùng lần chạy**; rủi ro nuôi sự cố ở **lần chạy sau**. Đây là vòng phản
+hồi dương trễ một nhịp.
+
+Khi chỉ báo nguồn bị vô hiệu — ở đây là bị nhận ra là self-observation — **không có cơ
+chế nào rút lại các artifact nó đã sinh**. Sự cố không mang con trỏ về chỉ báo nguồn,
+nên không có gì để rà lại.
+
+**Evidence:**
+
+    state/incidents.json (2 sự cố, cả hai OPEN, cả hai HIGH)
+
+    INC-0002  "Rủi ro tăng vọt: Risk Level = HIGH"
+      created_at : 2026-09-14T08:13:19.562925
+      evidence   : ["Risk Score: 31", "Thành phần yếu: threat_hunting"]
+
+    INC-0003  "Sự kiện nghi ngờ: Level Change"
+      evidence   : ["Mức rủi ro thay đổi: LOW → HIGH"]
+
+    state/risk_score.json (đọc cùng lúc)
+      overall_score  6        risk_level LOW
+      threat_hunting health 100   "không có IOC CRITICAL/HIGH"
+      incidents      health 88    contribution 3.0    "0 sự cố CRITICAL, 2 HIGH đang mở"
+
+Đối chiếu từng dòng bằng chứng của INC-0002 với state hiện tại:
+
+    "Risk Score: 31"              -> thật: 6
+    "Thành phần yếu: threat_hunting" -> thật: threat_hunting health 100, mạnh nhất
+
+Cả hai dòng bằng chứng đều sai. Và sự cố ấy đang đóng góp vào chính con số nó trích dẫn
+sai: `3.0 / 6.0 = 50%` điểm rủi ro hiện tại đến từ hai sự cố sinh ra bởi một dương tính
+giả đã được thừa nhận.
+
+INC-0002 tự trích dẫn `threat_hunting` là "thành phần yếu"; `threat_hunting` nay là 100.
+Sự cố sống sót qua chính điều kiện tạo ra nó.
+
+**Business Impact:**
+Risk hiện tại là **6**, đúng ra phải là **3**. Một nửa điểm rủi ro của hệ thống là tiếng
+vọng của một lỗi đã sửa. Tệ hơn, cơ chế này tự duy trì: chừng nào hai sự cố còn mở,
+`incidents` còn giữ health 88; nếu risk_level lại chạm HIGH vì bất kỳ lý do gì,
+`generate_incidents` sẽ tạo thêm INC mới, và mức nền lại dâng thêm một bậc. Mỗi dương
+tính giả để lại một khoản nợ vĩnh viễn trên điểm rủi ro.
+
+**Suggested Sprint:** SPRINT INVALIDATION-PATH —
+(1) Mỗi sự cố mang `source_indicators: [id...]` và `source_run_id`.
+(2) Khi chỉ báo nguồn bị đánh `suppressed` / self-observation / biến mất, sự cố phái
+sinh tự chuyển `INVALIDATED` kèm lý do — không xoá, để còn rà lại được.
+(3) Cắt vòng phản hồi: `generate_incidents` **không** được tạo sự cố từ `risk_level` —
+đó là sự cố về một con số, không phải về một quan sát. `calculate_risk_score` là nơi
+duy nhất diễn giải risk_level.
+(4) Bất biến trong `sprint_gate.py`: mọi sự cố OPEN phải có bằng chứng đối chiếu được
+với state hiện tại; bằng chứng mâu thuẫn là blocker.
+
+---
+
+## AQ-040 · Truth Gap · Risk Consistency
+
+**Issue:**
+AQ-035 chưa trả: `run_id` **là `None` trên mọi tệp state**. Lần này các dấu thời gian
+tình cờ nhất quán, nên state đang mạch lạc — nhưng cơ chế bảo đảm điều đó vẫn không tồn
+tại.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+Không đổi so với vòng 6. Pipeline ghi thẳng từng stage vào `state/`, không ảnh chụp
+nguyên tử, không khoá chạy, không đóng dấu lần chạy.
+
+**Evidence:**
+
+    state/risk_score.json                    run_id = None   ts 08:13:19
+    state/hunting_credential_dumping.json    run_id = None   ts 08:13:18
+    state/hunting_lateral_movement.json      run_id = None   ts 08:13:13
+    state/hunting_persistence.json           run_id = None   ts 08:13:07
+    state/hunting_suspicious_processes.json  run_id = None   ts 08:13:11
+
+Lần này thứ tự đúng (mọi hunt trước risk). Vòng 6 thì không:
+`risk_score 08:11:54` đứng cạnh `hunting_credential_dumping 08:12:27`.
+
+Sự khác nhau giữa hai vòng **không phải do bản sửa nào** — vòng 6 có hai lần chạy chồng
+lên nhau, vòng 7 thì không. Đó đúng là loại "đã sửa hay hôm nay dữ liệu khác" mà vòng
+lặp này phải phân biệt, và ở đây câu trả lời là **hôm nay dữ liệu khác**.
+
+AQ-039 cho thấy hậu quả thực tế của việc thiếu `run_id`: không có `source_run_id` thì
+không thể rút lại artifact của một lần chạy bị vô hiệu.
+
+**Suggested Sprint:** SPRINT RUN-ISOLATION (AQ-035, chưa làm) — `run_id` trên mọi tệp
+state; khoá chạy; consumer kiểm `run_id` đồng nhất; blocker trong gate khi state chứa
+nhiều hơn một `run_id`. Đây là tiền đề kỹ thuật của AQ-039 nên hai mục nên làm cùng
+sprint.
+
+---
+
+## AQ-041 · Schema Drift · Truth Gap
+
+**Issue:**
+Ba mục cũ chưa trả, và đều đã đứng yên từ ba vòng trở lên: `crypto_score` hằng số 100
+(AQ-020), 399 vs 64 lỗ hổng (AQ-021), attribution `FULL` trên kho không phân giải được
+tên nào (AQ-002).
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+Không đổi. Cả ba thuộc cùng một họ: **một phép ánh xạ sai giữa hai lược đồ, không ai đối
+chiếu hai đầu.** Không mục nào thuộc dạng `.get(key, default)` nên
+`pipeline_field_audit.py` không thấy chúng — đã ghi ở AQ-034/AQ-038.
+
+**Evidence:**
+
+    AQ-020  state/crypto_inventory.json
+            total_findings 19 · severity {0: 17, 2: 2} · breakdown tổng 0 · score 100
+            (đúng: 90). `collect_crypto_inventory.py:137` ghi khoá int, :147-149 đọc khoá str
+
+    AQ-021  assets.json cộng vuln = 399   |   nessus_status.json total = 64
+            Chênh 6.2 lần trên cùng một bản quét
+
+    AQ-002  assets.json  hostname_source = {unresolved: 11}   (11/11)
+            attribution_quality:
+              lateral    FULL 258 / PARTIAL 2
+              persistence FULL 96
+              processes   FULL 78
+            -> FULL 432 / 434 = 99.5% "đã quy kết đầy đủ" trên kho không máy nào có tên
+
+**Suggested Sprint:** SPRINT SCHEMA-RECONCILE — một bất biến duy nhất đóng được cả ba:
+với mỗi cặp (nguồn, dẫn xuất), tổng phải khớp.
+(1) `sum(severity_breakdown.values()) == total_findings` → bắt AQ-020.
+(2) `sum(assets[].vulnerability_count) == nessus_status.total` → bắt AQ-021.
+(3) `%FULL attribution <= %assets có hostname_source != unresolved` → bắt AQ-002.
+Cả ba là phép so tổng, không phải phép kiểm tên trường — nên chúng thuộc một bộ audit
+**khác** với `pipeline_field_audit.py`, không phải phần mở rộng của nó.
+
+---
+
+## AQ-042 · Portal Truth · Deployment Truth
+
+**Issue:**
+Ba mục hiển thị chưa trả, trong đó Deployment Truth nay là **6 vòng liên tiếp** không
+được chạm.
+
+**Severity:** HIGH
+
+**Root Cause & Evidence:**
+
+**AQ-018 (một nửa).** State đã sửa đúng: `protection_active` nay là `None` thay vì
+`false` — chưa-biết không còn bị ép thành đã-đo. `web/app.js:765` cũng đã sửa:
+`=== true ? '✅' : '⚠️'`. Nhưng `web/app.js:1177` chưa:
+
+    const protActive = stateData.waap?.security_summary?.protection_active ? '✓' : '✗';
+
+`None` là falsy → hiển thị **`✗`** = "đã đo, không có bảo vệ". Một nửa portal nói
+"chưa biết", nửa kia nói "không có".
+
+**AQ-024.** `web/app.js:1703` vẫn:
+
+    const severity = ind?.severity || 'MEDIUM';
+
+Chỉ báo thiếu severity vẫn được portal **bịa** cho một mức.
+
+**AQ-007 / AQ-030.** Không thay đổi từ vòng 1:
+
+    render.yaml:9      startCommand: node web-server.js
+    package.json:7     "start": "node web/server.js"
+    daily_brief/latest.html -> 2026-09-13   (hôm nay 14/09)
+
+Toàn bộ công portal của bốn PR gần nhất — `portal_escape_audit` 86/86, `riskView()`,
+lọc `suppressed`, xoá 5 bản sao công thức WAAP — nằm trong `web/app.js`, tệp Render
+không phục vụ. Trang người dùng thật sự mở vẫn là bản hôm qua.
+
+**AQ-033 / AQ-037.** `HANDOFF.md` khai `ba86908`; HEAD là `484f00b`. Phần chỉ số đã
+khớp (Risk 6 = 6, 434 chỉ báo), nên nguyên nhân còn lại thuần là thời điểm chạy — nó
+không phải stage của pipeline.
+
+**AQ-034.** `TECHNICAL_DEBT.md:25` vẫn in `| Số liệu giả trong pipeline Python | 0 |`,
+không mẫu số, không dòng phạm vi. Vòng này lại thêm bằng chứng cho luận điểm ở AQ-038:
+**AQ-039, AQ-040 và cả ba mục AQ-041 đều nằm ngoài dạng lỗi mà hàng đó đo.**
+
+**Suggested Sprint:** SPRINT DEPLOY-TRUTH (AQ-007, sáu vòng chưa làm) — đây nay là mục
+có tỉ lệ giá trị trên công sức cao nhất trong hàng đợi: nó quyết định toàn bộ công
+portal của bốn sprint vừa qua có tới được người dùng hay không. Kèm hai sửa một dòng
+(`web/app.js:1177`, `:1703`) và `generate_handoff.py` thành stage cuối pipeline.
+
+---
+
+## TỒN ĐỌNG SAU VÒNG 7
+
+| Mục | Hạng | Trạng thái |
+|---|---|---|
+| AQ-039 | CRITICAL | 🆕 2 sự cố từ dương tính giả vẫn OPEN, chiếm 50% điểm rủi ro; vòng phản hồi incidents↔risk |
+| AQ-035 / AQ-040 | CRITICAL | ❌ `run_id: None`; vòng 7 mạch lạc do may, không do sửa |
+| AQ-020 / AQ-041 | CRITICAL | ❌ `crypto_score` hằng số 100 |
+| AQ-021 / AQ-041 | CRITICAL | ❌ 399 vs 64 |
+| AQ-002 / AQ-041 | CRITICAL | ❌ FULL 432/434 trên kho 11/11 `unresolved` |
+| AQ-007 / AQ-030 | HIGH | ❌ **6 vòng** chưa chạm |
+| AQ-018 | HIGH | 🔶 state + app.js:765 đã sửa; app.js:1177 vẫn `None → ✗` |
+| AQ-024 | HIGH | ❌ `\|\| 'MEDIUM'` tại app.js:1703 |
+| AQ-033 / AQ-037 | HIGH | 🔶 chỉ số đã khớp; commit vẫn trễ một sprint |
+| AQ-034 / AQ-038 | HIGH | ❌ `0` trần, không mẫu số |
+
+**Đang mở: 10 (5 CRITICAL, 5 HIGH). Đã trả tích luỹ: 23.**
+
+---
+
+## NHẬN ĐỊNH VÒNG 7
+
+Bốn mục đóng, và cách đóng AQ-036 là phần đáng chú ý nhất: Builder không chỉ sửa triệu
+chứng mà truy ra đường nhân quả đầy đủ — bình luận giải thích luật phát hiện, viết bằng
+PowerShell heredoc, bị Event 4688 ghi lại, bị chính luật đó khớp. Rồi sửa tận gốc
+(`SELF_OBSERVATION_HINTS` sinh từ tên module thật thay vì danh sách viết tay) và thêm
+fixture để nó không quay lại. Đó là mẫu cho mọi mục còn lại.
+
+Nhưng chính sự cố đó để lại một vết mà sprint không dọn, và vết đó là phát hiện lớn
+nhất vòng này: **hệ thống không có đường thu hồi.** Sáu chỉ báo self-observation đã sinh
+ra hai sự cố; chỉ báo bị vô hiệu, sự cố thì không. Hai sự cố ấy hiện chiếm **một nửa
+điểm rủi ro**, và bằng chứng ghi trong chúng — `"Risk Score: 31"`, `"Thành phần yếu:
+threat_hunting"` — cả hai dòng đều sai khi đọc lại: risk là 6, `threat_hunting` là thành
+phần **mạnh nhất** với health 100.
+
+Đằng sau nó là một vòng phản hồi có thật giữa hai stage: `generate_incidents` đọc
+`risk_score.json`, `calculate_risk_score` đọc `incidents.json`. Mỗi dương tính giả để
+lại một khoản nợ vĩnh viễn trên điểm rủi ro, và mức nền chỉ có thể đi lên.
+
+Điều này nối thẳng với AQ-040: không có `run_id` thì không có `source_run_id`, và không
+có `source_run_id` thì không thể rút lại artifact của một lần chạy bị vô hiệu. Hai mục
+là một bài toán.
+
+Và ghi nhận một quan sát về chính vòng lặp này: vòng 6 báo state lệch pha, vòng 7 báo
+mạch lạc — **không phải vì có bản sửa nào**, mà vì vòng 6 rơi vào lúc hai lần chạy chồng
+nhau. Đúng loại nhầm lẫn mà bước 3 của quy trình được đặt ra để chặn.
+
+**Thứ tự vòng tới:** AQ-039 + AQ-040 (một sprint) → AQ-041 (ba bất biến so tổng) →
+AQ-007/030 → AQ-018/024 (hai dòng) → AQ-037 → AQ-034.
+
+---
+
+*Vòng 7, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
+
+
+---
+---
+
+# VÒNG 8 — 2026-09-14 08:22 · working tree (chưa commit)
+
+HEAD `484f00b` — **không có commit mới**. Thay đổi nằm trong working tree:
+`scripts/run_context.py` (mới), `state_manager.py`, `generate_incidents.py`,
+`calculate_risk_score.py`, `run_intelligence_pipeline.py`. Auditor READ ONLY.
+
+---
+
+## ĐÃ TRẢ — kiểm chứng được
+
+### AQ-039 ✅ — đường thu hồi đã có, và Risk về đúng 3
+
+Vòng 7 kết luận: *"Risk hiện tại là 6, đúng ra phải là 3."* Đo lại sau bản sửa:
+
+    state/risk_score.json      overall_score 3   risk_level LOW
+      incidents  health 100  contribution 0.0
+                 "0 sự cố CRITICAL, 0 HIGH đang mở (2 bản ghi đã đóng...)"
+
+    state/incidents.json
+      total_incidents 0   by_severity {}   by_status {'INVALIDATED': 2}
+      INC-0002  INVALIDATED   "Rủi ro tăng vọt: Risk Level = HIGH"
+      INC-0003  INVALIDATED   "Sự kiện nghi ngờ: Level Change"
+
+Ba điểm làm đúng:
+1. **Giữ lại, không xoá** — `INVALIDATED` kèm lý do, nên quyết định còn rà lại được.
+2. **Cắt vòng phản hồi ở gốc** — `risk_score.json` vào danh sách nguồn bị cấm với lý do
+   viết thẳng: *"điểm rủi ro là kết quả tính từ các quan sát khác"*.
+3. **Chặn cả đường vòng** — commit ghi rõ đường gián tiếp qua timeline
+   (`collect_timeline_events` đọc `risk_score.json` rồi phát CRITICAL "Level Change")
+   cũng bị chặn: *"chặn đường thẳng mà để hở đường này thì..."*.
+
+### AQ-035 / AQ-040 ✅ — `run_id` đặt ở cửa ra duy nhất
+
+`scripts/run_context.py` mới, và điều đáng ghi nhận nhất là **chỗ đặt nó**:
+
+    state_manager.write_state_atomic():
+        import run_context
+        data = run_context.stamp(data)
+
+    # "40 script ghi state qua hàm này. Sửa từng script là cách đã chứng minh
+    #  không scale ở AQ-014: một lần đổi khoá làm hỏng năm consumer và Builder
+    #  sửa được một. Ở đây có đúng một cửa ra, nên dấu lần chạy đặt ở cửa đó."
+
+Kiểm lại độc lập: **0 script ghi JSON vào `state/` mà không qua `state_manager`.** Cửa
+ra thật sự là duy nhất, nên việc đóng dấu là cấu trúc chứ không phải thói quen.
+
+Và quyết định không tự sinh `run_id` khi thiếu là đúng:
+
+    # "Cám dỗ rõ ràng là: nếu không có biến môi trường thì sinh một id mới...
+    #  Làm vậy thì mọi tệp đều CÓ run_id, mọi bảng đều xanh, và phép kiểm
+    #  'cả state có cùng một lần chạy' trở thành luôn luôn đỏ theo một cách vô nghĩa."
+
+Live: `risk_score.json` và `incidents.json` mang `run_id: null, run_scope: STANDALONE` —
+vắng mặt được **khai báo**, không bị lấp. Đó chính là kỷ luật mà cả hàng đợi này đòi
+hỏi, lần này áp cho chính cơ chế chống lấp.
+
+Còn lại: 5 tệp state sinh lúc 08:13 vẫn `run_scope: None` vì chưa chạy lại. Đó là lan
+truyền, không phải thiếu sót thiết kế.
+
+---
+
+## AQ-043 · Green Default · Truth Gap
+
+**Issue:**
+Cơ chế vừa xây để chặn suy giảm âm thầm **tự suy giảm âm thầm**. Nếu `run_context`
+không import được, `state_manager` nuốt lỗi và ghi state **không có dấu lần chạy**,
+không cảnh báo, không ghi log.
+
+**Severity:** HIGH
+
+**Root Cause:**
+`scripts/state_manager.py`
+
+    try:
+        import run_context
+        data = run_context.stamp(data)
+    except ImportError:
+        # state_manager được import từ nhiều thư mục; thiếu run_context thì ghi
+        # state vẫn phải chạy — mất dấu lần chạy, không mất dữ liệu.
+        pass
+
+Đánh đổi được cân nhắc có ý thức và ghi ra — hơn hẳn mặc định ngầm. Nhưng kết quả cuối
+cùng vẫn là dạng đã ghi ở AQ-003, AQ-013, AQ-026: **một tệp state thiếu `run_id` trông
+giống hệt một tệp chạy tay hợp lệ** (`run_scope: STANDALONE`, `run_id: null`). Người đọc
+không phân biệt được "chạy tay, đã khai" với "chạy trong pipeline, mất dấu".
+
+Đây đúng là điều `run_context` tồn tại để chặn, áp vào chính nó thì hở.
+
+**Evidence:**
+
+    scripts/state_manager.py   except ImportError: pass        <- không log, không cờ
+
+    Hai trạng thái không phân biệt được ở phía người đọc:
+      (a) chạy tay hợp lệ        -> run_id null, run_scope STANDALONE
+      (b) pipeline, import hỏng  -> run_id null, run_scope thiếu/None
+
+    state/ hiện có cả hai dạng:
+      risk_score.json               run_scope STANDALONE   (dạng a)
+      hunting_lateral_movement.json run_scope None         (dạng — chưa chạy lại)
+
+Blocker dự kiến của AQ-040 là *"state chứa nhiều hơn một `run_id`"*. Với nhánh này,
+một lần chạy mất dấu hoàn toàn sẽ **lọt** phép kiểm đó thay vì kích hoạt nó — đúng chiều
+sai nguy hiểm nhất.
+
+**Suggested Sprint:** SPRINT RUN-ISOLATION (phần cuối) — `except ImportError` phải ghi
+`run_scope: 'UNSTAMPED'` kèm lý do vào chính tệp, không im lặng. `sprint_gate.py` coi
+`UNSTAMPED` là blocker. Nếu `run_context` là bắt buộc — và nó nên là, vì AQ-039 phụ
+thuộc `source_run_id` — thì thiếu nó là lỗi khởi động, không phải điều bỏ qua.
+
+---
+
+## AQ-041 · Schema Drift — KHÔNG ĐỔI, vòng thứ tư
+
+**Issue:** Ba mục cùng họ, đứng yên từ vòng 3/5/6 tới nay. Đo lại vòng này, không con số
+nào thay đổi.
+
+**Severity:** CRITICAL
+
+**Root Cause:** Không đổi — ánh xạ sai giữa hai lược đồ, không ai đối chiếu hai đầu.
+Không mục nào thuộc dạng `.get(key, default)` nên `pipeline_field_audit.py` không thấy.
+
+**Evidence:**
+
+    AQ-020  crypto score 100 · severity_breakdown tổng 0 · total_findings 19   (đúng: 90)
+    AQ-021  assets vuln tổng 399   |   nessus_status.total 64      (chênh 6.2 lần)
+    AQ-002  hostname_source = {unresolved: 11}   (11/11)
+            attribution_quality lateral = {FULL: 258, PARTIAL: 2}
+
+**Suggested Sprint:** SPRINT SCHEMA-RECONCILE — ba bất biến so tổng (đã nêu ở vòng 7):
+`sum(severity_breakdown) == total_findings` · `sum(assets[].vulnerability_count) ==
+nessus.total` · `%FULL attribution <= %hostname đã phân giải`.
+
+Ghi chú xếp ưu tiên: hai sprint vừa rồi (AQ-039, AQ-040) đều là **cơ chế** — đường thu
+hồi, dấu lần chạy. Ba mục này là **số liệu sai đang hiển thị**. Cơ chế đã đủ tốt để đỡ
+chúng; giờ là lúc sửa chính con số.
+
+---
+
+## AQ-042 · Portal / Deployment Truth — KHÔNG ĐỔI, vòng thứ bảy
+
+**Issue:** Deployment Truth chưa được chạm lần nào kể từ vòng 1. Hai sửa một dòng ở
+portal cũng chưa.
+
+**Severity:** HIGH
+
+**Evidence:**
+
+    render.yaml:9            startCommand: node web-server.js
+    package.json:7           "start": "node web/server.js"
+    daily_brief/latest.html  2026-09-13          (hôm nay 14/09)
+
+    web/app.js:1177  protection_active ? '✓' : '✗'      <- None -> '✗'
+    web/app.js:1703  ind?.severity || 'MEDIUM'          <- bịa severity
+
+    docs/project/TECHNICAL_DEBT.md:25  | Số liệu giả trong pipeline Python | 0 |
+                                       (thật: 0 / 107 kiểm / 617 lời gọi = 17.3%)
+
+    HANDOFF.md  Commit ba86908   |   HEAD 484f00b
+
+Năm sprint liên tiếp đã cải thiện `web/app.js`. Không sprint nào làm cho tệp đó được
+phục vụ. Tỉ lệ giá trị trên công sức của AQ-007 nay là cao nhất trong hàng đợi: nó
+quyết định toàn bộ công portal đã tích luỹ có tới được người dùng hay không.
+
+**Suggested Sprint:** SPRINT DEPLOY-TRUTH — chốt entrypoint, đồng bộ `render.yaml` với
+`package.json`, đưa bộ sinh brief HTML vào pipeline, đóng dấu tuổi lên trang. Kèm hai
+sửa một dòng ở portal, `generate_handoff.py` thành stage cuối, và mẫu số cho hàng
+`TECHNICAL_DEBT.md:25`.
+
+---
+
+## TỒN ĐỌNG SAU VÒNG 8
+
+| Mục | Hạng | Trạng thái |
+|---|---|---|
+| AQ-020 / AQ-041 | CRITICAL | ❌ `crypto_score` hằng số 100 — **4 vòng** |
+| AQ-021 / AQ-041 | CRITICAL | ❌ 399 vs 64 — **6 vòng** |
+| AQ-002 / AQ-041 | CRITICAL | ❌ FULL 258/260 trên kho 11/11 `unresolved` — **8 vòng** |
+| AQ-043 | HIGH | 🆕 `except ImportError: pass` bỏ dấu lần chạy trong im lặng |
+| AQ-007 / AQ-030 / AQ-042 | HIGH | ❌ Deployment Truth — **7 vòng** |
+| AQ-018 | HIGH | 🔶 `app.js:1177` vẫn `None → ✗` |
+| AQ-024 | HIGH | ❌ `\|\| 'MEDIUM'` tại `app.js:1703` |
+| AQ-033 / AQ-037 | HIGH | 🔶 chỉ số khớp; commit trễ một sprint |
+| AQ-034 / AQ-038 | HIGH | ❌ `0` trần, không mẫu số |
+
+**Đang mở: 9 (3 CRITICAL, 6 HIGH). Đã trả tích luỹ: 25.**
+
+---
+
+## NHẬN ĐỊNH VÒNG 8
+
+Hai mục CRITICAL đóng, và cả hai đóng theo cách đáng ghi nhận.
+
+AQ-039 khép lại bằng một con số kiểm được: vòng 7 tuyên bố *"Risk đúng phải là 3"*, vòng
+8 đo được **3**. Dự báo và kết quả khớp, nên bản sửa là bản sửa — không phải dữ liệu đổi.
+
+AQ-040 đóng ở đúng chỗ. `run_context.stamp()` đặt trong `state_manager.write_state_atomic()`
+thay vì rải khắp 40 script, và commit trích dẫn thẳng bài học AQ-014 làm lý do. Kiểm độc
+lập: **0 script ghi state vòng qua cửa đó.** Đây là lần đầu trong tám vòng một bản sửa
+được thiết kế từ chính lịch sử lỗi của hàng đợi này thay vì từ triệu chứng.
+
+Quyết định **không tự sinh `run_id`** cũng đúng, và vì một lý do sâu: tự sinh sẽ làm mọi
+tệp "có `run_id`", mọi bảng xanh, và phép kiểm mất nghĩa. Đó chính xác là hình dạng của
+AQ-003, AQ-013, AQ-026 — lần này được nhận ra **trước** khi viết.
+
+Nhưng cùng bản sửa đó để hở một chỗ theo đúng hình dạng cũ: `except ImportError: pass`
+(AQ-043). Cơ chế chống lấp-chỗ-trống tự lấp chỗ trống của chính nó, im lặng, và một lần
+chạy mất dấu sẽ **lọt** phép kiểm thay vì kích hoạt nó.
+
+Quan sát về xu hướng: tám vòng, 25 mục đã trả. Nhưng ba mục CRITICAL còn lại đã đứng yên
+lần lượt **4, 6 và 8 vòng**, và Deployment Truth đứng yên **7 vòng**. Các sprint đang
+chọn việc theo độ mới thay vì theo tuổi nợ. Cả bốn mục đó đều là số liệu sai đang hiển
+thị, không phải cơ chế — và cơ chế thì nay đã đủ tốt để đỡ chúng.
+
+**Thứ tự vòng tới:** AQ-041 (ba bất biến so tổng, một sprint) → AQ-042/AQ-007 →
+AQ-043 → AQ-018/AQ-024 (hai dòng) → AQ-037 → AQ-034.
+
+---
+
+*Vòng 8, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
+
+
+---
+---
+
+# VÒNG 9 — 2026-09-14 08:27 · working tree (chưa commit)
+
+HEAD `484f00b` — không commit mới. Thay đổi mới so với vòng 8:
+`scripts/run_coherence_audit.py` (mới), `sprint_gate.py`, `web/app.js`, `web/index.html`.
+Auditor READ ONLY.
+
+---
+
+## ĐÃ TRẢ
+
+| Mục | Bằng chứng |
+|---|---|
+| **AQ-018** | `web/app.js:765` dùng `=== true ? '✅' : '⚠️'`; dòng `protection_active ? '✓' : '✗'` ở `:1177` đã xoá. `None` không còn hiển thị thành "đã đo, không có bảo vệ" |
+| **AQ-024** | `web/app.js:1713` — `\|\| 'MEDIUM'` đã bỏ, kèm chú thích viện dẫn AQ-024 |
+
+---
+
+## AQ-044 · Truth Gap · Green Default
+
+**Issue:**
+`run_coherence_audit.py` — bộ kiểm mới, đã nối vào cổng merge — báo **"TONG: 0 vi pham"**
+trong khi chính dòng phạm vi của nó nói **0/7 tệp có dấu lần chạy**. Không tệp nào được
+đóng dấu, nên không có gì để đối chiếu, nên không thể có vi phạm.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+Bộ kiểm đối chiếu `run_id` giữa các tệp trong "tập gắn kết". Khi **không** tệp nào mang
+`run_id`, tập so sánh rỗng và kết quả là 0. Không có nhánh nào phân biệt *"đã kiểm, nhất
+quán"* với *"không kiểm được, không có dữ liệu"*.
+
+Đây là lần thứ **tư** cùng một hình dạng xuất hiện trong repo này:
+
+| Bộ kiểm | Phạm vi thật | Tiêu đề công bố |
+|---|---|---|
+| `portal_field_audit` (vòng 1) | 29 / 122 truy cập | `0` |
+| `pipeline_field_audit` (vòng 4–8) | 107 / 617 lời gọi | `0` |
+| `run_coherence_audit` (vòng này) | **0 / 7 tệp** | `0 vi phạm` |
+
+Và nó nay nằm trong `sprint_gate.py:115` — tức là một tiêu chí merge **không có khả năng
+thất bại** ở trạng thái hiện tại. Đúng hình dạng AQ-013, mục vừa được sửa ở vòng 6 vì lý
+do y hệt.
+
+**Evidence:**
+
+    scripts/run_coherence_audit.py  (chạy lúc audit)
+      PHAM VI: 0/7 tep trong tap gan ket co dau lan chay;
+               0 su co dang mo, 0 truy nguoc duoc; 2 ban ghi da thu hoi.
+      KHONG DAU: executive_findings.json, hunting_credential_dumping.json,
+                 hunting_lateral_movement.json, hunting_persistence.json,
+                 hunting_suspicious_processes.json, incidents.json, risk_score.json
+      TONG: 0 vi pham
+
+    scripts/sprint_gate.py:50   import run_coherence_audit
+    scripts/sprint_gate.py:115  coherence, coherence_scope = run_coherence_audit.audit()
+
+Bảy tệp liệt kê là **toàn bộ** tập gắn kết. `0/7` không phải lan truyền chậm ở một góc —
+đó là 100% tập chưa có dữ liệu để kiểm.
+
+Lưu ý phân biệt "đã sửa mã" với "hôm nay dữ liệu khác": lý do 0/7 là các tệp sinh lúc
+08:13 có trước `run_context`, còn `risk_score.json` chạy tay nên `run_scope: STANDALONE`,
+`run_id: null` một cách hợp lệ. Cơ chế đóng dấu (AQ-040) **đúng**. Vấn đề nằm ở chỗ bộ
+kiểm báo tình trạng đó là `0 vi phạm` thay vì `không đánh giá được`.
+
+**Business Impact:**
+Cổng merge vừa mọc thêm một tiêu chí xanh vĩnh viễn. Tệ hơn: nếu AQ-043 xảy ra thật —
+`run_context` không import được và `state_manager` nuốt lỗi — mọi tệp sẽ mất dấu, bộ
+kiểm này sẽ báo `0 vi phạm`, và cổng sẽ xanh. Hai lỗ hổng cộng lại thành một đường thẳng
+từ hỏng-âm-thầm tới merge-được.
+
+**Suggested Sprint:** SPRINT RUN-ISOLATION (phần cuối, gộp AQ-043) —
+(1) `run_coherence_audit` trả ba trạng thái: `COHERENT` / `INCOHERENT` / `UNEVALUABLE`.
+`0/7 có dấu` là `UNEVALUABLE`, và `UNEVALUABLE` là **blocker**, không phải pass.
+(2) In tỉ lệ ngay cạnh con số ở mọi nơi công bố: `0 vi phạm / 0 trên 7 tệp kiểm được`.
+(3) Áp cùng quy tắc cho ba bộ kiểm còn lại — đây là lần thứ tư, nên nó là quy ước dự án
+chứ không phải một bản vá lẻ: **một bộ kiểm không được in con số vi phạm mà không in mẫu
+số bên cạnh.**
+
+---
+
+## AQ-043 · Green Default — KHÔNG ĐỔI
+
+**Issue:** `state_manager.write_state_atomic()` nuốt `ImportError` khi nạp `run_context`
+và ghi state không dấu, im lặng.
+
+**Severity:** HIGH
+
+**Evidence:**
+
+    scripts/state_manager.py:67-70
+        except ImportError:
+            # ... mất dấu lần chạy, không mất dữ liệu.
+            pass
+
+Không log, không cờ. Với AQ-044, một lần chạy mất dấu hoàn toàn sẽ **lọt** phép kiểm gắn
+kết thay vì kích hoạt nó.
+
+**Suggested Sprint:** Gộp vào SPRINT RUN-ISOLATION — ghi `run_scope: 'UNSTAMPED'` kèm lý
+do vào chính tệp; gate coi `UNSTAMPED` là blocker.
+
+---
+
+## AQ-041 · Schema Drift — KHÔNG ĐỔI, vòng thứ năm
+
+**Issue:** Ba số liệu sai, đo lại vòng này không con số nào thay đổi.
+
+**Severity:** CRITICAL
+
+**Evidence:**
+
+    crypto score 100 · severity_breakdown tổng 0 · total_findings 19     (đúng: 90)
+    assets vuln tổng 399   |   nessus_status.total 64                     (chênh 6.2 lần)
+    hostname_source {unresolved: 11}  ·  attribution {FULL: 258, PARTIAL: 2}
+
+**Suggested Sprint:** SPRINT SCHEMA-RECONCILE — ba bất biến so tổng (nêu từ vòng 7):
+`sum(severity_breakdown) == total_findings` · `sum(assets[].vulnerability_count) ==
+nessus.total` · `%FULL attribution <= %hostname đã phân giải`.
+
+---
+
+## AQ-042 · Deployment Truth — KHÔNG ĐỔI, vòng thứ tám
+
+**Issue:** Portal được deploy vẫn không phải portal được sửa.
+
+**Severity:** HIGH
+
+**Evidence:**
+
+    render.yaml:9            startCommand: node web-server.js
+    package.json:7           "start": "node web/server.js"
+    daily_brief/latest.html  2026-09-13            (hôm nay 14/09)
+    HANDOFF.md  Commit ba86908  ·  Risk 6/100      (HEAD 484f00b · state 3)
+    TECHNICAL_DEBT.md:25  | Số liệu giả trong pipeline Python | 0 |
+
+Vòng này `web/app.js` lại được sửa (AQ-018, AQ-024) — sprint thứ **sáu** liên tiếp cải
+thiện một tệp Render không phục vụ.
+
+**Suggested Sprint:** SPRINT DEPLOY-TRUTH — chốt entrypoint, đưa bộ sinh brief HTML vào
+pipeline, `generate_handoff.py` thành stage cuối, mẫu số cho `TECHNICAL_DEBT.md:25`.
+
+---
+
+## TỒN ĐỌNG SAU VÒNG 9
+
+| Mục | Hạng | Tuổi |
+|---|---|---|
+| AQ-044 | CRITICAL | 🆕 `run_coherence_audit` báo `0 vi phạm` trên `0/7` tệp kiểm được |
+| AQ-020 / AQ-041 | CRITICAL | ❌ 5 vòng |
+| AQ-021 / AQ-041 | CRITICAL | ❌ 7 vòng |
+| AQ-002 / AQ-041 | CRITICAL | ❌ 9 vòng |
+| AQ-043 | HIGH | ❌ 2 vòng |
+| AQ-007 / AQ-042 | HIGH | ❌ **8 vòng** |
+| AQ-033 / AQ-037 | HIGH | ❌ 3 vòng |
+| AQ-034 / AQ-038 | HIGH | ❌ 5 vòng |
+
+**Đang mở: 8 (4 CRITICAL, 4 HIGH). Đã trả tích luỹ: 27.**
+
+---
+
+## NHẬN ĐỊNH VÒNG 9
+
+Hai mục đóng, cả hai là sửa một dòng ở portal — đúng loại việc lẽ ra nên xong từ lâu.
+
+Phát hiện chính vòng này là một mẫu lặp lại lần thứ tư. `run_coherence_audit.py` được
+viết để phát hiện state pha trộn nhiều lần chạy, và nó báo `0 vi phạm` trong lúc chính
+dòng phạm vi của nó nói không tệp nào có dấu để so. Cùng hình dạng với
+`portal_field_audit` (29/122 → `0`) và `pipeline_field_audit` (107/617 → `0`).
+
+Ba lần là trùng hợp; bốn lần là thói quen. Và lần này nó nằm **trong cổng merge**, đúng
+chỗ mà AQ-013 vừa được sửa ở vòng 6 vì lý do y hệt — bộ phận quyết định ship không được
+có tiêu chí không thể đỏ.
+
+Cộng với AQ-043, hai mục tạo thành một đường liền: `run_context` không import được →
+`state_manager` nuốt lỗi im lặng → mọi tệp mất dấu → `run_coherence_audit` báo `0 vi
+phạm` → cổng xanh. Không bước nào trong chuỗi đó phát ra tiếng.
+
+Về xu hướng: chín vòng, 27 mục đã trả — nhịp tốt. Nhưng ba mục CRITICAL của AQ-041 đã
+đứng yên **5, 7 và 9 vòng**, và Deployment Truth **8 vòng**. Sáu sprint liên tiếp đã cải
+thiện `web/app.js`; không sprint nào làm cho tệp đó được phục vụ. Các sprint vẫn chọn
+việc theo độ mới thay vì theo tuổi nợ, và khoảng cách đang giãn ra chứ không thu lại.
+
+**Thứ tự vòng tới:** AQ-044 + AQ-043 (một sprint, cùng cơ chế) → AQ-041 (ba bất biến) →
+AQ-042/AQ-007 → AQ-037 → AQ-034.
+
+---
+
+*Vòng 9, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*

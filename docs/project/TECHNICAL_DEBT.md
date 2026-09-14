@@ -2,7 +2,7 @@
 
 Sinh tự động bởi `scripts/sprint_gate.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T08:16:20
+Cập nhật: 2026-09-14T13:26:11
 
 ## Cổng merge
 
@@ -14,15 +14,23 @@ Cập nhật: 2026-09-14T08:16:20
 | BLIND | 0 |
 | FAIL | 0 |
 | Bộ kiểm phát hiện | ĐẠT |
-| Toàn vẹn bằng chứng | 0 vi phạm / 434 chỉ báo |
+| Toàn vẹn bằng chứng | 0 vi phạm / 618 chỉ báo |
 | Pipeline | 28 stage, 0 thất bại |
-| Trường portal đọc sai | 0 |
-| Trường Telegram đọc sai | 0 |
-| Tuổi `tool_validation.json` | 0.0 giờ |
-| Tuổi `pipeline_results.json` | 0.1 giờ |
+| Trường portal đọc từ state không tồn tại | 0 / 28 truy cập soi được |
+| Trường Telegram đọc từ state không tồn tại | 0 / 15 truy cập soi được |
+| Tuổi `tool_validation.json` | 5.2 giờ |
+| Tuổi `pipeline_results.json` | 0.0 giờ |
 | Tuổi `sensor_coverage.json` | 0.0 giờ |
-| Biểu thức innerHTML chưa escape | 0 |
-| Số liệu giả trong pipeline Python | 0 |
+| Biểu thức innerHTML chưa escape | 0 / 85 biểu thức trong sink |
+| `.get(khoá, mặc định)` bịa số trong Python | 0 / 106 lời gọi lần được |
+| State cùng một lần chạy | 7 / 7 tệp có dấu, 1 lần chạy khác nhau |
+| Sự cố đang mở truy nguợc được về quan sát | 1 / 1 |
+| Sự cố đã thu hồi (giữ lại để rà) | 2 |
+
+Mỗi hàng trên là **phạm vi của một bộ audit cụ thể**, không phải của cả
+hệ thống. Một hàng `0 / 86` nghĩa là bộ đó soi 86 chỗ và cả 86 đều sạch;
+nó không nói gì về những chỗ bộ đó không soi tới. AQ-038/AQ-041 liệt kê
+các lớp lỗi nằm ngoài mọi hàng ở đây.
 
 ## Nợ đo được trong lần chạy này
 

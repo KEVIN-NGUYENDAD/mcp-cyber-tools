@@ -150,12 +150,33 @@ class RiskScoreCalculator:
     def analyze_incidents(self):
         """Thành phần mới của Sprint 6 - trước đây không engine nào đọc incidents."""
         incidents = self.load_state('incidents.json')
-        by_severity = incidents.get('by_severity') or {}
-        crit = by_severity.get('CRITICAL', 0) or 0
-        high = by_severity.get('HIGH', 0) or 0
+
+        # AQ-039. Đếm từ chính mảng sự cố, lọc theo `status`, thay vì tin vào
+        # `by_severity` do stage trước tổng kết.
+        #
+        # Lý do không phải là nghi ngờ stage đó: lý do là hai stage này khép một
+        # vòng phản hồi (sự cố nâng rủi ro, rủi ro từng sinh sự cố), và trong một
+        # vòng như vậy thì phía tiêu thụ phải tự đọc được điều kiện nó dựa vào.
+        # Câu "N sự cố đang mở" giờ có một phép đếm đứng sau, không phải một
+        # trường được truyền tay.
+        records = incidents.get('incidents')
+        if isinstance(records, list):
+            open_records = [i for i in records
+                            if (i or {}).get('status') == 'OPEN']
+            crit = len([i for i in open_records if i.get('severity') == 'CRITICAL'])
+            high = len([i for i in open_records if i.get('severity') == 'HIGH'])
+            retired = len(records) - len(open_records)
+        else:
+            by_severity = incidents.get('by_severity') or {}
+            crit = by_severity.get('CRITICAL', 0) or 0
+            high = by_severity.get('HIGH', 0) or 0
+            retired = 0
+
         score = max(0, 100 - crit * 15 - high * 6)
         detail = '{} sự cố CRITICAL, {} HIGH đang mở'.format(crit, high)
-        return score, detail, {'critical': crit, 'high': high}
+        if retired:
+            detail += ' ({} bản ghi đã đóng/thu hồi, không tính điểm)'.format(retired)
+        return score, detail, {'critical': crit, 'high': high, 'retired': retired}
 
     def analyze_crypto(self):
         crypto = self.load_state('crypto_inventory.json')
