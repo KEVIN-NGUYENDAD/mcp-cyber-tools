@@ -13,7 +13,8 @@
     "test:detection": "python tests/detection_quality/run_all.py",
     "audit:detection": "python scripts/detection_quality.py",
     "gate": "python scripts/sprint_gate.py",
-    "gate:full": "python scripts/sprint_gate.py --validate"
+    "gate:full": "python scripts/sprint_gate.py --validate",
+    "audit:portal": "python scripts/portal_field_audit.py"
   },
   "keywords": [],
   "author": "",

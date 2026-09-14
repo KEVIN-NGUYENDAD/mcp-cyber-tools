@@ -61,13 +61,13 @@
       "detail": "Defender b\u1eadt, 0 threat"
     }
   ],
-  "generated_at": "2026-09-13T23:16:28.958633",
+  "generated_at": "2026-09-13T23:28:38.558698",
   "engine": "calculate_risk_score",
   "engine_version": "2.0.0",
   "scale": "risk_ascending",
   "scale_description": "overall_score cao = r\u1ee7i ro cao (0 an to\u00e0n nh\u1ea5t, 100 nguy hi\u1ec3m nh\u1ea5t)",
   "notes": [],
-  "timestamp": "2026-09-13T23:16:28.958633",
+  "timestamp": "2026-09-13T23:28:38.558698",
   "threat_level": "LOW",
   "component_scores": {
     "threat_hunting": 28,

@@ -1038,7 +1038,18 @@ function renderAnalytics() {
       <div style="font-size: 0.9em;">
         <div style="margin: 10px 0;">DNS Health: <span style="color: var(--color-accent); font-weight: bold;">${dnsPercent !== '-' ? dnsPercent + '%' : '-'}</span></div>
         <div style="margin: 10px 0;">Domain: <span>${stateData.domain?.domain || 'UNKNOWN'}</span></div>
-        <div style="margin: 10px 0;">SSL Expiry: <span style="color: var(--color-accent);">${stateData.domain?.days_until_expiry || '-'} days</span></div>
+        <div style="margin: 10px 0;">SSL Expiry: <span style="color: var(--color-accent);">${
+          // Doc `stateData.domain.days_until_expiry` — truong chua bao gio ton
+          // tai trong domain_status.json. Dong nay luon in "- days", va dau gach
+          // do doc nhu "chua co du lieu" chu khong phai "chua bao gio noi day".
+          //
+          // So ngay het han SSL nam trong waap_status.json (79 ngay), va chinh
+          // portal nay da doc dung no o cho khac. Hai dong cung mot so lieu, mot
+          // dong lay tu nguon, mot dong lay tu hu khong.
+          typeof stateData.waap?.days_until_expiry === 'number'
+            ? `${stateData.waap.days_until_expiry} days`
+            : 'chua do duoc'
+        }</span></div>
         <div style="margin: 10px 0;">Nameservers: <span>${stateData.domain?.nameservers?.length || 0} configured</span></div>
       </div>
     `;
@@ -1176,6 +1187,35 @@ function renderExecutiveScorecard() {
     if (summaryUrgent) summaryUrgent.textContent = criticalIncidents + ' Critical, ' + highIncidents + ' High';
     if (summaryDns) summaryDns.textContent = dnsPercent + '%';
     if (summaryWaap) summaryWaap.textContent = waapScore > 0 ? waapScore + '/100' : 'Not Configured';
+
+    // THREAT HUNTING / INCIDENT RESPONSE: truoc Sprint 13 hai o nay la chu
+    // ACTIVE / READY viet cung trong HTML — to xanh du cuoc san co chay hay
+    // khong, du log co doc duoc hay khong. Do la dung kieu "0 phat hien tren mot
+    // cam bien da chet" ma ca du an nay ton tai de xoa, chi khac la no nam trong
+    // HTML thay vi trong du lieu.
+    const setStatus = (id, label, good) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = label;
+      el.style.color = good === null ? 'var(--color-text-dim)'
+        : (good ? '#00ff88' : '#FF3B5C');
+    };
+
+    // ACTIVE chi khi lan kiem gan nhat that su thay cuoc san tra ve bang chung.
+    const huntingVerified = stateData.mcp?.threat_hunting_active;
+    setStatus('summary-hunting',
+      huntingVerified === undefined ? 'CHUA KIEM' : (huntingVerified ? 'ACTIVE' : 'KHONG NHIN THAY'),
+      huntingVerified === undefined ? null : !!huntingVerified);
+
+    // READY nghia la co so may sinh su co va no vua chay — khong phai mot loi
+    // hua. Du lieu qua 24 gio thi khong con mo ta hom nay.
+    const incidentTs = stateData.incidents?.timestamp;
+    const incidentAgeH = incidentTs
+      ? (Date.now() - new Date(incidentTs).getTime()) / 3600000 : null;
+    setStatus('summary-incident',
+      incidentAgeH === null || Number.isNaN(incidentAgeH) ? 'CHUA KIEM'
+        : (incidentAgeH <= 24 ? 'READY' : `CU ${Math.floor(incidentAgeH / 24)} NGAY`),
+      incidentAgeH === null || Number.isNaN(incidentAgeH) ? null : incidentAgeH <= 24);
 
     // Recommendations
     const recommendations = [];
