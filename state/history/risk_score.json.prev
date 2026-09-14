@@ -1,17 +1,9 @@
 {
-  "overall_score": 18,
+  "overall_score": 5,
   "risk_level": "MEDIUM",
   "critical_count": 0,
-  "high_count": 7,
+  "high_count": 1,
   "factors": [
-    {
-      "name": "threat_hunting",
-      "health": 28,
-      "weight": 0.16666666666666669,
-      "risk_contribution": 12.0,
-      "detail": "lateral_movement: 0C/6H",
-      "measurable": true
-    },
     {
       "name": "waap",
       "health": 80,
@@ -45,6 +37,14 @@
       "measurable": true
     },
     {
+      "name": "threat_hunting",
+      "health": 100,
+      "weight": 0.16666666666666669,
+      "risk_contribution": 0.0,
+      "detail": "kh\u00f4ng c\u00f3 IOC CRITICAL/HIGH",
+      "measurable": true
+    },
+    {
       "name": "asset",
       "health": 100,
       "weight": 0.2,
@@ -69,7 +69,7 @@
       "measurable": true
     }
   ],
-  "generated_at": "2026-09-14T13:49:58.533623",
+  "generated_at": "2026-09-14T13:51:24.409251",
   "engine": "calculate_risk_score",
   "engine_version": "2.0.0",
   "scale": "risk_ascending",
@@ -77,13 +77,13 @@
   "notes": [
     "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 163 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay.",
     "N\u0103ng l\u1ef1c \"USB Device Activity\" \u0111ang M\u00d9 n\u00ean th\u00e0nh ph\u1ea7n `security_events` ch\u1ec9 \u0111\u01b0\u1ee3c t\u00ednh tr\u00ean 50% tr\u1ecdng s\u1ed1 c\u1ee7a n\u00f3. scripts\\enable_forensic_logs.ps1 (c\u1ea7n Administrator) S\u1ee9c kho\u1ebb 87 m\u00e0 th\u00e0nh ph\u1ea7n n\u00e0y khai ch\u1ec9 n\u00f3i v\u1ec1 ph\u1ea7n c\u00f2n quan s\u00e1t \u0111\u01b0\u1ee3c.",
-    "N\u0103ng l\u1ef1c \"Scheduled Task Execution\" \u0111ang M\u00d9 n\u00ean th\u00e0nh ph\u1ea7n `threat_hunting` ch\u1ec9 \u0111\u01b0\u1ee3c t\u00ednh tr\u00ean 67% tr\u1ecdng s\u1ed1 c\u1ee7a n\u00f3. scripts\\enable_forensic_logs.ps1 (c\u1ea7n Administrator) S\u1ee9c kho\u1ebb 28 m\u00e0 th\u00e0nh ph\u1ea7n n\u00e0y khai ch\u1ec9 n\u00f3i v\u1ec1 ph\u1ea7n c\u00f2n quan s\u00e1t \u0111\u01b0\u1ee3c.",
+    "N\u0103ng l\u1ef1c \"Scheduled Task Execution\" \u0111ang M\u00d9 n\u00ean th\u00e0nh ph\u1ea7n `threat_hunting` ch\u1ec9 \u0111\u01b0\u1ee3c t\u00ednh tr\u00ean 67% tr\u1ecdng s\u1ed1 c\u1ee7a n\u00f3. scripts\\enable_forensic_logs.ps1 (c\u1ea7n Administrator) S\u1ee9c kho\u1ebb 100 m\u00e0 th\u00e0nh ph\u1ea7n n\u00e0y khai ch\u1ec9 n\u00f3i v\u1ec1 ph\u1ea7n c\u00f2n quan s\u00e1t \u0111\u01b0\u1ee3c.",
     "Capability floor \u00e1p d\u1ee5ng: 2 n\u0103ng l\u1ef1c ph\u00e1t hi\u1ec7n \u0111ang m\u00f9 (Scheduled Task Execution, USB Device Activity), n\u00ean risk_level n\u00e2ng t\u1eeb LOW l\u00ean MEDIUM. overall_score gi\u1eef nguy\u00ean."
   ],
-  "timestamp": "2026-09-14T13:49:58.533623",
+  "timestamp": "2026-09-14T13:51:24.409251",
   "threat_level": "MEDIUM",
   "component_scores": {
-    "threat_hunting": 28,
+    "threat_hunting": 100,
     "incidents": 94,
     "asset": 100,
     "waap": 80,
