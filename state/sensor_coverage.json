@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T23:27:56.992085",
+  "generated_at": "2026-09-14T07:00:31.099986",
   "version": "2.0.0",
   "defender": "covered",
   "firewall": "covered",
@@ -18,7 +18,7 @@
     "event_id": 4688,
     "observable": true,
     "status": "OBSERVED",
-    "reason": "Log Security \u0111\u1ecdc \u0111\u01b0\u1ee3c v\u00e0 c\u00f3 s\u1ef1 ki\u1ec7n 4688",
+    "reason": "Log Security đọc được và có sự kiện 4688",
     "is_admin": false
   },
   "details": {
@@ -132,15 +132,15 @@
     "threat_hunting_active": true,
     "dfir_active": true,
     "event_hub_active": true,
-    "last_sync": "2026-09-13T23:27:56.992085"
+    "last_sync": "2026-09-14T07:00:31.099986"
   },
   "access_diagnosis": {
     "can_fix": true,
     "situation": "HAS_RIGHTS_NOT_ELEVATED",
-    "reason": "T\u00e0i kho\u1ea3n C\u00d3 trong nh\u00f3m Administrators nh\u01b0ng ti\u1ebfn tr\u00ecnh ch\u01b0a n\u00e2ng quy\u1ec1n (Mandatory Label\\Medium Mandatory Level). UAC l\u1ecdc token th\u00e0nh \"deny only\", n\u00ean quy\u1ec1n c\u00f3 m\u00e0 kh\u00f4ng d\u00f9ng \u0111\u01b0\u1ee3c.",
-    "action": "Ch\u1ea1y `scripts/enable_security_log_access.ps1` M\u1ed8T L\u1ea6N d\u01b0\u1edbi quy\u1ec1n Administrator. N\u00f3 th\u00eam t\u00e0i kho\u1ea3n v\u00e0o nh\u00f3m \"Event Log Readers\" \u2014 sau \u0111\u00f3 m\u1ecdi l\u1ea7n ch\u1ea1y pipeline b\u00ecnh th\u01b0\u1eddng (kh\u00f4ng n\u00e2ng quy\u1ec1n) \u0111\u1ec1u \u0111\u1ecdc \u0111\u01b0\u1ee3c log Security.",
+    "reason": "Tài khoản CÓ trong nhóm Administrators nhưng tiến trình chưa nâng quyền (Mandatory Label\\Medium Mandatory Level). UAC lọc token thành \"deny only\", nên quyền có mà không dùng được.",
+    "action": "Chạy `scripts/enable_security_log_access.ps1` MỘT LẦN dưới quyền Administrator. Nó thêm tài khoản vào nhóm \"Event Log Readers\" — sau đó mọi lần chạy pipeline bình thường (không nâng quyền) đều đọc được log Security.",
     "event_log_readers_members": "KEVIN\\tamng",
-    "note": "N\u00e2ng quy\u1ec1n ch\u1ec9 s\u1eeda cho m\u1ed9t l\u1ea7n ch\u1ea1y. Th\u00e0nh vi\u00ean nh\u00f3m s\u1eeda v\u0129nh vi\u1ec5n \u2014 v\u00e0 pipeline ch\u1ea1y theo l\u1ecbch th\u00ec kh\u00f4ng ai b\u1ea5m UAC \u0111\u01b0\u1ee3c."
+    "note": "Nâng quyền chỉ sửa cho một lần chạy. Thành viên nhóm sửa vĩnh viễn — và pipeline chạy theo lịch thì không ai bấm UAC được."
   },
   "fallback_sources": [
     {
@@ -148,7 +148,7 @@
       "log": "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational",
       "readable": true,
       "records": "1522",
-      "covers": "Phi\u00ean RDP: \u0111\u0103ng nh\u1eadp, \u0111\u0103ng xu\u1ea5t, k\u1ebft n\u1ed1i l\u1ea1i (ID 21/22/23/24/25/39/40)",
+      "covers": "Phiên RDP: đăng nhập, đăng xuất, kết nối lại (ID 21/22/23/24/25/39/40)",
       "used_by": [
         "rdpLogs",
         "huntRemoteDesktop"
@@ -159,7 +159,7 @@
       "log": "Microsoft-Windows-NTLM/Operational",
       "readable": true,
       "records": "197",
-      "covers": "X\u00e1c th\u1ef1c NTLM \u0111i v\u00e0 \u0111\u1ebfn \u2014 t\u00edn hi\u1ec7u di chuy\u1ec3n ngang",
+      "covers": "Xác thực NTLM đi và đến — tín hiệu di chuyển ngang",
       "used_by": [
         "huntLateralMovement"
       ]
@@ -169,7 +169,7 @@
       "log": "Microsoft-Windows-WinRM/Operational",
       "readable": true,
       "records": "1642",
-      "covers": "Th\u1ef1c thi t\u1eeb xa qua WinRM/PowerShell Remoting",
+      "covers": "Thực thi từ xa qua WinRM/PowerShell Remoting",
       "used_by": [
         "huntLateralMovement"
       ]
@@ -178,8 +178,8 @@
       "probe": "event_log_ps_operational",
       "log": "Microsoft-Windows-PowerShell/Operational",
       "readable": true,
-      "records": "493",
-      "covers": "Script block logging (4104): n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y \u2014 che \u0111\u01b0\u1ee3c ph\u1ea7n PowerShell c\u1ee7a v\u00f9ng m\u00f9 4688, kh\u00f4ng che ph\u1ea7n c\u00f2n l\u1ea1i",
+      "records": "554",
+      "covers": "Script block logging (4104): nội dung lệnh PowerShell đã chạy — che được phần PowerShell của vùng mù 4688, không che phần còn lại",
       "used_by": [
         "huntEncodedPowerShell"
       ]
@@ -189,23 +189,23 @@
     {
       "key": "security_log",
       "label": "Security Log",
-      "detail": "Log Security th\u00f4 \u2014 n\u1ec1n c\u1ee7a m\u1ecdi th\u1ee9 d\u01b0\u1edbi \u0111\u00e2y",
+      "detail": "Log Security thô — nền của mọi thứ dưới đây",
       "status": "covered",
-      "reason": "Log Security m\u1edf \u0111\u01b0\u1ee3c, 13728 b\u1ea3n ghi."
+      "reason": "Log Security mở được, 13951 bản ghi."
     },
     {
       "key": "process_creation",
       "label": "Process Creation",
-      "detail": "Event ID 4688 + d\u00f2ng l\u1ec7nh",
+      "detail": "Event ID 4688 + dòng lệnh",
       "status": "covered",
-      "reason": "C\u00f3 s\u1ef1 ki\u1ec7n 4688 v\u00e0 d\u00f2ng l\u1ec7nh \u0111\u01b0\u1ee3c ghi k\u00e8m."
+      "reason": "Có sự kiện 4688 và dòng lệnh được ghi kèm."
     },
     {
       "key": "script_block_logging",
       "label": "Script Block Logging",
-      "detail": "Event ID 4104 \u2014 n\u1ed9i dung l\u1ec7nh PowerShell \u0111\u00e3 ch\u1ea1y",
+      "detail": "Event ID 4104 — nội dung lệnh PowerShell đã chạy",
       "status": "covered",
-      "reason": "Ch\u00ednh s\u00e1ch Script Block Logging \u0111ang B\u1eacT \u2014 m\u1ecdi kh\u1ed1i l\u1ec7nh PowerShell \u0111\u1ec1u \u0111\u01b0\u1ee3c ghi (493 b\u1ea3n ghi trong log).",
+      "reason": "Chính sách Script Block Logging đang BẬT — mọi khối lệnh PowerShell đều được ghi (554 bản ghi trong log).",
       "module_logging": false
     }
   ],
@@ -213,5 +213,10 @@
     "covered": 3,
     "partial": 0,
     "blind": 0
-  }
+  },
+  "probe_generated_at": "2026-09-14T07:00:31.099986",
+  "tools_generated_at": "2026-09-13T23:27:56.992085",
+  "tools_age_hours": 7.5,
+  "refreshed_by": "refresh_sensor_coverage",
+  "freshness_note": "Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (7.5 giờ trước) — chạy `npm run validate` để làm mới."
 }
