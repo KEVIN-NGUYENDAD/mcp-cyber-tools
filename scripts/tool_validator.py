@@ -235,6 +235,25 @@ def _debt_forensic_logs_off(report):
                    for key in ('task_scheduler_log', 'usb_driver_log'))
 
 
+def _debt_hostnames_unresolved(report):
+    """Còn máy nào trong kho chưa có tên thật không?
+
+    Đọc từ chính assets.json chứ không nhớ từ sprint trước: món này trả được
+    bằng một hành động ngoài mã (phân giải DNS ngược, hoặc một nguồn kho khác),
+    và một bảng nợ vẫn liệt kê món đã trả thì không ai đọc nữa.
+    """
+    try:
+        import asset_store
+        assets, _meta, error = asset_store.read_assets_safe()
+    except Exception:  # noqa: BLE001
+        return True
+    if error or not assets:
+        return True
+    return not any(a.get('hostname')
+                   and str(a['hostname']).strip() != str(a.get('ip') or '').strip()
+                   for a in assets)
+
+
 REMAINING_DEBT = [
     ('Log Security vẫn đóng — 5 tool còn mù, và chưa thể biết audit 4688 bật hay tắt',
      'Không phải lỗi mã, và Sprint 9 đã dựng sẵn cách sửa: chạy MỘT LẦN '
@@ -250,6 +269,15 @@ REMAINING_DEBT = [
      '`scheduled_task_execution`, `usb_device_activity` giữ ô ❌ BLIND thay vì '
      'im lặng.',
      _debt_forensic_logs_off),
+    ('Không máy nào trong kho tài sản có tên đã phân giải — mọi quy kết về máy '
+     'ở xa vì thế dừng ở mức PARTIAL',
+     'Nessus trả IP trong chính trường `hostname` của nó, và bản cũ chép giá trị '
+     'đó sang cả hai cột: một cột "Hostname" hiện `192.168.0.10` trông như đã '
+     'phân giải được tên. Sprint 17 gọi thẳng nó là chưa phân giải, nên con số '
+     'quy kết tụt xuống — đó là số thật xuất hiện, không phải chất lượng giảm. '
+     'Máy cục bộ vẫn đủ tên vì nó tự biết tên mình. Trả nợ cần một nguồn tên '
+     'thật (DNS ngược, DHCP, hoặc một kho khác), là quyết định về hạ tầng.',
+     _debt_hostnames_unresolved),
     ('Nguồn thay thế chỉ che được MỘT PHẦN vùng mù: TerminalServices thấy phiên '
      'chứ không thấy chi tiết xác thực; NTLM thấy NTLM chứ không thấy Kerberos',
      'Đây là giới hạn của chính các log đó, không sửa được bằng mã. Mọi bản ghi '

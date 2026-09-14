@@ -1,5 +1,5 @@
 {
-  "scan_time": "2026-09-14T07:19:18.648053",
+  "scan_time": "2026-09-14T07:35:21.381777",
   "detector": "shadow_asset_detector",
   "detector_version": "2.0.0",
   "data_source": "OBSERVED",
@@ -18,152 +18,152 @@
     {
       "ip": "192.168.0.10",
       "mac": "Unknown",
-      "hostname": "192.168.0.10",
+      "hostname": null,
       "type": "Server",
       "shadow_class": "UNVERIFIED_L2",
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T07:19:18.648053",
+      "detected_at": "2026-09-14T07:35:21.381777",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T07:19:18.241951"
+        "last_seen": "2026-09-14T07:35:20.983310"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
     {
       "ip": "192.168.0.11",
       "mac": "Unknown",
-      "hostname": "192.168.0.11",
+      "hostname": null,
       "type": "Server",
       "shadow_class": "UNVERIFIED_L2",
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T07:19:18.648053",
+      "detected_at": "2026-09-14T07:35:21.381777",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T07:19:18.241951"
+        "last_seen": "2026-09-14T07:35:20.983310"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
     {
       "ip": "192.168.0.12",
       "mac": "Unknown",
-      "hostname": "192.168.0.12",
+      "hostname": null,
       "type": "Server",
       "shadow_class": "UNVERIFIED_L2",
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T07:19:18.648053",
+      "detected_at": "2026-09-14T07:35:21.381777",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T07:19:18.241951"
+        "last_seen": "2026-09-14T07:35:20.983310"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
     {
       "ip": "192.168.0.3",
       "mac": "Unknown",
-      "hostname": "192.168.0.3",
+      "hostname": null,
       "type": "Server",
       "shadow_class": "UNVERIFIED_L2",
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T07:19:18.648053",
+      "detected_at": "2026-09-14T07:35:21.381777",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T07:19:18.241951"
+        "last_seen": "2026-09-14T07:35:20.983310"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
     {
       "ip": "192.168.0.4",
       "mac": "Unknown",
-      "hostname": "192.168.0.4",
+      "hostname": null,
       "type": "Server",
       "shadow_class": "UNVERIFIED_L2",
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T07:19:18.648053",
+      "detected_at": "2026-09-14T07:35:21.381777",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T07:19:18.241951"
+        "last_seen": "2026-09-14T07:35:20.983310"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
     {
       "ip": "192.168.0.5",
       "mac": "Unknown",
-      "hostname": "192.168.0.5",
+      "hostname": null,
       "type": "Server",
       "shadow_class": "UNVERIFIED_L2",
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T07:19:18.648053",
+      "detected_at": "2026-09-14T07:35:21.381777",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T07:19:18.241951"
+        "last_seen": "2026-09-14T07:35:20.983310"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
     {
       "ip": "192.168.0.51",
       "mac": "Unknown",
-      "hostname": "192.168.0.51",
+      "hostname": null,
       "type": "Server",
       "shadow_class": "UNVERIFIED_L2",
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T07:19:18.648053",
+      "detected_at": "2026-09-14T07:35:21.381777",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T07:19:18.241951"
+        "last_seen": "2026-09-14T07:35:20.983310"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     },
     {
       "ip": "192.168.0.8",
       "mac": "Unknown",
-      "hostname": "192.168.0.8",
+      "hostname": null,
       "type": "Server",
       "shadow_class": "UNVERIFIED_L2",
       "severity": "LOW",
       "confidence": "LOW",
       "trust_score": null,
-      "detected_at": "2026-09-14T07:19:18.648053",
+      "detected_at": "2026-09-14T07:35:21.381777",
       "detection_method": "inventory-vs-ARP",
       "reason": "C\u00f3 trong kho t\u00e0i s\u1ea3n nh\u01b0ng kh\u00f4ng tr\u1ea3 l\u1eddi ARP \u2014 kh\u00f4ng x\u00e1c minh \u0111\u01b0\u1ee3c MAC \u1edf l\u1edbp 2 (m\u00e1y t\u1eaft c\u0169ng cho k\u1ebft qu\u1ea3 n\u00e0y)",
       "evidence": {
         "arp_entry": null,
         "in_inventory": true,
-        "last_seen": "2026-09-14T07:19:18.241951"
+        "last_seen": "2026-09-14T07:35:20.983310"
       },
       "recommended_action": "X\u00e1c minh thi\u1ebft b\u1ecb c\u00f2n ho\u1ea1t \u0111\u1ed9ng tr\u01b0\u1edbc khi \u0111i\u1ec1u tra"
     }
