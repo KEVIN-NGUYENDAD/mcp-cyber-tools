@@ -1,10 +1,27 @@
 {
-  "timestamp": "2026-09-13T16:15:22.722594",
+  "timestamp": "2026-09-13T19:30:06.631413",
   "question": "C\u00f3 s\u1ef1 c\u1ed1 g\u00ec c\u1ea7n x\u1eed l\u00fd?",
-  "total_incidents": 0,
-  "by_severity": {},
-  "by_status": {
-    "OPEN": 0
+  "total_incidents": 1,
+  "by_severity": {
+    "HIGH": 1
   },
-  "incidents": []
+  "by_status": {
+    "OPEN": 1
+  },
+  "incidents": [
+    {
+      "incident_id": "INC-0005",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "R\u1ee7i ro t\u0103ng v\u1ecdt: Risk Level = HIGH",
+      "description": "Risk Level escalation to HIGH",
+      "assets": [],
+      "evidence": [
+        "Risk Score: 39",
+        "Th\u00e0nh ph\u1ea7n y\u1ebfu: threat_hunting"
+      ],
+      "recommended_action": "\u01afu ti\u00ean c\u1ea3i thi\u1ec7n c\u00e1c th\u00e0nh ph\u1ea7n y\u1ebfu",
+      "created_at": "2026-09-13T19:30:06.591262"
+    }
+  ]
 }
