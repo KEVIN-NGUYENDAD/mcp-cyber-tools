@@ -1329,20 +1329,39 @@ function startAutoRefresh() {
 
 function renderAssetCommandCenter() {
   try {
-    const assets = stateData.assets?.assets || stateData.assets?.all_assets || [];
+    // Sprint 11: bo nhanh `|| stateData.assets?.all_assets`. Luoc do kep da
+    // duoc hop nhat ve khoa `assets`; giu lai nhanh du phong chinh la chua san
+    // mot cho cho luoc do thu hai quay lai ma khong ai thay.
+    const assets = stateData.assets?.assets || [];
     const shadowAssets = stateData.shadowAssets?.shadows || [];
     const risk = stateData.risk || {};
 
     // Calculate metrics
-    const trustScores = assets.map(a => a?.trust_score || 0);
-    const avgTrust = trustScores.length > 0 ? Math.round(trustScores.reduce((a, b) => a + b) / trustScores.length) : 0;
-    const onlineAssets = assets.filter(a => a?.status === 'ONLINE').length;
+    //
+    // Chi tinh trung binh tren nhung tai san DA duoc cham. `|| 0` cua ban cu
+    // bien "chua cham" thanh diem 0, keo trung binh xuong va bao mot mang binh
+    // thuong la khong dang tin — mot con so sai tu tin trong nhu mot ket luan.
+    const scored = assets.filter(a => typeof a?.trust_score === 'number');
+    const avgTrust = scored.length
+      ? Math.round(scored.reduce((sum, a) => sum + a.trust_score, 0) / scored.length)
+      : null;
+
+    // `status` KHONG co trong luoc do chinh thuc cua assets.json. Ban cu doc no
+    // roi ket luan moi thiet bi deu Offline — 11 thiet bi cung "🔴 Offline"
+    // tren mot mang dang chay. Nguon duy nhat biet thiet bi nao dang tra loi la
+    // bang ARP, va no nam trong shadow_assets.json.
+    const arpSeen = new Set([
+      ...(stateData.shadowAssets?.shadows || []).map(s => s.ip),
+      ...assets.map(a => a?.ip).filter(ip =>
+        !(stateData.shadowAssets?.unverified_assets || []).some(u => u.ip === ip))
+    ].filter(Boolean));
+    const liveCount = assets.filter(a => arpSeen.has(a?.ip)).length;
 
     // Update KPIs
     const els = {
       'assets-total': assets.length,
-      'assets-online': `${onlineAssets} online`,
-      'assets-trust': avgTrust,
+      'assets-online': `${liveCount} tra loi ARP`,
+      'assets-trust': avgTrust === null ? 'chua cham' : avgTrust,
       'assets-risk': risk.overall_score || 0,
       'assets-risk-level': getRiskLevel(risk.overall_score || 0),
       'assets-shadow': shadowAssets.length
@@ -1356,15 +1375,30 @@ function renderAssetCommandCenter() {
     // Populate asset table
     const tbody = document.getElementById('assets-table-body');
     if (tbody) {
-      const rows = assets.slice(0, 50).map(asset => `
+      const rows = assets.slice(0, 50).map(asset => {
+        // `device_type` la ten truong that; ban cu doc `type` va in "Unknown"
+        // cho moi dong, ke ca khi loai thiet bi da duoc nhan dang ro rang.
+        const kind = asset?.device_type || 'Khong ro';
+        const score = typeof asset?.trust_score === 'number' ? asset.trust_score : null;
+        const basis = asset?.trust_basis?.points_available;
+        // Diem tran trui giau mat co so cham no. 92 tren 60 diem kha dung khong
+        // cung nghia voi 92 tren 100 — va cot nay la noi duy nhat nguoi doc co
+        // co hoi thay dieu do.
+        const trustCell = score === null
+          ? '<span style="color: var(--color-text-dim);">chua cham</span>'
+          : `${score}<span style="color: var(--color-text-dim); font-size: 0.85em;">${basis ? ` /${basis}đ` : ''}</span>`;
+        const live = arpSeen.has(asset?.ip);
+        return `
         <tr style="border-bottom: 1px solid var(--color-border);">
           <td style="padding: 10px;">${asset?.ip || 'N/A'}</td>
-          <td style="padding: 10px;">${asset?.type || 'Unknown'}</td>
-          <td style="padding: 10px; color: var(--color-accent);">${asset?.trust_score || 0}</td>
-          <td style="padding: 10px;">${asset?.status === 'ONLINE' ? '🟢 Online' : '🔴 Offline'}</td>
-        </tr>
-      `).join('');
-      tbody.innerHTML = rows || '<tr><td colspan="4" style="padding: 10px; text-align: center;">No assets found</td></tr>';
+          <td style="padding: 10px;">${kind}</td>
+          <td style="padding: 10px; color: var(--color-accent);">${trustCell}</td>
+          <td style="padding: 10px;">${live ? '🟢 Tra loi ARP' : '<span style="color: var(--color-text-dim);">⚪ Chua xac minh</span>'}</td>
+        </tr>`;
+      }).join('');
+      // Rong o day nghia la doc duoc assets.json va trong do khong co thiet bi
+      // nao — khac han voi khong doc duoc, thu ma asset_store bay gio bao loi.
+      tbody.innerHTML = rows || '<tr><td colspan="4" style="padding: 10px; text-align: center;">Doc duoc assets.json, khong co thiet bi nao trong do</td></tr>';
     }
   } catch (error) {
     console.error('[ERROR] renderAssetCommandCenter:', error);
