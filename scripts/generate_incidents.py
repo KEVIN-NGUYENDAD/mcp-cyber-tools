@@ -12,6 +12,7 @@ Quy tắc tạo Incident:
 5. Weak Cipher + WAAP thấp → INCIDENT MEDIUM
 """
 
+import hashlib
 import json
 import sys
 from datetime import datetime
@@ -21,6 +22,35 @@ from collections import defaultdict
 # Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
 from state_manager import write_state_atomic, read_state_safe
 import ioc_attribution
+import run_context
+
+# AQ-039. Những tệp state này KHÔNG phải quan sát — chúng là kết quả của một
+# phép tính trên các quan sát khác. Tạo sự cố từ chúng đóng một vòng phản hồi:
+#
+#     generate_incidents  đọc risk_score.json  -> tạo sự cố
+#     calculate_risk_score đọc incidents.json  -> sự cố nâng rủi ro
+#
+# Hai stage chạy trong cùng một pipeline (:472 rồi :486), nên sự cố nuôi rủi ro
+# trong lần chạy này và rủi ro nuôi sự cố ở lần chạy sau. Vòng phản hồi dương
+# trễ một nhịp, và mức nền chỉ có thể đi lên: mỗi dương tính giả để lại một
+# khoản nợ vĩnh viễn trên điểm rủi ro.
+#
+# Điều đó đã xảy ra. Sáu chỉ báo self-observation (AQ-036 — bình luận giải thích
+# luật phát hiện, viết qua PowerShell, bị Event 4688 ghi lại) đẩy risk_level lên
+# HIGH. Chỉ báo được sửa; hai sự cố nó sinh ra thì không, và chúng chiếm 50%
+# điểm rủi ro với bằng chứng ghi "Risk Score: 31" (thật: 6) và "Thành phần yếu:
+# threat_hunting" (thật: mạnh nhất, health 100).
+DERIVED_STATE = {
+    'risk_score.json': 'điểm rủi ro là kết quả tính từ các quan sát khác, '
+                       'không phải một quan sát',
+}
+
+# Cùng lý do, ở đường vòng: `collect_timeline_events.detect_risk_changes()` đọc
+# risk_score.json rồi phát một sự kiện CRITICAL "Level Change". Sự kiện đó là
+# risk_score.json nói lại bằng lời — chặn đường thẳng mà để hở đường này thì
+# vòng phản hồi vẫn nguyên.
+DERIVED_EVENT_CATEGORIES = {'Risk'}
+
 
 class IncidentEngine:
     def __init__(self):
@@ -30,6 +60,11 @@ class IncidentEngine:
         # Luat khong chay duoc phai di kem ket qua. "0 su co" tren mot luat
         # khong danh gia duoc doc y het "0 su co" tren mot may sach.
         self.skipped_rules = []
+        # Luat bi TU CHOI theo thiet ke khac voi luat khong chay duoc. Ghi rieng,
+        # kem ly do, de khong ai phuc hoi no ma khong doc ly do.
+        self.declined_rules = []
+        self.run_id = run_context.run_id()
+        self.previous = []
         self.incidents_file = self.state_dir / 'incidents.json'
         self.load_existing_incidents()
 
@@ -38,24 +73,65 @@ class IncidentEngine:
         return json.load(open(fp, encoding='utf-8')) if fp.exists() else {}
 
     def load_existing_incidents(self):
-        """Tải incidents hiện có để tiếp tục đánh số"""
-        if self.incidents_file.exists():
-            try:
-                data = json.load(open(self.incidents_file))
-                existing = data.get('incidents', [])
-                if existing:
-                    last_id = existing[-1].get('incident_id', 'INC-0000')
-                    try:
-                        self.incident_counter = int(last_id.split('-')[1]) + 1
-                    except:
-                        pass
-            except:
-                pass
+        """Tải incidents hiện có: giữ số đếm VÀ giữ chính các sự cố.
 
-    def create_incident(self, severity, title, assets, evidence, recommended_action, reason):
+        Bản cũ chỉ lấy số đếm rồi ghi đè toàn bộ tệp. Hệ quả là một sự cố không
+        còn được phát hiện sẽ **biến mất không dấu vết** — không ai biết nó từng
+        tồn tại, tại sao nó mở, hay vì sao nó hết. Đó là mặt còn lại của AQ-039:
+        hệ thống không có đường thu hồi, nên nó chọn giữa "để nguyên mãi mãi" và
+        "xoá sạch", cả hai đều không kiểm lại được.
+        """
+        if not self.incidents_file.exists():
+            return
+        try:
+            data = json.load(open(self.incidents_file, encoding='utf-8'))
+        except (ValueError, IOError, OSError):
+            return
+        self.previous = data.get('incidents') or []
+        highest = 0
+        for incident in self.previous:
+            try:
+                highest = max(highest, int(str(incident.get('incident_id', '')).split('-')[1]))
+            except (IndexError, ValueError):
+                continue
+        self.incident_counter = highest + 1
+
+    @staticmethod
+    def fingerprint(source_state, source_key, severity):
+        """Định danh QUAN SÁT đứng sau sự cố, không phải nội dung sự cố.
+
+        Phải ổn định qua các lần chạy (nếu không thì mỗi lần chạy sinh một sự cố
+        "mới" cho cùng một sự việc) và phải đổi khi quan sát đổi (nếu không thì
+        không phát hiện được lúc nguồn biến mất). Nên nó băm nguồn + khoá nguồn,
+        không băm bằng chứng — bằng chứng chứa số liệu thay đổi mỗi lần chạy.
+        """
+        raw = '%s|%s|%s' % (source_state, source_key, severity)
+        return 'FP-' + hashlib.sha1(raw.encode('utf-8')).hexdigest()[:12]
+
+    def create_incident(self, severity, title, assets, evidence, recommended_action,
+                        reason, source_state=None, source_key=None):
         """Tạo incident mới"""
-        incident_id = f"INC-{self.incident_counter:04d}"
-        self.incident_counter += 1
+        if source_state in DERIVED_STATE:
+            self.declined_rules.append(
+                'Tu choi tao su co tu %s: %s (AQ-039).'
+                % (source_state, DERIVED_STATE[source_state]))
+            return None
+
+        marker = self.fingerprint(source_state or 'unknown',
+                                  source_key or title, severity)
+
+        # Sự cố cho cùng một quan sát phải giữ nguyên định danh qua các lần chạy.
+        carried = next((i for i in self.previous
+                        if i.get('fingerprint') == marker), None)
+        if carried is not None:
+            incident_id = carried.get('incident_id')
+            created_at = carried.get('created_at')
+            first_run = carried.get('source_run_id')
+        else:
+            incident_id = f"INC-{self.incident_counter:04d}"
+            self.incident_counter += 1
+            created_at = None
+            first_run = self.run_id
 
         resolved = assets if isinstance(assets, list) else [assets] if assets else []
         scope = 'ATTRIBUTED'
@@ -69,6 +145,7 @@ class IncidentEngine:
             resolved = list(ioc_attribution.local_host_identity()['ips'] or [])
             scope = 'LOCAL_HOST' if resolved else 'UNATTRIBUTED'
 
+        now = datetime.now().isoformat()
         incident = {
             'incident_id': incident_id,
             'severity': severity,
@@ -79,11 +156,56 @@ class IncidentEngine:
             'asset_scope': scope,
             'evidence': evidence if isinstance(evidence, list) else [evidence] if evidence else [],
             'recommended_action': recommended_action,
-            'created_at': datetime.now().isoformat()
+            'created_at': created_at or now,
+            # Nguồn gốc, ghi cùng chỗ với kết luận. Không có ba trường này thì
+            # không ai rà lại được một sự cố khi quan sát đứng sau nó bị rút.
+            'fingerprint': marker,
+            'source_state': source_state,
+            'source_key': source_key,
+            'source_run_id': first_run,
+            'last_seen_run_id': self.run_id,
+            'last_seen_at': now,
         }
 
         self.incidents.append(incident)
         return incident_id
+
+    def invalidate_stale(self):
+        """Sự cố mà quan sát nguồn không còn -> INVALIDATED, giữ lại, ghi lý do.
+
+        Không xoá: một sự cố biến mất không dấu vết là thứ khiến AQ-039 mất sáu
+        vòng mới bị nhìn thấy. Giữ bản ghi thì lần sau có cái để đối chiếu.
+        """
+        live = set(i['fingerprint'] for i in self.incidents)
+        now = datetime.now().isoformat()
+        retired = []
+        for incident in self.previous:
+            marker = incident.get('fingerprint')
+            if marker and marker in live:
+                continue
+            if incident.get('status') in ('INVALIDATED', 'RESOLVED', 'CLOSED'):
+                retired.append(incident)
+                continue
+
+            record = dict(incident)
+            record['status'] = 'INVALIDATED'
+            record['invalidated_at'] = now
+            record['invalidated_run_id'] = self.run_id
+            if not marker:
+                # Sự cố sinh ra trước khi có dấu nguồn. Không thể đối chiếu nó
+                # với state, và một sự cố không đối chiếu được thì không được
+                # tiếp tục cộng vào điểm rủi ro chỉ vì nó cũ.
+                record['invalidated_reason'] = (
+                    'Sự cố được tạo trước khi hệ thống ghi nguồn gốc '
+                    '(fingerprint), nên không đối chiếu được với state hiện '
+                    'tại. Đóng lại thay vì tiếp tục tính điểm trên một bằng '
+                    'chứng không kiểm được.')
+            else:
+                record['invalidated_reason'] = (
+                    'Quan sát nguồn (%s) không còn trong state của lần chạy '
+                    'này.' % (incident.get('source_state') or 'không rõ'))
+            retired.append(record)
+        self.incidents.extend(retired)
 
     def detect_device_service_logon_anomaly(self):
         """Quy tắc 1: New Device + Failed Logons + New Service"""
@@ -110,32 +232,36 @@ class IncidentEngine:
                 assets=device_ips,
                 evidence=evidence,
                 recommended_action='Kiểm tra thiết bị mới, xác thực người dùng, kiểm tra dịch vụ',
-                reason='Kết hợp: New Device + High Failed Logons + New Service'
+                reason='Kết hợp: New Device + High Failed Logons + New Service',
+                source_state='timeline.json',
+                source_key='device+logon+service'
             )
 
     def detect_risk_escalation(self):
-        """Quy tắc 2: Risk LOW → HIGH"""
-        # Load current and previous risk scores
-        risk = self.load_state('risk_score.json')
-        current_level = risk.get('risk_level', 'UNKNOWN')
-        current_score = risk.get('overall_score', 0)
+        """Quy tắc 2 — ĐÃ GỠ BỎ theo AQ-039.
 
-        if current_level == 'HIGH':
-            components = risk.get('component_scores', {})
-            weak_components = [c for c, s in components.items() if s < 50]
+        Quy tắc này đọc `risk_score.json` và tạo sự cố khi `risk_level == HIGH`.
+        `calculate_risk_score.py` thì đọc `incidents.json` và nâng rủi ro theo số
+        sự cố đang mở. Hai chiều đó khép thành vòng.
 
-            if weak_components:
-                self.create_incident(
-                    severity='HIGH',
-                    title='Rủi ro tăng vọt: Risk Level = HIGH',
-                    assets=[],
-                    evidence=[
-                        f'Risk Score: {current_score}',
-                        f'Thành phần yếu: {", ".join(weak_components)}'
-                    ],
-                    recommended_action='Ưu tiên cải thiện các thành phần yếu',
-                    reason='Risk Level escalation to HIGH'
-                )
+        Ngoài chuyện vòng lặp, còn một lý do đứng riêng: **đây là sự cố về một
+        con số, không phải về một sự việc.** Không có gì xảy ra trên máy khi
+        `overall_score` đi từ 29 lên 31; thứ xảy ra là một phép tính cho ra kết
+        quả khác. Mọi quan sát thật đứng sau con số đó đã có luật riêng ở dưới —
+        Defender tắt, firewall tắt, lỗ hổng, persistence, lateral movement — nên
+        luật này không thêm thông tin nào, nó chỉ đếm lại.
+
+        Bằng chứng nó để lại trong INC-0002 cho thấy hậu quả: `"Risk Score: 31"`
+        và `"Thành phần yếu: threat_hunting"` — cả hai dòng đều sai khi đọc lại
+        (risk là 6; `threat_hunting` health 100, thành phần mạnh nhất). Một sự cố
+        chụp lại con số của lần chạy trước rồi sống tiếp như một sự thật.
+
+        `calculate_risk_score.py` là nơi duy nhất được diễn giải risk_level.
+        """
+        self.declined_rules.append(
+            'Quy tac 2 (Risk Level = HIGH -> su co): da go bo. Su co ve mot con '
+            'so tinh ra, khong phai ve mot quan sat; va no khep vong phan hoi '
+            'incidents <-> risk_score (AQ-039).')
 
     def detect_defender_disabled(self):
         """Quy tắc 3: Defender Disabled → INCIDENT CRITICAL"""
@@ -147,7 +273,9 @@ class IncidentEngine:
                 assets=[],
                 evidence=['Microsoft Defender disabled'],
                 recommended_action='Bật ngay Microsoft Defender',
-                reason='Critical: Defender disabled'
+                reason='Critical: Defender disabled',
+                source_state='defender_status.json',
+                source_key='defender_disabled'
             )
 
     def detect_firewall_disabled(self):
@@ -160,7 +288,9 @@ class IncidentEngine:
                 assets=[],
                 evidence=['Windows Firewall disabled'],
                 recommended_action='Bật Windows Firewall ngay',
-                reason='Firewall disabled'
+                reason='Firewall disabled',
+                source_state='firewall_status.json',
+                source_key='firewall_disabled'
             )
 
     def detect_weak_crypto_plus_waap_low(self):
@@ -195,7 +325,9 @@ class IncidentEngine:
                     f'WAAP Score: {waap_score}/100'
                 ],
                 recommended_action='Cập nhật cipher suites, cải thiện WAAP score',
-                reason='Combination: Weak Cipher + Low WAAP'
+                reason='Combination: Weak Cipher + Low WAAP',
+                source_state='crypto_inventory.json',
+                source_key='weak_cipher+low_waap'
             )
 
     def detect_system_resource_critical(self):
@@ -211,7 +343,9 @@ class IncidentEngine:
                 assets=[],
                 evidence=[f'Disk usage: {disk_usage}%'],
                 recommended_action='Dọn dẹp đĩa ngay lập tức',
-                reason='Critical disk usage'
+                reason='Critical disk usage',
+                source_state='system_health.json',
+                source_key='disk_usage'
             )
 
         if cpu_usage > 95:
@@ -221,7 +355,9 @@ class IncidentEngine:
                 assets=[],
                 evidence=[f'CPU usage: {cpu_usage}%'],
                 recommended_action='Kiểm tra processes, tối ưu hóa',
-                reason='High CPU usage'
+                reason='High CPU usage',
+                source_state='system_health.json',
+                source_key='cpu_usage'
             )
 
     def detect_multiple_vulnerabilities(self):
@@ -243,7 +379,9 @@ class IncidentEngine:
                         f'{high_count} high vulnerabilities'
                     ],
                     recommended_action=f'Patch ngay các lỗ hổng trên {ip}',
-                    reason='Multiple critical vulnerabilities'
+                    reason='Multiple critical vulnerabilities',
+                    source_state='assets.json',
+                    source_key='vuln_critical|%s' % ip
                 )
             elif critical_count > 0 or high_count > 5:
                 self.create_incident(
@@ -255,13 +393,30 @@ class IncidentEngine:
                         f'{high_count} high vulnerabilities'
                     ],
                     recommended_action=f'Lập kế hoạch patch cho {ip}',
-                    reason='High-severity vulnerabilities detected'
+                    reason='High-severity vulnerabilities detected',
+                    source_state='assets.json',
+                    source_key='vuln_high|%s' % ip
                 )
 
     def detect_suspicious_events(self):
         """Phát hiện: Sự kiện lạ từ timeline"""
         timeline = self.load_state('timeline.json')
         critical_events = [e for e in timeline.get('events', []) if e.get('severity') == 'CRITICAL']
+
+        # AQ-039, đường vòng. `detect_risk_changes()` trong
+        # `collect_timeline_events.py` phát một sự kiện CRITICAL mỗi khi
+        # `risk_level` đổi bậc — chính là risk_score.json nói lại. Đó là cách
+        # INC-0003 ra đời ("Sự kiện nghi ngờ: Level Change") sau khi luật trực
+        # tiếp đã bị gỡ. Chặn một đầu mà để hở đầu kia thì vòng vẫn khép.
+        derived = [e for e in critical_events
+                   if e.get('category') in DERIVED_EVENT_CATEGORIES]
+        if derived:
+            self.declined_rules.append(
+                'Bo qua %d su kien timeline thuoc nhom %s: chung la risk_score '
+                'noi lai, khong phai quan sat moi (AQ-039).'
+                % (len(derived), '/'.join(sorted(DERIVED_EVENT_CATEGORIES))))
+        critical_events = [e for e in critical_events
+                           if e.get('category') not in DERIVED_EVENT_CATEGORIES]
 
         for event in critical_events[:3]:  # Top 3 critical
             self.create_incident(
@@ -270,7 +425,9 @@ class IncidentEngine:
                 assets=event.get('details', {}).get('ip', []) if isinstance(event.get('details', {}), dict) else [],
                 evidence=[event.get('description')],
                 recommended_action='Điều tra sự kiện',
-                reason=event.get('type')
+                reason=event.get('type'),
+                source_state='timeline.json',
+                source_key='%s|%s' % (event.get('category'), event.get('type'))
             )
 
     def detect_persistence_threats(self):
@@ -286,7 +443,9 @@ class IncidentEngine:
                     assets=[],
                     evidence=indicator.get('evidence', []),
                     recommended_action=indicator.get('recommendation', 'Điều tra persistence'),
-                    reason=f"Persistence type: {indicator.get('type')}"
+                    reason=f"Persistence type: {indicator.get('type')}",
+                    source_state='hunting_persistence.json',
+                    source_key=str(indicator.get('type'))
                 )
 
     def detect_suspicious_processes(self):
@@ -305,7 +464,9 @@ class IncidentEngine:
                         f"Command: {indicator.get('command_line')}"
                     ],
                     recommended_action=indicator.get('recommendation', 'Điều tra process'),
-                    reason=f"Suspicious pattern: {indicator.get('category')}"
+                    reason=f"Suspicious pattern: {indicator.get('category')}",
+                    source_state='hunting_suspicious_processes.json',
+                    source_key='%s|%s' % (indicator.get('category'), indicator.get('process'))
                 )
 
     def detect_lateral_movement_threats(self):
@@ -321,7 +482,9 @@ class IncidentEngine:
                     assets=indicator.get('affected_assets', []),
                     evidence=indicator.get('evidence', []),
                     recommended_action=indicator.get('recommendation', 'Điều tra lateral movement'),
-                    reason=f"Lateral movement pattern: {indicator.get('type')}"
+                    reason=f"Lateral movement pattern: {indicator.get('type')}",
+                    source_state='hunting_lateral_movement.json',
+                    source_key=str(indicator.get('type'))
                 )
 
     def detect_credential_dumping_threats(self):
@@ -337,7 +500,9 @@ class IncidentEngine:
                     assets=indicator.get('affected_systems', []),
                     evidence=indicator.get('evidence', []),
                     recommended_action=indicator.get('recommendation', 'Reset passwords ngay'),
-                    reason=f"Credential threat: {indicator.get('type')}"
+                    reason=f"Credential threat: {indicator.get('type')}",
+                    source_state='hunting_credential_dumping.json',
+                    source_key=str(indicator.get('type'))
                 )
 
     def generate(self):
@@ -368,35 +533,56 @@ class IncidentEngine:
 
         self.incidents = unique_incidents
 
+        # Đường thu hồi: những gì lần chạy trước mở mà lần này không còn quan sát
+        # nguồn. Chạy SAU khi đã chốt danh sách phát hiện được, TRƯỚC khi đếm.
+        self.invalidate_stale()
+
         # Sắp xếp: CRITICAL → HIGH → MEDIUM → LOW
         severity_order = {'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3}
         self.incidents.sort(key=lambda x: severity_order.get(x.get('severity'), 99))
 
+        open_incidents = [i for i in self.incidents if i.get('status') == 'OPEN']
+
         # Tạo output
         output = {
             'timestamp': datetime.now().isoformat(),
+            'run_id': self.run_id,
             'question': 'Có sự cố gì cần xử lý?',
-            'total_incidents': len(self.incidents),
+            # `total_incidents` luôn có nghĩa "đang mở". Bản ghi INVALIDATED nằm
+            # trong mảng để rà lại được, nhưng chúng KHÔNG phải việc cần xử lý,
+            # và mọi consumer đếm từ trường này.
+            'total_incidents': len(open_incidents),
+            'total_records': len(self.incidents),
             'by_severity': {},
-            'by_status': {'OPEN': len(self.incidents)},
+            'by_severity_all': {},
+            'by_status': {},
             'skipped_rules': self.skipped_rules,
+            'declined_rules': self.declined_rules,
             'incidents': self.incidents
         }
 
-        # Thống kê by severity
+        # Thống kê by severity — CHỈ trên sự cố đang mở.
         for incident in self.incidents:
             severity = incident.get('severity', 'UNKNOWN')
-            output['by_severity'][severity] = output['by_severity'].get(severity, 0) + 1
+            status = incident.get('status', 'UNKNOWN')
+            output['by_status'][status] = output['by_status'].get(status, 0) + 1
+            output['by_severity_all'][severity] = \
+                output['by_severity_all'].get(severity, 0) + 1
+            if status == 'OPEN':
+                output['by_severity'][severity] = \
+                    output['by_severity'].get(severity, 0) + 1
 
         # Atomic write for file safety (TD-L3-001: atomic writes, TD-L3-002: file locking)
         write_state_atomic(str(self.incidents_file), output, indent=2)
 
         return {
             'status': 'success',
-            'total_incidents': len(self.incidents),
+            'total_incidents': len(open_incidents),
+            'invalidated': output['by_status'].get('INVALIDATED', 0),
             'critical': output['by_severity'].get('CRITICAL', 0),
             'high': output['by_severity'].get('HIGH', 0),
-            'medium': output['by_severity'].get('MEDIUM', 0)
+            'medium': output['by_severity'].get('MEDIUM', 0),
+            'declined_rules': len(self.declined_rules)
         }
 
 if __name__ == '__main__':

@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T08:16:20.018034
+Cập nhật: 2026-09-14T13:26:11.455574
 
 ## Sprint vừa xong
 
 | | |
 |---|---|
-| Commit | `ba86908` |
+| Commit | `484f00b` |
 | Branch | `develop` |
-| Tiêu đề | Merge pull request #44 from KEVIN-NGUYENDAD/feature/gate-integrity |
+| Tiêu đề | Merge pull request #45 from KEVIN-NGUYENDAD/feature/self-observation-and-scoring |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 ## Cổng merge
@@ -28,11 +28,11 @@ Cập nhật: 2026-09-14T08:16:20.018034
 
 | | |
 |---|---|
-| Risk Score | 6/100 |
+| Risk Score | 22/100 |
 | Risk Level | LOW |
-| Sự cố đang mở | 2 |
+| Sự cố đang mở | 1 |
 | └ CRITICAL | 0 |
-| └ HIGH | 2 |
+| └ HIGH | 1 |
 | Phát hiện cấp điều hành | 2 |
 | └ cảnh báo chất lượng | 0 |
 | Rule không kết luận được | 2 |
@@ -55,7 +55,7 @@ Cập nhật: 2026-09-14T08:16:20.018034
 | **Scheduled Task Execution** | blind |
 | **USB Device Activity** | blind |
 
-_Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
+_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (5.2 giờ trước)._
 
 ## Việc tiếp theo
 

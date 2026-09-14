@@ -47,6 +47,7 @@ import portal_field_audit  # noqa: E402
 import telegram_field_audit  # noqa: E402
 import pipeline_field_audit  # noqa: E402
 import portal_escape_audit  # noqa: E402
+import run_coherence_audit  # noqa: E402
 import tool_validator  # noqa: E402
 
 
@@ -108,6 +109,10 @@ def collect(validate=False):
     # may DANG BI THEO DOI. Neu may do bi xam nhap thi ke tan cong kiem soat noi
     # dung cac truong do, va dashboard cua nguoi truc ca la noi chung duoc render.
     escapes = portal_escape_audit.audit()
+    # AQ-039/AQ-040. Hai bat bien ma ca sau bo audit trc do khong the thay,
+    # vi chung khong ve mot TRUONG nao ca: state co thuoc mot lan chay duy nhat
+    # khong, va su co dang mo co truy nguoc ve mot quan sat con ton tai khong.
+    coherence, coherence_scope = run_coherence_audit.audit()
     pipeline = _read_json(os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json'))
 
     return {
@@ -121,6 +126,8 @@ def collect(validate=False):
         'telegram': telegram,
         'pipeline_fields': pipeline_fields,
         'escapes': escapes,
+        'coherence': coherence,
+        'coherence_scope': coherence_scope,
     }
 
 
@@ -221,6 +228,24 @@ def evaluate(data):
         blockers.append('%d bieu thuc chua escape di vao innerHTML (%s)'
                         % (len(unescaped),
                            ', '.join(f['expression'][:24] for f in unescaped[:3])))
+
+    # AQ-039/AQ-040. Ba vi pham, ba lop loi khac nhau, cung mot goc: khong co
+    # duong noi giua mot ket luan va quan sat sinh ra no.
+    coherence = data.get('coherence') or []
+    mixed = [f for f in coherence if f['level'] == 'MIXED_RUN']
+    if mixed:
+        blockers.append('state tron nhieu lan chay (%s) — moi ket luan rut ra '
+                        'tu tap nay dang tron hai lan quan sat'
+                        % '; '.join(f['detail'][:60] for f in mixed))
+    orphan = [f for f in coherence if f['level'] in ('NO_PROVENANCE', 'SOURCE_MISSING')]
+    if orphan:
+        blockers.append('%d su co dang mo khong truy nguoc duoc ve quan sat (%s)'
+                        % (len(orphan), ', '.join(f['field'] for f in orphan[:3])))
+    derived = [f for f in coherence if f['level'] == 'DERIVED_SOURCE']
+    if derived:
+        blockers.append('%d su co sinh tu mot con so tinh ra, khong phai quan '
+                        'sat (%s) — vong phan hoi incidents<->risk'
+                        % (len(derived), ', '.join(f['field'] for f in derived[:3])))
 
     pipeline = data['pipeline'] or {}
     stages = pipeline.get('stages') or pipeline.get('results') or []
@@ -352,21 +377,47 @@ def write_debt(data, verdict):
         '' if not verdict.get('unknown_stages')
         else ', %d không khai trạng thái' % verdict['unknown_stages'])
     add('| Pipeline | %s |' % pipeline_note)
+    # AQ-034. Moi hang duoi day tung in mot con so tran: `0`. Mot bang no in
+    # `0` khong noi duoc su khac nhau giua "da soi 86 cho, sach ca 86" va "khong
+    # soi cho nao". Hai truong hop do doc len giong het nhau, va truong hop thu
+    # hai la truong hop nguy hiem.
+    #
+    # Nen tu day moi hang mang MAU SO cua chinh no, va ten hang noi dung pham vi
+    # bo audit do soi duoc — khong hua rong hon.
     portal_missing = [f for f in (data.get('portal') or [])
                       if f['level'] == 'MISSING']
-    add('| Trường portal đọc sai | %d |' % len(portal_missing))
+    add('| Trường portal đọc từ state không tồn tại | %d / %d truy cập soi được |'
+        % (len(portal_missing), len(data.get('portal') or [])))
     telegram_missing = [f for f in (data.get('telegram') or [])
                         if f['level'] == 'MISSING']
-    add('| Trường Telegram đọc sai | %d |' % len(telegram_missing))
+    add('| Trường Telegram đọc từ state không tồn tại | %d / %d truy cập soi được |'
+        % (len(telegram_missing), len(data.get('telegram') or [])))
     for name, age in input_ages(data):
         add('| Tuổi `%s` | %s |'
             % (name, 'KHÔNG RÕ' if age is None else '%.1f giờ' % age))
-    add('| Biểu thức innerHTML chưa escape | %d |'
-        % len([f for f in (data.get('escapes') or [])
-               if f['level'] == 'UNESCAPED']))
-    add('| Số liệu giả trong pipeline Python | %d |'
-        % len([f for f in (data.get('pipeline_fields') or [])
-               if f['level'] == 'FABRICATED']))
+    escapes = data.get('escapes') or []
+    add('| Biểu thức innerHTML chưa escape | %d / %d biểu thức trong sink |'
+        % (len([f for f in escapes if f['level'] == 'UNESCAPED']), len(escapes)))
+    pipeline_fields = data.get('pipeline_fields') or []
+    add('| `.get(khoá, mặc định)` bịa số trong Python | %d / %d lời gọi lần được |'
+        % (len([f for f in pipeline_fields if f['level'] == 'FABRICATED']),
+           len(pipeline_fields)))
+    # AQ-039/AQ-040.
+    scope = data.get('coherence_scope') or {}
+    runs = scope.get('runs') or {}
+    inc = scope.get('incidents') or {}
+    add('| State cùng một lần chạy | %d / %d tệp có dấu, %d lần chạy khác nhau |'
+        % (runs.get('files_stamped', 0), runs.get('files_present', 0),
+           len(runs.get('distinct_runs') or [])))
+    add('| Sự cố đang mở truy nguợc được về quan sát | %d / %d |'
+        % (inc.get('checked', 0), inc.get('open', 0)))
+    if inc.get('invalidated'):
+        add('| Sự cố đã thu hồi (giữ lại để rà) | %d |' % inc['invalidated'])
+    add('')
+    add('Mỗi hàng trên là **phạm vi của một bộ audit cụ thể**, không phải của cả')
+    add('hệ thống. Một hàng `0 / 86` nghĩa là bộ đó soi 86 chỗ và cả 86 đều sạch;')
+    add('nó không nói gì về những chỗ bộ đó không soi tới. AQ-038/AQ-041 liệt kê')
+    add('các lớp lỗi nằm ngoài mọi hàng ở đây.')
     add('')
 
     if verdict['blockers']:
@@ -468,6 +519,18 @@ def main():
     escapes = data.get('escapes') or []
     print('Portal escape      : %d chưa escape / %d biểu thức innerHTML'
           % (len([f for f in escapes if f['level'] == 'UNESCAPED']), len(escapes)))
+    # AQ-039/AQ-040. Hai bất biến này chặn được merge, nên chúng phải đọc được
+    # ở bản tóm tắt — một blocker chỉ hiện lúc đã đỏ thì không ai biết nó tồn
+    # tại cho tới lần đầu nó chặn.
+    scope = data.get('coherence_scope') or {}
+    runs = scope.get('runs') or {}
+    inc = scope.get('incidents') or {}
+    print('Gắn kết lần chạy   : %d/%d tệp có dấu, %d lần chạy khác nhau'
+          % (runs.get('files_stamped', 0), runs.get('files_present', 0),
+             len(runs.get('distinct_runs') or [])))
+    print('Nguồn gốc sự cố    : %d/%d sự cố đang mở truy ngược được%s'
+          % (inc.get('checked', 0), inc.get('open', 0),
+             ', %d đã thu hồi' % inc['invalidated'] if inc.get('invalidated') else ''))
     print('Tuổi đầu vào       : %s'
           % ' | '.join('%s %s' % (name.replace('.json', ''),
                                   'KHONG RO' if age is None else '%.1fh' % age)

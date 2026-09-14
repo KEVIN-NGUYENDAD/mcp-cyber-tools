@@ -53,6 +53,22 @@ def write_state_atomic(
     import time
     file_path = Path(file_path)
 
+    # AQ-040. Đóng dấu lần chạy ngay tại chỗ ghi, không ở từng script.
+    #
+    # 40 script ghi state qua hàm này. Sửa từng script là cách đã chứng minh
+    # không scale ở AQ-014: một lần đổi khoá làm hỏng năm consumer và Builder
+    # sửa được một. Ở đây có đúng một cửa ra, nên dấu lần chạy đặt ở cửa đó.
+    #
+    # `stamp()` không ghi đè `run_id` đã có, nên một payload cố ý mang lần chạy
+    # khác vẫn giữ nguyên.
+    try:
+        import run_context
+        data = run_context.stamp(data)
+    except ImportError:
+        # state_manager được import từ nhiều thư mục; thiếu run_context thì ghi
+        # state vẫn phải chạy — mất dấu lần chạy, không mất dữ liệu.
+        pass
+
     try:
         # Ensure parent directory exists
         file_path.parent.mkdir(parents=True, exist_ok=True)

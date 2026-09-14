@@ -1,10 +1,12 @@
 {
-  "timestamp": "2026-09-14T08:13:00.227206",
+  "timestamp": "2026-09-14T13:24:58.452898",
   "period": "last_24_hours",
   "failed_logons": 3,
   "critical_events": 0,
   "warning_events": 5,
   "info_events": 127,
   "suspicious_activity": false,
-  "summary": "Normal activity"
+  "summary": "Normal activity",
+  "run_id": "RUN-20260914T132454-cb565f",
+  "run_scope": "PIPELINE"
 }

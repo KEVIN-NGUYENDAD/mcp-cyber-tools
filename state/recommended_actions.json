@@ -1,10 +1,12 @@
 {
-  "timestamp": "2026-09-14T08:13:03.174520",
+  "timestamp": "2026-09-14T13:25:02.592907",
   "question": "What do I need to do right now?",
   "total_actions": 0,
   "by_priority": {
     "CRITICAL": 0,
     "HIGH": 0
   },
-  "recommended_actions": []
+  "recommended_actions": [],
+  "run_id": "RUN-20260914T132454-cb565f",
+  "run_scope": "PIPELINE"
 }

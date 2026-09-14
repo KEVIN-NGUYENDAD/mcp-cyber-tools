@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T08:13:02.386980",
+  "timestamp": "2026-09-14T13:25:01.644156",
   "domain": "sentinelops.fyi",
   "checks": {
     "ssl_valid": true,
@@ -21,7 +21,7 @@
     "security_headers": 25
   },
   "issues": [
-    "SSL certificate expiring in 79 days",
+    "SSL certificate expiring in 78 days",
     "Missing security headers: HSTS, X-Frame-Options, CSP"
   ],
   "issue_count": 2,
@@ -38,5 +38,7 @@
       "action": "Add missing security headers (HSTS, CSP, X-Frame-Options)",
       "impact": "Improves protection against XSS, clickjacking, and other attacks"
     }
-  ]
+  ],
+  "run_id": "RUN-20260914T132454-cb565f",
+  "run_scope": "PIPELINE"
 }
