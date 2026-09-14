@@ -305,20 +305,41 @@ def noise_class(indicator, hunt):
     if reason:
         return NOISE_SELF, reason
 
-    if indicator.get('severity') in ('CRITICAL', 'HIGH'):
-        # Mức cao không bị lọc tự động. Một kẻ tấn công dùng đúng những nhị phân
-        # mà lập trình viên dùng; lọc theo tên tiến trình ở mức cao là tự bịt
-        # mắt đúng chỗ đáng nhìn nhất.
-        return None, None
+    high_severity = indicator.get('severity') in ('CRITICAL', 'HIGH')
 
-    for hint in DEV_HINTS:
-        if hint in lowered:
-            return NOISE_DEV, 'công cụ phát triển trên chính máy này: %s' % hint
+    # AQ-019. Miễn trừ này trước đây phủ CẢ HAI bảng gợi ý, và đó là chỗ sai.
+    #
+    # Lập luận ban đầu — "kẻ tấn công dùng đúng những nhị phân mà lập trình viên
+    # dùng" — đúng cho DEV_HINTS: `node.exe` trong evidence là một PHỎNG ĐOÁN
+    # theo tên tiến trình, và một tên tiến trình có thể bị đặt trùng. Lọc theo
+    # phỏng đoán ở mức cao là tự bịt mắt đúng chỗ đáng nhìn nhất.
+    #
+    # Nhưng nó không đúng cho ROUTINE_HINTS. `s-1-5-18` không phải một phỏng
+    # đoán theo tên — đó là SID của tài khoản SYSTEM, một sự thật dứt khoát về
+    # chủ thể của sự kiện. `logon type 5` là một sự thật về loại phiên. Những
+    # thứ này không đổi nghĩa khi severity đổi.
+    #
+    # Hậu quả của việc gộp hai bảng: hai sự kiện 4648 — Windows đăng nhập người
+    # dùng vào chính tài khoản Microsoft của họ trên localhost — mang nhãn HIGH
+    # vì Event ID, nên được miễn trừ, nên thoát bộ lọc, nên chiếm 58% điểm rủi
+    # ro toàn hệ thống. Bản ghi cần soi lại nhất là bản ghi chắc chắn thoát.
+    #
+    # Đây đúng là phân biệt đã rút ra ở Sprint 17 giữa từ khoá mơ hồ (`lsass`)
+    # và token công cụ (`mimikatz`), áp vào một chỗ khác.
+    if not high_severity:
+        for hint in DEV_HINTS:
+            if hint in lowered:
+                return NOISE_DEV, 'công cụ phát triển trên chính máy này: %s' % hint
 
+    # ROUTINE_HINTS áp ở MỌI mức: chúng là sự thật về chủ thể, không phải
+    # phỏng đoán theo tên.
     for hint in ROUTINE_HINTS:
         if hint in lowered:
-            return NOISE_ROUTINE, ('hoạt động nền của Windows: %s'
-                                   % ' '.join(hint.split()))
+            return NOISE_ROUTINE, (
+                'hoạt động nền của Windows: %s%s'
+                % (' '.join(hint.split()),
+                   ' (mức %s do Event ID, nhưng chủ thể là tài khoản hệ thống)'
+                   % indicator.get('severity') if high_severity else ''))
 
     return None, None
 

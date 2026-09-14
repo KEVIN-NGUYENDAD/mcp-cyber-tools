@@ -1,9 +1,27 @@
 {
-  "timestamp": "2026-09-14T08:06:12.583455",
-  "period": "24 gi\u1edd g\u1ea7n nh\u1ea5t (2026-09-13T08:06:12.583455)",
-  "total_events": 0,
-  "by_category": {},
-  "by_severity": {},
+  "timestamp": "2026-09-14T08:13:03.374765",
+  "period": "24 gi\u1edd g\u1ea7n nh\u1ea5t (2026-09-13T08:13:03.374765)",
+  "total_events": 1,
+  "by_category": {
+    "Risk": 1
+  },
+  "by_severity": {
+    "CRITICAL": 1
+  },
   "skipped_checks": [],
-  "events": []
+  "events": [
+    {
+      "timestamp": "2026-09-14T08:13:03.369773",
+      "category": "Risk",
+      "type": "Level Change",
+      "severity": "CRITICAL",
+      "description": "M\u1ee9c r\u1ee7i ro thay \u0111\u1ed5i: LOW \u2192 HIGH",
+      "details": {
+        "previous_level": "LOW",
+        "current_level": "HIGH",
+        "previous_score": 3,
+        "current_score": 31
+      }
+    }
+  ]
 }

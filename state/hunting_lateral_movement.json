@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-14T08:06:22.364202",
+  "timestamp": "2026-09-14T08:13:13.176099",
   "hunting_type": "Lateral Movement",
   "hunt_version": "2.0.0",
   "data_source": "LIVE_OBSERVED",
@@ -48,41 +48,243 @@
       "tool": "securityLogs (probe)",
       "ok": true,
       "records": 3,
-      "duration": 0.41,
+      "duration": 0.42,
       "error": null
     },
     {
       "tool": "huntLateralMovement",
       "ok": true,
-      "records": 217,
-      "duration": 0.7,
+      "records": 214,
+      "duration": 0.68,
       "error": null
     },
     {
       "tool": "huntRemoteDesktop",
       "ok": true,
-      "records": 49,
-      "duration": 0.55,
+      "records": 46,
+      "duration": 0.49,
       "error": null
     }
   ],
   "errors": [],
   "question": "Có chỉ báo di chuyển ngang trong hệ thống không?",
-  "total_indicators": 266,
+  "total_indicators": 260,
   "self_observation": {
     "self_observed_excluded": 0,
     "self_observation_note": null,
     "self_observed_samples": []
   },
-  "blast_radius": "Đã đọc Security log; 266 sự kiện đăng nhập được soát",
+  "blast_radius": "Đã đọc Security log; 260 sự kiện đăng nhập được soát",
   "by_severity": {
-    "INFO": 266
+    "INFO": 260
   },
   "indicators": [
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.160919",
+      "timestamp": "2026-09-14T08:13:12.997161",
+      "event_time": "/Date(1789398598753)/",
+      "event_id": 4624,
+      "description": "Remote Logon (Event 4624)",
+      "evidence": [
+        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
+        "Nguồn MCP: huntLateralMovement"
+      ],
+      "matched_text": null,
+      "severity_basis": "Event ID 4624 — Remote Logon",
+      "assessment": "Không có IP từ xa trong sự kiện",
+      "recommendation": "Không cần hành động",
+      "status": "DETECTED",
+      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
+      "data_source": "LIVE_OBSERVED",
+      "affected_assets": [
+        "192.168.0.51"
+      ],
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
+        "confidence": "HIGH",
+        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
+        "scope": [
+          "LOCAL_HOST"
+        ],
+        "systems": [
+          {
+            "ip": "192.168.0.51",
+            "scope": "LOCAL_HOST",
+            "in_inventory": true,
+            "basis": "sự kiện được quan sát trên chính máy này",
+            "asset_id": "ASSET-7F083307",
+            "hostname": "kevin",
+            "hostname_resolved": true,
+            "hostname_source": "local host",
+            "identified": true,
+            "missing_identity": []
+          }
+        ]
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ],
+      "source_log": "Security",
+      "evidence_class": "EVENT_LOG",
+      "evidence_quality": "PARTIAL",
+      "attribution_quality": "FULL",
+      "confidence_score": 49,
+      "confidence": "LOW",
+      "confidence_basis": {
+        "components": [
+          {
+            "name": "evidence_fields",
+            "earned": 30.0,
+            "max": 40,
+            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
+          },
+          {
+            "name": "evidence_integrity",
+            "earned": 20,
+            "max": 20,
+            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
+          },
+          {
+            "name": "attribution",
+            "earned": 25,
+            "max": 25,
+            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
+          },
+          {
+            "name": "source_trust",
+            "earned": 15,
+            "max": 15,
+            "note": "data_source = LIVE_OBSERVED"
+          }
+        ],
+        "raw_score": 90,
+        "evidence_class": "EVENT_LOG",
+        "required_fields": [
+          "matched_text",
+          "source_log",
+          "event_id",
+          "timestamp"
+        ],
+        "missing_fields": [
+          "matched_text"
+        ],
+        "source_log_derived": true,
+        "matched_text_derived": false,
+        "capped_for_noise": true
+      },
+      "suppressed": true,
+      "noise_class": "ROUTINE_OS_ACTIVITY",
+      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
+    },
+    {
+      "type": "Remote Logon",
+      "severity": "INFO",
+      "timestamp": "2026-09-14T08:13:12.997161",
+      "event_time": "/Date(1789398416572)/",
+      "event_id": 4624,
+      "description": "Remote Logon (Event 4624)",
+      "evidence": [
+        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
+        "Nguồn MCP: huntLateralMovement"
+      ],
+      "matched_text": null,
+      "severity_basis": "Event ID 4624 — Remote Logon",
+      "assessment": "Không có IP từ xa trong sự kiện",
+      "recommendation": "Không cần hành động",
+      "status": "DETECTED",
+      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
+      "data_source": "LIVE_OBSERVED",
+      "affected_assets": [
+        "192.168.0.51"
+      ],
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
+        "confidence": "HIGH",
+        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
+        "scope": [
+          "LOCAL_HOST"
+        ],
+        "systems": [
+          {
+            "ip": "192.168.0.51",
+            "scope": "LOCAL_HOST",
+            "in_inventory": true,
+            "basis": "sự kiện được quan sát trên chính máy này",
+            "asset_id": "ASSET-7F083307",
+            "hostname": "kevin",
+            "hostname_resolved": true,
+            "hostname_source": "local host",
+            "identified": true,
+            "missing_identity": []
+          }
+        ]
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ],
+      "source_log": "Security",
+      "evidence_class": "EVENT_LOG",
+      "evidence_quality": "PARTIAL",
+      "attribution_quality": "FULL",
+      "confidence_score": 49,
+      "confidence": "LOW",
+      "confidence_basis": {
+        "components": [
+          {
+            "name": "evidence_fields",
+            "earned": 30.0,
+            "max": 40,
+            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
+          },
+          {
+            "name": "evidence_integrity",
+            "earned": 20,
+            "max": 20,
+            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
+          },
+          {
+            "name": "attribution",
+            "earned": 25,
+            "max": 25,
+            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
+          },
+          {
+            "name": "source_trust",
+            "earned": 15,
+            "max": 15,
+            "note": "data_source = LIVE_OBSERVED"
+          }
+        ],
+        "raw_score": 90,
+        "evidence_class": "EVENT_LOG",
+        "required_fields": [
+          "matched_text",
+          "source_log",
+          "event_id",
+          "timestamp"
+        ],
+        "missing_fields": [
+          "matched_text"
+        ],
+        "source_log_derived": true,
+        "matched_text_derived": false,
+        "capped_for_noise": true
+      },
+      "suppressed": true,
+      "noise_class": "ROUTINE_OS_ACTIVITY",
+      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
+    },
+    {
+      "type": "Remote Logon",
+      "severity": "INFO",
+      "timestamp": "2026-09-14T08:13:12.997666",
       "event_time": "/Date(1789398338958)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -183,7 +385,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.160919",
+      "timestamp": "2026-09-14T08:13:12.997666",
       "event_time": "/Date(1789398038365)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -284,7 +486,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:12.997666",
       "event_time": "/Date(1789397698696)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -385,7 +587,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:12.998667",
       "event_time": "/Date(1789397148710)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -486,7 +688,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:12.998667",
       "event_time": "/Date(1789397038120)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -587,7 +789,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:12.998667",
       "event_time": "/Date(1789396798622)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -688,7 +890,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:12.999667",
       "event_time": "/Date(1789396570438)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -789,7 +991,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:12.999667",
       "event_time": "/Date(1789396410834)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -890,7 +1092,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:12.999667",
       "event_time": "/Date(1789396402547)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -991,7 +1193,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:13.000668",
       "event_time": "/Date(1789395898532)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -1092,7 +1294,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:13.000668",
       "event_time": "/Date(1789395767772)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -1193,7 +1395,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.161237",
+      "timestamp": "2026-09-14T08:13:13.000668",
       "event_time": "/Date(1789395632342)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -1294,7 +1496,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
+      "timestamp": "2026-09-14T08:13:13.001668",
       "event_time": "/Date(1789395618410)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -1395,7 +1597,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
+      "timestamp": "2026-09-14T08:13:13.001668",
       "event_time": "/Date(1789395617962)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -1496,7 +1698,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
+      "timestamp": "2026-09-14T08:13:13.001668",
       "event_time": "/Date(1789395412795)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -1595,514 +1797,9 @@
       "suppression_reason": "hoạt động nền của Windows: logon type: 5"
     },
     {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
-      "event_time": "/Date(1789395348475)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntLateralMovement"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
-      "event_time": "/Date(1789394998454)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntLateralMovement"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
-      "event_time": "/Date(1789394902105)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntLateralMovement"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
-      "event_time": "/Date(1789394098396)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntLateralMovement"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
-      "event_time": "/Date(1789393934530)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntLateralMovement"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
+      "timestamp": "2026-09-14T08:13:13.001668",
       "event_time": "/Date(1788826178428)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2198,7 +1895,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
+      "timestamp": "2026-09-14T08:13:13.001668",
       "event_time": "/Date(1788826178418)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2294,7 +1991,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.164086",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826173343)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2390,7 +2087,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826167264)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2488,7 +2185,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826161182)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2586,7 +2283,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826155114)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2684,7 +2381,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826149039)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2780,7 +2477,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826142975)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2878,7 +2575,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826136880)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -2976,7 +2673,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826130815)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3074,7 +2771,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826124740)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3170,7 +2867,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826118670)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3268,7 +2965,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.002667",
       "event_time": "/Date(1788826112600)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3366,7 +3063,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826106521)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3464,7 +3161,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826100449)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3560,7 +3257,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826094373)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3658,7 +3355,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.166090",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826088306)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3756,7 +3453,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826082223)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3854,7 +3551,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826075130)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -3952,7 +3649,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826069042)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4050,7 +3747,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826062981)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4148,7 +3845,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826056919)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4244,7 +3941,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826050843)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4342,7 +4039,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.003667",
       "event_time": "/Date(1788826044760)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4440,7 +4137,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788826038680)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4538,7 +4235,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788826037675)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4634,7 +4331,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788826037228)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4730,7 +4427,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788826032376)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4826,7 +4523,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788825864370)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -4922,7 +4619,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788825857142)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5018,7 +4715,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788825857122)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5114,7 +4811,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788825788655)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5210,7 +4907,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788825788644)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5306,7 +5003,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.004671",
       "event_time": "/Date(1788825788632)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5402,7 +5099,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825788606)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5498,7 +5195,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825788596)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5594,7 +5291,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825780114)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5690,7 +5387,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825779913)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5786,7 +5483,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825761232)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5882,7 +5579,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825761209)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -5978,7 +5675,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825761201)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6074,7 +5771,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825761169)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6170,7 +5867,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825333470)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6266,7 +5963,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825333431)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6362,7 +6059,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.167093",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825328349)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6458,7 +6155,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825322285)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6556,7 +6253,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825316194)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6654,7 +6351,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825310122)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6752,7 +6449,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.005667",
       "event_time": "/Date(1788825304046)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6848,7 +6545,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825297983)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -6946,7 +6643,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825291910)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7044,7 +6741,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825285835)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7142,7 +6839,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825279777)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7238,7 +6935,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825273714)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7336,7 +7033,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825267652)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7434,7 +7131,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825261584)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7532,7 +7229,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825255511)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7628,7 +7325,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825249440)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7726,7 +7423,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.007170",
       "event_time": "/Date(1788825243378)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7824,7 +7521,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825224138)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -7922,7 +7619,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825218073)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8020,7 +7717,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825212007)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8116,7 +7813,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825205944)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8214,7 +7911,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825199842)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8312,7 +8009,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825193768)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8410,7 +8107,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825192757)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8506,7 +8203,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825192383)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8602,7 +8299,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825182238)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8698,7 +8395,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825011539)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8794,7 +8491,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.008174",
       "event_time": "/Date(1788825004353)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8890,7 +8587,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788825004335)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -8986,7 +8683,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824932273)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9082,7 +8779,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.169129",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824932263)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9178,7 +8875,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824932254)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9274,7 +8971,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824932244)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9370,7 +9067,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824932221)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9466,7 +9163,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824923796)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9562,7 +9259,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824923608)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9658,7 +9355,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824904897)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9754,7 +9451,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.009176",
       "event_time": "/Date(1788824904887)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9850,7 +9547,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788824904868)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -9946,7 +9643,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788824904857)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10042,7 +9739,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652418947)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10138,7 +9835,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652416751)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10234,7 +9931,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652416742)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10330,7 +10027,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652416725)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10426,7 +10123,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652416717)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10522,7 +10219,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652416701)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10618,7 +10315,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652184305)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10714,7 +10411,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652184280)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10810,7 +10507,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.010177",
       "event_time": "/Date(1788652184245)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -10906,7 +10603,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788652184232)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11002,7 +10699,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636395093)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11098,7 +10795,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636388294)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11194,7 +10891,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636383177)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11290,7 +10987,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636377117)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11388,7 +11085,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636371047)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11486,7 +11183,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636364971)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11584,7 +11281,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636358889)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11680,7 +11377,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636352823)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11778,7 +11475,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.171131",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636346747)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11876,7 +11573,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.011178",
       "event_time": "/Date(1788636340626)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -11974,7 +11671,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636334523)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12070,7 +11767,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636328454)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12168,7 +11865,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636322378)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12266,7 +11963,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636316274)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12364,7 +12061,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636310165)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12460,7 +12157,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636304097)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12558,7 +12255,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636298019)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12656,7 +12353,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636291935)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12754,7 +12451,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636285873)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12850,7 +12547,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636279790)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -12948,7 +12645,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.012179",
       "event_time": "/Date(1788636273720)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13046,7 +12743,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636267639)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13144,7 +12841,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636261551)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13240,7 +12937,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636255478)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13338,7 +13035,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636249406)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13436,7 +13133,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636243329)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13534,7 +13231,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636242310)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13630,7 +13327,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636242037)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13726,7 +13423,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636235140)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13822,7 +13519,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636120280)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -13918,7 +13615,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.013179",
       "event_time": "/Date(1788636113104)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14014,7 +13711,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636113087)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14110,7 +13807,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636050021)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14206,7 +13903,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636050002)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14302,7 +13999,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636049989)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14398,7 +14095,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636049976)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14494,7 +14191,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.173134",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636049962)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14590,7 +14287,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636041393)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14686,7 +14383,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636041118)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14782,7 +14479,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636022144)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14878,7 +14575,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636022132)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -14974,7 +14671,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636022124)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15070,7 +14767,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.014178",
       "event_time": "/Date(1788636022112)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15166,7 +14863,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.015179",
       "event_time": "/Date(1788633680289)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15262,7 +14959,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.015179",
       "event_time": "/Date(1788633679584)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15358,7 +15055,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.015179",
       "event_time": "/Date(1788633604587)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15454,7 +15151,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.015179",
       "event_time": "/Date(1788633596104)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15550,7 +15247,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.015179",
       "event_time": "/Date(1788633523158)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15646,7 +15343,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.015179",
       "event_time": "/Date(1788633523138)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15742,7 +15439,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.015179",
       "event_time": "/Date(1788633523127)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15838,7 +15535,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.175136",
+      "timestamp": "2026-09-14T08:13:13.015179",
       "event_time": "/Date(1788633523115)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -15934,7 +15631,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176139",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788633514708)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16030,7 +15727,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176139",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788633514560)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16126,7 +15823,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176139",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788633493970)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16222,7 +15919,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176139",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788633491852)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16318,7 +16015,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176139",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788633491845)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16414,7 +16111,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176139",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788633491838)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16510,7 +16207,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176639",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788633491813)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16606,7 +16303,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176639",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788633491806)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16702,7 +16399,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176639",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788632946883)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16798,7 +16495,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176943",
+      "timestamp": "2026-09-14T08:13:13.016178",
       "event_time": "/Date(1788632946307)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16894,7 +16591,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176943",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632873261)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -16990,7 +16687,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176943",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632855633)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17086,7 +16783,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176943",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632795643)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17182,7 +16879,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.176943",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632795631)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17278,7 +16975,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177349",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632795600)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17374,7 +17071,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177349",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632795588)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17470,7 +17167,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177349",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632787069)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17566,7 +17263,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177349",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632786890)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17662,7 +17359,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177349",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632766299)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17758,7 +17455,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177349",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632764155)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17854,7 +17551,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177349",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632764143)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -17950,7 +17647,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177349",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632764128)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18046,7 +17743,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632764118)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18142,7 +17839,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1788632764109)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18238,7 +17935,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1786734932388)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18334,7 +18031,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1786734931902)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18430,7 +18127,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1786734864307)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18526,7 +18223,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1786734852199)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18622,7 +18319,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1786734797771)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18718,7 +18415,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1786734797753)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18814,7 +18511,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1786734797724)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -18910,7 +18607,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.017178",
       "event_time": "/Date(1786734797704)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19006,7 +18703,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734789217)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19102,7 +18799,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734789020)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19198,7 +18895,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734768534)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19294,7 +18991,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734766413)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19390,7 +19087,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734766404)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19486,7 +19183,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734766397)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19582,7 +19279,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734766390)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19678,7 +19375,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734766381)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19774,7 +19471,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734608913)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19870,7 +19567,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.019447",
       "event_time": "/Date(1786734606784)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -19966,7 +19663,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786734606775)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20062,7 +19759,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786734606764)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20158,7 +19855,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786734606733)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20254,7 +19951,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.177948",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786734606723)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20350,7 +20047,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786723573665)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20446,7 +20143,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786723571549)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20542,7 +20239,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786723571534)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20638,7 +20335,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786723571519)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20734,7 +20431,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.020454",
       "event_time": "/Date(1786723571509)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20830,7 +20527,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.021463",
       "event_time": "/Date(1786723571495)/",
       "event_id": 4023,
       "description": "Logon Activity (Event 4023)",
@@ -20926,7 +20623,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.021463",
       "event_time": "/Date(1764612172386)/",
       "event_id": 4022,
       "description": "Logon Activity (Event 4022)",
@@ -21039,7 +20736,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.021463",
       "event_time": "/Date(1764612096299)/",
       "event_id": 4022,
       "description": "Logon Activity (Event 4022)",
@@ -21152,7 +20849,209 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.021463",
+      "event_time": "/Date(1789398598753)/",
+      "event_id": 4624,
+      "description": "Remote Logon (Event 4624)",
+      "evidence": [
+        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
+        "Nguồn MCP: huntRemoteDesktop"
+      ],
+      "matched_text": null,
+      "severity_basis": "Event ID 4624 — Remote Logon",
+      "assessment": "Không có IP từ xa trong sự kiện",
+      "recommendation": "Không cần hành động",
+      "status": "DETECTED",
+      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
+      "data_source": "LIVE_OBSERVED",
+      "affected_assets": [
+        "192.168.0.51"
+      ],
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
+        "confidence": "HIGH",
+        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
+        "scope": [
+          "LOCAL_HOST"
+        ],
+        "systems": [
+          {
+            "ip": "192.168.0.51",
+            "scope": "LOCAL_HOST",
+            "in_inventory": true,
+            "basis": "sự kiện được quan sát trên chính máy này",
+            "asset_id": "ASSET-7F083307",
+            "hostname": "kevin",
+            "hostname_resolved": true,
+            "hostname_source": "local host",
+            "identified": true,
+            "missing_identity": []
+          }
+        ]
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ],
+      "source_log": "Security",
+      "evidence_class": "EVENT_LOG",
+      "evidence_quality": "PARTIAL",
+      "attribution_quality": "FULL",
+      "confidence_score": 49,
+      "confidence": "LOW",
+      "confidence_basis": {
+        "components": [
+          {
+            "name": "evidence_fields",
+            "earned": 30.0,
+            "max": 40,
+            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
+          },
+          {
+            "name": "evidence_integrity",
+            "earned": 20,
+            "max": 20,
+            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
+          },
+          {
+            "name": "attribution",
+            "earned": 25,
+            "max": 25,
+            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
+          },
+          {
+            "name": "source_trust",
+            "earned": 15,
+            "max": 15,
+            "note": "data_source = LIVE_OBSERVED"
+          }
+        ],
+        "raw_score": 90,
+        "evidence_class": "EVENT_LOG",
+        "required_fields": [
+          "matched_text",
+          "source_log",
+          "event_id",
+          "timestamp"
+        ],
+        "missing_fields": [
+          "matched_text"
+        ],
+        "source_log_derived": true,
+        "matched_text_derived": false,
+        "capped_for_noise": true
+      },
+      "suppressed": true,
+      "noise_class": "ROUTINE_OS_ACTIVITY",
+      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
+    },
+    {
+      "type": "Remote Logon",
+      "severity": "INFO",
+      "timestamp": "2026-09-14T08:13:13.021463",
+      "event_time": "/Date(1789398416572)/",
+      "event_id": 4624,
+      "description": "Remote Logon (Event 4624)",
+      "evidence": [
+        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
+        "Nguồn MCP: huntRemoteDesktop"
+      ],
+      "matched_text": null,
+      "severity_basis": "Event ID 4624 — Remote Logon",
+      "assessment": "Không có IP từ xa trong sự kiện",
+      "recommendation": "Không cần hành động",
+      "status": "DETECTED",
+      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
+      "data_source": "LIVE_OBSERVED",
+      "affected_assets": [
+        "192.168.0.51"
+      ],
+      "affected_systems": [
+        "192.168.0.51"
+      ],
+      "attribution": {
+        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
+        "confidence": "HIGH",
+        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
+        "scope": [
+          "LOCAL_HOST"
+        ],
+        "systems": [
+          {
+            "ip": "192.168.0.51",
+            "scope": "LOCAL_HOST",
+            "in_inventory": true,
+            "basis": "sự kiện được quan sát trên chính máy này",
+            "asset_id": "ASSET-7F083307",
+            "hostname": "kevin",
+            "hostname_resolved": true,
+            "hostname_source": "local host",
+            "identified": true,
+            "missing_identity": []
+          }
+        ]
+      },
+      "hunt_scope": [
+        "192.168.0.51"
+      ],
+      "source_log": "Security",
+      "evidence_class": "EVENT_LOG",
+      "evidence_quality": "PARTIAL",
+      "attribution_quality": "FULL",
+      "confidence_score": 49,
+      "confidence": "LOW",
+      "confidence_basis": {
+        "components": [
+          {
+            "name": "evidence_fields",
+            "earned": 30.0,
+            "max": 40,
+            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
+          },
+          {
+            "name": "evidence_integrity",
+            "earned": 20,
+            "max": 20,
+            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
+          },
+          {
+            "name": "attribution",
+            "earned": 25,
+            "max": 25,
+            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
+          },
+          {
+            "name": "source_trust",
+            "earned": 15,
+            "max": 15,
+            "note": "data_source = LIVE_OBSERVED"
+          }
+        ],
+        "raw_score": 90,
+        "evidence_class": "EVENT_LOG",
+        "required_fields": [
+          "matched_text",
+          "source_log",
+          "event_id",
+          "timestamp"
+        ],
+        "missing_fields": [
+          "matched_text"
+        ],
+        "source_log_derived": true,
+        "matched_text_derived": false,
+        "capped_for_noise": true
+      },
+      "suppressed": true,
+      "noise_class": "ROUTINE_OS_ACTIVITY",
+      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
+    },
+    {
+      "type": "Remote Logon",
+      "severity": "INFO",
+      "timestamp": "2026-09-14T08:13:13.022479",
       "event_time": "/Date(1789398338958)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -21253,7 +21152,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.022479",
       "event_time": "/Date(1789398038365)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -21354,7 +21253,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.022479",
       "event_time": "/Date(1789397698696)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -21455,7 +21354,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.023500",
       "event_time": "/Date(1789397148710)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -21556,7 +21455,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.179780",
+      "timestamp": "2026-09-14T08:13:13.023500",
       "event_time": "/Date(1789397038120)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -21657,7 +21556,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.023500",
       "event_time": "/Date(1789396798622)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -21758,7 +21657,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.023500",
       "event_time": "/Date(1789396570438)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -21859,7 +21758,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.024564",
       "event_time": "/Date(1789396410834)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -21960,7 +21859,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.024564",
       "event_time": "/Date(1789396402547)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -22061,7 +21960,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.024564",
       "event_time": "/Date(1789395898532)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -22162,7 +22061,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.025619",
       "event_time": "/Date(1789395767772)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -22263,7 +22162,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.025619",
       "event_time": "/Date(1789395632342)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -22364,7 +22263,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.025619",
       "event_time": "/Date(1789395618410)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -22465,7 +22364,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.181789",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789395617962)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -22566,7 +22465,7 @@
     {
       "type": "Remote Logon",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789395412795)/",
       "event_id": 4624,
       "description": "Remote Logon (Event 4624)",
@@ -22665,514 +22564,9 @@
       "suppression_reason": "hoạt động nền của Windows: logon type: 5"
     },
     {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
-      "event_time": "/Date(1789395348475)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntRemoteDesktop"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
-      "event_time": "/Date(1789394998454)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntRemoteDesktop"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
-      "event_time": "/Date(1789394902105)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntRemoteDesktop"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
-      "event_time": "/Date(1789394098396)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntRemoteDesktop"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
-      "type": "Remote Logon",
-      "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
-      "event_time": "/Date(1789393934530)/",
-      "event_id": 4624,
-      "description": "Remote Logon (Event 4624)",
-      "evidence": [
-        "An account was successfully logged on.\r\n\r\nSubject:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tKEVIN$\r\n\tAccount Domain:\t\tWORKGROUP\r\n\tLogon ID:\t\t0x3E7\r\n\r\nLogon Information:\r\n\tLogon Type:\t\t5\r\n\tRestricted Admin Mode:\t-\r\n\tRemote Credential Guard:\t-\r\n\tVirtual Account:\t\tNo\r\n\tElevated Token:\t\tYes\r\n\r\nImpersonation Level:\t\tImpersonation\r\n\r\nNew Logon:\r\n\tSecurity ID:\t\tS-1-5-18\r\n\tAccount Name:\t\tSYSTEM\r\n\tAccount Domain:\t\tNT AUTHORITY\r\n\tLogon ID:\t\t0x3E7\r\n\tLinked Logon ID:\t\t0x0\r\n\tNetwork Account Name:\t-\r\n\tNetwork Account Domain:\t-\r\n\tLogon GUID:\t\t{00000000-0000-0000-0000-000000000000}\r\n\r\nProcess Information:\r\n\t",
-        "Nguồn MCP: huntRemoteDesktop"
-      ],
-      "matched_text": null,
-      "severity_basis": "Event ID 4624 — Remote Logon",
-      "assessment": "Không có IP từ xa trong sự kiện",
-      "recommendation": "Không cần hành động",
-      "status": "DETECTED",
-      "detection_method": "MCP huntLateralMovement / huntRemoteDesktop",
-      "data_source": "LIVE_OBSERVED",
-      "affected_assets": [
-        "192.168.0.51"
-      ],
-      "affected_systems": [
-        "192.168.0.51"
-      ],
-      "attribution": {
-        "method": "quan sát trên máy cục bộ + IP trích từ nội dung Security event",
-        "confidence": "HIGH",
-        "reason": "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện",
-        "scope": [
-          "LOCAL_HOST"
-        ],
-        "systems": [
-          {
-            "ip": "192.168.0.51",
-            "scope": "LOCAL_HOST",
-            "in_inventory": true,
-            "basis": "sự kiện được quan sát trên chính máy này",
-            "asset_id": "ASSET-7F083307",
-            "hostname": "kevin",
-            "hostname_resolved": true,
-            "hostname_source": "local host",
-            "identified": true,
-            "missing_identity": []
-          }
-        ]
-      },
-      "hunt_scope": [
-        "192.168.0.51"
-      ],
-      "source_log": "Security",
-      "evidence_class": "EVENT_LOG",
-      "evidence_quality": "PARTIAL",
-      "attribution_quality": "FULL",
-      "confidence_score": 49,
-      "confidence": "LOW",
-      "confidence_basis": {
-        "components": [
-          {
-            "name": "evidence_fields",
-            "earned": 30.0,
-            "max": 40,
-            "note": "3/4 trường của lớp EVENT_LOG; thiếu matched_text"
-          },
-          {
-            "name": "evidence_integrity",
-            "earned": 20,
-            "max": 20,
-            "note": "evidence chứa đủ mọi thứ chỉ báo viện dẫn"
-          },
-          {
-            "name": "attribution",
-            "earned": 25,
-            "max": 25,
-            "note": "FULL — 1 hệ thống đủ IP + hostname + asset_id"
-          },
-          {
-            "name": "source_trust",
-            "earned": 15,
-            "max": 15,
-            "note": "data_source = LIVE_OBSERVED"
-          }
-        ],
-        "raw_score": 90,
-        "evidence_class": "EVENT_LOG",
-        "required_fields": [
-          "matched_text",
-          "source_log",
-          "event_id",
-          "timestamp"
-        ],
-        "missing_fields": [
-          "matched_text"
-        ],
-        "source_log_derived": true,
-        "matched_text_derived": false,
-        "capped_for_noise": true
-      },
-      "suppressed": true,
-      "noise_class": "ROUTINE_OS_ACTIVITY",
-      "suppression_reason": "hoạt động nền của Windows: logon type: 5"
-    },
-    {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789360793017)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -23270,7 +22664,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789360792821)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -23368,7 +22762,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789360790067)/",
       "event_id": 24,
       "description": "Logon Activity (Event 24)",
@@ -23466,7 +22860,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789360789458)/",
       "event_id": 40,
       "description": "Logon Activity (Event 40)",
@@ -23564,7 +22958,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789360789457)/",
       "event_id": 39,
       "description": "Logon Activity (Event 39)",
@@ -23662,7 +23056,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789360789317)/",
       "event_id": 23,
       "description": "Logon Activity (Event 23)",
@@ -23760,7 +23154,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789266040982)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -23858,7 +23252,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.026657",
       "event_time": "/Date(1789266040692)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -23956,7 +23350,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1789265956068)/",
       "event_id": 23,
       "description": "Logon Activity (Event 23)",
@@ -24054,7 +23448,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1789258307164)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -24152,7 +23546,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1789258303792)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -24250,7 +23644,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1789258268809)/",
       "event_id": 23,
       "description": "Logon Activity (Event 23)",
@@ -24348,7 +23742,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1789054035652)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -24446,7 +23840,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1789054035397)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -24544,7 +23938,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1788028166475)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -24642,7 +24036,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1788028166238)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -24740,7 +24134,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1788027937890)/",
       "event_id": 23,
       "description": "Logon Activity (Event 23)",
@@ -24838,7 +24232,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1788026145262)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -24936,7 +24330,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1788026144912)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -25034,7 +24428,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1788025735424)/",
       "event_id": 23,
       "description": "Logon Activity (Event 23)",
@@ -25132,7 +24526,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786803873236)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -25230,7 +24624,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786803872723)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -25328,7 +24722,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786747266450)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -25426,7 +24820,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786747263110)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -25524,7 +24918,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786747225218)/",
       "event_id": 23,
       "description": "Logon Activity (Event 23)",
@@ -25622,7 +25016,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786504423739)/",
       "event_id": 22,
       "description": "Logon Activity (Event 22)",
@@ -25720,7 +25114,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786504423011)/",
       "event_id": 21,
       "description": "Logon Activity (Event 21)",
@@ -25818,7 +25212,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786490946622)/",
       "event_id": 40,
       "description": "Logon Activity (Event 40)",
@@ -25916,7 +25310,7 @@
     {
       "type": "Logon Activity",
       "severity": "INFO",
-      "timestamp": "2026-09-14T08:06:22.183791",
+      "timestamp": "2026-09-14T08:13:13.027181",
       "event_time": "/Date(1786490743860)/",
       "event_id": 23,
       "description": "Logon Activity (Event 23)",
@@ -26014,14 +25408,14 @@
   ],
   "ioc_quality": {
     "version": "1.0.0",
-    "scored_at": "2026-09-14T08:06:28.642307",
-    "total": 266,
-    "suppressed": 40,
+    "scored_at": "2026-09-14T08:13:19.207199",
+    "total": 260,
+    "suppressed": 34,
     "by_noise_class": {
-      "ROUTINE_OS_ACTIVITY": 40
+      "ROUTINE_OS_ACTIVITY": 34
     },
     "scored_population": 226,
-    "population_note": "Mọi phân phối và `average_score` tính trên 226 chỉ báo còn lại sau lọc tiếng ồn, KHÔNG trên 266 tổng. Số trên toàn bộ nằm ở `*_all`.",
+    "population_note": "Mọi phân phối và `average_score` tính trên 226 chỉ báo còn lại sau lọc tiếng ồn, KHÔNG trên 260 tổng. Số trên toàn bộ nằm ở `*_all`.",
     "by_confidence": {
       "HIGH": 226
     },
@@ -26034,11 +25428,11 @@
       "PARTIAL": 81
     },
     "by_confidence_all": {
-      "LOW": 40,
+      "LOW": 34,
       "HIGH": 226
     },
     "average_score": 96.3,
-    "average_score_all": 89.2,
+    "average_score_all": 90.1,
     "score_variance": 23.24,
     "by_class_variance": {
       "EVENT_LOG": {
