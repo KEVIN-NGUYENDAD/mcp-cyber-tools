@@ -21,6 +21,7 @@ from pathlib import Path
 
 from state_manager import write_state_atomic
 import ioc_attribution
+import detection_quality
 from mcp_bridge import McpBridge, McpBridgeError, as_list
 
 HUNT_VERSION = '2.0.0'
@@ -47,6 +48,7 @@ class SuspiciousProcessHunter(object):
         self.observable = False
         self.tools_used = []
         self._seen = {}
+        self.self_log = detection_quality.SelfObservationLog()
 
     # -- thu thập ---------------------------------------------------------
 
@@ -110,6 +112,11 @@ class SuspiciousProcessHunter(object):
             path = proc.get('Path') or ''
             lowered = name.lower()
 
+            # Chinh python/node dang chay cac script san nay cung la mot tien
+            # trinh tren may. Khong loai thi bo may giam sat tu bao cao minh.
+            if self.self_log.check('{} {}'.format(name, path), source='lolbin'):
+                continue
+
             # Ghi lại CHÍNH đoạn đường dẫn đã kích hoạt kết luận. Không có nó,
             # người đọc thấy một kết luận HIGH và phải tự đoán chỗ nào đáng ngờ —
             # và `detection_quality` không kiểm chứng được gì cả.
@@ -142,6 +149,9 @@ class SuspiciousProcessHunter(object):
             remote = conn.get('RemoteAddress')
             port = conn.get('RemotePort')
 
+            if self.self_log.check('{} {}'.format(name, path), source='beacon'):
+                continue
+
             suspect = SUSPECT_PATH_RE.search(path)
             if suspect:
                 severity = 'HIGH'
@@ -171,6 +181,9 @@ class SuspiciousProcessHunter(object):
         for proc in unusual:
             name = proc.get('Name') or 'unknown'
             path = proc.get('Path') or ''
+
+            if self.self_log.check('{} {}'.format(name, path), source='unusual'):
+                continue
 
             # %LOCALAPPDATA%\Programs là nơi cài đặt hợp lệ của rất nhiều phần
             # mềm hiện đại. Chỉ Temp/Downloads/Public mới thực sự đáng ngờ.
@@ -233,6 +246,8 @@ class SuspiciousProcessHunter(object):
             'question': 'Có quy trình bất thường nào đang chạy không?',
             'total_detections': len(self.indicators),
             'total_indicators': len(self.indicators),
+            'self_observation': self.self_log.report(
+                'tien trinh cua chinh bo may giam sat'),
             'by_severity': {},
             'by_category': {},
             'indicators': self.indicators,

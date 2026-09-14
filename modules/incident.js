@@ -14,6 +14,28 @@ const STATE_DIR = path.join(MODULE_DIR, "..", "state");
 // thap duoc". Trong bang kiem dinh chung deu roi vao o EMPTY vinh vien.
 //
 // Hop dong moi: bang chung THAT di ra cung luc voi duong dan file.
+// JSON hop le KHONG BAO GIO chua ky tu dieu khien tho ben trong chuoi — chung
+// phai duoc escape. Nen neu JSON.parse vap phai mot ky tu nhu vay, viec cat no
+// di la an toan tuyet doi: khong co JSON dung nao bi thay doi y nghia.
+//
+// Sua o day chu khong o PowerShell vi o PowerShell phai doan TRUONG NAO mang ky
+// tu xau. Lan truoc doan la `Message`, loc dung truong do, va van FAIL — ky tu
+// nam o cho khac. O tang nay thi khong can doan: moi truong deu di qua.
+function parseJsonSafely(text, label) {
+  try {
+    return { data: JSON.parse(text), repaired: false };
+  } catch (first) {
+    const cleaned = text.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, " ");
+    try {
+      const data = JSON.parse(cleaned);
+      console.error(`[JSON-REPAIR] ${label}: da cat ky tu dieu khien tho khoi dau ra PowerShell`);
+      return { data, repaired: true };
+    } catch (second) {
+      throw new Error(`${label}: ${second.message}`);
+    }
+  }
+}
+
 function evidenceResponse(payload, report) {
   return formatResponse(true, JSON.stringify({
     ...payload,
@@ -80,7 +102,7 @@ export function registerIncidentTools(server) {
 
       let evidence = null;
       try {
-        evidence = JSON.parse(result.data);
+        evidence = parseJsonSafely(result.data, 'collectEvidence').data;
       } catch (error) {
         return formatResponse(false, "", `Khong phan tich duoc ket qua thu thap: ${error.message}`);
       }
@@ -251,7 +273,7 @@ export function registerIncidentTools(server) {
 
       let payload = null;
       try {
-        payload = JSON.parse(result.data);
+        payload = parseJsonSafely(result.data, 'collectLogs').data;
       } catch (error) {
         return formatResponse(false, "", `Khong phan tich duoc log: ${error.message}`);
       }
@@ -378,7 +400,7 @@ export function registerIncidentTools(server) {
 
       let payload = null;
       try {
-        payload = JSON.parse(result.data);
+        payload = parseJsonSafely(result.data, 'timeline').data;
       } catch (error) {
         return formatResponse(false, "", `Khong phan tich duoc timeline: ${error.message}`);
       }
@@ -484,7 +506,7 @@ export function registerIncidentTools(server) {
 
       let live = null;
       try {
-        live = JSON.parse(result.data);
+        live = parseJsonSafely(result.data, 'securityAudit').data;
       } catch (error) {
         return formatResponse(false, "", `Khong phan tich duoc ket qua audit: ${error.message}`);
       }
