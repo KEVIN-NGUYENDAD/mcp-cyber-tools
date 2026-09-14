@@ -22,13 +22,14 @@ never committed to the repo and never leaves this host (same rule as
 alerts.json and baseline_store.py's state\\).
 """
 import json
+from pathlib import Path
 import os
 from datetime import datetime, timezone
 
 # Sibling to baseline_store.py's state\\ and security-watch.js's
 # alerts.json -- local-only state, outside the git repo.
 DAILY_BRIEF_DIR = (
-    r"C:\GitHub\mcp-cyber-tools\daily_brief"
+    str(Path(__file__).resolve().parent.parent / "daily_brief")
 )
 
 CATEGORIES = ("changes", "incidents", "recommendations", "score_deltas")

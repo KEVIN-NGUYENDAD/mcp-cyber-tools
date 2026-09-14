@@ -265,6 +265,52 @@ app.get('/api/daily-brief/:date', (req, res) => {
 });
 
 // ============================================================================
+// ROUTES KẾ THỪA TỪ web-server.js (AQ-007 / AQ-030)
+// ============================================================================
+//
+// Render chạy `web-server.js` suốt sáu vòng audit. Những URL dưới đây là URL
+// mà server đó phục vụ và người ta đã mở — chúng nằm trong `render.yaml`, có
+// thể đang nằm trong bookmark hay một tin nhắn Telegram cũ.
+//
+// Đổi điểm vào mà bỏ chúng thì sửa xong một lỗi truth và tạo ra một lỗi khác:
+// liên kết từng chạy nay 404. Nên giữ, và giữ ở đây, cạnh nhau, có nhãn — chứ
+// không giữ bằng cách để nguyên server thứ hai.
+
+app.get('/latest', (req, res) => {
+  const filepath = path.join(BRIEF_DIR, 'latest.html');
+  if (!fs.existsSync(filepath)) {
+    return res.status(404).type('html').send(
+      '<h1>404 - Chưa có bản tin</h1><p>Chưa có daily brief nào được sinh ra.</p>');
+  }
+  res.sendFile(filepath);
+});
+
+app.get('/brief/:date', (req, res) => {
+  const { date } = req.params;
+  if (!BRIEF_DATE_RE.test(date)) {
+    return res.status(400).type('html').send(
+      '<h1>400 - Sai định dạng ngày</h1><p>Dùng YYYY-MM-DD.</p>');
+  }
+  const filepath = path.join(BRIEF_DIR, `${date}.html`);
+  if (!fs.existsSync(filepath)) {
+    return res.status(404).type('html').send(
+      `<h1>404 - Không có bản tin</h1><p>Không có bản tin cho ngày ${date}.</p>`);
+  }
+  res.sendFile(filepath);
+});
+
+// `render.yaml` định tuyến `/health`; API mới đặt nó ở `/api/health`. Health
+// check của nền tảng gọi đường cũ, nên đường cũ phải sống.
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'sentinelops-soc',
+    entrypoint: 'web/server.js',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// ============================================================================
 // STATIC ROUTES
 // ============================================================================
 

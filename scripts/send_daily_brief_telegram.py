@@ -12,7 +12,7 @@ from state_manager import write_state_atomic, read_state_safe
 
 def load_credentials():
     """Load TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID from .env"""
-    env_file = Path(r"C:\GitHub\mcp-cyber-tools\.env")
+    env_file = Path(__file__).resolve().parent.parent / ".env"
     bot_token = None
     chat_id = None
 
@@ -40,7 +40,7 @@ def load_daily_brief(date: str = None) -> dict:
     if not date:
         date = datetime.now(timezone.utc).date().isoformat()
 
-    brief_path = Path(r"C:\GitHub\mcp-cyber-tools\daily_brief") / f"{date}.json"
+    brief_path = Path(__file__).resolve().parent.parent / "daily_brief" / f"{date}.json"
 
     try:
         with open(brief_path, 'r', encoding='utf-8') as f:
@@ -280,7 +280,11 @@ def save_html_brief(brief: dict, date: str = None) -> bool:
         date = datetime.now(timezone.utc).date().isoformat()
 
     html_content = generate_html_brief(brief, date)
-    daily_brief_dir = Path(r"C:\GitHub\mcp-cyber-tools\daily_brief")
+    # AQ-007. Dong nay tung la mot duong dan tuyet doi tro toi C:\GitHub —
+    # no chi dung tren mot may. Tren Render (hoac bat ky checkout nao khac) no
+    # ghi vao mot thu muc khong ton tai, va `/latest` phuc vu ban cu mai mai.
+    daily_brief_dir = Path(__file__).resolve().parent.parent / 'daily_brief'
+    daily_brief_dir.mkdir(parents=True, exist_ok=True)
 
     try:
         # Save dated HTML

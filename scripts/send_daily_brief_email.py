@@ -13,7 +13,7 @@ def load_daily_brief(date: str = None) -> dict:
     if not date:
         date = datetime.now(timezone.utc).date().isoformat()
 
-    brief_path = Path(r"C:\GitHub\mcp-cyber-tools\daily_brief") / f"{date}.json"
+    brief_path = Path(__file__).resolve().parent.parent / "daily_brief" / f"{date}.json"
 
     try:
         with open(brief_path, 'r', encoding='utf-8') as f:

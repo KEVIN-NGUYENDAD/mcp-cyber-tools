@@ -48,6 +48,7 @@ import telegram_field_audit  # noqa: E402
 import pipeline_field_audit  # noqa: E402
 import portal_escape_audit  # noqa: E402
 import run_coherence_audit  # noqa: E402
+import deploy_truth_audit  # noqa: E402
 import tool_validator  # noqa: E402
 
 
@@ -113,6 +114,10 @@ def collect(validate=False):
     # vi chung khong ve mot TRUONG nao ca: state co thuoc mot lan chay duy nhat
     # khong, va su co dang mo co truy nguoc ve mot quan sat con ton tai khong.
     coherence, coherence_scope = run_coherence_audit.audit()
+    # AQ-007/AQ-030. Sau vong audit deu xanh trong khi Render chay mot tep khac
+    # voi tep duoc soi. Cac bo kia hoi "cai nay co dung khong"; bo nay hoi "cai
+    # gi dang chay" — va khong bo nao trong so do tra loi duoc cau thu hai.
+    deploy, deploy_scope = deploy_truth_audit.audit()
     pipeline = _read_json(os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json'))
 
     return {
@@ -128,6 +133,8 @@ def collect(validate=False):
         'escapes': escapes,
         'coherence': coherence,
         'coherence_scope': coherence_scope,
+        'deploy': deploy,
+        'deploy_scope': deploy_scope,
     }
 
 
@@ -246,6 +253,12 @@ def evaluate(data):
         blockers.append('%d su co sinh tu mot con so tinh ra, khong phai quan '
                         'sat (%s) — vong phan hoi incidents<->risk'
                         % (len(derived), ', '.join(f['field'] for f in derived[:3])))
+
+    # AQ-007/AQ-030. Lech diem vao la blocker tuyet doi: khi no do thi moi ket
+    # qua xanh cua cac bo khac deu noi ve mot artifact khong ai mo.
+    for finding in (data.get('deploy') or []):
+        blockers.append('deploy truth [%s] %s'
+                        % (finding['level'], finding['detail']))
 
     pipeline = data['pipeline'] or {}
     stages = pipeline.get('stages') or pipeline.get('results') or []
@@ -404,11 +417,16 @@ def write_debt(data, verdict):
            len(pipeline_fields)))
     # AQ-039/AQ-040.
     scope = data.get('coherence_scope') or {}
+    deploy_scope_debt = data.get('deploy_scope') or {}
     runs = scope.get('runs') or {}
     inc = scope.get('incidents') or {}
     add('| State cùng một lần chạy | %d / %d tệp có dấu, %d lần chạy khác nhau |'
         % (runs.get('files_stamped', 0), runs.get('files_present', 0),
            len(runs.get('distinct_runs') or [])))
+    add('| Điểm vào triển khai khớp `package.json` | %s |'
+        % ('có — %s' % (deploy_scope_debt.get('entrypoint') or '?')
+           if not (data.get('deploy') or []) else 'KHÔNG — %d vi phạm'
+           % len(data.get('deploy') or [])))
     add('| Sự cố đang mở truy nguợc được về quan sát | %d / %d |'
         % (inc.get('checked', 0), inc.get('open', 0)))
     if inc.get('invalidated'):
@@ -531,6 +549,10 @@ def main():
     print('Nguồn gốc sự cố    : %d/%d sự cố đang mở truy ngược được%s'
           % (inc.get('checked', 0), inc.get('open', 0),
              ', %d đã thu hồi' % inc['invalidated'] if inc.get('invalidated') else ''))
+    deploy_scope = data.get('deploy_scope') or {}
+    print('Điểm vào triển khai: %s (%d vi phạm, %d route đối chiếu)'
+          % (deploy_scope.get('entrypoint') or 'KHONG XAC DINH',
+             len(data.get('deploy') or []), deploy_scope.get('routes_checked', 0)))
     print('Tuổi đầu vào       : %s'
           % ' | '.join('%s %s' % (name.replace('.json', ''),
                                   'KHONG RO' if age is None else '%.1fh' % age)

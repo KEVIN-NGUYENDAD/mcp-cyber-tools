@@ -6,7 +6,16 @@ services:
     plan: free
     rootDir: .
     buildCommand: npm install
-    startCommand: node web-server.js
+    # AQ-007 / AQ-030, sáu vòng audit. Dòng này từng là `node web-server.js` —
+    # một server thứ hai, chỉ phục vụ daily_brief, không biết tới `web/app.js`.
+    # `package.json` khai `web/server.js`, và mọi công portal của bốn sprint gần
+    # nhất nằm trong tệp Render không chạy. Trang người dùng thật sự mở là một
+    # bản khác với bản được kiểm.
+    #
+    # Không ghi lại đường dẫn ở đây: ghi hai lần thì trôi lần nữa. `npm start`
+    # để `package.json` là chỗ duy nhất nói đâu là điểm vào, và
+    # `deploy_truth_audit.py` chặn merge nếu hai bên lại lệch.
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
