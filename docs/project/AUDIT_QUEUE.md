@@ -866,3 +866,476 @@ Thứ tự đúng: **AQ-013 → AQ-014/AQ-015 → AQ-017/AQ-018 → AQ-016 → A
 commit, không push, không merge. Lưu ý working tree đang có sửa đổi CHƯA COMMIT của
 Builder (`asset_builder.py`, `calculate_risk_score.py`, `ioc_quality.py`) — mọi nhận
 định về trạng thái vòng 1 ở trên đối chiếu với working tree đó, không phải với HEAD.*
+
+
+---
+---
+
+# VÒNG 3 — 2026-09-14 · "TẠI SAO LÀ 10?"
+
+Câu hỏi duy nhất của vòng này: hệ thống nói **Risk = 10**. Chứng minh được không?
+Không hỏi "trường có tồn tại không". Chỉ hỏi "con số này có đúng không".
+
+Đã đọc: `HANDOFF.md` · `TECHNICAL_DEBT.md` · `TOOL_VALIDATION_REPORT.md` · `IOC_QUALITY_REPORT.md`
+Đã audit: `risk_score.json` · `executive_findings.json` · `incidents.json` · `daily_brief/*.json` · `web/app.js` · `web/server.js` · `telegramBot.js` · `alertDelivery.js` · `incidentAlerter.js`
+
+Auditor READ ONLY. Không sửa file, không commit, không push, không merge.
+
+---
+
+## PHÉP TÍNH: ĐÚNG. ĐẦU VÀO: KHÔNG.
+
+Số học nội bộ của `risk_score.json` kiểm được và khớp:
+
+    weighted_health = Σ(weight × health) = 89.58
+    weight_available = 1.0
+    overall = 100 − 89.58 / 1.0 = 10.42  →  10   ✅
+
+Tổng trọng số = 1.0. Tổng `risk_contribution` = 10.42. Không có lỗi số học.
+
+Nhưng "Risk = 10" không phải một phép tính — nó là một **tuyên bố về hệ thống này**.
+Truy ngược từng đầu vào của tám thành phần cho kết quả:
+
+| Thành phần | w | health | điểm rủi ro | đầu vào có đúng không |
+|---|---|---|---|---|
+| `threat_hunting` | 0.25 | 76 | **6.00** | ❌ **AQ-019** — 2 chỉ báo dán nhãn sai |
+| `waap` | 0.10 | 80 | 2.00 | ✅ đúng (Builder vừa sửa) |
+| `incidents` | 0.25 | 94 | 1.50 | ⚠️ thiếu — Quy tắc 5 chết (AQ-014) |
+| `security_events` | 0.04 | 87 | 0.52 | ✅ đúng |
+| `firewall` | 0.04 | 90 | 0.40 | ❌ **AQ-023** — hằng số |
+| `asset` | 0.20 | 100 | 0.00 | ❌ **AQ-021** — quét cũ 157h, hai tổng mâu thuẫn |
+| `crypto` | 0.06 | 100 | 0.00 | ❌ **AQ-020** — không thể khác 100 |
+| `defender` | 0.06 | 100 | 0.00 | ✅ đúng |
+
+**6.00 / 10.42 = 58% điểm rủi ro đến từ hai bản ghi. Cả hai đều dán nhãn sai.**
+**0.40 là hằng số. 0.00 của crypto là một hàm không thể trả về giá trị khác.**
+
+Kết luận: **không chứng minh được "Risk = 10"** → CRITICAL, theo đúng tiêu chí đề ra.
+
+---
+
+## AQ-019 · Fake Severity · Số liệu sai
+
+**Issue:**
+58% điểm rủi ro toàn hệ thống đến từ **hai** sự kiện Windows 4648, và cả hai là việc
+Windows đăng nhập người dùng vào chính tài khoản Microsoft của họ trên `localhost`.
+Chúng được dán nhãn `severity: HIGH`, `hunting_type: lateral_movement`, và được **miễn
+trừ** khỏi bộ lọc tiếng ồn đúng vì chúng mang nhãn HIGH.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+`ioc_quality.py:307`
+
+    if indicator.get('severity') in ('CRITICAL', 'HIGH'):
+        return None, None      # mức cao không bị lọc tự động
+
+Severity được gán **trước**, một cách máy móc, từ Event ID (`severity_basis:
+"Event ID 4648 — Explicit Credential Logon"`). Bộ lọc tiếng ồn chạy **sau**, và được
+lệnh không đụng vào HIGH. Bản ghi cần soi lại nhất là bản ghi chắc chắn thoát.
+
+Lập luận trong chú thích — *"kẻ tấn công dùng đúng những nhị phân mà lập trình viên
+dùng"* — đúng cho `DEV_HINTS` (lọc theo tên tiến trình). Nhưng miễn trừ này cũng phủ
+luôn `ROUTINE_HINTS`, trong đó có `s-1-5-18` — **tài khoản SYSTEM**, không phải một
+heuristic tên tiến trình. Nếu hai bản ghi này là INFO, `s-1-5-18` trong evidence sẽ
+khiến chúng bị hạ xuống `ROUTINE_OS_ACTIVITY` như 208 bản ghi khác.
+
+**Evidence:**
+
+    state/hunting_lateral_movement.json — cả 2 chỉ báo severity HIGH:
+
+    type            : "Explicit Credential Logon"
+    severity        : HIGH
+    severity_basis  : "Event ID 4648 — Explicit Credential Logon"
+    suppressed      : false
+    noise_class     : null
+    evidence[0]     : "...Security ID:  S-1-5-18
+                       Account Name:   KEVIN$
+                       Account Domain: WORKGROUP
+                       Account Whose Credentials Were Used:
+                         Account Name:   tamngankevin@gmail.com
+                         Account Domain: MicrosoftAccount
+                       Target Server Name: localhost
+                       Process Name:   C:\Windows\System32\lsass.exe"   (bản 2: svchost.exe)
+    attribution.scope  : ["LOCAL_HOST"]
+    attribution.reason : "Đăng nhập cục bộ: không có máy thứ hai trong sự kiện"
+
+`S-1-5-18` có mặt trong `ROUTINE_HINTS` (`ioc_quality.py:288`). `Target Server Name:
+localhost`. Và chính bản ghi tự khai **"không có máy thứ hai trong sự kiện"** — trong
+khi loại của nó là *lateral movement*, tức là chuyển động **giữa** các máy.
+
+Phép tính chịu ảnh hưởng:
+
+    HUNTING_PENALTY['hunting_lateral_movement.json']['HIGH'] = 12
+    threat_hunting health = 100 − 2 × 12 = 76
+    risk_contribution     = 0.25 × (100 − 76) = 6.00
+
+    Nếu 2 bản ghi này được lọc đúng như 208 bản ghi cùng loại:
+    threat_hunting health = 100  →  contribution = 0.00
+    overall = 10.42 − 6.00 = 4.42  →  Risk = 4
+
+**Business Impact:**
+Điểm rủi ro của toàn bộ hệ thống bị thổi lên **gấp 2.4 lần** (10 thay vì 4) bởi việc
+chủ máy đăng nhập vào tài khoản Microsoft của chính mình. Cùng hai bản ghi này cũng
+sinh ra `EF-0001`/`EF-0002` — hai phát hiện cấp điều hành mức HIGH mang tiêu đề
+*"Dò quét di chuyển ngang nhắm vào 192.168.0.51"*, trong đó `192.168.0.51` **chính là
+máy đang chạy hệ thống**. Chúng cũng là "0C/2H" trong `HANDOFF.md` và `high_count: 3`
+trong `risk_score.json`.
+
+Hệ quả vận hành: mỗi lần chủ máy đăng nhập Windows, điểm rủi ro tăng. Một analyst đi
+theo `recommended_action` của EF sẽ *"Chặn SMB/WinRM/RDP"* và *"Reset mật khẩu các tài
+khoản bị dò"* để đối phó với việc chính mình đăng nhập. Đây là dạng cảnh báo giả tốn
+kém nhất: nó có bằng chứng thật, có điểm tin cậy 90 chính đáng, và vẫn hoàn toàn sai
+về ý nghĩa.
+
+**Suggested Sprint:** SPRINT SEVERITY-AFTER-NOISE —
+(1) Bỏ miễn trừ ở `ioc_quality.py:307` **đối với `ROUTINE_HINTS`**; giữ miễn trừ cho
+`DEV_HINTS` (lập luận ở đó đúng). `s-1-5-18` / logon type 5 là hoạt động nền của HĐH
+bất kể severity.
+(2) `lateral_movement` không được kết luận khi `attribution.scope == ['LOCAL_HOST']`
+và `Target Server Name` là `localhost` — đó là định nghĩa của *không* lateral.
+(3) Thứ tự đúng: gán severity **sau** phân loại tiếng ồn, không phải trước.
+(4) Gate: một chỉ báo `suppressed=false` mà evidence khớp `ROUTINE_HINTS` phải là
+blocker cho tới khi có lý do ghi rõ.
+
+---
+
+## AQ-020 · Green Default · Số liệu sai
+
+**Issue:**
+`crypto_score` **không thể nhận giá trị nào khác 100**. Hàm chấm điểm đếm severity
+bằng khoá chuỗi trên một dict được ghi bằng khoá số nguyên, nên mọi bộ đếm luôn là 0.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+`collect_crypto_inventory.py:121` lấy `severity` từ Nessus — một **số nguyên** 0–4.
+Dòng 137 ghi `severity_counts[severity] += 1`, tức khoá là `0`, `2`, ...
+Dòng 147-149 đọc lại bằng **chuỗi**: `severity_counts.get('CRITICAL', 0)`,
+`.get('HIGH', 0)`, `.get('MEDIUM', 0)` → luôn `0`.
+Dòng 152-156: `crypto_score = 100 − 0 − 0 − 0 = 100`, mãi mãi.
+
+Drift số nguyên ↔ chuỗi trong cùng một hàm, giữa chỗ ghi và chỗ đọc.
+
+**Evidence:**
+
+    state/crypto_inventory.json
+      n_findings          = 19
+      severity values     = Counter({0: 17, 2: 2})     <- CÓ 2 finding MEDIUM
+      severity_breakdown  = {CRITICAL:0, HIGH:0, MEDIUM:0, LOW:0, INFO:0}
+      SUM(severity_breakdown) = 0        <- trên 19 finding
+      score               = 100
+
+Điểm đúng phải là `100 − 2 × 5 = 90`.
+Và `severity_breakdown` công bố tổng **0** cạnh `total_findings: 19` trong cùng object.
+
+Hệ quả trong `risk_score.json`: `crypto health=100, weight 0.06, contribution 0.00`.
+Kể cả 50 finding CRITICAL về mã hoá, con số này vẫn là 100 và vẫn đóng góp 0.
+
+Thêm một lớp nữa: finding đầu tiên là
+`"Target Credential Status by Authentication Protocol - No Credentials Provided"` —
+bản quét Nessus **không có credential**. Một bảng kiểm kê mã hoá dựng từ quét không
+xác thực, báo sức khoẻ 100, thực chất đang nói *"không nhìn được, nên hoàn hảo"*.
+
+**Business Impact:**
+6% trọng số rủi ro bị khoá cứng ở "hoàn hảo". Hệ thống không có khả năng phát hiện
+bất kỳ vấn đề mã hoá nào — cipher yếu, chứng chỉ hết hạn, TLS cũ — và vẫn in ra
+`crypto inventory score 100` như một kết luận đã đo. `generate_incidents.py` Quy tắc 5
+(*"Weak Cipher + WAAP thấp"*) đọc `severity_breakdown['CRITICAL']` — luôn 0 — nên quy
+tắc đó chết theo, cộng dồn với default `100` ở AQ-014.
+
+**Suggested Sprint:** SPRINT KILL-GREEN-DEFAULTS — ánh xạ số nguyên Nessus → tên
+severity ở đúng một chỗ, dùng chung cho `collect_crypto_inventory.py`,
+`collect_nessus_snapshot.py`, `extract_asset_intelligence.py`. Thêm bất biến:
+`sum(severity_breakdown.values()) == total_findings`, sai là blocker. Và một quét
+không có credential phải hạ `crypto` xuống UNKNOWN, không phải 100.
+
+---
+
+## AQ-021 · Nguồn sự thật trùng lặp · Truth Gap
+
+**Issue:**
+Hai tệp state báo hai tổng lỗ hổng khác nhau cho **cùng một bản quét**: **399** và
+**64**. Daily Brief in cả hai trên **cùng một trang** và tự mâu thuẫn. Bản quét đó đã
+**157 giờ tuổi** và thành phần `asset` (20% trọng số) vẫn chấm nó 100/100.
+
+**Severity:** CRITICAL
+
+**Root Cause:**
+`extract_asset_intelligence.py` và `collect_nessus_snapshot.py` cùng đọc Nessus nhưng
+tổng hợp theo hai phạm vi khác nhau, ghi vào hai tệp, và không tầng nào đối chiếu.
+`calculate_risk_score.py:analyze_assets` đọc `assets.json` mà **không kiểm tuổi** —
+`scan_age_hours: 157.3` không xuất hiện ở bất kỳ đâu trong `risk_score.json`.
+
+**Evidence:**
+
+    state/assets.json        (cộng dồn 11 máy)
+      vulnerability_count tổng = 399
+      critical 0 · high 0 · medium 4 · low 9 · info 386
+
+    state/nessus_status.json (cùng scan "Home Network Discovery")
+      total 64
+      critical 0 · high 0 · medium 3 · low 2 · info 59
+      last_scan       = 2026-09-07T18:35:32
+      scan_age_hours  = 157.3
+      scanner_status  = "running"
+
+    daily_brief/2026-09-14.json — MỘT tài liệu, HAI con số:
+      vulnerability_summary.total_findings                     = 64
+      asset_summary.top_vulnerable_devices[0].vulnerability_count = 215   (192.168.0.51)
+
+Một thiết bị đơn lẻ mang 215 lỗ hổng trong khi tổng của cả bản quét là 64. Chênh
+**3.4 lần**, trong cùng một tài liệu điều hành, không có ghi chú nào.
+
+    state/risk_score.json
+      {"name":"asset","health":100,"weight":0.2,"risk_contribution":0.0,
+       "detail":"0 lỗ hổng CRITICAL, 0 HIGH trên 11 tài sản"}
+
+Câu "0 lỗ hổng CRITICAL, 0 HIGH" là một phát biểu về **ngày 7/9**, trình bày như trạng
+thái hôm nay. 20% trọng số rủi ro đang dựa trên dữ liệu gần 7 ngày tuổi, từ một scanner
+mà chính state khai là `"running"` (tức bản quét có thể chưa xong).
+
+**Business Impact:**
+Thành phần trọng số lớn thứ hai (0.20) đóng góp **0.00 điểm rủi ro** dựa trên một bản
+quét tuần trước. Một lỗ hổng CRITICAL xuất hiện hôm nay sẽ không chạm tới điểm rủi ro
+cho tới lần quét kế tiếp — và không có gì trong hệ thống nói cho người đọc biết điều
+đó. Đồng thời bất kỳ ai đối chiếu hai mục của Daily Brief đều mất niềm tin vào cả hai:
+khi một tài liệu tự mâu thuẫn 3.4 lần, người đọc không có cách nào biết mục nào đúng.
+
+**Suggested Sprint:** SPRINT ONE-VULN-TOTAL — một nơi duy nhất tổng hợp Nessus; hai
+tệp còn lại đọc từ đó. Bất biến: `sum(assets[].vulnerability_count) == nessus_status.total`,
+lệch là blocker. Thành phần `asset` phải mang `scan_age_hours` vào `detail` và hạ
+xuống UNKNOWN khi quá ngưỡng (đề xuất 48h) thay vì chấm 100.
+
+---
+
+## AQ-022 · Schema Drift · Truth Gap
+
+**Issue:**
+`HANDOFF.md` — tài liệu mà quy trình audit đọc đầu tiên mỗi phiên — mở đầu bằng
+*"mọi con số dưới đây đọc thẳng từ `state/` lúc chạy"*. Dòng ngay bên dưới công bố
+**602 chỉ báo**. Giá trị thật lúc chạy là **577**. `TECHNICAL_DEBT.md`, sinh cùng giây,
+in **577**.
+
+**Severity:** HIGH
+
+**Root Cause:**
+`generate_handoff.py:115` đọc `validation.get('detection_integrity')` — tức từ
+**`state/tool_validation.json` đã cache**, ghi lúc 07:38:17.
+`sprint_gate.py` gọi `detection_quality.audit_state()` **trực tiếp** → 577.
+
+Hai tài liệu, cùng một chỉ số, hai nguồn khác nhau, cùng một dấu thời gian
+`Cập nhật: 2026-09-14T07:54:38`.
+
+**Evidence:**
+
+    docs/project/HANDOFF.md:25        | Toàn vẹn bằng chứng | 0 vi phạm / 602 chỉ báo |
+    docs/project/TECHNICAL_DEBT.md:17 | Toàn vẹn bằng chứng | 0 vi phạm / 577 chỉ báo |
+    docs/project/IOC_QUALITY_REPORT.md| Tổng chỉ báo: 577
+    mtime cả hai tệp                  : 07:55:09
+
+    Đếm trực tiếp state/ lúc audit:
+      credential 0 + lateral 436 + persistence 96 + processes 45 = 577
+    detection_quality.audit_state() chạy live -> total_indicators = 577
+
+Không chỉ một dòng: `PASS 94 / EMPTY 5 / BLIND 0 / FAIL 0` trong `HANDOFF.md` cũng đến
+từ cùng cache 07:38 đó. Toàn bộ bảng "Cổng merge" của HANDOFF là ảnh chụp **16 phút
+trước**, dán nhãn "lúc chạy".
+
+Thêm: `generate_handoff.py:112` lặp lại nguyên văn khiếm khuyết AQ-013 —
+`[s for s in stages if not s.get('success', True)]` trong khi bộ ghi dùng khoá
+`status`. Dòng **"Pipeline | 27 stage, 0 thất bại"** là giả ở **cả hai** tài liệu.
+
+**Business Impact:**
+Tài liệu onboarding chính thức chứa số liệu cũ dưới một lời cam kết là số liệu tươi.
+Vòng 1 của chính cuộc audit này đã bị chệch vì `SESSION_STATE.md` cũ; `HANDOFF.md` được
+sinh ra để chấm dứt chuyện đó và đang tái lập nó ở quy mô nhỏ hơn nhưng khó thấy hơn —
+vì lần này con số *gần đúng*, và nó tự nhận là đọc trực tiếp.
+
+**Suggested Sprint:** SPRINT HANDOFF-LIVE — `generate_handoff.py` gọi cùng hàm
+`collect()` mà `sprint_gate.py` dùng, hoặc in kèm tuổi của `tool_validation.json` bên
+cạnh mỗi con số lấy từ đó. Bất biến CI: hai tài liệu sinh trong cùng một lần chạy
+không được lệch nhau ở bất kỳ chỉ số chung nào.
+
+---
+
+## AQ-023 · Fake Confidence · Green Default
+
+**Issue:**
+Thành phần `firewall` trả về **hằng số 90** khi tường lửa bật. Nó không đọc ba profile,
+không đọc `blocked_connections`. 0.40 điểm rủi ro là một hằng số đeo nhãn số đo.
+
+**Severity:** HIGH
+
+**Root Cause:**
+`calculate_risk_score.py:159-163`
+
+    def analyze_firewall(self):
+        firewall = self.load_state('firewall_status.json')
+        if not firewall.get('enabled'):
+            return 20, 'Firewall đang TẮT', {}
+        return 90, 'Firewall bật', {}
+
+Hàm này chỉ có hai đầu ra: 20 hoặc 90. Nó bỏ qua toàn bộ dữ liệu đã thu được.
+
+**Evidence:**
+
+    state/firewall_status.json (07:53:43)
+      enabled          : true
+      domain_profile   : true
+      private_profile  : true
+      public_profile   : true      <- cả ba profile BẬT
+      blocked_connections : 42
+      status           : "ACTIVE"
+
+    state/risk_score.json
+      {"name":"firewall","health":90,"weight":0.04,"risk_contribution":0.4,
+       "detail":"Firewall bật"}
+
+Một máy có đủ ba profile bật vẫn bị trừ 10 điểm sức khoẻ. Ngược lại, nếu
+`public_profile` tắt — cấu hình nguy hiểm nhất trong ba — điểm vẫn đúng 90, vì hàm
+không bao giờ đọc trường đó. Hệ thống **thu thập** dữ liệu profile và
+`blocked_connections`, ghi vào state, rồi vứt đi khi chấm điểm.
+
+**Business Impact:**
+Cùng bệnh với AQ-003 (`waap.get('score', 50)`) nhưng do thiết kế chứ không do drift:
+một hằng số được trình bày như kết quả đo. Sự khác biệt quan trọng — AQ-003 đã có thể
+phát hiện bằng audit trường, cái này thì không: không có trường nào bị đọc sai, đơn
+giản là **không có trường nào được đọc**. Đây là lớp lỗi mà `pipeline_field_audit.py`
+mới không bắt được, và là lý do phải có thêm một phép kiểm khác: *thành phần này có
+thay đổi khi đầu vào thay đổi không?*
+
+**Suggested Sprint:** SPRINT MEASURED-NOT-DECLARED — `analyze_firewall` chấm theo
+profile và `blocked_connections`. Và một phép kiểm mới trong `sprint_gate.py`: với mỗi
+thành phần rủi ro, đảo đầu vào trong bộ nhớ và khẳng định điểm đổi. Thành phần có điểm
+bất biến trước mọi đầu vào là hằng số, không phải số đo, và phải bị gắn cờ.
+
+---
+
+## AQ-024 · Fake Severity · Portal Truth
+
+**Issue:**
+Portal in `threats-total` = **577** trong khi số thật sau lọc tiếng ồn là **369**. Và
+một chỉ báo thiếu trường `severity` được portal hiển thị là **MEDIUM** — một mức
+nghiêm trọng do portal bịa ra, không có trong dữ liệu.
+
+**Severity:** HIGH
+
+**Root Cause:**
+`web/app.js:1607` gộp bốn mảng `indicators` không lọc `suppressed` (grep `suppressed`
+trong `web/app.js` → 0 kết quả). `web/app.js:1630-1631` dùng `|| 'medium'` / `|| 'MEDIUM'`
+làm giá trị thay thế khi trường vắng mặt.
+
+Đây là mục AQ-010 của vòng 1, chưa trả, cộng thêm một lớp mới: default không chỉ làm
+sai **số đếm**, nó còn chế ra một **phán quyết**.
+
+**Evidence:**
+
+    web/app.js:1613  'threats-total': allIndicators.length            -> 577
+    state/ thật     : 577 tổng, 208 suppressed  ->  369 là con số trung thực
+    IOC_QUALITY_REPORT.md khai đúng: "Tổng 577 | Còn lại sau lọc 369 | Hạ xuống tiếng ồn 208"
+
+    web/app.js:1630  <span class="badge badge-${ind?.severity?.toLowerCase() || 'medium'}">
+    web/app.js:1631  ${ind?.severity || 'MEDIUM'}
+
+    web/app.js:1628  indicators.slice(0, 10)    <- vẫn không sort theo severity
+
+Portal và `IOC_QUALITY_REPORT.md` đọc **cùng một tệp state** và công bố hai con số khác
+nhau cho cùng câu hỏi "có bao nhiêu chỉ báo". Báo cáo nói đúng; màn hình thì không.
+
+**Business Impact:**
+Người dùng nhìn portal mỗi ngày thấy 577 mối đe doạ, gần 36% trong đó chính hệ thống
+đã kết luận là tiếng ồn nền của Windows. Tệ hơn, bốn danh sách top-10 vẫn lấy 10 phần
+tử đầu của mảng **chưa sắp xếp** — trong 436 chỉ báo lateral có đúng 2 mức HIGH
+(chính là hai bản ghi sai ở AQ-019), nên panel gần như chắc chắn hiển thị mười dòng
+INFO. Con số thì phóng đại, danh sách thì rỗng nghĩa: hai lỗi ngược chiều trên cùng
+một panel.
+
+**Suggested Sprint:** SPRINT PORTAL-SIGNAL (đã đề xuất ở AQ-010, chưa làm) — lọc
+`suppressed`, sort theo severity trước khi `.slice(0,10)`, hiển thị `369 (+208 tiếng ồn)`.
+Bỏ `|| 'MEDIUM'`: chỉ báo thiếu severity hiển thị `?`, không phải một mức bịa ra.
+
+---
+
+## TRẠNG THÁI CÁC VÒNG TRƯỚC
+
+| Mục | Trạng thái |
+|---|---|
+| AQ-001, 003, 008, 012 | ✅ đã trả (vòng 1) |
+| AQ-006 | ✅ **đã trả** — `/analytics` và `/evidence` không còn bịa; chú thích giải thích lý do đã thay chỗ đoạn mã cũ |
+| AQ-014 | 🔶 một phần — `scripts/pipeline_field_audit.py` đã có (chưa track); `TECHNICAL_DEBT.md` in "Số liệu giả trong pipeline Python: 0" |
+| AQ-002, 004, 005, 007, 009, 010, 011, 013, 015, 016, 017, 018 | ❌ còn nguyên |
+
+⚠️ Lưu ý về AQ-014: `TECHNICAL_DEBT.md` công bố **"Số liệu giả trong pipeline Python | 0"**.
+Vòng này tìm thấy bốn số liệu giả trong pipeline Python: AQ-019 (miễn trừ lọc tiếng ồn),
+AQ-020 (khoá int/str), AQ-021 (không kiểm tuổi quét), AQ-023 (hằng số 90). Bộ audit mới
+kiểm *tên trường có tồn tại không* — nó không kiểm *giá trị có đúng không*, mà đó là
+đúng ranh giới vòng này được giao. Con số 0 ấy đang đúng trong phạm vi của nó và **sai
+trong phạm vi mà tên gọi của nó gợi ra**.
+
+---
+
+# TOP 3 CRITICAL ISSUES
+
+### 1. AQ-019 — Risk = 10 vì chủ máy đăng nhập vào máy của chính mình
+58% điểm rủi ro (6.00/10.42) đến từ hai sự kiện 4648 `Target Server Name: localhost`,
+tài khoản `tamngankevin@gmail.com`, tiến trình `lsass.exe`/`svchost.exe`. Chính bản ghi
+tự khai *"không có máy thứ hai trong sự kiện"* — trong khi loại của nó là *lateral
+movement*. Chúng thoát bộ lọc tiếng ồn **đúng vì** mang nhãn HIGH
+(`ioc_quality.py:307`). Lọc đúng → **Risk = 4, không phải 10**.
+
+### 2. AQ-020 — `crypto_score` là hằng số 100, không phải số đo
+Khoá `severity_counts` ghi bằng int Nessus (0,2), đọc bằng chuỗi (`'MEDIUM'`).
+19 finding, `severity_breakdown` tổng **0**, 2 finding MEDIUM vô hình. Hàm chấm điểm
+**không thể trả về giá trị nào khác 100**. Và bản quét nguồn không có credential.
+
+### 3. AQ-021 — 399 vs 64 lỗ hổng, và Daily Brief tự mâu thuẫn 3.4 lần
+`assets.json` cộng ra 399; `nessus_status.json` nói 64. Daily Brief in `total_findings: 64`
+cạnh một thiết bị đơn lẻ có `vulnerability_count: 215`. Bản quét **157 giờ tuổi**,
+`scanner_status: "running"`, và thành phần `asset` (20% trọng số) vẫn chấm 100/100 mà
+không nhắc tới tuổi.
+
+---
+
+# TOP 3 HIGH ISSUES
+
+### 1. AQ-022 — `HANDOFF.md` in số cache dưới lời cam kết "đọc thẳng từ state/"
+602 vs 577 thật, cùng dấu thời gian với `TECHNICAL_DEBT.md` in 577. Cả bảng "Cổng merge"
+của HANDOFF là ảnh chụp 16 phút trước. Và nó lặp lại lỗi `s.get('success', True)` nên
+dòng "0 thất bại" là giả ở cả hai tài liệu.
+
+### 2. AQ-023 — Thành phần `firewall` là hằng số 90
+Không đọc ba profile, không đọc `blocked_connections` — dù cả hai đã được thu thập và
+ghi vào state. Chỉ có hai đầu ra: 20 hoặc 90. `pipeline_field_audit.py` không bắt được
+lớp này vì **không trường nào bị đọc sai — đơn giản là không trường nào được đọc**.
+
+### 3. AQ-024 — Portal in 577 mối đe doạ; sự thật là 369
+Cùng tệp state, `IOC_QUALITY_REPORT.md` nói đúng (369 + 208 tiếng ồn), màn hình nói sai.
+Kèm `|| 'MEDIUM'`: chỉ báo thiếu severity được portal **bịa** cho một mức nghiêm trọng.
+
+---
+
+## KẾT LUẬN VÒNG 3
+
+Yêu cầu đặt ra: *nếu hệ thống nói Risk = 10 thì phải chứng minh được tại sao là 10.*
+
+Chứng minh được **phép tính** (10.42 → 10, trọng số tổng 1.0, không sai số học).
+**Không** chứng minh được **con số**: 58% của nó dựng trên hai bản ghi dán nhãn sai,
+4% là hằng số, 6% đến từ một hàm không thể trả về giá trị khác, và 20% dựa trên dữ liệu
+157 giờ tuổi không được khai báo là cũ.
+
+**Risk = 10 là một con số có thật về một hệ thống không tồn tại.** Giá trị đúng, với
+cùng công thức và cùng dữ liệu đã lọc đúng, là **4**.
+
+Đây chính xác là điều đã dự báo ở cuối vòng 2 khi hoãn Executive Narrative: số liệu
+"đúng field nhưng sai sự thật". Vòng 3 đo được mức lệch — **2.4 lần** — và định vị
+được nó nằm ở hai bản ghi cụ thể trong một tệp cụ thể tại một dòng mã cụ thể.
+
+Thứ tự đề xuất: **AQ-019 → AQ-020 → AQ-021 → AQ-013 → AQ-022 → AQ-023 → AQ-024 →**
+phần còn lại của vòng 1–2 → **rồi mới Narrative.**
+
+---
+
+*Vòng 3, CHIEF AUDITOR 2026-09-14. Read-only: không file production nào bị sửa, không
+commit, không push, không merge. Mọi con số đối chiếu với `state/` lúc 07:53–07:55 và
+với working tree chưa commit của Builder.*

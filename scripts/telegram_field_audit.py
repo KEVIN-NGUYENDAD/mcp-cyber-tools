@@ -206,10 +206,67 @@ def audit_file(filename):
     return findings
 
 
+# --------------------------------------------------------------------------
+# Lượt hai: khẳng định KHÔNG đọc trường nào
+# --------------------------------------------------------------------------
+#
+# Lượt một kiểm các TRƯỜNG được đọc. Một dòng bịa đặt không đọc trường nào cả,
+# nên nó đạt điểm audit tuyệt đối — đó là lỗ hổng cấu trúc của chính bộ audit
+# này, và nó đã để lọt hai thứ suốt nhiều sprint:
+#
+#     "Digital signature verified"     <- khong co khoa ky nao trong repo
+#     "Persistence Mechanisms (23%)"   <- bon hang so, mot muc khong ton tai
+#
+# Lượt hai đi tìm đúng loại câu đó: phần trăm viết cứng và từ vựng khẳng định
+# đã-xác-minh, trong chuỗi template, không kèm một biểu thức `${...}` nào.
+
+CLAIM_WORDS = (
+    'signature verified', 'tamper-proof', 'tamper proof', 'hash verification',
+    'chain of custody complete', 'verified ✅',
+)
+
+# `(23%)` — phần trăm viết cứng trong một dòng không có biểu thức nào.
+HARDCODED_PERCENT_RE = re.compile(r'\(\s*\d{1,3}\s*%\s*\)')
+
+
+def audit_claims(filename):
+    """Dòng khẳng định mà không có dữ liệu nào phía sau."""
+    path = os.path.join(TELEGRAM_DIR, filename)
+    with io.open(path, encoding='utf-8') as handle:
+        lines = handle.read().splitlines()
+
+    findings = []
+    for number, line in enumerate(lines, 1):
+        stripped = line.strip()
+        if stripped.startswith('//') or stripped.startswith('*'):
+            continue
+        # Có `${...}` nghĩa là dòng này lấy giá trị từ đâu đó — không phải đích.
+        if '${' in line:
+            continue
+        lowered = line.lower()
+
+        for word in CLAIM_WORDS:
+            if word in lowered:
+                findings.append({
+                    'level': 'CLAIM', 'file': filename, 'line': number,
+                    'state': '-', 'field': word,
+                    'detail': 'khang dinh da xac minh, khong co du lieu phia sau: '
+                              + stripped[:70]})
+                break
+        else:
+            if HARDCODED_PERCENT_RE.search(line):
+                findings.append({
+                    'level': 'CLAIM', 'file': filename, 'line': number,
+                    'state': '-', 'field': 'hardcoded %',
+                    'detail': 'phan tram viet cung: ' + stripped[:70]})
+    return findings
+
+
 def audit():
     findings = []
     for filename in FILES:
         findings.extend(audit_file(filename))
+        findings.extend(audit_claims(filename))
     return findings
 
 
@@ -218,6 +275,14 @@ def main():
     missing = [f for f in findings if f['level'] == 'MISSING']
     unknown = [f for f in findings if f['level'] == 'UNKNOWN']
     ok = [f for f in findings if f['level'] == 'OK']
+
+    claims = [f for f in findings if f['level'] == 'CLAIM']
+    if claims:
+        print('KHANG DINH KHONG CO DU LIEU PHIA SAU (%d):' % len(claims))
+        for finding in claims:
+            print('  %s:%-5d %s' % (finding['file'], finding['line'],
+                                    finding['detail'][:100]))
+        print('')
 
     if missing:
         print('TRUONG KHONG TON TAI (%d):' % len(missing))
@@ -233,9 +298,10 @@ def main():
                                           finding['field'], finding['detail'][:60]))
 
     print('')
-    print('TONG: %d truy cap | %d dung | %d khong ton tai | %d khong kiem duoc'
-          % (len(findings), len(ok), len(missing), len(unknown)))
-    return 1 if missing else 0
+    print('TONG: %d muc | %d truong dung | %d khong ton tai | %d khong kiem duoc '
+          '| %d khang dinh khong co du lieu'
+          % (len(findings), len(ok), len(missing), len(unknown), len(claims)))
+    return 1 if (missing or claims) else 0
 
 
 if __name__ == '__main__':

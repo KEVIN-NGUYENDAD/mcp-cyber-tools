@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T07:54:38.837278
+Cập nhật: 2026-09-14T08:02:15.645655
 
 ## Sprint vừa xong
 
 | | |
 |---|---|
-| Commit | `1c8a386` |
+| Commit | `e8ba09b` |
 | Branch | `develop` |
-| Tiêu đề | Merge pull request #41 from KEVIN-NGUYENDAD/feature/ioc-data-quality |
+| Tiêu đề | Merge pull request #42 from KEVIN-NGUYENDAD/feature/kill-green-defaults |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 ## Cổng merge
@@ -21,7 +21,7 @@ Cập nhật: 2026-09-14T07:54:38.837278
 | EMPTY | 5 |
 | BLIND | 0 |
 | FAIL | 0 |
-| Pipeline | 27 stage, 0 thất bại |
+| Pipeline | 28 stage, 0 thất bại |
 | Toàn vẹn bằng chứng | 0 vi phạm / 602 chỉ báo |
 
 ## Trạng thái thật (đọc từ state/)
@@ -55,7 +55,7 @@ Cập nhật: 2026-09-14T07:54:38.837278
 | **Scheduled Task Execution** | blind |
 | **USB Device Activity** | blind |
 
-_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (0.3 giờ trước)._
+_Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là của lần chạy tool_validator gần nhất (0.4 giờ trước)._
 
 ## Việc tiếp theo
 
