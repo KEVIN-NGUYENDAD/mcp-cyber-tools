@@ -44,6 +44,7 @@ if SCRIPT_DIR not in sys.path:
 
 import detection_quality  # noqa: E402
 import portal_field_audit  # noqa: E402
+import telegram_field_audit  # noqa: E402
 import tool_validator  # noqa: E402
 
 
@@ -92,6 +93,9 @@ def collect(validate=False):
     # repo nay, va lan nao cung im lang. No thuoc ve cong chan, khong phai mot
     # lan don dep.
     portal = portal_field_audit.audit()
+    # Lop Telegram nguy hiem hon portal o mot diem: mot tin nhan sai di toi
+    # dien thoai mot minh, khong co o nao ben canh de doi chieu.
+    telegram = telegram_field_audit.audit()
     pipeline = _read_json(os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json'))
 
     return {
@@ -102,6 +106,7 @@ def collect(validate=False):
         'tests_detail': tests_detail,
         'pipeline': pipeline,
         'portal': portal,
+        'telegram': telegram,
     }
 
 
@@ -135,6 +140,12 @@ def evaluate(data):
     if portal_missing:
         blockers.append('%d truong portal doc tu state khong ton tai'
                         % len(portal_missing))
+
+    telegram_missing = [f for f in (data.get('telegram') or [])
+                        if f['level'] == 'MISSING']
+    if telegram_missing:
+        blockers.append('%d truong telegram doc tu state khong ton tai'
+                        % len(telegram_missing))
 
     pipeline = data['pipeline'] or {}
     stages = pipeline.get('stages') or pipeline.get('results') or []
@@ -241,6 +252,9 @@ def write_debt(data, verdict):
     portal_missing = [f for f in (data.get('portal') or [])
                       if f['level'] == 'MISSING']
     add('| Trường portal đọc sai | %d |' % len(portal_missing))
+    telegram_missing = [f for f in (data.get('telegram') or [])
+                        if f['level'] == 'MISSING']
+    add('| Trường Telegram đọc sai | %d |' % len(telegram_missing))
     add('')
 
     if verdict['blockers']:
@@ -320,6 +334,10 @@ def main():
                       if f['level'] == 'MISSING']
     print('Trường portal      : %d đọc sai / %d truy cập'
           % (len(portal_missing), len(data.get('portal') or [])))
+    telegram_missing = [f for f in (data.get('telegram') or [])
+                        if f['level'] == 'MISSING']
+    print('Trường Telegram    : %d đọc sai / %d truy cập'
+          % (len(telegram_missing), len(data.get('telegram') or [])))
     print('Nợ kỹ thuật        : %s' % os.path.relpath(path, PROJECT_ROOT))
     print('')
 
