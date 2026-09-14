@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-09-14T07:35:18.728453",
+  "timestamp": "2026-09-14T07:53:41.981007",
   "domain": "sentinelops.fyi",
   "nameservers": [
+    "salvador.ns.porkbun.com.",
     "curitiba.ns.porkbun.com.",
     "fortaleza.ns.porkbun.com.",
-    "maceio.ns.porkbun.com.",
-    "salvador.ns.porkbun.com."
+    "maceio.ns.porkbun.com."
   ],
   "a_records": [
     "216.24.57.15",

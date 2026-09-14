@@ -19,7 +19,9 @@
     "coverage": "python scripts/refresh_sensor_coverage.py",
     "coverage:auto": "python scripts/refresh_sensor_coverage.py --auto-validate",
     "logs:enable": "powershell -ExecutionPolicy Bypass -File scripts/enable_forensic_logs.ps1",
-    "ioc:quality": "python scripts/ioc_quality.py"
+    "ioc:quality": "python scripts/ioc_quality.py",
+    "audit:pipeline": "python scripts/pipeline_field_audit.py",
+    "handoff": "python scripts/generate_handoff.py"
   },
   "keywords": [],
   "author": "",

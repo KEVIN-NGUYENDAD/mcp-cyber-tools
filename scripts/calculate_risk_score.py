@@ -80,6 +80,27 @@ class RiskScoreCalculator:
     def load_state(self, filename):
         return read_state_safe(self.state_dir / filename, dict)
 
+    def required(self, data, key, filename):
+        """Một khoá BẮT BUỘC. Thiếu thì nói ra, không thay bằng một con số.
+
+        AQ-003. `waap.get('score', 50)` đã chạy như vậy trong nhiều sprint:
+        `calculate_waap_score.py` đổi tên `score` -> `health_score`, consumer
+        không đổi theo, và mặc định 50 nhận lấy chỗ trống. Điểm WAAP thật là 80.
+        Năm phần trăm rủi ro — 38% của tổng điểm 13 — là một hằng số fallback
+        đeo nhãn số đo.
+
+        Đây chính là điều `.get(key, default)` làm: nó biến "trường này không tồn
+        tại" thành một giá trị trông như đã đo được. Không có ngoại lệ nào đáng
+        để giữ hành vi đó cho một trường bắt buộc: một con số sai đi xa hơn
+        nhiều so với một stage đỏ.
+        """
+        if key in data:
+            return data[key], None
+        note = ('%s thiếu khoá bắt buộc "%s" (có: %s)'
+                % (filename, key, ', '.join(sorted(data.keys())[:8]) or 'rỗng'))
+        self.notes.append(note)
+        return None, note
+
     # ------------------------------------------------------------------
     # COMPONENT HEALTH (0-100, cao = tốt)
     # ------------------------------------------------------------------
@@ -107,13 +128,24 @@ class RiskScoreCalculator:
 
     def analyze_crypto(self):
         crypto = self.load_state('crypto_inventory.json')
-        score = crypto.get('score', 50)
+        score, missing = self.required(crypto, 'score', 'crypto_inventory.json')
+        if score is None:
+            return None, 'Crypto: {}'.format(missing), {}
         return score, 'crypto inventory score {}'.format(score), {}
 
     def analyze_waap(self):
         waap = self.load_state('waap_score.json')
-        score = waap.get('score', 50)
-        return score, 'WAAP score {}'.format(score), {}
+        # `health_score` la ten that trong waap_score.json. Bo tro `score` KHONG
+        # phai de phong ho: no de mot tep cu (truoc lan doi ten) van doc duoc, va
+        # neu ca hai deu vang thi ham tra ve None -> thanh phan nay bi loai khoi
+        # phep tinh thay vi duoc doan la 50.
+        score, missing = self.required(waap, 'health_score', 'waap_score.json')
+        if score is None and 'score' in waap:
+            score = waap['score']
+            missing = None
+        if score is None:
+            return None, 'WAAP: {}'.format(missing), {}
+        return score, 'WAAP health_score {}'.format(score), {}
 
     def analyze_defender(self):
         defender = self.load_state('defender_status.json')
@@ -228,11 +260,33 @@ class RiskScoreCalculator:
         critical_count = 0
         high_count = 0
 
+        weight_available = 0.0
+        unmeasurable = []
+
         for name, analyzer in analyzers:
             health, detail, counts = analyzer()
-            health = max(0, min(100, int(health)))
             weight = WEIGHTS[name]
 
+            if health is None:
+                # AQ-003. Thành phần không đo được phải rời khỏi CẢ tử số lẫn
+                # mẫu số — đúng kỷ luật `points_available`. Cho nó một giá trị
+                # mặc định là cách cũ: điểm rủi ro vẫn ra một con số đẹp, và
+                # không ai biết một phần của con số đó chưa từng được đo.
+                unmeasurable.append(name)
+                component_scores[name] = None
+                self.factors.append({
+                    'name': name,
+                    'health': None,
+                    'weight': weight,
+                    'weight_counted': 0.0,
+                    'risk_contribution': None,
+                    'detail': detail,
+                    'measurable': False,
+                })
+                continue
+
+            health = max(0, min(100, int(health)))
+            weight_available += weight
             component_scores[name] = health
             weighted_health += weight * health
 
@@ -251,11 +305,25 @@ class RiskScoreCalculator:
                 'weight': weight,
                 'risk_contribution': round(weight * (100 - health), 2),
                 'detail': detail,
+                'measurable': True,
             })
 
-        overall_score = int(round(100 - weighted_health))
-        overall_score = max(0, min(100, overall_score))
-        risk_level = risk_level_from_score(overall_score)
+        # Chuẩn hoá theo trọng số THỰC SỰ đo được. Nếu không, mỗi thành phần
+        # không đo được sẽ lặng lẽ đóng góp 0 điểm sức khoẻ và đẩy rủi ro lên —
+        # một vùng mù đọc y hệt một mối nguy.
+        if weight_available <= 0:
+            overall_score = None
+            risk_level = 'UNMEASURED'
+        else:
+            overall_score = int(round(100 - weighted_health / weight_available))
+            overall_score = max(0, min(100, overall_score))
+        if unmeasurable:
+            self.notes.append(
+                'Không đo được {} thành phần ({}); điểm được chuẩn hoá trên {:.0%} '
+                'trọng số còn lại thay vì đoán giá trị thay thế.'
+                .format(len(unmeasurable), ', '.join(unmeasurable), weight_available))
+        if overall_score is not None:
+            risk_level = risk_level_from_score(overall_score)
 
         # Sàn nghiêm trọng: trung bình có trọng số làm loãng sự cố CRITICAL.
         # Đây chính là lỗi đã khiến Risk Score = 1 trong khi có 7 CRITICAL.

@@ -27,6 +27,9 @@ class IncidentEngine:
         self.state_dir = Path(__file__).parent.parent / 'state'
         self.incidents = []
         self.incident_counter = 1
+        # Luat khong chay duoc phai di kem ket qua. "0 su co" tren mot luat
+        # khong danh gia duoc doc y het "0 su co" tren mot may sach.
+        self.skipped_rules = []
         self.incidents_file = self.state_dir / 'incidents.json'
         self.load_existing_incidents()
 
@@ -166,7 +169,21 @@ class IncidentEngine:
         waap = self.load_state('waap_score.json')
 
         weak_ciphers = crypto.get('severity_breakdown', {}).get('CRITICAL', 0)
-        waap_score = waap.get('score', 100)
+
+        # SPRINT B. Dong nay tung la `waap.get('score', 100)`. Khoa `score` khong
+        # ton tai — ten that la `health_score` — nen moi lan chay deu nhan 100,
+        # va dieu kien `waap_score < 60` KHONG BAO GIO dung. Quy tac 5 da chet tu
+        # luc doi ten, im lang, khong mot dong log.
+        #
+        # Gia tri mac dinh 100 o day khong chi lam sai mot con so: no tat han mot
+        # luat phat hien. Khong doc duoc thi bo qua luat va NOI RA, thay vi cho
+        # no chay voi mot gia tri gia va bao "khong co gi".
+        waap_score = waap.get('health_score', waap.get('score'))
+        if waap_score is None:
+            self.skipped_rules.append(
+                'Quy tac 5 (weak crypto + WAAP thap): waap_score.json khong co '
+                '`health_score` lan `score`, khong danh gia duoc.')
+            return
 
         if weak_ciphers > 0 and waap_score < 60:
             self.create_incident(
@@ -362,6 +379,7 @@ class IncidentEngine:
             'total_incidents': len(self.incidents),
             'by_severity': {},
             'by_status': {'OPEN': len(self.incidents)},
+            'skipped_rules': self.skipped_rules,
             'incidents': self.incidents
         }
 

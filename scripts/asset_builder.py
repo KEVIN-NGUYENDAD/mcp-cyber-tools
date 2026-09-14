@@ -90,10 +90,25 @@ class TrustScoreEngine(object):
         đáng ngờ, nó là một thiết bị ta chưa hỏi đúng nguồn.
         """
         mac = (asset.get('mac') or '').strip()
+        source = 'assets.json'
         if not mac or mac.lower() == 'unknown':
+            mac = ((getattr(self, 'arp', None) or {})
+                   .get(asset.get('ip'), {}).get('mac') or '').strip()
+            source = 'arp -a'
+        if not mac or mac.lower() == 'unknown':
+            # Khong o trong assets.json, khong o trong bang ARP. Van la KHONG
+            # QUAN SAT DUOC, khong phai 0 diem: mot thiet bi khong tra loi ARP
+            # luc nay khong phai mot thiet bi dang ngo.
             return _component('mac_consistency', 0, 40, False,
-                              'assets.json không mang trường MAC')
+                              'không có MAC trong assets.json lẫn bảng ARP')
+        asset['mac'] = mac
+        asset['mac_source'] = source
         changes = entry.get('mac_changes', 0)
+        previous = entry.get('mac')
+        if previous and previous != mac:
+            changes += 1
+        entry['mac'] = mac
+        entry['mac_changes'] = changes
         if changes == 0:
             return _component('mac_consistency', 40, 40, True, 'MAC ổn định')
         if changes == 1:
@@ -205,8 +220,12 @@ class TrustScoreEngine(object):
 
     @staticmethod
     def trust_level(score):
+        # AQ-008. Ten cu la `CRITICAL_ASSET`, va no gop hai cau hoi khac han:
+        # "ta tin dinh danh may nay toi dau" (cong thuc tinh cai nay) va "may
+        # nay quan trong toi dau" (nhan doc len nhu cai nay). Mot may in mang
+        # khong bao gio tro thanh tai san trong yeu chi vi MAC cua no on dinh.
         if score >= 85:
-            return 'CRITICAL_ASSET'
+            return 'IDENTITY_VERIFIED'
         if score >= 70:
             return 'TRUSTED'
         if score >= 50:
@@ -227,6 +246,23 @@ class TrustScoreEngine(object):
         if meta['legacy']:
             print('[WARN] assets.json vẫn dùng khoá di sản "all_assets"; '
                   'ghi lại bằng khoá chính thức "assets"', file=sys.stderr)
+
+        # AQ-008. `mac_consistency` la thanh phan lon nhat (40/100) va luon
+        # khong-quan-sat-duoc vi assets.json khong mang truong MAC — nen moi may
+        # deu duoc cham 60/60 -> chuan hoa thanh 100, va `trust_score` co phuong
+        # sai bang 0 tren 11/11 may. Ky luat `points_available` dung ve nguyen
+        # tac, nhung ap o day no xoa mat chinh bien phan biet lon nhat.
+        #
+        # Bang ARP co san va `shadow_asset_detector` da doc no tu truoc. May nao
+        # dang tren mang thi co MAC that; may nao khong thi VAN khong quan sat
+        # duoc — va do la phuong sai that, khong phai phuong sai bia ra.
+        arp = {}
+        try:
+            import ioc_attribution
+            arp = ioc_attribution.arp_devices()
+        except Exception as error:  # noqa: BLE001
+            print('[WARN] khong doc duoc bang ARP: %s' % error, file=sys.stderr)
+        self.arp = arp
 
         history = self.load_trust_history()
         now = datetime.now().isoformat()
@@ -280,8 +316,40 @@ class TrustScoreEngine(object):
             counts.append(asset.get('vulnerability_count', 0) or 0)
             del counts[:-20]
 
+        # AQ-008. Mot chi so co phuong sai bang 0 tren 100% mau phai TU NOI ra
+        # dieu do. `trust_score: 100` tren 11/11 may khong phai mot thanh tich —
+        # no la mot hang so doi lot phep do, va doc no nhu mot ket qua la cach
+        # mot bang dieu khien tu tran an minh.
+        scores = [a['trust_score'] for a in assets
+                  if isinstance(a.get('trust_score'), int)]
+        variance = None
+        if len(scores) >= 2:
+            mean = sum(scores) / float(len(scores))
+            variance = round(sum((x - mean) ** 2 for x in scores)
+                             / float(len(scores)), 2)
+        bases = sorted(set((a.get('trust_basis') or {}).get('points_available')
+                           for a in assets))
+        summary = {
+            'scored': len(scores),
+            'total': len(assets),
+            'mean': round(sum(scores) / float(len(scores)), 1) if scores else None,
+            'variance': variance,
+            'discriminating': None if variance is None else variance > 0.0,
+            'points_available_seen': bases,
+            'note': ('Phương sai %s trên %d tài sản: thang điểm %s phân biệt được '
+                     'các máy này. Mẫu số khác nhau giữa các máy (%s điểm khả '
+                     'dụng) nên hai điểm 100 KHÔNG cùng nghĩa.'
+                     % (variance, len(scores),
+                        'chưa' if not variance else 'có',
+                        ', '.join(str(b) for b in bases if b is not None))),
+        }
+        print('     phuong sai=%s discriminating=%s basis=%s'
+              % (variance, summary['discriminating'],
+                 [b for b in bases if b is not None]))
+
         try:
-            asset_store.write_assets(assets, extra={'trust_scored_at': now})
+            asset_store.write_assets(assets, extra={'trust_scored_at': now,
+                                                    'trust_summary': summary})
         except asset_store.AssetStoreError as error:
             print('[FAIL] không ghi được assets.json: %s' % error, file=sys.stderr)
             return False
