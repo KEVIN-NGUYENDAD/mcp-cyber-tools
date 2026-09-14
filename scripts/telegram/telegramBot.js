@@ -12,6 +12,28 @@ dotenv.config();
 // waap_status.json — nen no luon undefined, va `undefined >= 60` luon false:
 // lenh do bao WAAP mau do vinh vien. `/analytics` thi tu cong diem tu
 // security_summary va ra so that. Hai lenh, mot so lieu, mot duong hong.
+// SPRINT A - KILL GREEN DEFAULTS
+//
+// `let risk = { overall_score: 0 }` cong voi `score >= 40 ? ... : 'LOW'` nghia
+// la: khong doc duoc risk_score.json -> tin nhan bao "0/100 LOW". Do la ket qua
+// an toan nhat co the co, sinh ra tu viec khong biet gi ca — va no di toi dien
+// thoai luc nua dem, mot minh, khong co gi de doi chieu.
+//
+// Thieu du lieu tu day tra ve UNKNOWN.
+function riskView(risk) {
+  const raw = risk && risk.overall_score;
+  const known = typeof raw === 'number' && Number.isFinite(raw);
+  if (!known) {
+    return { known: false, score: null, level: 'UNKNOWN', emoji: '🟣',
+             scoreText: '—/100', levelText: 'UNKNOWN (khong doc duoc du lieu)' };
+  }
+  const level = risk.risk_level
+    || (raw >= 80 ? 'CRITICAL' : raw >= 60 ? 'HIGH' : raw >= 40 ? 'MEDIUM' : 'LOW');
+  const emoji = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢' }[level] || '⚪';
+  return { known: true, score: raw, level, emoji,
+           scoreText: `${raw}/100`, levelText: level };
+}
+
 function waapScoreFrom(waap) {
   const summary = (waap && waap.security_summary) || {};
   return (summary.ssl_valid ? 60 : 0)
@@ -126,7 +148,7 @@ All incidents with details
   async handleStatus(msg) {
     console.log('[CMD] /status received from', msg.chat.id);
     try {
-      let riskScore = { overall_score: 0 };
+      let riskScore = null;
       let assets = { total_assets: 0 };
       let incidents = { total_incidents: 0, critical: 0, high: 0 };
 
@@ -143,11 +165,11 @@ All incidents with details
         incidents = JSON.parse(fs.readFileSync(paths.incidents, 'utf8'));
       }
 
-      const score = riskScore.overall_score || 0;
+      const rv = riskView(riskScore);
+      const score = rv.scoreText;
       // risk_score.json is risk-ascending and ships its own risk_level (which
       // carries the severity floor); the bands are only a fallback.
-      const riskLevel = riskScore.risk_level ||
-        (score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW');
+      const riskLevel = rv.levelText;
       const riskColor = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢' }[riskLevel] || '⚪';
 
       const statusMsg = `*━━━━━ SECURITY STATUS ━━━━━*
@@ -239,7 +261,7 @@ Score: *${score}/100*
 
       let assets = { total_assets: 0 };
       let incidents = { total_incidents: 0, by_severity: { CRITICAL: 0, HIGH: 0 } };
-      let risk = { overall_score: 0 };
+      let risk = null;
       let waap = { security_summary: {}, ssl_status: 'UNKNOWN', days_until_expiry: 0 };
       let domain = { dns_health: 'N/A' };
 
@@ -262,7 +284,7 @@ Score: *${score}/100*
 
       if (fs.existsSync(paths.riskScore)) {
         risk = JSON.parse(fs.readFileSync(paths.riskScore, 'utf8'));
-        console.log('[EXEC-RISK] Loaded:', { score: risk.overall_score });
+        console.log('[EXEC-RISK] Loaded:', { score: risk && risk.overall_score });
       } else {
         console.log('[EXEC-ERROR] Risk score file not found at:', paths.riskScore);
       }
@@ -292,7 +314,7 @@ Score: *${score}/100*
         totalIncidents: incidents.total_incidents,
         critical: incidents.by_severity?.CRITICAL,
         high: incidents.by_severity?.HIGH,
-        riskScore: risk.overall_score,
+        riskScore: risk && risk.overall_score,
         waapScore: waapScoreFrom(waap),
         dnsHealth: dnsHealthPercent
       });
@@ -321,11 +343,11 @@ Score: *${score}/100*
         : `  └ Khong co phat hien tuong quan${(findings.coverage_gaps || []).length
             ? ` (${findings.coverage_gaps.length} rule khong ket luan duoc)` : ''}`;
 
-      const score = risk.overall_score || 0;
       // Prefer the engine's own risk_level - see /status above.
-      const scoreLevel = risk.risk_level ||
-        (score >= 80 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 40 ? 'MEDIUM' : 'LOW');
-      const scoreEmoji = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢' }[scoreLevel] || '⚪';
+      const execRisk = riskView(risk);
+      const score = execRisk.scoreText;
+      const scoreLevel = execRisk.levelText;
+      const scoreEmoji = execRisk.emoji;
 
       const execWaapScore = waapScoreFrom(waap);
       const waapEmoji = execWaapScore >= 80 ? '✅' : execWaapScore >= 60 ? '⚠️' : '🔴';
@@ -354,7 +376,7 @@ ${incidents.total_incidents || 0} Open Incidents
 
 *🎯 OVERALL RISK*
 ${scoreEmoji} *${scoreLevel}*
-  Score: ${score}/100
+  Score: ${score}
 
 *🔒 APPLICATION SECURITY*
 ${waapEmoji} SSL/TLS: ${waap.ssl_status || 'N/A'}
@@ -505,7 +527,7 @@ ${findingLines}
 
       let incidents = { total_incidents: 0, by_severity: { CRITICAL: 0, HIGH: 0 } };
       let assets = { total_assets: 0, assets: [] };
-      let risk = { overall_score: 0 };
+      let risk = null;
       let waap = { security_summary: {} };
       let domain = { dns_complete: {} };
 
@@ -528,7 +550,7 @@ ${findingLines}
 
       if (fs.existsSync(paths.riskScore)) {
         risk = JSON.parse(fs.readFileSync(paths.riskScore, 'utf8'));
-        console.log('[ANALYTICS-RISK] Loaded:', { score: risk.overall_score });
+        console.log('[ANALYTICS-RISK] Loaded:', { score: risk && risk.overall_score });
       } else {
         console.log('[ANALYTICS-ERROR] Risk score file not found at:', paths.riskScore);
       }
@@ -572,7 +594,7 @@ ${findingLines}
         totalIncidents: incidents.total_incidents,
         critical: incidents.by_severity?.CRITICAL,
         high: incidents.by_severity?.HIGH,
-        riskScore: risk.overall_score,
+        riskScore: risk && risk.overall_score,
         waapScore: waapScore,
         dnsHealth: dnsHealthPercent
       });
@@ -583,7 +605,7 @@ ${findingLines}
       const analyticsIncidents = incidents.total_incidents;
       const analyticsCritical = incidents.by_severity?.CRITICAL;
       const analyticsHigh = incidents.by_severity?.HIGH;
-      const analyticsRisk = risk.overall_score;
+      const analyticsRisk = riskView(risk).score;
 
       console.error('[ANALYTICS-FINAL]', JSON.stringify({
         assets: analyticsAssets,
@@ -608,7 +630,7 @@ ${analyticsIncidents} Incidents Detected
 🟠 ${analyticsHigh || 0} High Severity
 
 *Risk Assessment*
-Score: ${risk.overall_score || 0}/100
+Score: ${riskView(risk).scoreText}
 
 *Application Security*
 WAAP Score: ${waapScore}/100

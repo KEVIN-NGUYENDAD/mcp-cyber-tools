@@ -55,7 +55,9 @@ async function loadAllData() {
       fetch(`${baseUrl}/assets.json`).then(r => r.json()).catch(() => ({ assets: [] })),
       fetch(`${baseUrl}/shadow_assets.json`).then(r => r.json()).catch(() => ({ shadows: [] })),
       fetch(`${baseUrl}/incidents.json`).then(r => r.json()).catch(() => ({ incidents: [] })),
-      fetch(`${baseUrl}/risk_score.json`).then(r => r.json()).catch(() => ({ overall_score: 0 })),
+      // null chu khong phai { overall_score: 0 }: mot tep khong doc duoc phai
+      // doc ra UNKNOWN, khong phai diem 0 (tuc la "khong co rui ro nao").
+      fetch(`${baseUrl}/risk_score.json`).then(r => r.json()).catch(() => null),
       fetch(`${baseUrl}/system_health.json`).then(r => r.json()).catch(() => ({})),
       fetch(`${baseUrl}/defender_status.json`).then(r => r.json()).catch(() => ({})),
       fetch(`${baseUrl}/firewall_status.json`).then(r => r.json()).catch(() => ({})),
@@ -73,7 +75,7 @@ async function loadAllData() {
     stateData.assets = assets.value || { assets: [] };
     stateData.shadowAssets = shadowAssets.value || { shadows: [] };
     stateData.incidents = incidents.value || { incidents: [] };
-    stateData.risk = risk.value || { overall_score: 0 };
+    stateData.risk = risk.value || null;
     stateData.health = health.value || {};
     stateData.defender = defender.value || {};
     stateData.firewall = firewall.value || {};
@@ -188,7 +190,8 @@ function renderOverviewPage() {
 
     const assets = stateData.assets.assets || [];
     const incidents = stateData.incidents.incidents || [];
-    const riskScore = stateData.risk.overall_score || 0;
+    const riskView_ = riskView(stateData.risk);
+    const riskScore = riskView_.known ? riskView_.score : null;
     const alerts = stateData.alerts.sent_alerts || [];
 
     // Calculate metrics
@@ -209,7 +212,7 @@ function renderOverviewPage() {
 
     if (kpiIncidents) kpiIncidents.textContent = incidents.length;
     if (kpiIncidentsSub) kpiIncidentsSub.textContent = `${criticalIncidents} critical`;
-    if (kpiRisk) kpiRisk.textContent = riskScore;
+    if (kpiRisk) kpiRisk.textContent = scoreText(riskScore);
     if (kpiRiskSub) kpiRiskSub.textContent = getRiskLevel(riskScore);
 
     // Calculate WAAP Health Score from security_summary
@@ -257,7 +260,7 @@ function renderOverviewPage() {
     if (mcAssets) mcAssets.textContent = assets.length;
     if (mcIncidents) mcIncidents.textContent = incidents.length;
     if (mcCritical) mcCritical.textContent = criticalIncidents;
-    if (mcRisk) mcRisk.textContent = riskScore + '/100';
+    if (mcRisk) mcRisk.textContent = scoreText(riskScore, '/100');
     if (mcFresh) mcFresh.textContent = minutesOld + ' min';
 
     // Recent Activity
@@ -1187,8 +1190,10 @@ function renderAnalytics() {
     if (radarCdn) radarCdn.textContent = cdnActive;
     if (radarProt) radarProt.textContent = protActive;
 
-    // SOC Score Gauge
-    const riskScore = stateData.risk?.overall_score || 0;
+    // SOC Score Gauge. Khong doc duoc rui ro thi kim dong ho KHONG ve o 0 —
+    // 0 tren mot thang rui ro tang dan nghia la "hoan toan an toan".
+    const gaugeView = riskView(stateData.risk);
+    const riskScore = gaugeView.known ? gaugeView.score : null;
     const dnsScore = dnsPercent !== '-' ? parseInt(dnsPercent) : 0;
 
     const gaugeRisk = document.getElementById('gauge-risk');
@@ -1198,8 +1203,8 @@ function renderAnalytics() {
     const gaugeDns = document.getElementById('gauge-dns');
     const gaugeDnsBar = document.getElementById('gauge-dns-bar');
 
-    if (gaugeRisk) gaugeRisk.textContent = riskScore + '/100';
-    if (gaugeRiskBar) gaugeRiskBar.style.width = riskScore + '%';
+    if (gaugeRisk) gaugeRisk.textContent = scoreText(riskScore, '/100');
+    if (gaugeRiskBar) gaugeRiskBar.style.width = (riskScore === null ? 0 : riskScore) + '%';
     if (gaugeWaap) gaugeWaap.textContent = waapScore + '/100';
     if (gaugeWaapBar) gaugeWaapBar.style.width = waapScore + '%';
     if (gaugeDns) gaugeDns.textContent = dnsScore + '%';
@@ -1217,7 +1222,8 @@ function renderExecutiveScorecard() {
   try {
     const incidents = stateData.incidents?.incidents || [];
     const assets = stateData.assets?.assets || [];
-    const riskScore = stateData.risk?.overall_score || 0;
+    const scorecardView = riskView(stateData.risk);
+    const riskScore = scorecardView.known ? scorecardView.score : null;
     console.log('[RENDER] renderExecutiveScorecard:', { incidents: incidents.length, assets: assets.length, riskScore });
 
     // Calculate metrics
@@ -1262,7 +1268,7 @@ function renderExecutiveScorecard() {
     const scoreThreat = document.getElementById('score-threat');
     const scoreThreatDetail = document.getElementById('score-threat-detail');
 
-    if (scoreRisk) scoreRisk.textContent = riskScore;
+    if (scoreRisk) scoreRisk.textContent = scoreText(riskScore);
     if (scoreRiskLevel) scoreRiskLevel.textContent = getThreatLevel(riskScore);
     if (scoreWaap) scoreWaap.textContent = waapScore > 0 ? waapScore : '-';
     if (scoreDns) scoreDns.textContent = dnsPercent + '%';
@@ -1280,7 +1286,7 @@ function renderExecutiveScorecard() {
     const summaryDns = document.getElementById('summary-dns');
     const summaryWaap = document.getElementById('summary-waap');
 
-    if (summaryRisk) summaryRisk.textContent = riskScore + '/100';
+    if (summaryRisk) summaryRisk.textContent = scoreText(riskScore, '/100');
     if (summaryAtRisk) summaryAtRisk.textContent = atRiskAssets + ' of ' + assets.length;
     if (summaryCritVulns) summaryCritVulns.textContent = critVulns;
     if (summaryUrgent) summaryUrgent.textContent = criticalIncidents + ' Critical, ' + highIncidents + ' High';
@@ -1319,7 +1325,8 @@ function renderExecutiveScorecard() {
     // Recommendations
     const recommendations = [];
     if (critVulns > 0) recommendations.push('🔴 Address ' + critVulns + ' critical vulnerabilities immediately');
-    if (riskScore > 70) recommendations.push('🔴 Risk score is HIGH - escalate to security team');
+    if (riskScore === null) recommendations.push('🟣 Risk score UNKNOWN - khong doc duoc risk_score.json, chua ket luan duoc gi');
+    else if (riskScore > 70) recommendations.push('🔴 Risk score is HIGH - escalate to security team');
     if (dnsPercent < 100) recommendations.push('🟠 Complete DNS security configuration (currently ' + dnsPercent + '%)');
     if (waapScore < 80) recommendations.push('🟠 Enhance WAAP protection - score at ' + waapScore + '/100');
     if (highVulns > 5) recommendations.push('🟡 High severity vulnerabilities require remediation planning');
@@ -1348,7 +1355,11 @@ function getRiskDetail(score) {
     case 'CRITICAL': return 'Immediate action required';
     case 'HIGH': return 'High priority remediation needed';
     case 'MEDIUM': return 'Medium priority - plan remediation';
-    default: return 'Acceptable risk level';
+    // UNKNOWN KHONG duoc roi vao nhanh `default` cua muc thap. "Acceptable risk
+    // level" la cau tra loi cho mot phep do da lam; o day chua co phep do nao.
+    case 'UNKNOWN': return 'Chua doc duoc du lieu rui ro - chua ket luan duoc';
+    case 'LOW': return 'Acceptable risk level';
+    default: return 'Chua xac dinh';
   }
 }
 
@@ -1404,17 +1415,56 @@ function renderTimeline() {
 // risk_score.json is risk-ascending: a higher overall_score means more danger.
 // The engine also publishes risk_level, which carries the severity floor that
 // raw thresholds cannot reproduce - so prefer it and keep the bands as fallback.
-const RISK_EMOJI = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢' };
+const RISK_EMOJI = { CRITICAL: '🔴', HIGH: '🟠', MEDIUM: '🟡', LOW: '🟢', UNKNOWN: '🟣' };
 
 function bandFromScore(score) {
+  if (typeof score !== 'number' || !Number.isFinite(score)) return 'UNKNOWN';
   if (score >= 80) return 'CRITICAL';
   if (score >= 60) return 'HIGH';
   if (score >= 40) return 'MEDIUM';
   return 'LOW';
 }
 
+// SPRINT A - KILL GREEN DEFAULTS
+//
+// `{ overall_score: 0 }` la gia tri du phong khi khong doc duoc risk_score.json,
+// va `score >= 40 ? ... : 'LOW'` bien no thanh chu "LOW" mau xanh. Nghia la:
+// khong lay duoc du lieu rui ro -> man hinh bao rui ro THAP. Do la ket qua an
+// toan nhat co the co, sinh ra tu viec khong biet gi ca.
+//
+// Mot he thong giam sat sai theo huong nay se khong bao gio bi phat hien: no chi
+// im lang dung luc dang le phai keu. Thieu du lieu tu day tra ve UNKNOWN, va
+// UNKNOWN khong co mau xanh.
+function riskView(risk) {
+  const raw = risk && risk.overall_score;
+  const known = typeof raw === 'number' && Number.isFinite(raw);
+  if (!known) {
+    return {
+      known: false, score: null, level: 'UNKNOWN',
+      scoreText: '—', levelText: 'UNKNOWN',
+      reason: (risk && risk.risk_level === 'UNMEASURED')
+        ? 'Engine khong do duoc thanh phan nao'
+        : 'Khong doc duoc risk_score.json'
+    };
+  }
+  const level = risk.risk_level || bandFromScore(raw);
+  return { known: true, score: raw, level,
+           scoreText: String(raw), levelText: level, reason: null };
+}
+
+const UNKNOWN_COLOR = '#9B8AFB';
+
+// `null + '/100'` ra chuoi "null/100". Mot man hinh bao "null" con trung thuc
+// hon bao "0", nhung van la mot loi hien thi — nen moi cho in diem rui ro di
+// qua dung mot ham nay.
+function scoreText(score, suffix) {
+  const text = (typeof score === 'number' && Number.isFinite(score))
+    ? String(score) : '—';
+  return suffix ? text + suffix : text;
+}
+
 function getThreatLevel(score) {
-  return stateData.risk?.risk_level || bandFromScore(score);
+  return riskView(stateData.risk).level;
 }
 
 function getRiskLevel(score) {
@@ -1501,8 +1551,8 @@ function renderAssetCommandCenter() {
       'assets-total': assets.length,
       'assets-online': `${liveCount} tra loi ARP`,
       'assets-trust': avgTrust === null ? 'chua cham' : avgTrust,
-      'assets-risk': risk.overall_score || 0,
-      'assets-risk-level': getRiskLevel(risk.overall_score || 0),
+      'assets-risk': riskView(risk).scoreText,
+      'assets-risk-level': riskView(risk).levelText,
       'assets-shadow': shadowAssets.length
     };
 
@@ -1633,9 +1683,9 @@ function renderDailyBriefArchive() {
 
     // Update KPIs
     const els = {
-      'brief-score': risk.overall_score || 0,
+      'brief-score': riskView(risk).scoreText,
       'brief-score-date': new Date(risk.timestamp).toLocaleDateString() || '-',
-      'brief-risk': getRiskLevel(risk.overall_score || 0)
+      'brief-risk': riskView(risk).levelText
     };
 
     Object.entries(els).forEach(([id, value]) => {
@@ -1656,7 +1706,9 @@ function renderDailyBriefArchive() {
       if (criticalCount > 0) recommendations.push(`Investigate ${criticalCount} critical incidents`);
       if (highCount > 0) recommendations.push(`Review ${highCount} high-priority issues`);
       // Risk-ascending: a HIGH score is the alarming case, not a low one.
-      if ((risk.overall_score || 0) >= 60) recommendations.push(`Risk score ${risk.overall_score}/100 - take immediate action`);
+      const rv = riskView(risk);
+      if (!rv.known) recommendations.push(`Risk score UNKNOWN (${rv.reason}) - khong ket luan duoc muc rui ro`);
+      else if (rv.score >= 60) recommendations.push(`Risk score ${rv.score}/100 - take immediate action`);
       if (recommendations.length === 0) recommendations.push('System operating normally');
 
       const html = recommendations.map((rec, idx) => `

@@ -1,17 +1,17 @@
 {
-  "timestamp": "2026-09-14T07:35:41.065501",
+  "timestamp": "2026-09-14T07:54:03.899218",
   "question": "Cái gì quan trọng nhất hôm nay?",
   "total_items_analyzed": 6,
   "top_5_critical": [
     {
       "source": "risk",
-      "priority_score": 50,
-      "title": "Cải thiện Waap",
+      "priority_score": 24,
+      "title": "Cải thiện Threat Hunting",
       "category": "Risk Management",
       "priority": "MEDIUM",
-      "description": "waap score chỉ 50/100",
-      "impact": "Ảnh hưởng đến Risk Score: 13",
-      "reason": "waap component weak",
+      "description": "threat_hunting score chỉ 76/100",
+      "impact": "Ảnh hưởng đến Risk Score: 10",
+      "reason": "threat_hunting component weak",
       "affected_assets": [],
       "steps": [
         "Phân tích chi tiết",
@@ -21,13 +21,13 @@
     },
     {
       "source": "risk",
-      "priority_score": 24,
-      "title": "Cải thiện Threat Hunting",
+      "priority_score": 20,
+      "title": "Cải thiện Waap",
       "category": "Risk Management",
       "priority": "MEDIUM",
-      "description": "threat_hunting score chỉ 76/100",
-      "impact": "Ảnh hưởng đến Risk Score: 13",
-      "reason": "threat_hunting component weak",
+      "description": "waap score chỉ 80/100",
+      "impact": "Ảnh hưởng đến Risk Score: 10",
+      "reason": "waap component weak",
       "affected_assets": [],
       "steps": [
         "Phân tích chi tiết",
@@ -42,7 +42,7 @@
       "category": "Risk Management",
       "priority": "MEDIUM",
       "description": "security_events score chỉ 87/100",
-      "impact": "Ảnh hưởng đến Risk Score: 13",
+      "impact": "Ảnh hưởng đến Risk Score: 10",
       "reason": "security_events component weak",
       "affected_assets": [],
       "steps": [
