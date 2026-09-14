@@ -1,11 +1,47 @@
 {
-  "timestamp": "2026-09-14T08:06:29.046972",
+  "timestamp": "2026-09-14T08:13:19.613226",
   "question": "C\u00f3 s\u1ef1 c\u1ed1 g\u00ec c\u1ea7n x\u1eed l\u00fd?",
-  "total_incidents": 0,
-  "by_severity": {},
+  "total_incidents": 2,
+  "by_severity": {
+    "HIGH": 2
+  },
   "by_status": {
-    "OPEN": 0
+    "OPEN": 2
   },
   "skipped_rules": [],
-  "incidents": []
+  "incidents": [
+    {
+      "incident_id": "INC-0002",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "R\u1ee7i ro t\u0103ng v\u1ecdt: Risk Level = HIGH",
+      "description": "Risk Level escalation to HIGH",
+      "assets": [
+        "192.168.0.51"
+      ],
+      "asset_scope": "LOCAL_HOST",
+      "evidence": [
+        "Risk Score: 31",
+        "Th\u00e0nh ph\u1ea7n y\u1ebfu: threat_hunting"
+      ],
+      "recommended_action": "\u01afu ti\u00ean c\u1ea3i thi\u1ec7n c\u00e1c th\u00e0nh ph\u1ea7n y\u1ebfu",
+      "created_at": "2026-09-14T08:13:19.562925"
+    },
+    {
+      "incident_id": "INC-0003",
+      "severity": "HIGH",
+      "status": "OPEN",
+      "title": "S\u1ef1 ki\u1ec7n nghi ng\u1edd: Level Change",
+      "description": "Level Change",
+      "assets": [
+        "192.168.0.51"
+      ],
+      "asset_scope": "LOCAL_HOST",
+      "evidence": [
+        "M\u1ee9c r\u1ee7i ro thay \u0111\u1ed5i: LOW \u2192 HIGH"
+      ],
+      "recommended_action": "\u0110i\u1ec1u tra s\u1ef1 ki\u1ec7n",
+      "created_at": "2026-09-14T08:13:19.564925"
+    }
+  ]
 }

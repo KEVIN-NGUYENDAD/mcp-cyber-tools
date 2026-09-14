@@ -59,6 +59,10 @@ HUNTING_PENALTY = {
 }
 
 
+# Bản quét lỗ hổng cũ hơn ngưỡng này thì kết luận từ nó phải tự khai tuổi.
+ASSET_SCAN_STALE_HOURS = 48
+
+
 def risk_level_from_score(score):
     """Thang rủi ro tăng dần - khớp với mọi consumer (portal, server, Telegram)."""
     if score >= 80:
@@ -106,6 +110,14 @@ class RiskScoreCalculator:
     # ------------------------------------------------------------------
 
     def analyze_assets(self):
+        """AQ-021. Thành phần này (20% trọng số) chấm 100/100 trên một bản quét
+        157 giờ tuổi, và câu "0 lỗ hổng CRITICAL, 0 HIGH" — một phát biểu về
+        ngày 7/9 — được trình bày như trạng thái hôm nay.
+
+        Một lỗ hổng CRITICAL xuất hiện hôm nay sẽ không chạm tới điểm rủi ro cho
+        tới lần quét kế tiếp, và không có gì nói cho người đọc biết điều đó.
+        Tuổi của bằng chứng là một phần của kết luận, không phải chú thích.
+        """
         assets = self.load_state('assets.json')
         crit, high = 0, 0
         for asset in assets.get('assets', []) or []:
@@ -114,6 +126,25 @@ class RiskScoreCalculator:
         score = max(0, 100 - crit * 15 - high * 8)
         detail = '{} lỗ hổng CRITICAL, {} HIGH trên {} tài sản'.format(
             crit, high, len(assets.get('assets', []) or []))
+
+        nessus = self.load_state('nessus_status.json')
+        age = nessus.get('scan_age_hours')
+        if isinstance(age, (int, float)):
+            detail += ' — bản quét %0.0f giờ tuổi' % age
+            if age > ASSET_SCAN_STALE_HOURS:
+                # Không hạ điểm: dữ liệu cũ không chứng minh máy kém an toàn
+                # hơn. Nhưng nó cũng không chứng minh máy AN TOÀN, và đó mới là
+                # điều con số 100 đang nói. Ghi chú để dòng đó không đọc như một
+                # phép đo hôm nay.
+                self.notes.append(
+                    'Thành phần `asset` dựa trên bản quét Nessus %0.0f giờ tuổi '
+                    '(ngưỡng %d): "0 CRITICAL" là phát biểu về lúc quét, không '
+                    'phải về hôm nay.' % (age, ASSET_SCAN_STALE_HOURS))
+        else:
+            detail += ' — không rõ tuổi bản quét'
+            self.notes.append(
+                'nessus_status.json không khai `scan_age_hours`; không biết dữ '
+                'liệu lỗ hổng cũ bao nhiêu.')
         return score, detail, {'critical': crit, 'high': high}
 
     def analyze_incidents(self):
@@ -157,10 +188,39 @@ class RiskScoreCalculator:
         return 100, 'Defender bật, 0 threat', {}
 
     def analyze_firewall(self):
+        """AQ-023. Trước đây hàm này trả về hằng số 90 cho mọi tường lửa đang bật.
+
+        Một thành phần chỉ có hai giá trị khả dĩ (20 hoặc 90) không đo được gì
+        giữa hai trạng thái đó — và `firewall_status.json` có ba profile riêng
+        biệt cùng số kết nối bị chặn, tức là có dữ liệu để phân biệt.
+
+        "Bật" không phải một trạng thái. Một máy bật Domain profile nhưng tắt
+        Public profile đang mở đúng chỗ nguy hiểm nhất, và bản cũ chấm nó bằng
+        điểm với một máy bật cả ba.
+        """
         firewall = self.load_state('firewall_status.json')
+        if not firewall:
+            return None, 'Không đọc được firewall_status.json', {}
+        if firewall.get('enabled') is None:
+            return None, 'firewall_status.json thiếu trường `enabled`', {}
         if not firewall.get('enabled'):
             return 20, 'Firewall đang TẮT', {}
-        return 90, 'Firewall bật', {}
+
+        profiles = [('domain_profile', 'Domain'), ('private_profile', 'Private'),
+                    ('public_profile', 'Public')]
+        known = [(key, label) for key, label in profiles
+                 if firewall.get(key) is not None]
+        if not known:
+            # Bật, nhưng không biết profile nào. Không đoán: nói ra.
+            return 70, 'Firewall bật, không đọc được profile nào', {}
+
+        on = [label for key, label in known if firewall.get(key)]
+        off = [label for key, label in known if not firewall.get(key)]
+        # 70 điểm nền cho việc bật, 30 điểm chia đều cho các profile ĐỌC ĐƯỢC.
+        score = int(round(70 + 30.0 * len(on) / len(known)))
+        detail = 'Firewall bật, %d/%d profile bật%s' % (
+            len(on), len(known), '' if not off else ' (tắt: %s)' % ', '.join(off))
+        return score, detail, {}
 
     def analyze_security_events(self):
         events = self.load_state('security_events.json')

@@ -1,66 +1,84 @@
 {
-  "timestamp": "2026-09-14T08:06:34.796131",
+  "timestamp": "2026-09-14T08:13:25.363617",
   "date": "2026-09-14",
   "incident_summary": {
-    "total_open": 0,
+    "total_open": 2,
     "critical": 0,
-    "high": 0,
+    "high": 2,
     "medium": 0,
     "low": 0,
-    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 0 HIGH"
+    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 2 HIGH"
   },
   "priority_summary": {
     "top_5": [
       {
         "rank": 1,
         "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
-        "priority": "MEDIUM",
+        "priority": "HIGH",
         "time_estimate": "N/A",
         "reason": "threat_hunting component weak"
       },
       {
         "rank": 2,
+        "title": "X\u1eed l\u00fd: Level Change",
+        "priority": "CRITICAL",
+        "time_estimate": "1-2 hours",
+        "reason": "Level Change"
+      },
+      {
+        "rank": 3,
         "title": "C\u1ea3i thi\u1ec7n Waap",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
         "reason": "waap component weak"
       },
       {
-        "rank": 3,
-        "title": "C\u1ea3i thi\u1ec7n Security Events",
+        "rank": 4,
+        "title": "C\u1ea3i thi\u1ec7n Incidents",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
-        "reason": "security_events component weak"
-      },
-      {
-        "rank": 4,
-        "title": "Patch 192.168.0.1 (Router)",
-        "priority": "HIGH",
-        "time_estimate": "4-8 hours",
-        "reason": "High vulnerability count"
+        "reason": "incidents component weak"
       },
       {
         "rank": 5,
-        "title": "Patch 192.168.0.10 (Server)",
+        "title": "Patch 192.168.0.1 (Router)",
         "priority": "HIGH",
         "time_estimate": "4-8 hours",
         "reason": "High vulnerability count"
       }
     ],
-    "critical_count": 0,
+    "critical_count": 1,
     "high_count": 2,
-    "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 2 HIGH"
+    "summary_text": "\u01afu ti\u00ean: 1 CRITICAL, 2 HIGH"
   },
   "change_summary": {
-    "total_changes": 0,
-    "changes_by_category": {},
-    "changes_by_severity": {},
-    "critical_incidents": [],
-    "summary_text": "Kh\u00f4ng c\u00f3 thay \u0111\u1ed5i"
+    "total_changes": 1,
+    "changes_by_category": {
+      "Risk": 1
+    },
+    "changes_by_severity": {
+      "CRITICAL": 1
+    },
+    "critical_incidents": [
+      {
+        "timestamp": "2026-09-14T08:13:03.369773",
+        "category": "Risk",
+        "type": "Level Change",
+        "severity": "CRITICAL",
+        "description": "M\u1ee9c r\u1ee7i ro thay \u0111\u1ed5i: LOW \u2192 HIGH",
+        "details": {
+          "previous_level": "LOW",
+          "current_level": "HIGH",
+          "previous_score": 3,
+          "current_score": 31
+        }
+      }
+    ],
+    "summary_text": "1 s\u1ef1 ki\u1ec7n CRITICAL, 0 s\u1ef1 ki\u1ec7n HIGH"
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 157.5,
+    "scan_age_hours": 157.6,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -175,16 +193,17 @@
   },
   "risk_assessment": {
     "risk_level": "LOW",
-    "risk_score": 3,
+    "risk_score": 6,
     "risk_factors": [
+      "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 2 HIGH \u0111ang m\u1edf (+3.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "waap: WAAP health_score 80 (+2.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.52 \u0111i\u1ec3m r\u1ee7i ro)",
-      "firewall: Firewall b\u1eadt (+0.4 \u0111i\u1ec3m r\u1ee7i ro)"
+      "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 158 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay."
     ],
     "critical_count": 0,
-    "high_count": 0,
+    "high_count": 2,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-14T08:06:29.238083"
+    "generated_at": "2026-09-14T08:13:19.795089"
   }
 }
