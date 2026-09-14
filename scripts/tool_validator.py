@@ -223,6 +223,12 @@ REMAINING_DEBT = [
      'Đây là giới hạn của chính các log đó, không sửa được bằng mã. Mọi bản ghi '
      'từ nguồn thay thế đều mang cờ `Fallback = true` để không ai nhầm bớt mù '
      'với hết mù.'),
+    ('Script Block Logging chỉ PARTIAL: log `PowerShell/Operational` đọc được và '
+     'có sự kiện 4104, nhưng chính sách `EnableScriptBlockLogging` đang TẮT',
+     'Khi chính sách tắt, PowerShell vẫn tự ghi 4104 cho những khối lệnh NÓ cho '
+     'là đáng ngờ — nên "có bản ghi" ở đây không đồng nghĩa "đang ghi đầy đủ". '
+     'Đây chính là lý do phải có ô ⚠ PARTIAL: một cột hai giá trị sẽ tô xanh '
+     'chỗ này. Bật chính sách là thay đổi cấu hình máy, phải do người quyết định.'),
     ('`state/sensor_coverage.json` không tự làm mới theo pipeline',
      'tool_validator.py gọi thật 99 tool và có tác dụng phụ (ghi báo cáo, quét). '
      'Portal hiển thị tuổi của dữ liệu và cảnh báo khi quá 24 giờ.'),
@@ -526,6 +532,7 @@ def validate(verbose=True):
         'event_4688': event_4688,
         'access_diagnosis': sensor_probe.access_diagnosis(probes),
         'fallback_sources': sensor_probe.fallback_summary(probes),
+        'detection_capabilities': sensor_probe.capability_summary(probes),
         'results': rows,
         'summary': _summarize(rows),
     }
@@ -620,6 +627,17 @@ def sensor_coverage(report):
     # Mot o do khong kem loi khuyen thi chi la mot o do.
     coverage['access_diagnosis'] = report.get('access_diagnosis')
     coverage['fallback_sources'] = report.get('fallback_sources')
+    # Ba nang luc phat hien duoc goi ten. Chung KHONG trung voi bang nguon o
+    # tren: nguon tra loi "co mo duoc khong", nang luc tra loi "co dang ghi thu
+    # ta can khong". `event_logs` dang COVERED trong khi Script Block Logging chi
+    # PARTIAL — dung mot cot thi mat han su khac nhau do.
+    capabilities = report.get('detection_capabilities') or []
+    coverage['detection_capabilities'] = capabilities
+    coverage['capability_summary'] = {
+        'covered': sum(1 for c in capabilities if c.get('status') == COVERED),
+        'partial': sum(1 for c in capabilities if c.get('status') == PARTIAL),
+        'blind': sum(1 for c in capabilities if c.get('status') == BLIND),
+    }
     return coverage
 
 
@@ -716,6 +734,33 @@ def render_markdown(report, coverage):
     add('Mỗi tool có tham số còn được gọi lại với giá trị khác mặc định và với')
     add('từng giá trị enum — nhánh không được gọi là nhánh không được kiểm.')
     add('')
+
+    caps = report.get('detection_capabilities') or []
+    if caps:
+        add(u'## Năng lực phát hiện')
+        add('')
+        add(u'Bảng "Sensor coverage" bên dưới trả lời: **mở được nguồn không?**')
+        add(u'Bảng này trả lời một câu khác hẳn: **nguồn đó có đang GHI thứ ta**')
+        add(u'**cần không?** Hai câu này không thay nhau được. Ngay trên máy này, nguồn')
+        add(u'`event_logs` đang ✅ COVERED trong khi Script Block Logging chỉ ⚠ PARTIAL:')
+        add(u'log đọc được toàn bộ, nhưng thứ được ghi vào đó lại có chọn lọc. Đọc hết')
+        add(u'một cuốn sổ ghi chép có chọn lọc không phải là nhìn thấy mọi thứ.')
+        add('')
+        add(u'| Năng lực | Trạng thái | Nguồn | Vì sao |')
+        add('|---|---|---|---|')
+        for cap in caps:
+            add('| **%s** | %s %s | %s | %s |' % (
+                cap['label'], COVERAGE_ICON.get(cap['status'], '?'),
+                cap['status'].upper(), cap.get('detail', ''),
+                ' '.join((cap.get('reason') or '').split())))
+        add('')
+        actionable = [c for c in caps if c.get('action')]
+        if actionable:
+            add(u'Cách mở từng vùng mù:')
+            add('')
+            for cap in actionable:
+                add('- **%s** — %s' % (cap['label'], cap['action']))
+            add('')
 
     add('## Sensor coverage')
     add('')
@@ -859,6 +904,13 @@ def main():
         {k: coverage[k] for k in REPORTED_SENSORS}, ensure_ascii=False))
     print('Event 4688: observable=%s (%s)' % (
         report['event_4688']['observable'], report['event_4688']['status']))
+    # In riêng ba năng lực phát hiện. Dòng "Coverage" ở trên nói nguồn nào MỞ
+    # ĐƯỢC; dòng này nói nguồn nào đang GHI thứ ta cần. Trên máy này hai dòng đó
+    # mâu thuẫn nhau (event_logs=covered, script_block=partial) — và chính chỗ
+    # mâu thuẫn là chỗ đáng đọc.
+    print('Năng lực: %s' % ' | '.join(
+        '%s=%s' % (c['key'], c['status'])
+        for c in (report.get('detection_capabilities') or [])))
     return 0
 
 

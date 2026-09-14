@@ -29,8 +29,24 @@
     KHONG bat mac dinh: day la thay doi chinh sach bao mat cua may, va no lam
     log Security day nhanh hon. Chi bat khi ban that su muon giam sat 4688.
 
+.PARAMETER EnableScriptBlockLogging
+    Bat chinh sach Script Block Logging (sinh Event ID 4104 cho MOI khoi lenh
+    PowerShell).
+
+    Vi sao dieu nay dang mot cong tac rieng: khi chinh sach TAT, PowerShell VAN
+    tu ghi 4104 cho nhung khoi lenh NO cho la dang ngo. Nen log co ban ghi, va
+    moi bang tong hop deu hien mau xanh — trong khi thuc te chi mot phan duoc
+    ghi. Do la ly do sensor_probe.py xep nang luc nay la PARTIAL chu khong phai
+    COVERED khi chua bat.
+
+    KHONG bat mac dinh: noi dung moi lenh PowerShell se duoc ghi lai, ke ca lenh
+    co chua chuoi nhay cam nguoi dung go tay.
+
 .PARAMETER Undo
     Go tai khoan khoi nhom "Event Log Readers", tra may ve trang thai cu.
+    KHONG dong thoi tat lai audit hay Script Block Logging: go mot quyen doc thi
+    an toan, con tat mot nguon ghi lai la lam may mu di, nen viec do phai duoc
+    go rieng va co chu y.
 
 .EXAMPLE
     # Chay trong mot cua so PowerShell DA NANG QUYEN (Run as Administrator):
@@ -53,6 +69,7 @@
 param(
     [string]$UserName,
     [switch]$EnableProcessAuditing,
+    [switch]$EnableScriptBlockLogging,
     [switch]$Undo
 )
 
@@ -159,6 +176,39 @@ if ($auditOn) {
 Write-Host ''
 
 # --------------------------------------------------------------------------
+# 3b. Script Block Logging — chi khi duoc yeu cau ro rang
+#
+# Day la o PARTIAL duy nhat trong bang nang luc, va no PARTIAL vi mot ly do de
+# bi bo qua: 4104 VAN duoc ghi khi chinh sach tat, chi la ghi co chon loc. Mot
+# he thong chi dem "co ban ghi khong" se cham diem chinh no cao hon su that.
+# --------------------------------------------------------------------------
+Write-Host '-- Script Block Logging (Event ID 4104) ---------------------'
+
+$sblPath = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging'
+$sblValue = $null
+try {
+    $sblValue = (Get-ItemProperty -Path $sblPath -Name EnableScriptBlockLogging -ErrorAction Stop).EnableScriptBlockLogging
+} catch {
+    $sblValue = $null
+}
+
+if ($sblValue -eq 1) {
+    Write-Good 'Chinh sach dang BAT — moi khoi lenh PowerShell deu duoc ghi.'
+} elseif (-not $EnableScriptBlockLogging) {
+    Write-Warn2 'Chinh sach dang TAT — chi nhung khoi lenh PowerShell tu cho la dang ngo moi duoc ghi.'
+    Write-Step 'Log van co su kien 4104, nen no TRONG NHU da phu song. Thuc te la mot phan.'
+    Write-Step 'Chay lai kem -EnableScriptBlockLogging neu ban muon ghi day du.'
+} else {
+    if (-not (Test-Path $sblPath)) { New-Item -Path $sblPath -Force | Out-Null }
+    New-ItemProperty -Path $sblPath -Name EnableScriptBlockLogging `
+        -Value 1 -PropertyType DWord -Force | Out-Null
+    Write-Good 'Da bat Script Block Logging.'
+    Write-Step 'Tat lai: Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" -Name EnableScriptBlockLogging -Value 0'
+    Write-Step 'Luu y: noi dung moi lenh PowerShell se nam trong log ke tu bay gio.'
+}
+Write-Host ''
+
+# --------------------------------------------------------------------------
 # 4. Kiem chung ngay tai day
 # --------------------------------------------------------------------------
 Write-Host '-- Kiem chung -----------------------------------------------'
@@ -182,6 +232,13 @@ Write-Host '  2. Kiem lai bang tien trinh BINH THUONG (khong nang quyen):'
 Write-Host '       python scripts/sensor_probe.py'
 Write-Host '       python scripts/tool_validator.py'
 Write-Host ''
-Write-Host '  3. Ky vong: security_log readable = true, va 8 tool BLIND'
+Write-Host '  3. Ky vong: security_log readable = true, va 5 tool BLIND'
 Write-Host '     chuyen sang PASS hoac EMPTY.'
+Write-Host ''
+Write-Host '     Trong bang "Nang luc phat hien":'
+Write-Host '       Security Log          BLIND   -> COVERED'
+Write-Host '       Process Creation      BLIND   -> COVERED neu audit 4688 dang bat'
+Write-Host '                                        (ProcessCreationIncludeCmdLine da = 1)'
+Write-Host '       Script Block Logging  PARTIAL -> COVERED chi khi chay kem'
+Write-Host '                                        -EnableScriptBlockLogging'
 Write-Host ''
