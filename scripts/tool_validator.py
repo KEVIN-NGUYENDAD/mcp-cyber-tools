@@ -222,6 +222,19 @@ def _debt_script_block_partial(report):
     return True
 
 
+def _debt_forensic_logs_off(report):
+    """Hai kênh log kia còn TẮT không? Đọc từ probe, không nhớ từ sprint trước.
+
+    Món nợ này trả được bằng một hành động NGOÀI mã nguồn (chạy
+    `enable_forensic_logs.ps1` dưới quyền Administrator). Một bảng nợ viết cứng
+    sẽ tiếp tục liệt kê nó sau khi nó đã được trả — và một bảng nợ nói sai thì
+    không ai đọc nữa.
+    """
+    probes = report['probes']
+    return not all((probes.get(key) or {}).get('log_enabled')
+                   for key in ('task_scheduler_log', 'usb_driver_log'))
+
+
 REMAINING_DEBT = [
     ('Log Security vẫn đóng — 5 tool còn mù, và chưa thể biết audit 4688 bật hay tắt',
      'Không phải lỗi mã, và Sprint 9 đã dựng sẵn cách sửa: chạy MỘT LẦN '
@@ -230,8 +243,13 @@ REMAINING_DEBT = [
      _debt_security_log_closed),
     ('Log `Microsoft-Windows-TaskScheduler/Operational` và '
      '`Microsoft-Windows-DriverFrameworks-UserMode/Operational` đang TẮT',
-     'Bật chúng là thay đổi cấu hình máy. Cho tới lúc đó, "không có bản ghi nào" '
-     'ở hai nguồn này nghĩa là chưa ai từng ghi, không phải không có gì xảy ra.'),
+     'Bật chúng là thay đổi cấu hình máy, nên phải do người quyết định chạy: '
+     'MỘT LẦN `scripts/enable_forensic_logs.ps1` dưới quyền Administrator. '
+     'Cho tới lúc đó, "không có bản ghi nào" ở hai nguồn này nghĩa là chưa ai '
+     'từng ghi, không phải không có gì xảy ra — và hai năng lực '
+     '`scheduled_task_execution`, `usb_device_activity` giữ ô ❌ BLIND thay vì '
+     'im lặng.',
+     _debt_forensic_logs_off),
     ('Nguồn thay thế chỉ che được MỘT PHẦN vùng mù: TerminalServices thấy phiên '
      'chứ không thấy chi tiết xác thực; NTLM thấy NTLM chứ không thấy Kerberos',
      'Đây là giới hạn của chính các log đó, không sửa được bằng mã. Mọi bản ghi '
@@ -244,11 +262,13 @@ REMAINING_DEBT = [
      'Đây chính là lý do phải có ô ⚠ PARTIAL: một cột hai giá trị sẽ tô xanh '
      'chỗ này. Bật chính sách là thay đổi cấu hình máy, phải do người quyết định.',
      _debt_script_block_partial),
-    ('Phần KẾT QUẢ TOOL trong `sensor_coverage.json` chỉ mới khi có người chạy '
-     '`npm run validate` — phần cảm biến đã tự làm mới mỗi lần chạy pipeline',
-     'tool_validator.py gọi thật 99 tool (~5 phút, có tác dụng phụ) nên không '
-     'đưa vào pipeline được. Sprint 15 tách tệp thành hai mốc thời gian: nửa rẻ '
-     'làm mới liên tục, nửa đắt tự khai tuổi của nó. Portal hiện cả hai.'),
+    ('Làm mới tự động nửa KẾT QUẢ TOOL kéo theo một lần `defenderQuickScan` '
+     'mỗi ngày',
+     'Sprint 16 cho pipeline tự khởi chạy tool_validator ở nền khi nửa tool quá '
+     '20 giờ — không còn phải chạy tay. Nhưng validator gọi THẬT cả 99 tool, và '
+     'một trong số đó khởi động quét nhanh Defender. Đó là tác dụng phụ có thật '
+     'của việc tự động hoá, và chỗ của nó là bảng nợ chứ không phải một dòng '
+     'chú thích không ai đọc. Tắt bằng cách bỏ cờ `--auto-validate` ở stage 18A.'),
 ]
 
 
@@ -709,6 +729,49 @@ def _tool_summary(report):
 # Ghi
 # --------------------------------------------------------------------------
 
+def _age_hours(timestamp):
+    if not timestamp:
+        return None
+    try:
+        then = datetime.fromisoformat(str(timestamp).replace('Z', ''))
+    except ValueError:
+        return None
+    return round((datetime.now() - then).total_seconds() / 3600.0, 1)
+
+
+def stamp_freshness(coverage, probe_at, tools_at, refreshed_by):
+    """Đóng dấu tuổi cho TỪNG NỬA của sensor_coverage.json.
+
+    Tệp này trộn hai câu trả lời có giá rất khác nhau: "nguồn còn đọc được
+    không" (10 giây, chạy mỗi lần pipeline) và "tool nào trả bằng chứng" (99 lời
+    gọi thật, ~5 phút). Sprint 15 tách chúng ra làm hai mốc thời gian.
+
+    Sprint 16 đưa việc đóng dấu về MỘT chỗ. Trước đó chỉ
+    `refresh_sensor_coverage` đóng dấu, còn `tool_validator` ghi đè cả tệp mà
+    không đóng dấu gì — nên mỗi lần chạy validator lại xoá mất hai mốc, và tệp
+    quay về đúng trạng thái mập mờ mà Sprint 15 vừa sửa. Lỗi đó nằm im vì
+    validator hiếm khi chạy; tự động hoá nó ở sprint này sẽ biến nó thành
+    thường trực.
+    """
+    coverage['probe_generated_at'] = probe_at
+    coverage['tools_generated_at'] = tools_at
+    coverage['tools_age_hours'] = _age_hours(tools_at)
+    coverage['refreshed_by'] = refreshed_by
+    if tools_at is None:
+        coverage['freshness_note'] = (
+            'Chưa từng chạy tool_validator. Coverage dưới đây chỉ phản ánh việc '
+            'nguồn có mở được hay không, chưa có tool nào được kiểm.')
+    elif probe_at == tools_at:
+        coverage['freshness_note'] = (
+            'Cả hai nửa vừa đo trong cùng một lần chạy tool_validator.')
+    else:
+        coverage['freshness_note'] = (
+            'Phần cảm biến (đọc được hay không) vừa dò lại. Phần kết quả tool là '
+            'của lần chạy tool_validator gần nhất (%s giờ trước).'
+            % coverage['tools_age_hours'])
+    return coverage
+
+
 def _write_json(path, payload):
     if write_state_atomic:
         write_state_atomic(path, payload)
@@ -938,6 +1001,11 @@ def main():
     docs_dir = os.path.join(PROJECT_ROOT, 'docs', 'project')
     if not os.path.isdir(docs_dir):
         os.makedirs(docs_dir)
+
+    # Validator đo CẢ HAI nửa trong cùng một lần chạy, nên hai mốc bằng nhau ở
+    # đây là sự thật — không phải cái bẫy "đóng dấu mới lên nửa cũ".
+    stamp_freshness(coverage, report['generated_at'], report['generated_at'],
+                    'tool_validator')
 
     _write_json(os.path.join(state_dir, 'tool_validation.json'), report)
     _write_json(os.path.join(state_dir, 'sensor_coverage.json'), coverage)

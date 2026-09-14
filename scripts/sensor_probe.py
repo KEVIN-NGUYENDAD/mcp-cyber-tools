@@ -165,6 +165,18 @@ PROBES = [
     ('winrm_log',
      "(Get-WinEvent -LogName 'Microsoft-Windows-WinRM/Operational' "
      "-MaxEvents 1 -ErrorAction Stop).Id"),
+    # Sprint 16. Hai kênh này trước đây chỉ có mặt trong LOG_STATES — biết được
+    # bật hay tắt, nhưng không đọc thử. Khi còn tắt thì đọc thử là vô nghĩa; kể
+    # từ lúc được bật thì "bật" và "đang thực sự ghi được" lại là hai chuyện,
+    # và chỉ một lần đọc thật mới phân biệt nổi.
+    ('task_scheduler_log',
+     "(Get-WinEvent -LogName "
+     "'Microsoft-Windows-TaskScheduler/Operational' "
+     "-MaxEvents 1 -ErrorAction Stop).Id"),
+    ('usb_driver_log',
+     "(Get-WinEvent -LogName "
+     "'Microsoft-Windows-DriverFrameworks-UserMode/Operational' "
+     "-MaxEvents 1 -ErrorAction Stop).Id"),
 ]
 
 # Log cần biết TRẠNG THÁI CẤU HÌNH, không chỉ đọc được hay không.
@@ -699,6 +711,82 @@ def _capability_script_block(probes):
     }
 
 
+ENABLE_SCRIPT = 'scripts\enable_forensic_logs.ps1 (cần Administrator)'
+
+
+def _capability_channel(probes, key, log_name, what, why_matters):
+    """Một kênh log bị TẮT, và ba trạng thái người ta hay gộp làm một.
+
+    Ba trạng thái đó là:
+
+        tắt                  -> chưa ai ghi gì. "Không có bản ghi" ở đây rỗng nghĩa.
+        vừa bật, 0 bản ghi   -> đã ghi được, chưa có gì để ghi. Chưa đủ để tin.
+        bật, có bản ghi      -> mới thật sự nhìn thấy.
+
+    Gộp hai trạng thái đầu vào ô ✅ là cách nhanh nhất để một bảng coverage nói
+    dối: bật một kênh rồi tô xanh ngay lập tức cho cảm giác đã xong việc, trong
+    khi thứ duy nhất vừa thay đổi là một cờ trong registry.
+    """
+    entry = probes.get(key) or {}
+    enabled = entry.get('log_enabled')
+    records = _records(probes, key)
+
+    if enabled is None:
+        return {
+            'status': CAP_BLIND,
+            'reason': 'Không hỏi được trạng thái kênh %s: %s'
+                      % (log_name, (entry.get('error') or 'không rõ')[:100]),
+            'action': ENABLE_SCRIPT,
+        }
+    if enabled is False:
+        return {
+            'status': CAP_BLIND,
+            'reason': ('Kênh %s đang TẮT — %s không được ghi ở đâu cả. %s'
+                       % (log_name, what, why_matters)),
+            'action': ENABLE_SCRIPT,
+            'fixable_here': False,
+        }
+    if not records:
+        return {
+            'status': CAP_PARTIAL,
+            'reason': ('Kênh %s đã BẬT nhưng chưa có bản ghi nào. Kênh vừa bật '
+                       'thì rỗng là bình thường — nhưng rỗng vẫn là rỗng, và '
+                       'chưa có gì chứng minh nó thật sự ghi được.' % log_name),
+            'action': ('Chờ %s lần tiếp theo, rồi chạy lại '
+                       '`python scripts/refresh_sensor_coverage.py`.' % what),
+        }
+    if not entry.get('readable'):
+        return {
+            'status': CAP_PARTIAL,
+            'reason': ('Kênh %s đã BẬT và có %s bản ghi, nhưng đọc không được: %s'
+                       % (log_name, records, (entry.get('error') or '')[:100])),
+            'action': 'Thêm tài khoản vào nhóm "Event Log Readers".',
+        }
+    return {
+        'status': CAP_COVERED,
+        'reason': 'Kênh %s đang BẬT, %s bản ghi, đọc được.' % (log_name, records),
+    }
+
+
+def _capability_task_scheduler(probes):
+    return _capability_channel(
+        probes, 'task_scheduler_log',
+        'Microsoft-Windows-TaskScheduler/Operational',
+        'việc tác vụ được tạo, sửa và CHẠY',
+        'Không có kênh này, huntSuspiciousTasks chỉ thấy tác vụ đang còn tồn '
+        'tại — không thấy tác vụ đã chạy xong rồi bị xoá, thứ mà một kẻ tấn '
+        'công cẩn thận luôn để lại đúng dạng đó.')
+
+
+def _capability_usb_activity(probes):
+    return _capability_channel(
+        probes, 'usb_driver_log',
+        'Microsoft-Windows-DriverFrameworks-UserMode/Operational',
+        'việc thiết bị USB được cắm vào',
+        'usbLogs không có nguồn nào khác cho câu hỏi "cái gì đã được cắm vào '
+        'máy này, lúc nào".')
+
+
 DETECTION_CAPABILITIES = [
     ('security_log', 'Security Log', 'Log Security thô — nền của mọi thứ dưới đây',
      _capability_security_log),
@@ -707,11 +795,17 @@ DETECTION_CAPABILITIES = [
     ('script_block_logging', 'Script Block Logging',
      'Event ID 4104 — nội dung lệnh PowerShell đã chạy',
      _capability_script_block),
+    ('scheduled_task_execution', 'Scheduled Task Execution',
+     'Kênh TaskScheduler/Operational — tác vụ nào được tạo, sửa, chạy',
+     _capability_task_scheduler),
+    ('usb_device_activity', 'USB Device Activity',
+     'Kênh DriverFrameworks-UserMode/Operational — thiết bị nào được cắm vào',
+     _capability_usb_activity),
 ]
 
 
 def capability_summary(probes):
-    """Ba năng lực phát hiện được hỏi tên: Covered / Partial / Blind."""
+    """Năm năng lực phát hiện được hỏi tên: Covered / Partial / Blind."""
     out = []
     for key, label, detail, resolve in DETECTION_CAPABILITIES:
         row = {'key': key, 'label': label, 'detail': detail}

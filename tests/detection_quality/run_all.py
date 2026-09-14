@@ -41,6 +41,7 @@ MODULES = [
 EXTRA_SUITES = [
     ('telegram_truth', 'test_telegram_fields'),
     ('sensor_coverage', 'test_coverage_refresh'),
+    ('sensor_coverage', 'test_auto_validate'),
 ]
 
 
