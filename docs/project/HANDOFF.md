@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T14:23:06.648140
+Cập nhật: 2026-09-14T14:30:06.502371
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `bbf8590` |
+| Commit lúc chạy | `74ffc93` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | docs: regenerate handoff after AQ-002 fix |
+| Tiêu đề | docs: regenerate handoff with merge verdict (AQ-046) |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
