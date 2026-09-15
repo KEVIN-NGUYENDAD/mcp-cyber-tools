@@ -241,14 +241,26 @@ class AutoInvestigationPlaybook:
         # mô phỏng sẽ đẩy người trực ca đi cô lập một máy bình thường.
         result['data_source'] = data.get('data_source', 'UNKNOWN')
 
+        # AQ-045 (vá Bài 3). Một chỉ báo mang `suppressed: true` đã được
+        # `ioc_quality.noise_class` kết luận là tiếng ồn, kèm một câu lý do đọc
+        # được. Đếm nó vào `by_severity` là để một kết luận đã có bị bỏ qua ở
+        # stage sau, và hồ sơ điều tra nói "6 HIGH" khi không có phát hiện nào.
+        # Chỉ báo KHÔNG bị xoá — nó ở lại trong `items` để còn rà lại được;
+        # chỉ bảng đếm và phần `details` là bỏ qua nó.
+        def _is_noise(item):
+            return bool(item.get('suppressed'))
+
+        signal = [item for item in items if not _is_noise(item)]
+        result['suppressed_count'] = len(items) - len(signal)
+
         by_severity = {}
-        for item in items:
+        for item in signal:
             severity = item.get('severity', 'UNKNOWN')
             by_severity[severity] = by_severity.get(severity, 0) + 1
         result['by_severity'] = by_severity
 
         # Chỉ giữ phần đáng chú ý để hồ sơ không phình ra vô ích.
-        for item in items:
+        for item in signal:
             if item.get('severity') in ('CRITICAL', 'HIGH'):
                 result['details'].append({
                     'type': item.get('type') or item.get('category') or item.get('event'),

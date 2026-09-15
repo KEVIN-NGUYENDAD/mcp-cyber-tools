@@ -298,9 +298,22 @@ class RiskScoreCalculator:
                 # 100 điểm sức khoẻ - tức là thưởng điểm cho việc không nhìn thấy.
                 blind_sources.append((filename, coverage.get('reason') or ''))
 
-            by_severity = data.get('by_severity') or {}
-            crit = by_severity.get('CRITICAL', 0) or 0
-            high = by_severity.get('HIGH', 0) or 0
+            # AQ-045 (vá Bài 3, lớp hai). `ioc_quality.score_file` đã tính lại
+            # `by_severity` trên tập đã lọc — nhưng điều đó chỉ đúng cho tệp
+            # đã đi qua stage đó. Một tệp hunting ghi trực tiếp (cuộc săn lỗi
+            # nửa chừng, tệp chép tay, phiên bản cũ) vẫn mang bảng đếm trước
+            # lọc. Bộ chấm không được tin bảng tổng kết khi nó còn giữ được
+            # danh sách chỉ báo để tự đếm.
+            indicators = data.get('indicators')
+            if isinstance(indicators, list) and indicators:
+                signal = [i for i in indicators
+                          if isinstance(i, dict) and not i.get('suppressed')]
+                crit = sum(1 for i in signal if i.get('severity') == 'CRITICAL')
+                high = sum(1 for i in signal if i.get('severity') == 'HIGH')
+            else:
+                by_severity = data.get('by_severity') or {}
+                crit = by_severity.get('CRITICAL', 0) or 0
+                high = by_severity.get('HIGH', 0) or 0
             if crit == 0 and high == 0:
                 continue
 

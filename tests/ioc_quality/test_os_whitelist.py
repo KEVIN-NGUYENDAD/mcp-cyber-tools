@@ -166,6 +166,37 @@ def run():
                 reason and 'THEO T' in reason.upper(),
                 'reason=%r' % (reason,))
 
+    print('\n[7b] AQ-045 / Bai 3: explorer.exe ngay tai goc C:\Windows')
+
+    noise, reason = classify(process='explorer.exe',
+                             command_line=r'C:\Windows\explorer.exe',
+                             severity='MEDIUM')
+    suite.check('  explorer.exe CO dong lenh o C:\\Windows bi dap',
+                noise == iq.NOISE_TRUSTED_PATH,
+                'noise_class=%r' % (noise,))
+
+    # Doi chung AM TINH. Neu ai do "sua" bang cach them `\windows\` tran vao
+    # TRUSTED_DIRS thi hai ca duoi day do, va do moi la diem cua bo ca kiem nay:
+    # C:\Windows\Temp va C:\Windows\Tasks nguoi dung thuong ghi duoc.
+    noise, _ = classify(process='explorer.exe',
+                        command_line=r'C:\Windows\Temp\explorer.exe',
+                        severity='MEDIUM')
+    suite.check('  explorer.exe gia o C:\\Windows\\Temp KHONG bi dap',
+                noise is None, 'noise_class=%r' % (noise,))
+
+    noise, _ = classify(process='svchost.exe',
+                        command_line=r'C:\Windows\Tasks\svchost.exe -k netsvcs',
+                        severity='MEDIUM')
+    suite.check('  svchost.exe gia o C:\\Windows\\Tasks KHONG bi dap',
+                noise is None, 'noise_class=%r' % (noise,))
+
+    # Duong dan chuan van phai thua tham so tan cong.
+    noise, _ = classify(process='explorer.exe',
+                        command_line=r'C:\Windows\explorer.exe -enc SQBFAFgA',
+                        severity='MEDIUM')
+    suite.check('  explorer.exe dung cho NHUNG mang -enc KHONG bi dap',
+                noise is None, 'noise_class=%r' % (noise,))
+
     print('\n[8] Doi chieu state that: khong co phat hien CRITICAL/HIGH nao bi nuot')
 
     state_dir = os.path.join(PROJECT_ROOT, 'state')
@@ -188,6 +219,54 @@ def run():
                             noise not in new_classes,
                             'noise_class=%r type=%r' % (noise, item.get('type')))
     suite.check('  co doc duoc chi bao that de doi chieu', checked_any)
+
+    print('\n[9] AQ-045 / Bai 3: chi bao da suppressed khong duoc tru diem rui ro')
+
+    import shutil
+    import tempfile
+    from pathlib import Path
+    scripts_dir = os.path.join(PROJECT_ROOT, 'scripts')
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
+    import calculate_risk_score as crs
+
+    tmp = Path(tempfile.mkdtemp(prefix='aq045_'))
+    try:
+        for f in Path(os.path.join(PROJECT_ROOT, 'state')).glob('*.json'):
+            shutil.copy2(f, tmp / f.name)
+
+        def health(n, suppressed):
+            items = [{
+                'process': 'lsass.exe',
+                'severity': 'HIGH',
+                'confidence': 'HIGH',
+                'suppressed': suppressed,
+                'evidence': ['Account: S-1-5-18  Logon Type: 5'],
+                'command_line': r'C:\Windows\System32\lsass.exe',
+            } for _ in range(n)]
+            # `by_severity` co y ghi SO TRUOC LOC - day la hinh dang cua mot tep
+            # hunting ghi truc tiep, chua di qua `ioc_quality.score_file`.
+            payload = {'timestamp': '2026-01-01T00:00:00',
+                       'data_source': 'LIVE_OBSERVED',
+                       'total_indicators': n,
+                       'by_severity': {'HIGH': n} if n else {},
+                       'indicators': items,
+                       'coverage': {'observable': True}}
+            (tmp / 'hunting_credential_dumping.json').write_text(
+                json.dumps(payload), encoding='utf-8')
+            calc = crs.RiskScoreCalculator()
+            calc.state_dir = tmp
+            return calc.analyze_threat_hunting()[0]
+
+        suite.check('  3 chi bao HIGH da suppressed -> health giu nguyen 100',
+                    health(3, True) == 100, 'health=%r' % (health(3, True),))
+        suite.check('  1 chi bao HIGH da suppressed -> health giu nguyen 100',
+                    health(1, True) == 100, 'health=%r' % (health(1, True),))
+        # Doi chung AM TINH: bo loc phai PHAN BIET, khong phai lam moi thu ve 100.
+        suite.check('  3 chi bao HIGH KHONG suppressed -> van bi tru diem',
+                    health(3, False) < 100, 'health=%r' % (health(3, False),))
+    finally:
+        shutil.rmtree(str(tmp), ignore_errors=True)
 
     return suite
 

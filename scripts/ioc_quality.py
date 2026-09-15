@@ -300,6 +300,16 @@ TRUSTED_DIRS = (
     '\\program files (x86)\\',
 )
 
+# Va Bai 3 (gap explorer.exe): `C:\Windows\explorer.exe` la nhi phan he thong
+# hop le nhung nam NGAY TAI goc `C:\Windows\`, khong thuoc thu muc con nao o
+# tren. Co y KHONG them `\\windows\\` tran vao TRUSTED_DIRS: `C:\Windows\Temp\`
+# nam trong cay do va nguoi dung thuong ghi duoc — them tien to tran se whitelist
+# luon mot trong nhung cho tha ma pho bien nhat. Thay vao do la danh sach khop
+# DUNG TOAN BO duong dan, tung tep mot.
+TRUSTED_ROOT_FILES = (
+    '\\windows\\explorer.exe',
+)
+
 # Nếu một trong các chuỗi này có mặt thì KHÔNG hạ xuống tiếng ồn, dù nhị phân
 # nằm ở đâu.
 #
@@ -395,6 +405,11 @@ def trusted_os_binary(indicator):
     path = executable_path(command).lower().replace('/', '\\')
     if not path:
         return False, None
+    root_file = next((f for f in TRUSTED_ROOT_FILES if path.endswith(f)), None)
+    if root_file:
+        return True, ('nhị phân hệ thống khớp đúng đường dẫn chuẩn (%s), '
+                      'không có tham số đáng ngờ' % root_file.strip('\\'))
+
     directory = next((d for d in TRUSTED_DIRS if d in path), None)
     if not directory:
         return False, None
