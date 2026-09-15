@@ -27,12 +27,12 @@
 
 ---
 
-## AQ-035 · NEW CRITICAL
+## AQ-035 · ✅ CLOSED
 **Issue:** `state/` không atomicity. Lúc audit: `risk_score.json` (08:11:54, lần N) khai `credential_dumping 6C` nhưng `hunting_credential_dumping.json` (08:12:27, lần N+1) = 0 chỉ báo. Risk 31/HIGH đang trích dẫn 6 chỉ báo không tồn tại.
 
 **Root:** Pipeline ghi stage-by-stage vào `state/` mà không `run_id` hoặc ảnh chụp nguyên tử. Lần N+1 bắt đầu trong lúc N chưa xong.
 
-**Suggested:** SPRINT RUN-ISOLATION — mỗi run sinh `run_id`; tệp mang `run_id + pipeline_started_at`; consumer kiểm đồng nhất; lock file; sprint_gate kiểm multiple run_id.
+**Fix (commit `2fbc6d6`):** `write_manifest_entry()` ghi `run_id/generated_at/size` mỗi lần ghi nguyên tử (`state_manager.py`); `run_coherence_audit.py` thêm `check_manifest_complete()` kiểm đủ 7 tệp COHERENT_SET trong `state/run_manifest.json`; `sprint_gate.py` chặn merge trên `MANIFEST_INCOMPLETE` cạnh `MIXED_RUN` đã có. Verified: cùng `run_id` trên 7 tệp → PASS; sửa lệch 1 `run_id` → BI CHAN đúng; phục hồi → PASS 93/EMPTY 6/BLIND 0/FAIL 0.
 
 ---
 
@@ -40,17 +40,17 @@
 
 **Trạng thái tích luỹ:**
 - ✅ Closed (vòng 1–6): AQ-001, 003, 006, 008, 009, 010, 012, 014, 015, 026, 023, 013
-- ✅ Closed (vòng 7): AQ-019/031, AQ-020/032, AQ-021
-- ❌ Open CRITICAL: 2 (AQ-002, AQ-035)
+- ✅ Closed (vòng 7): AQ-019/031, AQ-020/032, AQ-021, AQ-035
+- ❌ Open CRITICAL: 1 (AQ-002)
 - ❌ Open HIGH: 5 (AQ-030, 033, 024, 034, AQ-016–018, 029 remainder)
-- **Total:** ~10 items, **2 CRITICAL + 8 HIGH**
+- **Total:** ~9 items, **1 CRITICAL + 8 HIGH**
 
 **Next Audit Focus:**
-1. **AQ-035:** Run isolation — state consistency
-2. **AQ-002:** Attribution vs hostname
-3. **AQ-030/007:** Portal entrypoint không được deploy
-4. **AQ-033/028/022:** Handoff thành stage + live read
-5. **AQ-034/025:** Pipeline field audit mẫu số
+1. **AQ-002:** Attribution vs hostname
+2. **AQ-030/007:** Portal entrypoint không được deploy
+3. **AQ-033/028/022:** Handoff thành stage + live read
+4. **AQ-034/025:** Pipeline field audit mẫu số
+5. **AQ-024:** Default severity "MEDIUM" vẫn bịa
 
 ---
 
