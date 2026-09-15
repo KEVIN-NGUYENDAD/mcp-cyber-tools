@@ -5,8 +5,8 @@
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "SentinelOps"
 #define MyAppURL "https://sentinel.example.com"
-#define MyAppExeName "sentinel_agent.exe"
-#define SourceExe "dist\sentinel_agent.exe"
+#define MyAppExeName "sentinel_agent.cmd"
+#define SourceExe "dist\sentinel_agent.cmd"
 
 [Setup]
 AppId={{SENTINEL-OPS-AGENT-2026}}
@@ -43,7 +43,7 @@ english.FinishLabel=Installation complete
 english.FinishLabelNoIcons=Installation complete (no shortcuts created)
 
 [Run]
-Filename: "{sys}\cmd.exe"; Parameters: "/c schtasks /create /tn ""SentinelOpsAgent"" /tr ""{app}\{#MyAppExeName}"" /sc onstart /ru SYSTEM /f /rl HIGHEST"; Flags: runhidden postinstall skipifsilent; Description: "Register startup task"
+Filename: "{sys}\cmd.exe"; Parameters: "/c schtasks /create /tn ""SentinelOpsAgent"" /tr ""cmd.exe /c {app}\{#MyAppExeName}"" /sc onstart /ru SYSTEM /f /rl HIGHEST"; Flags: runhidden postinstall skipifsilent; Description: "Register startup task"
 
 [UninstallRun]
 Filename: "{sys}\cmd.exe"; Parameters: "/c schtasks /delete /tn ""SentinelOpsAgent"" /f"; Flags: runhidden
