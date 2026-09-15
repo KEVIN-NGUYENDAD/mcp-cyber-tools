@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T19:14:33.540592
+Cập nhật: 2026-09-14T19:23:33.796280
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `2fbc6d6` |
+| Commit lúc chạy | `3edd4b8` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | AQ-035: Run isolation — run_manifest.json + run_id consistency gate + manifest completeness check |
+| Tiêu đề | docs: mark AQ-035 closed in AUDIT_QUEUE_ACTIVE.md |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
