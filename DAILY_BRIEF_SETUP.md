@@ -207,8 +207,8 @@ Example:
 Read from: `C:\GitHub\mcp-cyber-tools\.env`
 
 ```ini
-TELEGRAM_BOT_TOKEN=***REMOVED-TELEGRAM-BOT-TOKEN***s
-TELEGRAM_CHAT_ID=8814186709
+TELEGRAM_BOT_TOKEN=<TELEGRAM_BOT_TOKEN — doc tu .env, khong bao gio viet ra day>
+TELEGRAM_CHAT_ID=<TELEGRAM_CHAT_ID — doc tu .env>
 ```
 
 ---

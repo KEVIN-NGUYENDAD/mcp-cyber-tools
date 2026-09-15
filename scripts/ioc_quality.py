@@ -32,6 +32,7 @@ import hashlib
 import io
 import json
 import os
+import re
 import sys
 from datetime import datetime
 
@@ -283,6 +284,59 @@ def attribution_quality(systems):
 NOISE_SELF = 'SELF_OBSERVATION'
 NOISE_DEV = 'DEVELOPER_ACTIVITY'
 NOISE_ROUTINE = 'ROUTINE_OS_ACTIVITY'
+NOISE_TRUSTED_PATH = 'TRUSTED_OS_BINARY'
+NOISE_CORE_PROCESS = 'CORE_OS_PROCESS'
+
+# Thư mục chỉ ghi được bằng quyền quản trị. Đây là ranh giới toàn vẹn thật, không
+# phải một danh sách tên: một nhị phân nằm ở đây đã phải qua quyền admin để tới
+# được đó. `C:\Users\...\AppData\` CỐ Ý không có trong bảng — người dùng thường
+# ghi được vào đó, nên đó chính là chỗ persistence hay nằm nhất.
+TRUSTED_DIRS = (
+    '\\windows\\system32\\',
+    '\\windows\\syswow64\\',
+    '\\windows\\winsxs\\',
+    '\\windows\\servicing\\',
+    '\\program files\\',
+    '\\program files (x86)\\',
+)
+
+# Nếu một trong các chuỗi này có mặt thì KHÔNG hạ xuống tiếng ồn, dù nhị phân
+# nằm ở đâu.
+#
+# Đây là điều kiện quan trọng nhất của cả bộ lọc. Lạm dụng LOLBin dùng ĐÚNG nhị
+# phân đã ký, ở ĐÚNG đường dẫn hợp lệ — `C:\Windows\System32\certutil.exe
+# -urlcache -f http://...` khớp mọi tiêu chí "đáng tin" ở trên. Một bộ lọc chỉ
+# xét đường dẫn sẽ bịt mắt đúng lớp tấn công mà cuộc săn LOLBin sinh ra để tìm.
+# Thứ phân biệt được không phải nhị phân, mà là tham số.
+ATTACK_ARG_TOKENS = (
+    '-enc', '-encodedcommand', '-e ', 'frombase64string', 'downloadstring',
+    'downloadfile', 'iex', 'invoke-expression', 'invoke-webrequest',
+    '-nop', '-noprofile', '-w hidden', '-windowstyle hidden', 'bypass',
+    'urlcache', '/transfer', 'regsvr32 /i:', 'mshta http', 'http://', 'https://',
+    '-decode', 'bcdedit',
+    # Khop theo THAM SO, khong theo ten nhi phan. Ban dau bang nay ghi
+    # 'vssadmin delete' va chuoi that la `vssadmin.exe delete shadows` — bon ky
+    # tu `.exe` o giua du de mot lenh xoa ban sao bong di qua bo loc. Tham so
+    # thi khong doi du ke tan cong goi vssadmin bang duong dan nao.
+    'delete shadows', 'delete catalog', 'resize shadowstorage',
+)
+
+# Tiến trình do Windows phát hành, thường xuyên mở kết nối mạng như hoạt động
+# bình thường. Bảng này khớp theo TÊN, nên nó là bằng chứng YẾU hơn hẳn
+# TRUSTED_DIRS — một tệp bất kỳ đặt tên `svchost.exe` cũng khớp.
+#
+# Nó vẫn tồn tại vì chỉ báo `Network Connection` KHÔNG mang dòng lệnh nào cả
+# (đã đo: 42/42 có `command_line = None`), nên không có đường dẫn để xét. Lựa
+# chọn thật ở đây là: lọc theo tên yếu, hay để 42 dòng nhiễu đẩy phát hiện thật
+# ra khỏi màn hình điện thoại. Chọn cái thứ nhất, và ghi rõ là suy đoán theo tên
+# trong `suppression_reason` để người đọc biết giá trị của lời khẳng định này.
+CORE_OS_PROCESSES = (
+    'svchost', 'explorer', 'msmpeng', 'windefend', 'securityhealthservice',
+    'securityhealthsystray', 'runtimebroker', 'searchhost', 'searchindexer',
+    'startmenuexperiencehost', 'shellexperiencehost', 'dwm', 'lsass', 'services',
+    'wininit', 'winlogon', 'csrss', 'smss', 'taskhostw', 'sihost', 'ctfmon',
+    'wuauclt', 'usoclient', 'trustedinstaller', 'tiworker', 'wmiprvse',
+)
 
 DEV_HINTS = ('node.exe', 'python.exe', 'git.exe', 'code.exe', 'msbuild.exe',
              'powershell_ise.exe', 'windowsterminal.exe', 'conhost.exe')
@@ -291,6 +345,73 @@ DEV_HINTS = ('node.exe', 'python.exe', 'git.exe', 'code.exe', 'msbuild.exe',
 # nghìn lần mỗi ngày. Nó KHÔNG bị xoá — chỉ bị hạ xuống tiếng ồn, kèm lý do.
 ROUTINE_HINTS = ('logon type:\t\t5', 's-1-5-18', 'security id:\t\ts-1-5-19',
                  'security id:\t\ts-1-5-20')
+
+
+def executable_path(command):
+    """Tách phần đường dẫn nhị phân ra khỏi dòng lệnh đầy đủ."""
+    text = (command or '').strip()
+    if not text:
+        return ''
+    if text.startswith('"'):
+        end = text.find('"', 1)
+        return text[1:end] if end > 0 else text[1:]
+    match = re.match(r'(.+?\.(?:exe|com|scr|dll|sys))(?:\s|$)', text, re.IGNORECASE)
+    return match.group(1) if match else text.split(' ')[0]
+
+
+def command_of(indicator):
+    """Dòng lệnh của chỉ báo, bất kể nguồn săn gọi trường đó là gì.
+
+    `hunting_persistence` ghi `command`, `hunting_suspicious_processes` ghi
+    `command_line`. Cùng một dữ kiện, hai cái tên — đọc cả hai ở đây, một lần,
+    thay vì để mỗi nơi gọi tự nhớ.
+    """
+    for key in ('command_line', 'command'):
+        value = indicator.get(key)
+        if value:
+            return str(value)
+    return ''
+
+
+def has_attack_arguments(command):
+    lowered = (command or '').lower()
+    return next((token for token in ATTACK_ARG_TOKENS if token in lowered), None)
+
+
+def trusted_os_binary(indicator):
+    """Nhị phân này có nằm trong thư mục chỉ admin ghi được, và chạy trần không?
+
+    Trả về (True, lý do) chỉ khi CẢ HAI đúng. Đường dẫn tin cậy một mình không
+    đủ — xem ghi chú ở ATTACK_ARG_TOKENS.
+    """
+    command = command_of(indicator)
+    if not command:
+        return False, None
+
+    attack_token = has_attack_arguments(command)
+    if attack_token:
+        return False, None
+
+    path = executable_path(command).lower().replace('/', '\\')
+    if not path:
+        return False, None
+    directory = next((d for d in TRUSTED_DIRS if d in path), None)
+    if not directory:
+        return False, None
+
+    return True, ('nhị phân hệ thống trong thư mục chỉ admin ghi được (%s), '
+                  'không có tham số đáng ngờ' % directory.strip('\\'))
+
+
+def core_os_process(indicator):
+    """Suy đoán THEO TÊN cho chỉ báo không có dòng lệnh nào để xét."""
+    if command_of(indicator):
+        return False, None
+    name = str(indicator.get('process') or '').lower().replace('.exe', '').strip()
+    if not name or name not in CORE_OS_PROCESSES:
+        return False, None
+    return True, ('tiến trình nền của Windows: %s — suy đoán THEO TÊN, '
+                  'chỉ báo này không mang dòng lệnh để đối chiếu đường dẫn' % name)
 
 
 def noise_class(indicator, hunt):
@@ -310,6 +431,19 @@ def noise_class(indicator, hunt):
         return NOISE_SELF, reason
 
     high_severity = indicator.get('severity') in ('CRITICAL', 'HIGH')
+
+    # PHASE 1. Hai bảng dưới đây đều bị chặn ở mức cao, vì cùng một lý do đã ghi
+    # ở AQ-019: chúng nhận dạng CÔNG CỤ, không nhận dạng HÀNH VI. Một nhị phân
+    # Windows đã ký, ở đúng chỗ của nó, vẫn là thứ mà lateral movement dùng.
+    # Ở mức INFO chúng là tiếng ồn; ở mức HIGH chúng là đúng thứ cần nhìn.
+    if not high_severity:
+        trusted, reason = trusted_os_binary(indicator)
+        if trusted:
+            return NOISE_TRUSTED_PATH, reason
+
+        core, reason = core_os_process(indicator)
+        if core:
+            return NOISE_CORE_PROCESS, reason
 
     # AQ-019. Miễn trừ này trước đây phủ CẢ HAI bảng gợi ý, và đó là chỗ sai.
     #

@@ -78,7 +78,7 @@ GitHub Incident / Daily Brief Store
 **Trigger**: Telegram message received (polling-based)  
 **Credentials**: Loaded from `.env` file
 ```
-TELEGRAM_BOT_TOKEN=8779048449:AAHRr2aWnp...
+TELEGRAM_BOT_TOKEN=<doc tu .env>
 TELEGRAM_CHAT_ID=<chatid>
 ```
 
@@ -247,7 +247,7 @@ create_issue() → assign_issue() → GitHub Issue Created
 **Bot Configuration**:
 ```
 Name: sentinelops_kevin_bot
-Token: 8779048449:AAHRr2aWnp... (loaded from .env)
+Token: <doc tu .env, khong in ra>
 Chat ID: Configured in .env
 Polling: Active long-polling mode
 ```

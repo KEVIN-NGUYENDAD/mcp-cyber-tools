@@ -40,9 +40,21 @@ MODULES = [
 # hai lenh la mot cong chan se co lan chi chay mot nua.
 EXTRA_SUITES = [
     ('telegram_truth', 'test_telegram_fields'),
+    # PHASE 1. Cau noi sang `node --test`: che danh tinh + ket noi lai la ma
+    # JavaScript, nhung chung phai do bang CUNG mot lenh nhu phan Python, neu
+    # khong se co lan chi chay mot nua.
+    ('telegram_truth', 'test_bot_runtime'),
+    # PHASE 1. Co HAI duong gui Telegram (bot Node, script Python) nen co hai
+    # ban sao cua bo che. Hai ban sao khong kiem chung nhau se troi khoi nhau,
+    # va cai troi ra se la mot duong ro ma khong ai nhin.
+    ('telegram_truth', 'test_redaction_parity'),
     ('sensor_coverage', 'test_coverage_refresh'),
     ('sensor_coverage', 'test_auto_validate'),
     ('ioc_quality', 'test_ioc_quality'),
+    # PHASE 1. Bo loc tien trinh Windows. Phan lon ca kiem la ca AM TINH: mot bo
+    # loc tieng on chi duoc kiem theo chieu "co loc duoc khong" se im lang dung
+    # vao lop tan cong dung nhi phan hop le.
+    ('ioc_quality', 'test_os_whitelist'),
     ('crypto_inventory', 'test_crypto_inventory'),
     ('nessus_snapshot', 'test_nessus_snapshot'),
     ('deploy_truth', 'test_deploy_truth'),
@@ -64,6 +76,11 @@ EXTRA_SUITES = [
     # `TONG: 443/443 dat` canh chu TRUOT la mot mau so tu co lai theo so bo con
     # song sot, tuc mot default xanh trong chinh dong cong in ra.
     ('suite_isolation', 'test_suite_isolation'),
+    # AUDIT_SECURITY_AND_DATA.md, 4 CRITICAL. Bo nay TIEM payload that vao lop
+    # truyen lenh (cmd.exe, PowerShell), vao HTTP, vao git — roi hoi payload co
+    # duoc THUC THI khong. Mot ca chi doc ma nguon se van xanh vao ngay ai do
+    # viet lai bang cu phap khac, nen phan quyet dinh phai la hanh vi.
+    ('exec_safety', 'test_exec_safety'),
 ]
 
 

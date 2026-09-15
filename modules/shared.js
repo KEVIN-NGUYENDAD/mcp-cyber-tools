@@ -5,7 +5,53 @@ export { z };
 
 const COMMAND_TIMEOUT = 30000; // 30 seconds timeout to prevent server blocking
 
-export function runPowerShell(command) {
+// INJ-02. `-EncodedCommand` bảo vệ DÒNG LỆNH, không bảo vệ THÂN SCRIPT.
+//
+// Tham số được nội suy vào script TRƯỚC khi mã hoá base64, nên nó đã nằm trong
+// mã nguồn PowerShell lúc mã hoá — base64 chỉ chuyên chở nguyên vẹn thứ đã bị
+// chèn. Và PowerShell bung `$(...)` NGAY BÊN TRONG nháy kép, nên kẻ tấn công
+// không cần thoát dấu nháy: `checkHash({ path: "$(calc)" })` là chạy được.
+//
+// Cách duy nhất không phụ thuộc vào việc thoát ký tự cho đúng: giá trị không đi
+// qua trình phân tích cú pháp nữa. Nó đi qua BIẾN MÔI TRƯỜNG; script chỉ đọc
+// `$env:MCP_ARG_<TÊN>`, mà nội dung biến môi trường thì PowerShell không bao
+// giờ diễn dịch lại.
+const ARG_PREFIX = "MCP_ARG_";
+
+function buildParamPrelude(params) {
+  const env = {};
+  const lines = [];
+  for (const [name, value] of Object.entries(params)) {
+    if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(name)) {
+      throw new Error(`Tên tham số PowerShell không hợp lệ: ${name}`);
+    }
+    const key = ARG_PREFIX + name.toUpperCase();
+    env[key] = value === undefined || value === null ? "" : String(value);
+    // Không nháy, không nội suy: vế phải là một truy cập biến, không phải chuỗi.
+    lines.push(`$${name} = $env:${key}`);
+  }
+  return { env, prelude: lines.length ? lines.join("\n") + "\n" : "" };
+}
+
+/**
+ * @param {string} command  Script PowerShell. Tham chiếu tham số bằng TÊN BIẾN
+ *                          (`$path`), tuyệt đối không nội suy `${path}` vào đây.
+ * @param {object} [params] Cặp tên→giá trị, truyền qua biến môi trường.
+ */
+export function runPowerShell(command, params = null) {
+  try {
+    if (params) {
+      const { env, prelude } = buildParamPrelude(params);
+      return runPowerShellEncoded(prelude + command, env);
+    }
+    return runPowerShellEncoded(command, null);
+  } catch (error) {
+    console.error("[CMD-POWERSHELL-ERROR]", error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+function runPowerShellEncoded(command, extraEnv) {
   try {
     console.error("[CMD-POWERSHELL] Starting:", command.substring(0, 100) + "...");
     const startTime = Date.now();
@@ -30,7 +76,8 @@ export function runPowerShell(command) {
         encoding: "utf8",
         stdio: ["pipe", "pipe", "pipe"],
         timeout: COMMAND_TIMEOUT,
-        maxBuffer: 10 * 1024 * 1024 // 10MB buffer for large outputs
+        maxBuffer: 10 * 1024 * 1024, // 10MB buffer for large outputs
+        env: extraEnv ? { ...process.env, ...extraEnv } : process.env
       }
     );
 
@@ -105,6 +152,64 @@ function describePowerShellFailure(error) {
   if (stdout) return stdout.substring(0, 500);
   return `${error.code || "lỗi"}: PowerShell thoát với mã ${error.status}`;
 }
+
+// INJ-01. `runCmd` đi qua `cmd.exe /d /s /c`, nên `&`, `&&`, `|`, `^` trong
+// tham số là TOÁN TỬ chứ không phải dữ liệu: `ping({ host: "127.0.0.1 & whoami" })`
+// chạy hai lệnh. Không có cách nào thoát cho đúng một cách đáng tin trên cmd.exe
+// — nên đừng dựng dòng lệnh nữa.
+//
+// `execFileSync` không có shell: `args` tới thẳng tiến trình con dưới dạng mảng
+// đối số tách rời. Một `host` chứa `& whoami` khi đó là một tên máy sai, và
+// `ping` trả về "không phân giải được" — đúng như phải thế.
+export function runCmdArgs(file, args = []) {
+  const shown = `${file} ${args.join(" ")}`;
+  try {
+    console.error("[CMD-EXECFILE] Starting:", shown.substring(0, 100));
+    const startTime = Date.now();
+
+    const output = execFileSync(file, args, {
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+      timeout: COMMAND_TIMEOUT,
+      maxBuffer: 10 * 1024 * 1024
+    });
+
+    console.error(`[CMD-EXECFILE-OK] ${Date.now() - startTime}ms, ${output.length} bytes`);
+    return { success: true, data: output };
+  } catch (error) {
+    console.error("[CMD-EXECFILE-ERROR]", {
+      file,
+      code: error.code,
+      signal: error.signal,
+      status: error.status,
+      stderr: error.stderr ? String(error.stderr).substring(0, 300) : null
+    });
+
+    // ping/tracert/nslookup thoát khác 0 cho một kết quả HỢP LỆ (host không
+    // phản hồi, tên không phân giải được). Thông tin nằm ở stdout; ném nó đi
+    // rồi báo FAIL sẽ biến "đã đo, không tới được" thành "không đo được".
+    const stdout = (error.stdout || "").toString().trim();
+    const stderr = (error.stderr || "").toString().trim();
+    if (stdout && error.signal !== "SIGTERM" && error.code !== "ETIMEDOUT") {
+      return { success: true, data: stdout };
+    }
+    if (error.signal === "SIGTERM" || error.code === "ETIMEDOUT") {
+      return { success: false, error: `Hết giờ sau ${COMMAND_TIMEOUT}ms` };
+    }
+    return { success: false, error: stderr || error.message };
+  }
+}
+
+// Ràng buộc dùng chung cho mọi tham số "host" đi vào một lệnh mạng.
+// Không phải để chặn injection — `runCmdArgs` đã chặn ở lớp dưới — mà để một
+// giá trị vô nghĩa bị từ chối tại biên với thông báo đọc được, thay vì đi tới
+// tận `ping` rồi quay về dưới dạng lỗi của Windows.
+export const hostSchema = z.string()
+  .trim()
+  .min(1, "host rỗng")
+  .max(253, "host dài quá 253 ký tự")
+  .regex(/^[A-Za-z0-9._:-]+$/,
+         "host chỉ được chứa chữ, số, dấu chấm, gạch ngang, gạch dưới, hai chấm (IPv6)");
 
 export function runCmd(command) {
   try {
