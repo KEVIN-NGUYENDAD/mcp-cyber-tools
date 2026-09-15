@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T15:08:19.913131
+Cập nhật: 2026-09-14T18:58:37.581506
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `9f03cf0` |
+| Commit lúc chạy | `b6f5e04` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | docs: LOOP MODE V4 final status report — Sprint 15 complete, system green |
+| Tiêu đề | docs: AUDIT_QUEUE_ACTIVE.md automated tracking — Round 7 start |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint

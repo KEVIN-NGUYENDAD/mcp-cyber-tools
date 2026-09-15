@@ -261,6 +261,9 @@ def evaluate(data):
         blockers.append('state tron nhieu lan chay (%s) — moi ket luan rut ra '
                         'tu tap nay dang tron hai lan quan sat'
                         % '; '.join(f['detail'][:60] for f in mixed))
+    manifest_incomplete = [f for f in coherence if f['level'] == 'MANIFEST_INCOMPLETE']
+    if manifest_incomplete:
+        blockers.append('manifest khong toan ven — thieu file trong run_manifest.json')
     orphan = [f for f in coherence if f['level'] in ('NO_PROVENANCE', 'SOURCE_MISSING')]
     if orphan:
         blockers.append('%d su co dang mo khong truy nguoc duoc ve quan sat (%s)'

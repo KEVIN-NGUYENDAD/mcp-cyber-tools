@@ -17,6 +17,42 @@ from typing import Any, Callable, Dict, Optional
 logger = logging.getLogger(__name__)
 
 
+def write_manifest_entry(file_path: str, data: Any, run_id: str = None) -> None:
+    """
+    Track state file in run_manifest.json for coherence validation.
+
+    Called after successful atomic write to record file metadata.
+    """
+    try:
+        manifest_path = Path(file_path).parent / 'run_manifest.json'
+        manifest = {}
+
+        if manifest_path.exists():
+            try:
+                with open(manifest_path, 'r', encoding='utf-8') as f:
+                    manifest = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                manifest = {}
+
+        file_key = Path(file_path).name
+        file_info = {
+            'generated_at': data.get('generated_at') if isinstance(data, dict) else None,
+            'size': len(json.dumps(data, indent=2)) if isinstance(data, dict) else 0
+        }
+
+        if 'files' not in manifest:
+            manifest['files'] = {}
+        manifest['files'][file_key] = file_info
+        manifest['run_id'] = run_id or (data.get('run_id') if isinstance(data, dict) else None)
+        manifest['manifest_updated_at'] = __import__('datetime').datetime.now().isoformat()
+
+        with open(manifest_path, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2)
+
+    except Exception as e:
+        logger.debug(f"[MANIFEST] Failed to track {file_path}: {e}")
+
+
 def write_state_atomic(
     file_path: str,
     data: Any,
@@ -112,6 +148,10 @@ def write_state_atomic(
                 # On Windows: ReplaceFileW (via os.replace), on POSIX: rename() with overwrite
                 os.replace(temp_path, str(file_path))
                 logger.debug(f"[ATOMIC] Successfully wrote {file_path} (atomic, attempt {attempt + 1})")
+
+                # Track in manifest after successful write
+                run_id = data.get('run_id') if isinstance(data, dict) else None
+                write_manifest_entry(str(file_path), data, run_id)
                 return
 
             except (OSError, PermissionError) as e:

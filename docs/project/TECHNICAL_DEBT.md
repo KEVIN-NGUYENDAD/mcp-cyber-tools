@@ -2,7 +2,7 @@
 
 Sinh tự động bởi `scripts/sprint_gate.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T15:08:19
+Cập nhật: 2026-09-14T18:58:37
 
 ## Cổng merge
 
@@ -18,9 +18,9 @@ Cập nhật: 2026-09-14T15:08:19
 | Pipeline | 28 stage, 0 thất bại |
 | Trường portal đọc từ state không tồn tại | 0 / 28 truy cập soi được |
 | Trường Telegram đọc từ state không tồn tại | 0 / 15 truy cập soi được |
-| Tuổi `tool_validation.json` | 0.1 giờ |
-| Tuổi `pipeline_results.json` | 1.2 giờ |
-| Tuổi `sensor_coverage.json` | 0.1 giờ |
+| Tuổi `tool_validation.json` | 0.0 giờ |
+| Tuổi `pipeline_results.json` | 5.1 giờ |
+| Tuổi `sensor_coverage.json` | 0.0 giờ |
 | Biểu thức innerHTML chưa escape | 0 / 85 biểu thức trong sink |
 | `.get(khoá, mặc định)` bịa số trong Python | 0 / 107 lời gọi lần được |
 | State cùng một lần chạy | 7 / 7 tệp có dấu, 1 lần chạy khác nhau |
