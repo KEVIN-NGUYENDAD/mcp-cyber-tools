@@ -155,7 +155,8 @@ def run():
                 inline_bands == 0, '%d ban sao' % inline_bands)
 
     # -- SPRINT B: bo audit lop Python --------------------------------------
-    findings = pfa.audit()
+    audit_result = pfa.audit()
+    findings = audit_result['findings'] if isinstance(audit_result, dict) else audit_result
     fabricated = [f for f in findings if f['level'] == 'FABRICATED']
     suite.check('Khong con so lieu gia trong pipeline Python',
                 not fabricated,

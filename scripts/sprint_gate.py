@@ -106,7 +106,8 @@ def collect(validate=False):
     # tiep vao portal, Telegram va bao cao, tat ca cung hien dung mot gia tri sai
     # mot cach nhat quan. Ca hai bo audit truoc chi soi JavaScript, va do dung la
     # ly do `waap.get('score', 50)` song sot qua nhieu sprint voi gate xanh.
-    pipeline_fields = pipeline_field_audit.audit()
+    pipeline_fields_result = pipeline_field_audit.audit()
+    pipeline_fields = pipeline_fields_result['findings']
     # AQ-009. Portal DFIR hien ten tien trinh, dong lenh va duong dan tep thu tu
     # may DANG BI THEO DOI. Neu may do bi xam nhap thi ke tan cong kiem soat noi
     # dung cac truong do, va dashboard cua nguoi truc ca la noi chung duoc render.
@@ -136,6 +137,7 @@ def collect(validate=False):
         'portal': portal,
         'telegram': telegram,
         'pipeline_fields': pipeline_fields,
+        'pipeline_fields_scope': pipeline_fields_result,
         'escapes': escapes,
         'coherence': coherence,
         'coherence_scope': coherence_scope,
@@ -438,9 +440,13 @@ def write_debt(data, verdict):
     add('| Biểu thức innerHTML chưa escape | %d / %d biểu thức trong sink |'
         % (len([f for f in escapes if f['level'] == 'UNESCAPED']), len(escapes)))
     pipeline_fields = data.get('pipeline_fields') or []
-    add('| `.get(khoá, mặc định)` bịa số trong Python | %d / %d lời gọi lần được |'
+    scope = data.get('pipeline_fields_scope') or {}
+    traced = scope.get('traced', len(pipeline_fields))
+    total_gets = scope.get('total_gets', 0)
+    coverage_pct = (traced * 100.0 / total_gets) if total_gets > 0 else 0
+    add('| `.get(khoá, mặc định)` bịa số trong Python | %d / %d kiểm / %d lời gọi (%.1f%%) |'
         % (len([f for f in pipeline_fields if f['level'] == 'FABRICATED']),
-           len(pipeline_fields)))
+           traced, total_gets, coverage_pct))
     # AQ-039/AQ-040.
     scope = data.get('coherence_scope') or {}
     deploy_scope_debt = data.get('deploy_scope') or {}
@@ -564,9 +570,13 @@ def main():
     print('Trường Telegram    : %d đọc sai / %d truy cập'
           % (len(telegram_missing), len(data.get('telegram') or [])))
     pipeline_fields = data.get('pipeline_fields') or []
+    scope = data.get('pipeline_fields_scope') or {}
     fabricated = [f for f in pipeline_fields if f['level'] == 'FABRICATED']
-    print('Trường Python      : %d số liệu giả / %d truy cập lần được'
-          % (len(fabricated), len(pipeline_fields)))
+    traced = scope.get('traced', len(pipeline_fields))
+    total_gets = scope.get('total_gets', 0)
+    coverage_pct = (traced * 100.0 / total_gets) if total_gets > 0 else 0
+    print('Trường Python      : %d số liệu giả / %d kiểm / %d lời gọi (%.1f%%)'
+          % (len(fabricated), traced, total_gets, coverage_pct))
     escapes = data.get('escapes') or []
     print('Portal escape      : %d chưa escape / %d biểu thức innerHTML'
           % (len([f for f in escapes if f['level'] == 'UNESCAPED']), len(escapes)))

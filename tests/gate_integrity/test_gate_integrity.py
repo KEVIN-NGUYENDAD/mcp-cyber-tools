@@ -59,7 +59,7 @@ def base_data():
                                 {'name': 'B', 'status': 'success'}]},
         'integrity': {'ok': True, 'total_violations': 0},
         'tests_ok': True, 'tests_detail': '',
-        'portal': [], 'telegram': [], 'pipeline_fields': [], 'escapes': [],
+        'portal': [], 'telegram': [], 'pipeline_fields': [], 'pipeline_fields_scope': {'findings': [], 'traced': 0, 'total_gets': 0, 'file_count': 0}, 'escapes': [],
     }
 
 
@@ -142,7 +142,8 @@ def run():
                  'generate_daily_brief.py'):
         suite.check('  -> co soi %s' % name, name in pfa.FILES)
 
-    findings = pfa.audit()
+    audit_result = pfa.audit()
+    findings = audit_result['findings'] if isinstance(audit_result, dict) else audit_result
     fabricated = [f for f in findings if f['level'] == 'FABRICATED']
     suite.check('Khong con so lieu gia trong pipeline Python',
                 not fabricated,
