@@ -50,6 +50,12 @@ EXTRA_SUITES = [
     ('portal_hardening', 'test_portal_hardening'),
     ('gate_integrity', 'test_gate_integrity'),
     ('fixtures', 'test_scoring_fixtures'),
+    ('sqlite_mirror', 'test_sqlite_mirror'),
+    # AQ-045. `schema_reconcile_audit` giu bon bat bien ma cong chan merge tren
+    # do, nhung chinh no chua tung duoc kiem. Mot bo do chua bao gio duoc chung
+    # minh la BAO DUOC thi `0 vi pham` cua no khong phan biet duoc voi `khong
+    # chay` — dung lop loi AQ-030 da day.
+    ('schema_reconcile', 'test_schema_reconcile'),
 ]
 
 

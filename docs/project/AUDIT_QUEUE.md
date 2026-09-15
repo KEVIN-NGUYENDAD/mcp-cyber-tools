@@ -3778,3 +3778,178 @@ lỗi mà `test_auto_validate.py` vừa bỏ đi trong cùng commit này.
 ---
 
 *Vòng 14, CHIEF AUDITOR 2026-09-14. LOOP MODE. Read-only.*
+
+
+---
+---
+
+# VÒNG 15 — 2026-09-14 · BUILDER (TEAM B), không phải auditor
+
+Vòng này là một lượt BUILDER, không phải audit read-only. Nhiệm vụ: đưa hàng đợi về
+`CRITICAL = 0, HIGH = 0`.
+
+## Phát hiện đầu tiên: sáu mục vòng 14 báo mở đã có bản sửa tại HEAD
+
+Vòng 13/14 đo trên `fc0441c` / `22cb27f`. HEAD hiện tại là `4bf2655`, sau cả hai.
+Đo lại từng mục trên mã + state thật:
+
+| Mục | Đo lại vòng 15 |
+|---|---|
+| AQ-046 | `generate_handoff.build(verdict)` in `Đủ điều kiện merge` + `Đang chặn`; `verdict=None` khai "chưa biết". Test phủ **cả hai nhánh** |
+| AQ-045 | `by_severity {INFO 226}` · `by_severity_including_noise {INFO 422, HIGH 6}` · HIGH trong kept **0** · Risk **23 → 5** |
+| AQ-002 | `by_attribution {FULL 224, PARTIAL 2}` khớp `by_hostname_source {local host 226, unresolved 2}` — 0 `unresolved` trong `FULL` |
+| AQ-047 | `notes` nêu đích danh hai năng lực mù + % trọng số bị rút; capability floor `LOW → MEDIUM` |
+| AQ-044 | `UNEVALUABLE` trong `run_coherence_audit.py`: 3 · trong `sprint_gate.py`: blocker |
+| AQ-043 | `except ImportError` nay ghi `run_scope: UNSTAMPED` + `run_scope_reason` |
+
+Đây là chênh lệch giữa auditor và cây làm việc, không phải nợ. Ghi ra để lần sau
+auditor đối chiếu HEAD trước khi tính tuổi một mục — AQ-002 được đếm "14 vòng"
+trong khi bản sửa đã nằm trong mã từ trước đó.
+
+## Lỗ hổng thật còn lại: bộ dò chưa từng được chứng minh là báo được
+
+`scripts/schema_reconcile_audit.py` giữ **bốn** bất biến — và `sprint_gate.py:288`
+chặn merge trên mọi vi phạm nó báo. Chính nó **chưa có một phép kiểm nào**.
+
+Nó in `TONG: 0 vi pham`. Câu đó có hai nghĩa không phân biệt được từ cổng:
+
+    (a) hai đầu mọi phép cộng khớp
+    (b) không phép kiểm nào chạy
+
+Đúng lớp lỗi AQ-030 đã đóng ở chỗ khác ("bộ dò phải phát hiện lệch khi có lệch"),
+và là lý do AQ-045/AQ-002 chưa thể đóng: bất biến của chúng đúng **hôm nay**, không
+có gì khoá lại cho ngày mai. Một mục chỉ hiện ra vào ngày xấu là mục nguy hiểm nhất
+trong hàng đợi — nhận định vòng 14 nói đúng điều đó, và nó áp cho chính bộ dò.
+
+**Đã thêm:** `tests/schema_reconcile/test_schema_reconcile.py` — **21/21**, nối vào
+`run_all.py` nên chạy trong `test:detection` và trong cổng.
+
+Không ca nào hỏi "hôm nay có vi phạm không". Mỗi ca tiêm đúng **một** loại lệch vào
+một `state/` giả (thư mục tạm, gán lại `sra.STATE_DIR` — gán lại biến chứ không vá
+`_read`, để đồng thời kiểm đường đọc không bị đóng băng lúc import), hỏi bộ dò có
+báo không, rồi gỡ ra hỏi nó có im lại không.
+
+Đáng ghi nhất là các **ca âm** — chúng khoá lại đúng những bài học hàng đợi này đã
+phải trả giá mới học được:
+
+- chỉ báo `suppressed` **tồn tại** là bình thường (nó ở lại mang cờ, đúng thiết kế);
+  cái phải báo là nó vẫn được **đếm**;
+- còn một `HIGH` thật thì bảng khai `HIGH` là đúng → không được báo `NOISE_SCORED`;
+- `FULL` từ `local host` phải **im** — máy tự biết tên mình là nguồn đáng tin nhất
+  đang có (AQ-002, và là lý do bất biến AQ-041 đề nghị không dùng được);
+- `399 lượt` cạnh `64 plugin` **khai đủ đơn vị → phải im**: đây chính là con số tám
+  vòng audit gọi nhầm là "lỗi đếm" trước khi AQ-021 chỉ ra là hai câu hỏi khác nhau.
+
+Một bộ dò kêu cả trên dữ liệu đúng sẽ bị tắt, nên các ca âm này là điều kiện sống
+của nó, không phải phần thêm.
+
+**Mutation — bằng chứng phép kiểm trượt được:** vô hiệu hoá `if counted != kept`
+trong `check_suppressed_severity` → suite `21/21 → 20/21`; phục hồi → `21/21`.
+Một fixture chưa từng được chứng minh là trượt được thì chưa phải bằng chứng; nó
+chỉ là một dòng `OK` nữa.
+
+**Sửa kèm — `sprint_gate.py:600`:** dòng `Đối chiếu lược đồ` in phạm vi của **hai**
+bất biến trong khi bộ dò chạy **bốn**. `attribution` và `suppressed` — hai bất biến
+vừa đóng AQ-002 và AQ-045 — chạy thật nhưng không xuất hiện ở đâu trên màn hình
+cổng, nên không đối chiếu được chúng đã đo cái gì. Cùng một lỗi với chính mục đang
+sửa: **một phép kiểm chạy mà không khai phạm vi đọc lên giống hệt phép kiểm không
+chạy.** Nay in đủ bốn dòng.
+
+## Sửa kèm thứ hai: `AUDIT_QUEUE_ACTIVE.md` tụt lại bảy vòng
+
+Tệp tóm tắt mô tả trạng thái **vòng 7** và liệt kê `0 CRITICAL + 8 HIGH` với các ID
+AQ-030/033/034/024/016–018/029 — đã đóng từ lâu — trong khi nguồn của nó đã chạy tới
+vòng 14 với tập mục hoàn toàn khác. Một Builder đọc nó sẽ sửa nhầm tám mục đã xong
+và bỏ sót sáu mục đang mở.
+
+Đây là **AQ-046 ở một tệp khác**: tệp tóm tắt tụt lại sau nguồn, và vì nó chỉ chứa
+số chứ không chứa ngày của nguồn, không có gì trên mặt tệp nói ra điều đó. Đã viết
+lại theo đo đạc vòng 15, kèm một dòng quy tắc ở đầu: tệp này chỉ được cập nhật trong
+cùng lần chạy với vòng audit mới.
+
+## CỔNG
+
+    PASS 93 | EMPTY 6 | BLIND 0 | FAIL 0
+    Bộ kiểm phát hiện : ĐẠT  (TONG: 472/472 dat)      <- 451 + 21 mới
+    Đối chiếu lược đồ  : 0 vi phạm | crypto 19/19, score 90 | vuln assets 399 luot
+                         quy kết   570 chi bao | local host 570, unresolved 2
+                         lọc nhiễu lateral 226/226 | persistence 96/96 | proc 46/46
+    KET QUA: DU DIEU KIEN MERGE
+
+---
+
+## AQ-048 · Gate Flakiness — MỚI (vòng 15, ghi nhận tại chỗ)
+
+**Issue:** Bộ kiểm trượt **không do mã**, một lần trong bốn lần chạy liên tiếp.
+
+**Severity:** HIGH — một cổng chặn merge vì lý do không phải lỗi mã sẽ bị người ta
+học cách chạy lại cho tới khi nó xanh. Một cổng bị chạy-lại-tới-khi-xanh thì không
+còn là cổng.
+
+**Evidence:**
+
+    Lần chạy 2026-09-14 (vòng 15):
+      TONG: 442/443 dat
+      test_sqlite_mirror  PermissionError: [WinError 32] The process cannot access
+                          the file because it is being used by another process
+      test_deploy_truth   TRUOT  "Cau hinh tong hop LECH -> ENTRYPOINT_MISMATCH bi bat"  [[]]
+
+    Ba lần chạy ngay sau đó, không đổi một dòng mã:
+      TONG: 472/472 dat   (x3)
+
+    Riêng từng bộ: deploy_truth 11/11 · sqlite_mirror 29/29
+
+**Root Cause (giả thuyết, chưa chứng minh):** hai bộ dùng tệp trên đĩa trong lúc
+chạy. `test_deploy_truth` ghi vào `tests/deploy_truth/_fixture/` — một thư mục
+**cố định**, không phải `tempfile.mkdtemp()` — nên hai tiến trình hoặc một lần
+chạy trước chưa dọn sẽ dẫm lên nhau; `audit()` trả `[]` (đọc không ra tệp) chứ
+không phải trả sai kết luận. Trên Windows, WinError 32 là triệu chứng kinh điển
+của một handle chưa đóng lúc `rmtree`.
+
+**Phân biệt quan trọng:** `[[]]` trong thông báo trượt nghĩa là bộ dò **không báo
+gì cả**, không phải báo sai. Đây lại đúng hình dạng `0 vi phạm` = "khớp" hay
+"không chạy" mà cả vòng 15 xoay quanh — lần này phep kiem bắt được, vì nó kiểm
+rằng bộ dò PHẢI báo. Nếu `test_deploy_truth` chỉ hỏi "hôm nay có vi phạm không"
+thì lần chạy hỏng này đã **xanh**.
+
+**Suggested Sprint:** SPRINT TEST-ISOLATION —
+(1) `test_deploy_truth` chuyển `_fixture/` sang `tempfile.mkdtemp()` + `rmtree`,
+cùng khuôn `tests/schema_reconcile/test_schema_reconcile.py` vừa viết.
+(2) `test_sqlite_mirror` đóng mọi connection trước khi dọn (WinError 32 là handle
+còn mở), hoặc `rmtree(ignore_errors=True)`.
+(3) Bộ kiểm trượt vì **hạ tầng** phải nói ra là hạ tầng, không trông giống một
+bất biến bị vỡ — cùng kỷ luật `UNSTAMPED` / `UNEVALUABLE` (AQ-043/044): khai vắng
+mặt, đừng để nó đội lốt một câu trả lời.
+
+**Ghi chú trung thực:** mục này **không được sửa trong vòng 15**. Nó nằm ngoài
+phạm vi "đóng AQ đang mở" và việc sửa nó chạm vào hai bộ kiểm không liên quan tới
+hàng đợi. Ghi ra đây vì ba lần chạy xanh liên tiếp là điều kiện đủ để **tiếp
+tục**, không phải điều kiện đủ để gọi lần trượt kia là không xảy ra.
+
+
+## TỒN ĐỌNG SAU VÒNG 15
+
+**Đang mở: 0 (0 CRITICAL, 0 HIGH). Đã trả tích luỹ: 41.**
+
+## NHẬN ĐỊNH VÒNG 15
+
+Mục tiêu `CRITICAL = 0, HIGH = 0` đạt được, nhưng không phải theo cách tôi tưởng lúc
+bắt đầu. Sáu mục vòng 14 báo mở đều đã có bản sửa trong mã. Việc thật của vòng này
+không phải viết thêm bản sửa — mà là hỏi *bản sửa được giữ bằng gì*, và câu trả lời
+cho hai mục CRITICAL là: **không gì cả**. Bất biến của AQ-045 và AQ-002 nằm trong một
+bộ dò chưa từng được chứng minh là báo được.
+
+Đóng chúng dựa trên `0 vi phạm` của một bộ dò như thế là lặp lại đúng lỗi hàng đợi
+này đã đóng nhiều lần dưới tên *green default*. Hai vòng trước vừa dạy cùng bài đó ở
+hai chỗ khác nhau: `test_auto_validate.py` xanh trong khi tệp thiếu dấu, và AQ-046
+"trông như đã sửa" vào ngày cổng thông. Lần này là mặt thứ ba của cùng một đồng xu —
+và nó ở trong chính công cụ dùng để bắt hai mặt kia.
+
+Bài học để lại cho vòng sau, viết thành một câu: **một bộ dò chưa trượt bao giờ thì
+chưa được tính là bằng chứng.** `schema_reconcile` nay đã trượt được. `deploy_truth`,
+`run_coherence_audit`, `portal_escape_audit` thì chưa — và cả ba đang đứng sau những
+dòng `0 vi phạm` trên cùng màn hình cổng.
+
+---
+
+*Vòng 15, BUILDER TEAM B 2026-09-14. LOOP MODE.*

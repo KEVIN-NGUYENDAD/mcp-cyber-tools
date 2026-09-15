@@ -597,9 +597,19 @@ def main():
           % (deploy_scope.get('entrypoint') or 'KHONG XAC DINH',
              len(data.get('deploy') or []), deploy_scope.get('routes_checked', 0)))
     reconcile_scope = data.get('reconcile_scope') or {}
+    # AQ-045. Dòng này in phạm vi của HAI bất biến trong khi bộ dò chạy BỐN.
+    # `attribution` và `suppressed` — hai bất biến vừa đóng AQ-002 và AQ-045 —
+    # chạy thật nhưng không xuất hiện ở đâu trên màn hình cổng, nên không ai
+    # đối chiếu được chúng đã đo cái gì. Một phép kiểm chạy mà không khai phạm
+    # vi đọc lên giống hệt một phép kiểm không chạy: đúng lớp lỗi mà chính bộ
+    # dò này tồn tại để bắt. In đủ bốn, theo đúng thứ tự `INVARIANTS`.
     print('Đối chiếu lược đồ  : %d vi phạm | crypto %s | vuln %s'
           % (len(data.get('reconcile') or []),
              reconcile_scope.get('crypto', '-'), reconcile_scope.get('vulns', '-')))
+    print('                     quy kết %s'
+          % reconcile_scope.get('attribution', '-'))
+    print('                     lọc nhiễu %s'
+          % reconcile_scope.get('suppressed', '-'))
     print('Tuổi đầu vào       : %s'
           % ' | '.join('%s %s' % (name.replace('.json', ''),
                                   'KHONG RO' if age is None else '%.1fh' % age)
