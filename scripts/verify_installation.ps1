@@ -3,22 +3,32 @@ param([switch]$Verbose)
 Write-Host "SentinelOps Installation Verification" -ForegroundColor Cyan
 $errors = @()
 $warnings = @()
-$installPath = 'C:\Program Files\SentinelOps'
+$installPath = $null
 $task = $null
 
-if (Test-Path $installPath) {
-    Write-Host "[PASS] Installation directory found" -ForegroundColor Green
+# Check both Program Files and Program Files (x86)
+$programFilesX64 = 'C:\Program Files\SentinelOps'
+$programFilesX86 = 'C:\Program Files (x86)\SentinelOps'
+
+if (Test-Path $programFilesX64) {
+    $installPath = $programFilesX64
+    Write-Host "[PASS] Installation directory found (Program Files)" -ForegroundColor Green
+} elseif (Test-Path $programFilesX86) {
+    $installPath = $programFilesX86
+    Write-Host "[PASS] Installation directory found (Program Files x86)" -ForegroundColor Green
 } else {
-    $errors += "Installation directory not found"
+    $errors += "Installation directory not found in either Program Files or Program Files (x86)"
     Write-Host "[FAIL] Installation directory not found" -ForegroundColor Red
 }
 
-$agentExe = Join-Path $installPath 'sentinel_agent.exe'
-if (Test-Path $agentExe) {
-    Write-Host "[PASS] Agent binary found" -ForegroundColor Green
-} else {
-    $errors += "Agent binary not found"
-    Write-Host "[FAIL] Agent binary not found" -ForegroundColor Red
+if ($installPath) {
+    $agentExe = Join-Path $installPath 'sentinel_agent.exe'
+    if (Test-Path $agentExe) {
+        Write-Host "[PASS] Agent binary found" -ForegroundColor Green
+    } else {
+        $errors += "Agent binary not found"
+        Write-Host "[FAIL] Agent binary not found" -ForegroundColor Red
+    }
 }
 
 $task = Get-ScheduledTask -TaskName 'SentinelOpsAgent' -ErrorAction SilentlyContinue
