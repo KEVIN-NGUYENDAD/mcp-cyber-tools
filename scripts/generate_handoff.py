@@ -41,6 +41,8 @@ HANDOFF_FILE = os.path.join(DOCS_DIR, 'HANDOFF.md')
 if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
+import run_context  # noqa: E402
+
 
 def read_json(name, folder='state'):
     path = os.path.join(PROJECT_ROOT, folder, name)
@@ -315,6 +317,56 @@ def build(verdict=None):
     return '\n'.join(lines) + '\n'
 
 
+def _record_stage(duration, handoff_path):
+    """AQ-050. Ghi stage nay vao ban ghi pipeline — CHI khi no thuoc ve lan chay do.
+
+    Truoc day doan nay append vo dieu kien. Nhung `generate_handoff` khong phai
+    mot stage cua `run_intelligence_pipeline`: no chay tu `npm run handoff` va tu
+    `sprint_gate`. Moi lan goi cong them mot dong `Generate Handoff` vao ban ghi
+    cua mot lan chay DA KET THUC, nen so stage tang dan qua cac lan chay cong —
+    36, roi 41, roi 43 — trong khi pipeline van lam dung bay nhieu viec. Do that:
+    45 dong ghi cho 29 stage, `Generate Handoff` 17 lan.
+
+    Con so bi thoi phong nay khong vo hai: no la MAU SO cua dong "0 that bai".
+
+    Nen dieu kien o day la `run_id` cua tien trinh nay bang `run_id` trong tep:
+    cung mot lan chay thi ghi, khac hoac vang mat thi khong dong vao. Va ghi la
+    GHI DE theo ten stage chu khong phai them — goi hai lan trong cung lan chay
+    van la mot stage.
+    """
+    mine = run_context.run_id()
+    if not mine:
+        return 'STANDALONE'          # chay tay: khong co lan chay nao de ghi vao
+
+    pipeline_results_path = os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json')
+    pipeline_data = read_json('pipeline_results.json', 'logs')
+    if not pipeline_data or not isinstance(pipeline_data.get('stages'), list):
+        return 'KHONG DOC DUOC'
+    if pipeline_data.get('run_id') != mine:
+        return 'LAN CHAY KHAC'       # ban ghi cua lan chay khac, khong phai cua ta
+
+    entry = {
+        'name': 'Generate Handoff',
+        'status': 'success',
+        'duration': duration,
+        'run_id': mine,
+        'output': {'status': 'success', 'handoff': handoff_path},
+    }
+    stages = pipeline_data['stages']
+    for index, stage in enumerate(stages):
+        if stage.get('name') == 'Generate Handoff':
+            stages[index] = entry
+            break
+    else:
+        stages.append(entry)
+    try:
+        with io.open(pipeline_results_path, 'w', encoding='utf-8') as handle:
+            json.dump(pipeline_data, handle, indent=2, ensure_ascii=False)
+    except (IOError, OSError):
+        return 'KHONG GHI DUOC'
+    return 'DA GHI'
+
+
 def main(verdict=None):
     """AQ-046. `verdict` là kết quả `sprint_gate.evaluate()` của CHÍNH lần chạy
     này. Không có nó thì tệp phải nói là không có — xem `build()`."""
@@ -329,23 +381,7 @@ def main(verdict=None):
     duration = time.time() - start_time
     handoff_path = os.path.relpath(HANDOFF_FILE, PROJECT_ROOT)
 
-    pipeline_results_path = os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json')
-    pipeline_data = read_json('pipeline_results.json', 'logs')
-    if pipeline_data:
-        pipeline_data['stages'].append({
-            'name': 'Generate Handoff',
-            'status': 'success',
-            'duration': duration,
-            'output': {
-                'status': 'success',
-                'handoff': handoff_path
-            }
-        })
-        try:
-            with io.open(pipeline_results_path, 'w', encoding='utf-8') as handle:
-                json.dump(pipeline_data, handle, indent=2, ensure_ascii=False)
-        except (IOError, OSError):
-            pass
+    _record_stage(duration, handoff_path)
 
     print(json.dumps({'status': 'success',
                       'handoff': handoff_path},

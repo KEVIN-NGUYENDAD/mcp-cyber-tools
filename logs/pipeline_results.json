@@ -517,51 +517,6 @@
         "status": "success",
         "handoff": "docs\\project\\HANDOFF.md"
       }
-    },
-    {
-      "name": "Generate Handoff",
-      "status": "success",
-      "duration": 0.0930938720703125,
-      "output": {
-        "status": "success",
-        "handoff": "docs\\project\\HANDOFF.md"
-      }
-    },
-    {
-      "name": "Generate Handoff",
-      "status": "success",
-      "duration": 0.09182000160217285,
-      "output": {
-        "status": "success",
-        "handoff": "docs\\project\\HANDOFF.md"
-      }
-    },
-    {
-      "name": "Generate Handoff",
-      "status": "success",
-      "duration": 0.09108233451843262,
-      "output": {
-        "status": "success",
-        "handoff": "docs\\project\\HANDOFF.md"
-      }
-    },
-    {
-      "name": "Generate Handoff",
-      "status": "success",
-      "duration": 0.09182429313659668,
-      "output": {
-        "status": "success",
-        "handoff": "docs\\project\\HANDOFF.md"
-      }
-    },
-    {
-      "name": "Generate Handoff",
-      "status": "success",
-      "duration": 0.09734511375427246,
-      "output": {
-        "status": "success",
-        "handoff": "docs\\project\\HANDOFF.md"
-      }
     }
   ],
   "status": "success",
@@ -574,5 +529,6 @@
   },
   "duration": 28.832457065582275,
   "end_time": "2026-09-14T13:53:55.505644",
-  "run_scope": "PIPELINE"
+  "run_scope": "PIPELINE",
+  "stages_note": "AQ-050: go 16 dong `Generate Handoff` duoc append sau khi lan chay nay ket thuc. 29 stage con lai la nhung gi pipeline that su chay."
 }

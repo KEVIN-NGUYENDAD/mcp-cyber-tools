@@ -318,11 +318,29 @@ def evaluate(data):
     if not stages:
         blockers.append('khong co stage pipeline nao trong logs/pipeline_results.json')
 
+    # AQ-050. Mot lan chay chay moi stage dung mot lan. Ten lap lai nghia la co ai
+    # do GHI THEM vao ban ghi cua mot lan chay da ket thuc — do la cach so stage
+    # phinh tu 36 len 41 len 43 trong khi pipeline khong he lam them viec gi.
+    # Con so bi thoi phong o day khong vo hai: no la mau so cua "0 that bai".
+    seen = {}
+    for stage in stages:
+        name = stage.get('name') or '?'
+        seen[name] = seen.get(name, 0) + 1
+    duplicates = sorted((n, c) for n, c in seen.items() if c > 1)
+    if duplicates:
+        blockers.append('%d stage bi ghi lap (%s) — %d dong ghi cho %d stage that; '
+                        'ban ghi mot lan chay bi boi them sau khi lan chay ket thuc'
+                        % (len(duplicates),
+                           ', '.join('%s x%d' % (n, c) for n, c in duplicates[:3]),
+                           len(stages), len(seen)))
+
     return {
         'merge_ready': not blockers,
         'blockers': blockers,
         'summary': summary,
         'stages': len(stages),
+        'distinct_stages': len(seen),
+        'duplicate_stages': len(duplicates),
         'failed_stages': len(failed_stages),
         'unknown_stages': len(unknown_stages),
     }
@@ -561,6 +579,10 @@ def main():
           % (verdict['stages'], verdict['failed_stages'],
              '' if not verdict.get('unknown_stages')
              else ', %d không khai trạng thái' % verdict['unknown_stages']))
+    if verdict.get('duplicate_stages'):
+        print('                     %d dòng ghi cho %d stage thật — %d tên bị lặp'
+              % (verdict['stages'], verdict.get('distinct_stages', 0),
+                 verdict['duplicate_stages']))
     portal_missing = [f for f in (data.get('portal') or [])
                       if f['level'] == 'MISSING']
     print('Trường portal      : %d đọc sai / %d truy cập'

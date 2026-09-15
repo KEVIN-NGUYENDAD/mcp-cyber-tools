@@ -56,6 +56,10 @@ EXTRA_SUITES = [
     # minh la BAO DUOC thi `0 vi pham` cua no khong phan biet duoc voi `khong
     # chay` — dung lop loi AQ-030 da day.
     ('schema_reconcile', 'test_schema_reconcile'),
+    # AQ-050. Ban ghi mot lan chay phai noi ve dung lan chay do. So stage tung
+    # phinh 36 -> 41 -> 43 vi mot script ngoai pipeline append vao ban ghi cua
+    # lan chay da ket thuc; mau so cua "0 that bai" bi thoi len theo.
+    ('pipeline_ledger', 'test_pipeline_ledger'),
 ]
 
 

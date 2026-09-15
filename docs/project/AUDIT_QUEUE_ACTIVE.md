@@ -1,5 +1,5 @@
 # AUDIT_QUEUE_ACTIVE.md
-**Last updated:** 2026-09-14 (vòng 15, BUILDER TEAM B) · **Status:** LOOP MODE · **Context:** Distilled for token efficiency
+**Last updated:** 2026-09-14 (vòng 16, BUILDER TEAM B) · **Status:** LOOP MODE · **Context:** Distilled for token efficiency
 
 > **Cảnh báo về chính tệp này.** Bản trước của nó mô tả trạng thái vòng 7 và liệt kê
 > `0 CRITICAL + 8 HIGH` với các ID (AQ-030/033/034/024/016–018/029) đã đóng từ lâu,
@@ -10,9 +10,9 @@
 
 ---
 
-## TỒN ĐỌNG — 0 CRITICAL · 2 HIGH (hạ tầng bộ kiểm + bản ghi pipeline)
+## TỒN ĐỌNG — 0 CRITICAL · 1 HIGH (hạ tầng bộ kiểm)
 
-| ID | Hạng | Trạng thái vòng 15 |
+| ID | Hạng | Trạng thái vòng 16 |
 |---|---|---|
 | **AQ-046** | CRITICAL | ✅ `generate_handoff.build(verdict)` in `Đủ điều kiện merge` + khối `Đang chặn` từ chính `sprint_gate.evaluate()`; `verdict=None` (chạy tay) nói thẳng "chưa biết" thay vì in nửa câu trả lời. Khoá bằng `tests/gate_integrity/test_gate_integrity.py:250` — kiểm **cả hai nhánh** chặn/thông cộng nhánh standalone, đúng điều kiện nghiệm thu vòng 14 đặt ra |
 | **AQ-045** | CRITICAL | ✅ `ioc_quality.py:601` ghi lại `by_severity` sau lọc, số trước lọc chuyển sang `by_severity_including_noise` + `by_severity_note`. Đo thật: `{INFO 226}` / `{INFO 422, HIGH 6}`, HIGH trong kept = **0**, Risk **23 → 5**. Bất biến `sum(by_severity) == len(kept)` nằm trong `schema_reconcile_audit.check_suppressed_severity`, cổng chặn trên `SUPPRESSED_COUNTED` / `NOISE_SCORED` |
@@ -23,9 +23,9 @@
 
 | **AQ-048** | HIGH | ❌ **MỚI, chưa sửa.** Bộ kiểm trượt một lần trong bốn, **không do mã**: `test_sqlite_mirror` → `PermissionError [WinError 32]`, kéo theo `test_deploy_truth` trượt vì `tests/deploy_truth/_fixture/` là thư mục **cố định** chứ không phải `mkdtemp()`. Ba lần chạy sau: `472/472` ×3; riêng từng bộ: 11/11 và 29/29. Chi tiết + sprint đề xuất ở `AUDIT_QUEUE.md` · AQ-048 |
 
-| **AQ-050** | HIGH | ❌ **MỚI, chưa sửa** (mở trong DB-1 · TASK 4). Số stage pipeline tự phình mỗi lần chạy **cổng**, không có stage mới thật: git HEAD `34 stage / 29 tên`, cây làm việc `45 stage / 29 tên`, `"Generate Handoff" x6 → x17`; cổng in `36 → 41 → 43` trong một phiên không chạy pipeline lần nào. Nguyên nhân: `generate_handoff.py:335` `append` vào bản ghi của lần chạy **trước** (giữ nguyên `run_id`, `timestamp`, `duration 28.83s`). `gate_integrity:109` không bắt vì chỉ hỏi `bool(stages)`. Chi tiết + sprint đề xuất ở `AUDIT_QUEUE.md` · AQ-050. **AQ-049 không tồn tại** — khoảng trống có chủ ý |
+| **AQ-050** | HIGH | ✅ **Vòng 16.** Chẩn đoán của DB-1 đúng và đã đo lại độc lập: `45 dòng ghi / 29 tên`, `Generate Handoff` ×17 — **handoff append**, không phải stage leak cũng không phải metadata drift. Sửa **hai đầu**: (1) `_record_stage()` chỉ ghi khi `run_id` tiến trình **khớp** `run_id` trong tệp, và **ghi đè theo tên** chứ không append — chạy tay → `STANDALONE`, bản ghi lần chạy khác → `LAN CHAY KHAC`, cả hai không đụng vào; (2) `sprint_gate.evaluate()` **chặn** khi có tên stage lặp, nêu cả `n dòng ghi` lẫn `m stage thật` — đúng chỗ `gate_integrity:109` bỏ sót vì chỉ hỏi `bool(stages)`. Con số bị thổi không vô hại: nó là **mẫu số** của `0 thất bại`. `tests/pipeline_ledger/` **14/14**; mutation `14→11` (tắt bộ dò) và `14→13` (tắt điều kiện `run_id`). Bản ghi cũ dọn `45 → 29` kèm `stages_note`. **AQ-049 không tồn tại** — khoảng trống có chủ ý |
 
-**Đang mở: 2 (0 CRITICAL, 2 HIGH — AQ-048, AQ-050). Đã trả tích luỹ: 41.**
+**Đang mở: 1 (0 CRITICAL, 1 HIGH — AQ-048). Đã trả tích luỹ: 42.**
 
 > **Mục tiêu `CRITICAL = 0, HIGH = 0` đạt được trên hàng đợi nhận vào đầu vòng 15**
 > (AQ-046/045/002/047/044/043 — toàn bộ đóng, có bằng chứng). AQ-048 là mục **phát
@@ -80,12 +80,12 @@ phép kiểm không chạy. Nay in đủ bốn dòng.
 
 ---
 
-## CỔNG — 2026-09-14, vòng 15
+## CỔNG — 2026-09-14, vòng 16
 
     PASS 93 | EMPTY 6 | BLIND 0 | FAIL 0
-    Bộ kiểm phát hiện : ĐẠT  (TONG: 472/472 dat)      <- 451 + 21 mới
+    Bộ kiểm phát hiện : ĐẠT  (TONG: 486/486 dat)      <- 472 + 14 (AQ-050)
     Toàn vẹn bằng chứng: 0 vi phạm / 570 chỉ báo
-    Pipeline           : 38 stage, 0 thất bại
+    Pipeline           : 29 stage, 0 thất bại        <- 45 trước AQ-050
     Đối chiếu lược đồ  : 0 vi phạm | crypto 19/19, score 90 | vuln assets 399 luot
                          quy kết   570 chi bao | local host 570, unresolved 2
                          lọc nhiễu lateral 226/226 | persistence 96/96 | proc 46/46
