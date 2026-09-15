@@ -3927,6 +3927,65 @@ hàng đợi. Ghi ra đây vì ba lần chạy xanh liên tiếp là điều ki�
 tục**, không phải điều kiện đủ để gọi lần trượt kia là không xảy ra.
 
 
+---
+
+## AQ-050 · Pipeline Stage Count Inflation — MỞ (DB-1, TASK 4)
+
+> ID theo yêu cầu đặt hàng. **AQ-049 không tồn tại** — khoảng trống có chủ ý, đừng
+> đi tìm.
+
+**Issue:** `logs/pipeline_results.json` tăng số stage mỗi lần chạy **cổng chặn**,
+trong khi pipeline không hề chạy. Không có stage mới thật nào được sinh ra.
+
+**Severity:** HIGH — số stage là một trong bốn con số cổng in ra để người đọc tin
+là pipeline còn sống (`Pipeline: 43 stage, 0 thất bại`). Nó đang đếm một thứ không
+phải stage. Một đại lượng tự phình khi bị quan sát thì không dùng để giám sát được.
+
+**Evidence (đo 2026-09-14, không sửa gì trước khi đo):**
+
+    Bản trong git (HEAD d92c96e)      : 34 stage · 29 tên khác nhau · "Generate Handoff" x6
+    Bản trong cây làm việc            : 45 stage · 29 tên khác nhau · "Generate Handoff" x17
+    Số stage THẬT                     : 29  (không đổi ở cả hai bản)
+    Cổng in ra trong phiên này        : 36 → 41 → 43   (+1 mỗi lần chạy cổng)
+
+    Toàn bộ 45 mục vẫn nằm dưới:
+      run_id    : RUN-20260914T135326-48c449
+      timestamp : 2026-09-14T13:53:26   end_time : 13:53:55   duration : 28.83s
+    tức 17 mục "Generate Handoff" được ghi HÀNG GIỜ sau khi lần chạy đó kết thúc,
+    nhưng mang run_id của nó. `duration` 28.83s không đổi.
+
+**Root Cause (đã định vị, không phải giả thuyết):** `scripts/generate_handoff.py:335`
+
+    pipeline_data['stages'].append({'name': 'Generate Handoff', ...})
+
+`main()` đọc tệp kết quả của **lần chạy pipeline trước**, nối thêm một mục, rồi ghi
+đè. Không kiểm `run_id` hiện tại, không thay `timestamp`, không chống trùng. Từ
+AQ-033, `generate_handoff` chạy trong **mọi** lần gọi `sprint_gate.py` — nên mỗi lần
+mở cổng là một mục nữa. AQ-033 thêm handoff làm stage 29 là đúng; khuyết tật nằm ở
+chỗ mục đó được nối vào bản ghi của một lần chạy đã đóng, thay vì của lần chạy hiện
+tại.
+
+**Vì sao không bộ kiểm nào bắt:** `tests/gate_integrity/test_gate_integrity.py:109`
+chỉ hỏi `bool(stages)` — "có stage không". Danh sách càng phình thì câu trả lời càng
+đúng. Đây lại là hình dạng *green default* quen thuộc: phép kiểm đo sự **tồn tại**,
+còn cái hỏng là **tính đúng**.
+
+**Suggested Sprint:** PIPELINE-STAGE-TRUTH —
+(1) `generate_handoff` chỉ được nối vào bản ghi **có `run_id` trùng lần chạy hiện
+tại**; chạy cổng standalone thì ghi ra chỗ khác hoặc không ghi.
+(2) Thay `append` bằng upsert theo tên, để chạy lại không nhân bản.
+(3) Thêm bất biến vào `gate_integrity`: `len(stages) == len(set(tên stage))` — một
+lần chạy không thể có hai stage cùng tên; và `stages` không được đổi nếu
+`run_id`/`timestamp` không đổi.
+(4) Dọn 16 mục thừa trong tệp hiện tại **sau** khi (1)–(3) xong, không trước — dọn
+trước chỉ đặt lại đồng hồ.
+
+**Chưa sửa ở đây.** DB-1 là SQLite Mirror; sửa chỗ này chạm `generate_handoff.py`
+và `sprint_gate.py`, tức chính công cụ đang dùng để nghiệm thu DB-1. Mở mục, không
+sửa trong cùng lần chạy.
+
+---
+
 ## TỒN ĐỌNG SAU VÒNG 15
 
 **Đang mở: 0 (0 CRITICAL, 0 HIGH). Đã trả tích luỹ: 41.**

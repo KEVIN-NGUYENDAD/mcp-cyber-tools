@@ -10,7 +10,7 @@
 
 ---
 
-## TỒN ĐỌNG — 0 CRITICAL · 1 HIGH (mới, hạ tầng bộ kiểm)
+## TỒN ĐỌNG — 0 CRITICAL · 2 HIGH (hạ tầng bộ kiểm + bản ghi pipeline)
 
 | ID | Hạng | Trạng thái vòng 15 |
 |---|---|---|
@@ -23,7 +23,9 @@
 
 | **AQ-048** | HIGH | ❌ **MỚI, chưa sửa.** Bộ kiểm trượt một lần trong bốn, **không do mã**: `test_sqlite_mirror` → `PermissionError [WinError 32]`, kéo theo `test_deploy_truth` trượt vì `tests/deploy_truth/_fixture/` là thư mục **cố định** chứ không phải `mkdtemp()`. Ba lần chạy sau: `472/472` ×3; riêng từng bộ: 11/11 và 29/29. Chi tiết + sprint đề xuất ở `AUDIT_QUEUE.md` · AQ-048 |
 
-**Đang mở: 1 (0 CRITICAL, 1 HIGH — AQ-048). Đã trả tích luỹ: 41.**
+| **AQ-050** | HIGH | ❌ **MỚI, chưa sửa** (mở trong DB-1 · TASK 4). Số stage pipeline tự phình mỗi lần chạy **cổng**, không có stage mới thật: git HEAD `34 stage / 29 tên`, cây làm việc `45 stage / 29 tên`, `"Generate Handoff" x6 → x17`; cổng in `36 → 41 → 43` trong một phiên không chạy pipeline lần nào. Nguyên nhân: `generate_handoff.py:335` `append` vào bản ghi của lần chạy **trước** (giữ nguyên `run_id`, `timestamp`, `duration 28.83s`). `gate_integrity:109` không bắt vì chỉ hỏi `bool(stages)`. Chi tiết + sprint đề xuất ở `AUDIT_QUEUE.md` · AQ-050. **AQ-049 không tồn tại** — khoảng trống có chủ ý |
+
+**Đang mở: 2 (0 CRITICAL, 2 HIGH — AQ-048, AQ-050). Đã trả tích luỹ: 41.**
 
 > **Mục tiêu `CRITICAL = 0, HIGH = 0` đạt được trên hàng đợi nhận vào đầu vòng 15**
 > (AQ-046/045/002/047/044/043 — toàn bộ đóng, có bằng chứng). AQ-048 là mục **phát
