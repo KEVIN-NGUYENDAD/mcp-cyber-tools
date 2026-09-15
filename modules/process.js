@@ -98,7 +98,7 @@ export function registerProcessTools(server) {
       limit: z.coerce.number().optional()
     },
     async ({ limit = 10 }) => {
-      const result = runPowerShell(`Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First ${limit} Name, Id, @{Name='MemoryMB';Expression={[math]::Round($_.WorkingSet/1MB,2)}} | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First $limit Name, Id, @{Name='MemoryMB';Expression={[math]::Round($_.WorkingSet/1MB,2)}} | ConvertTo-Json -Depth 5`, { limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -117,7 +117,7 @@ export function registerProcessTools(server) {
       else if (metric === "cpu") sortField = "CPU";
       else sortField = "Handles";
 
-      const result = runPowerShell(`Get-Process | Sort-Object ${sortField} -Descending | Select-Object -First ${limit} Name, Id, ${sortField} | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-Process | Sort-Object $sortField -Descending | Select-Object -First $limit Name, Id, $sortField | ConvertTo-Json -Depth 5`, { sortField, limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );

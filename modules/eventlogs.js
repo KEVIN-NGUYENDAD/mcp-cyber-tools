@@ -76,7 +76,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 50 }) => {
-      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents $count -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`, { count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -89,7 +89,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 50 }) => {
-      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624} -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624} -MaxEvents $count -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`, { count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -152,7 +152,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 50 }) => {
-      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='System'; ProviderName='Disk'} -MaxEvents ${count} -ErrorAction SilentlyContinue | Where-Object { $_.Message -like '*USB*' } | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='System'; ProviderName='Disk'} -MaxEvents $count -ErrorAction SilentlyContinue | Where-Object { $_.Message -like '*USB*' } | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`, { count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -165,7 +165,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 50 }) => {
-      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='System'; Id=7034,7035,7036,7040,7045} -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='System'; Id=7034,7035,7036,7040,7045} -MaxEvents $count -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`, { count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );

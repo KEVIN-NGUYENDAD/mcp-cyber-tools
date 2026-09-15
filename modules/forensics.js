@@ -140,9 +140,9 @@ export function registerForensicsTools(server) {
       const result = runPowerShell(`
         Get-ChildItem -Path "$env:APPDATA\\Microsoft\\Windows\\Recent" -ErrorAction SilentlyContinue |
         Sort-Object LastAccessTime -Descending |
-        Select-Object -First ${limit} Name, LastAccessTime, FullName |
+        Select-Object -First $limit Name, LastAccessTime, FullName |
         ConvertTo-Json
-      `);
+      `, { limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -158,9 +158,9 @@ export function registerForensicsTools(server) {
       const result = runPowerShell(`
         Get-ChildItem -Path "$env:USERPROFILE\\Downloads" -Recurse -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending |
-        Select-Object -First ${limit} FullName, Length, LastWriteTime |
+        Select-Object -First $limit FullName, Length, LastWriteTime |
         ConvertTo-Json
-      `);
+      `, { limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -192,9 +192,9 @@ export function registerForensicsTools(server) {
       const result = runPowerShell(`
         Get-ChildItem -Path "$env:TEMP" -Recurse -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending |
-        Select-Object -First ${limit} FullName, Length, LastWriteTime |
+        Select-Object -First $limit FullName, Length, LastWriteTime |
         ConvertTo-Json
-      `);
+      `, { limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -211,9 +211,9 @@ export function registerForensicsTools(server) {
         $shell = New-Object -ComObject Shell.Application;
         $recycleBin = $shell.NameSpace(10);
         $recycleBin.Items() |
-        Select-Object -First ${limit} Name, Size |
+        Select-Object -First $limit Name, Size |
         ConvertTo-Json
-      `);
+      `, { limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -277,14 +277,14 @@ export function registerForensicsTools(server) {
           }
         }
 
-        $limited = @($rows | Select-Object -First ${limit})
+        $limited = @($rows | Select-Object -First $limit)
         [PSCustomObject]@{
           ScannedPaths = @($scanned)
           Total = $rows.Count
           Streams = $limited
         } | ConvertTo-Json -Depth 5 -Compress
         exit 0
-      `, { userTarget: path || "" });
+      `, { userTarget: path || "", limit: String(limit) });
 
       if (!result.success) return formatResponse(result.success, result.data, result.error);
 
