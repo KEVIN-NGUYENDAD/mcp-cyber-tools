@@ -82,9 +82,14 @@ _Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
 
 ## Việc tiếp theo
 
-1. Đọc `docs/project/AUDIT_QUEUE.md` — còn CRITICAL/HIGH thì sửa trước.
-2. Đọc `docs/project/TECHNICAL_DEBT.md` — nợ đo được và nợ ghi nhận.
-3. `npm run gate` trước khi mở PR.
+**Sprint 17 Status:** CRITICAL = 0, HIGH = 5 (AQ-033, AQ-034, AQ-024, AQ-016–029 remainder)
+- AQ-024: Fixed (default severity UNKNOWN, suppressed filter, top-10 sort)
+- AQ-034: Fixed (denominator 109/645 shown)
+- AQ-033: Open (handoff as tracked pipeline stage — requires pipeline system mod)
+
+1. AQ-033: Add handoff as pipeline stage 29 (complex, low priority now)
+2. Verify AQ-016–029 remainder items in full AUDIT_QUEUE.md
+3. Merge PR #46 and redeploy
 
 ## Tài liệu handoff viết tay
 
