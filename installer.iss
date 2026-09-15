@@ -36,51 +36,16 @@ Source: "{#SourceExe}"; DestDir: "{app}"; Flags: ignoreversion
 ; Source: "LICENSE"; DestDir: "{app}"; Flags: ignoreversion (optional - not included)
 Source: ".env.example"; DestDir: "{app}"; Flags: ignoreversion
 
-[Code]
-procedure RegisterService;
-var
-  ResultCode: Integer;
-  ServicePath: String;
-  NssmPath: String;
-begin
-  ServicePath := ExpandConstant('{app}\{#MyAppExeName}');
-  NssmPath := ExpandConstant('{app}\nssm.exe');
-
-  // Download NSSM if not present
-  if not FileExists(NssmPath) then
-  begin
-    MsgBox('NSSM not found. Downloading...', mbInformation, MB_OK);
-    // In production: fetch from trusted source
-    // idpAddFile('https://nssm.cc/release/nssm-2.24-101-g897c7ad.zip', ExpandConstant('{tmp}\nssm.zip'));
-  end;
-
-  // Register service with NSSM
-  if FileExists(NssmPath) then
-  begin
-    if Exec(NssmPath, ExpandConstant('install SentinelOpsAgent "' + ServicePath + '"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
-    begin
-      if ResultCode = 0 then
-      begin
-        // Set startup type to Automatic
-        Exec(NssmPath, 'set SentinelOpsAgent Start SERVICE_AUTO_START', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-        // Restart policy: restart service on failure
-        Exec(NssmPath, 'set SentinelOpsAgent AppRestartDelay 10000', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-        MsgBox('Service registered successfully', mbInformation, MB_OK);
-      end
-      else
-        MsgBox('Failed to register service. Error code: ' + IntToStr(ResultCode), mbError, MB_OK);
-    end;
-  end
-  else
-    MsgBox('NSSM executable not found', mbError, MB_OK);
-end;
 
 [CustomMessages]
 english.FinishLabel=Installation complete
 english.FinishLabelNoIcons=Installation complete (no shortcuts created)
 
 [Run]
-Filename: "{app}\nssm.exe"; Parameters: "start SentinelOpsAgent"; Flags: nowait postinstall skipifsilent hidewizard; Description: "Start service"
+Filename: "{sys}\cmd.exe"; Parameters: "/c schtasks /create /tn ""SentinelOpsAgent"" /tr ""{app}\{#MyAppExeName}"" /sc onstart /ru SYSTEM /f /rl HIGHEST"; Flags: runhidden postinstall skipifsilent; Description: "Register startup task"
+
+[UninstallRun]
+Filename: "{sys}\cmd.exe"; Parameters: "/c schtasks /delete /tn ""SentinelOpsAgent"" /f"; Flags: runhidden
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
