@@ -5,6 +5,47 @@
 
 console.log('[APP.JS] Script loaded at:', new Date().toISOString());
 
+// ============================================================================
+// EXP-02 — gắn API key vào mọi lời gọi /api
+// ============================================================================
+//
+// Server nay gio doi header `x-api-key` tren moi route `/api` (fail-closed:
+// khong co khoa thi 401/503). Dashboard co 19 loi goi fetch; thay vi sua tung
+// cho — va bo sot mot cho vao lan sau — boc `fetch` mot lan tai day.
+//
+// Khoa nam trong `localStorage` cua TUNG NGUOI XEM, khong nam trong ma nguon.
+// Nhung KHONG duoc doc dieu do thanh "dashboard da duoc bao ve": ai mo duoc
+// trang va co khoa thi doc duoc du lieu. Lop xac thuc that nam o server; cai
+// nay chi la cho cat khoa cua trinh duyet.
+(function attachApiKey() {
+  const STORAGE_KEY = 'sentinelops_api_key';
+  const nativeFetch = window.fetch.bind(window);
+
+  window.setApiKey = function (key) {
+    localStorage.setItem(STORAGE_KEY, key);
+    console.log('[APP.JS] Da luu API key. Tai lai trang de dung.');
+  };
+
+  window.fetch = function (input, init) {
+    const url = typeof input === 'string' ? input : (input && input.url) || '';
+    const key = localStorage.getItem(STORAGE_KEY);
+    if (key && url.startsWith('/api')) {
+      init = Object.assign({}, init);
+      init.headers = Object.assign({}, init.headers, { 'x-api-key': key });
+    }
+    return nativeFetch(input, init).then((res) => {
+      if (res.status === 401 && url.startsWith('/api')) {
+        console.error('[APP.JS] 401 tu %s — thieu hoac sai API key. '
+          + 'Dat bang: setApiKey("<khoa>") trong console roi tai lai trang.', url);
+      } else if (res.status === 503 && url.startsWith('/api')) {
+        console.error('[APP.JS] 503 tu %s — server CHUA duoc cau hinh API_KEY. '
+          + 'Day la loi cau hinh phia server, khong phai phia trinh duyet.', url);
+      }
+      return res;
+    });
+  };
+})();
+
 let stateData = {
   assets: null,
   shadowAssets: null,
@@ -1171,10 +1212,20 @@ function renderAnalytics() {
     if (chartLow) chartLow.textContent = lowVulns;
 
     // WAAP Radar
-    const sslValid = stateData.waap?.security_summary?.ssl_valid ? '✓' : '✗';
-    const wafActive = stateData.waap?.security_summary?.waf_active ? '✓' : '✗';
-    const cdnActive = stateData.waap?.security_summary?.cdn_active ? '✓' : '✗';
-    const protActive = stateData.waap?.security_summary?.protection_active ? '✓' : '✗';
+    // AQ-018, nua con lai. `security_summary` gio giu ba gia tri (true / false /
+    // null), va `null` nghia la "chua do duoc" — mot cau tra loi khac han voi
+    // "da do, khong co bao ve".
+    //
+    // `? :` tren gia tri tho khong phan biet duoc hai dieu do: `null` la falsy,
+    // nen no hien ✗ y het mot he thong that su khong duoc bao ve. Dong :765 da
+    // sua bang `=== true`; dong nay thi chua, nen mot nua portal noi "chua biet"
+    // con nua kia noi "khong co".
+    const triMark = (value) => (value === true ? '✓' : value === false ? '✗' : '?');
+    const summary = stateData.waap?.security_summary;
+    const sslValid = triMark(summary?.ssl_valid);
+    const wafActive = triMark(summary?.waf_active);
+    const cdnActive = triMark(summary?.cdn_active);
+    const protActive = triMark(summary?.protection_active);
 
     const radarSsl = document.getElementById('radar-ssl');
     const radarWaf = document.getElementById('radar-waf');
@@ -1700,7 +1751,14 @@ function renderThreatIntelligence() {
         (a, b) => (SEVERITY_RANK[b?.severity] || 0) - (SEVERITY_RANK[a?.severity] || 0)
       );
       const html = ranked.slice(0, 10).map(ind => {
-        const severity = ind?.severity || 'MEDIUM';
+        // AQ-024. Dong nay tung la `ind?.severity || 'MEDIUM'`. Mot chi bao
+        // khong khai severity thi portal TU DAT cho no mot muc — va 'MEDIUM'
+        // doc len giong het mot muc da duoc danh gia.
+        //
+        // Khong doc duoc thi noi la khong doc duoc. Huy hieu 'UNKNOWN' xau hon
+        // ve thi giac, va do dung la dieu can: no moi nguoi di tim, con
+        // 'MEDIUM' thi khong.
+        const severity = ind?.severity || 'UNKNOWN';
         const label = ind?.type || ind?.process || ind?.pattern || 'Unknown';
         return `
           <div style="padding: 8px; border-bottom: 1px solid var(--color-border); font-size: 0.85em;">

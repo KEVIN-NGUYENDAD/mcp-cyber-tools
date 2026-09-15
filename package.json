@@ -11,6 +11,7 @@
     "assets": "python scripts/asset_manager.py --health",
     "trust": "python scripts/asset_builder.py",
     "test:detection": "python tests/detection_quality/run_all.py",
+    "test:bot": "node --test \"tests/telegram_truth/*.test.mjs\"",
     "audit:detection": "python scripts/detection_quality.py",
     "gate": "python scripts/sprint_gate.py",
     "gate:full": "python scripts/sprint_gate.py --validate",
@@ -23,7 +24,9 @@
     "audit:pipeline": "python scripts/pipeline_field_audit.py",
     "handoff": "python scripts/generate_handoff.py",
     "evidence:manifest": "python scripts/evidence_manifest.py",
-    "audit:escape": "python scripts/portal_escape_audit.py"
+    "audit:escape": "python scripts/portal_escape_audit.py",
+    "db:mirror": "python scripts/sqlite_mirror.py",
+    "db:verify": "python scripts/sqlite_mirror.py --verify"
   },
   "keywords": [],
   "author": "",

@@ -202,6 +202,35 @@ def run():
                                              '-> mimikatz']},
                                'credential_dumping')[0] == iq.NOISE_SELF)
 
+    # AQ-019/AQ-031 fixture. Su co goc: 4648 logon vao chinh SYSTEM account
+    # (SID s-1-5-18) mang nhan HIGH vi Event ID, duoc MIEN TRU khoi loc, chiem
+    # 58% risk score toan he thong. ROUTINE_HINTS la su that ve CHU THE (SID),
+    # khong phai phong doan theo ten tien trinh nhu DEV_HINTS -- nen no phai
+    # loc o MOI muc, ke ca HIGH/CRITICAL. Day la fixture khoa lai hanh vi do,
+    # de mot lan sua sau nay khong lam risk score dao dong lai (10->3, 436->
+    # 356->266 chi bao giua cac lan chay) ma khong ai phat hien qua code review.
+    routine_high = {'severity': 'HIGH',
+                     'evidence': ['Logon Type:\t\t5', 'Security ID:\t\ts-1-5-18']}
+    klass_routine_high, reason_routine_high = iq.noise_class(routine_high,
+                                                              'lateral_movement')
+    suite.check('SYSTEM SID (s-1-5-18) o muc HIGH -> VAN bi loc la ROUTINE',
+                klass_routine_high == iq.NOISE_ROUTINE, str(klass_routine_high))
+    suite.check('  -> ly do noi ro la hoat dong nen, khong phai bia',
+                bool(reason_routine_high) and 'hệ thống' in reason_routine_high,
+                reason_routine_high)
+
+    routine_critical = dict(routine_high, severity='CRITICAL')
+    klass_routine_crit, _ = iq.noise_class(routine_critical, 'lateral_movement')
+    suite.check('Cung SID o muc CRITICAL -> VAN bi loc (khac DEV_HINTS)',
+                klass_routine_crit == iq.NOISE_ROUTINE, str(klass_routine_crit))
+
+    # Doi chieu: DEV_HINTS van duoc mien tru o HIGH/CRITICAL (hanh vi co y,
+    # khong phai loi) -- hai bang gop khong con gop nua.
+    dev_critical = {'severity': 'CRITICAL', 'evidence': ['Path=C:\\tools\\git.exe']}
+    klass_dev_crit, _ = iq.noise_class(dev_critical, 'suspicious_processes')
+    suite.check('DEV_HINTS o CRITICAL van duoc mien tru (khong giong ROUTINE_HINTS)',
+                klass_dev_crit is None, str(klass_dev_crit))
+
     # Tieng on bi chan tran, nhung diem tho phai con de kiem lai duoc.
     noisy = iq.score_indicator(
         dict(complete_event_indicator(), process='node',
@@ -284,9 +313,90 @@ def run():
         suite.check('docs/project/IOC_QUALITY_REPORT.md ton tai', False,
                     iq.REPORT_FILE)
 
+    # -- 10. AQ-002: FULL khong duoc gom he thong chua phan giai ------------
+    # Su co goc: hang doi doc `attribution.full == 602/602` canh
+    # `hostname_source: unresolved` tren 11/11 asset va ket luan nhan FULL la
+    # bia. Do lai (vong 11 cua chinh script nay) thi khong phai: gan nhu moi
+    # FULL den tu may cuc bo tu biet ten no (`local host`), va moi he o xa
+    # khong phan giai duoc deu dung dang la PARTIAL. Fixture nay khoa cau
+    # truc that: mot he `hostname_source == 'unresolved'` khong bao gio duoc
+    # dem vao FULL, du no dung chung mot lo voi mot he da dinh danh day du.
+    old_local = iq._LOCAL
+    iq._LOCAL = {'hostname': 'HOMEBOX', 'ips': ['10.0.0.1']}
+    try:
+        local_sys = iq.enrich_systems(
+            [{'ip': '10.0.0.1', 'scope': iq.SCOPE_LOCAL}], {})
+        suite.check('He cuc bo, khong co trong kho -> hostname_source la '
+                    "'local host'",
+                    local_sys[0]['hostname_source'] == 'local host',
+                    str(local_sys[0]))
+        suite.check('  -> va duoc coi la dinh danh day du',
+                    local_sys[0]['identified'] is True, str(local_sys[0]))
+
+        unresolved_sys = iq.enrich_systems(
+            [{'ip': '10.0.0.200', 'scope': iq.SCOPE_REMOTE}], {})
+        suite.check("He o xa, khong co trong kho -> hostname_source 'unresolved'",
+                    unresolved_sys[0]['hostname_source'] == 'unresolved',
+                    str(unresolved_sys[0]))
+
+        mixed_quality, mixed_why = iq.attribution_quality(local_sys + unresolved_sys)
+        suite.check('Gop 1 he FULL + 1 he unresolved trong CUNG mot chi bao '
+                    '-> khong duoc la FULL',
+                    mixed_quality != iq.ATTR_FULL,
+                    '%s -- %s' % (mixed_quality, mixed_why))
+
+        fake_indicators = [{'attribution': {'systems': local_sys}},
+                           {'attribution': {'systems': unresolved_sys}}]
+        counted = iq._count_systems(fake_indicators, 'hostname_source')
+        suite.check('_count_systems dem theo HE THONG: 1 local host + 1 unresolved',
+                    counted.get('local host') == 1 and counted.get('unresolved') == 1,
+                    str(counted))
+
+        tmp_path = os.path.join(TESTS_DIR, '_aq002_fixture.json')
+        fixture_data = {'indicators': [
+            dict(complete_event_indicator(),
+                 attribution={'systems': [{'ip': '10.0.0.1',
+                                           'scope': iq.SCOPE_LOCAL}]}),
+            dict(complete_event_indicator(),
+                 attribution={'systems': [{'ip': '10.0.0.200',
+                                           'scope': iq.SCOPE_REMOTE}]}),
+        ]}
+        with io.open(tmp_path, 'w', encoding='utf-8') as handle:
+            handle.write(json.dumps(fixture_data))
+        try:
+            scored = iq.score_file(tmp_path, 'lateral_movement', {})
+            block = scored['ioc_quality']
+            suite.check("score_file: khoi ioc_quality co 'by_hostname_source'",
+                        'by_hostname_source' in block, str(sorted(block.keys())))
+            suite.check('  -> va attribution_note khong rong',
+                        bool(block.get('attribution_note')),
+                        str(block.get('attribution_note'))[:80])
+
+            full_count = block['by_attribution'].get(iq.ATTR_FULL, 0)
+            resolved_count = sum(v for k, v in block['by_hostname_source'].items()
+                                 if k != 'unresolved')
+            suite.check('  -> FULL khong bao gio vuot qua so he da phan giai ten '
+                        '(bat bien AQ-002)',
+                        full_count <= resolved_count,
+                        'FULL=%d, da phan giai ten=%d' % (full_count, resolved_count))
+            suite.check('  -> he unresolved duoc dem rieng trong by_hostname_source, '
+                        'khong lan vao FULL',
+                        block['by_hostname_source'].get('unresolved', 0) == 1,
+                        str(block['by_hostname_source']))
+        finally:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+    finally:
+        iq._LOCAL = old_local
+
     return suite
 
 
 if __name__ == '__main__':
+    if sys.platform == 'win32':
+        try:
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+        except AttributeError:
+            pass
     from harness import render
     sys.exit(render([run()]))

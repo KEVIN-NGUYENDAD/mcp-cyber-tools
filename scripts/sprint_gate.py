@@ -47,6 +47,9 @@ import portal_field_audit  # noqa: E402
 import telegram_field_audit  # noqa: E402
 import pipeline_field_audit  # noqa: E402
 import portal_escape_audit  # noqa: E402
+import run_coherence_audit  # noqa: E402
+import deploy_truth_audit  # noqa: E402
+import schema_reconcile_audit  # noqa: E402
 import tool_validator  # noqa: E402
 
 
@@ -103,11 +106,25 @@ def collect(validate=False):
     # tiep vao portal, Telegram va bao cao, tat ca cung hien dung mot gia tri sai
     # mot cach nhat quan. Ca hai bo audit truoc chi soi JavaScript, va do dung la
     # ly do `waap.get('score', 50)` song sot qua nhieu sprint voi gate xanh.
-    pipeline_fields = pipeline_field_audit.audit()
+    pipeline_fields_result = pipeline_field_audit.audit()
+    pipeline_fields = pipeline_fields_result['findings']
     # AQ-009. Portal DFIR hien ten tien trinh, dong lenh va duong dan tep thu tu
     # may DANG BI THEO DOI. Neu may do bi xam nhap thi ke tan cong kiem soat noi
     # dung cac truong do, va dashboard cua nguoi truc ca la noi chung duoc render.
     escapes = portal_escape_audit.audit()
+    # AQ-039/AQ-040. Hai bat bien ma ca sau bo audit trc do khong the thay,
+    # vi chung khong ve mot TRUONG nao ca: state co thuoc mot lan chay duy nhat
+    # khong, va su co dang mo co truy nguoc ve mot quan sat con ton tai khong.
+    coherence, coherence_scope = run_coherence_audit.audit()
+    # AQ-007/AQ-030. Sau vong audit deu xanh trong khi Render chay mot tep khac
+    # voi tep duoc soi. Cac bo kia hoi "cai nay co dung khong"; bo nay hoi "cai
+    # gi dang chay" — va khong bo nao trong so do tra loi duoc cau thu hai.
+    deploy, deploy_scope = deploy_truth_audit.audit()
+    # AQ-041. Ba muc CRITICAL dung yen ba vong deu cung mot ho: mot phep anh xa
+    # sai giua hai luoc do, khong ai doi chieu hai dau. Chung khong phai ten
+    # truong doc sai nen `portal_field_audit` mu; khong phai `.get(k, mac dinh)`
+    # nen `pipeline_field_audit` mu. Bo nay cong hai dau roi so.
+    reconcile, reconcile_scope = schema_reconcile_audit.audit()
     pipeline = _read_json(os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json'))
 
     return {
@@ -120,7 +137,14 @@ def collect(validate=False):
         'portal': portal,
         'telegram': telegram,
         'pipeline_fields': pipeline_fields,
+        'pipeline_fields_scope': pipeline_fields_result,
         'escapes': escapes,
+        'coherence': coherence,
+        'coherence_scope': coherence_scope,
+        'deploy': deploy,
+        'deploy_scope': deploy_scope,
+        'reconcile': reconcile,
+        'reconcile_scope': reconcile_scope,
     }
 
 
@@ -222,6 +246,48 @@ def evaluate(data):
                         % (len(unescaped),
                            ', '.join(f['expression'][:24] for f in unescaped[:3])))
 
+    # AQ-039/AQ-040. Ba vi pham, ba lop loi khac nhau, cung mot goc: khong co
+    # duong noi giua mot ket luan va quan sat sinh ra no.
+    coherence = data.get('coherence') or []
+    # AQ-043/AQ-044. `UNEVALUABLE` va `UNSTAMPED` la blocker, khong phai canh
+    # bao: ca hai deu co nghia la phep kiem gan ket KHONG chay duoc, va mot bo
+    # audit khong chay duoc ma de merge di qua thi no khong phai mot cong.
+    blind_audit = [f for f in coherence
+                   if f['level'] in ('UNEVALUABLE', 'UNSTAMPED')]
+    for finding in blind_audit:
+        blockers.append('gan ket lan chay [%s] %s'
+                        % (finding['level'], finding['detail']))
+
+    mixed = [f for f in coherence if f['level'] == 'MIXED_RUN']
+    if mixed:
+        blockers.append('state tron nhieu lan chay (%s) — moi ket luan rut ra '
+                        'tu tap nay dang tron hai lan quan sat'
+                        % '; '.join(f['detail'][:60] for f in mixed))
+    manifest_incomplete = [f for f in coherence if f['level'] == 'MANIFEST_INCOMPLETE']
+    if manifest_incomplete:
+        blockers.append('manifest khong toan ven — thieu file trong run_manifest.json')
+    orphan = [f for f in coherence if f['level'] in ('NO_PROVENANCE', 'SOURCE_MISSING')]
+    if orphan:
+        blockers.append('%d su co dang mo khong truy nguoc duoc ve quan sat (%s)'
+                        % (len(orphan), ', '.join(f['field'] for f in orphan[:3])))
+    derived = [f for f in coherence if f['level'] == 'DERIVED_SOURCE']
+    if derived:
+        blockers.append('%d su co sinh tu mot con so tinh ra, khong phai quan '
+                        'sat (%s) — vong phan hoi incidents<->risk'
+                        % (len(derived), ', '.join(f['field'] for f in derived[:3])))
+
+    # AQ-007/AQ-030. Lech diem vao la blocker tuyet doi: khi no do thi moi ket
+    # qua xanh cua cac bo khac deu noi ve mot artifact khong ai mo.
+    for finding in (data.get('deploy') or []):
+        blockers.append('deploy truth [%s] %s'
+                        % (finding['level'], finding['detail']))
+
+    # AQ-041. Hai dau mot phep cong khong khop nghia la mot con so cong bo dang
+    # noi ve mot tap khac voi tap no trich dan.
+    for finding in (data.get('reconcile') or []):
+        blockers.append('schema reconcile [%s] %s'
+                        % (finding['level'], finding['detail']))
+
     pipeline = data['pipeline'] or {}
     stages = pipeline.get('stages') or pipeline.get('results') or []
     # AQ-013. Dong nay tung la `not s.get('success', True)`. Bo ghi pipeline
@@ -252,11 +318,29 @@ def evaluate(data):
     if not stages:
         blockers.append('khong co stage pipeline nao trong logs/pipeline_results.json')
 
+    # AQ-050. Mot lan chay chay moi stage dung mot lan. Ten lap lai nghia la co ai
+    # do GHI THEM vao ban ghi cua mot lan chay da ket thuc — do la cach so stage
+    # phinh tu 36 len 41 len 43 trong khi pipeline khong he lam them viec gi.
+    # Con so bi thoi phong o day khong vo hai: no la mau so cua "0 that bai".
+    seen = {}
+    for stage in stages:
+        name = stage.get('name') or '?'
+        seen[name] = seen.get(name, 0) + 1
+    duplicates = sorted((n, c) for n, c in seen.items() if c > 1)
+    if duplicates:
+        blockers.append('%d stage bi ghi lap (%s) — %d dong ghi cho %d stage that; '
+                        'ban ghi mot lan chay bi boi them sau khi lan chay ket thuc'
+                        % (len(duplicates),
+                           ', '.join('%s x%d' % (n, c) for n, c in duplicates[:3]),
+                           len(stages), len(seen)))
+
     return {
         'merge_ready': not blockers,
         'blockers': blockers,
         'summary': summary,
         'stages': len(stages),
+        'distinct_stages': len(seen),
+        'duplicate_stages': len(duplicates),
         'failed_stages': len(failed_stages),
         'unknown_stages': len(unknown_stages),
     }
@@ -352,21 +436,60 @@ def write_debt(data, verdict):
         '' if not verdict.get('unknown_stages')
         else ', %d không khai trạng thái' % verdict['unknown_stages'])
     add('| Pipeline | %s |' % pipeline_note)
+    # AQ-034. Moi hang duoi day tung in mot con so tran: `0`. Mot bang no in
+    # `0` khong noi duoc su khac nhau giua "da soi 86 cho, sach ca 86" va "khong
+    # soi cho nao". Hai truong hop do doc len giong het nhau, va truong hop thu
+    # hai la truong hop nguy hiem.
+    #
+    # Nen tu day moi hang mang MAU SO cua chinh no, va ten hang noi dung pham vi
+    # bo audit do soi duoc — khong hua rong hon.
     portal_missing = [f for f in (data.get('portal') or [])
                       if f['level'] == 'MISSING']
-    add('| Trường portal đọc sai | %d |' % len(portal_missing))
+    add('| Trường portal đọc từ state không tồn tại | %d / %d truy cập soi được |'
+        % (len(portal_missing), len(data.get('portal') or [])))
     telegram_missing = [f for f in (data.get('telegram') or [])
                         if f['level'] == 'MISSING']
-    add('| Trường Telegram đọc sai | %d |' % len(telegram_missing))
+    add('| Trường Telegram đọc từ state không tồn tại | %d / %d truy cập soi được |'
+        % (len(telegram_missing), len(data.get('telegram') or [])))
     for name, age in input_ages(data):
         add('| Tuổi `%s` | %s |'
             % (name, 'KHÔNG RÕ' if age is None else '%.1f giờ' % age))
-    add('| Biểu thức innerHTML chưa escape | %d |'
-        % len([f for f in (data.get('escapes') or [])
-               if f['level'] == 'UNESCAPED']))
-    add('| Số liệu giả trong pipeline Python | %d |'
-        % len([f for f in (data.get('pipeline_fields') or [])
-               if f['level'] == 'FABRICATED']))
+    escapes = data.get('escapes') or []
+    add('| Biểu thức innerHTML chưa escape | %d / %d biểu thức trong sink |'
+        % (len([f for f in escapes if f['level'] == 'UNESCAPED']), len(escapes)))
+    pipeline_fields = data.get('pipeline_fields') or []
+    scope = data.get('pipeline_fields_scope') or {}
+    traced = scope.get('traced', len(pipeline_fields))
+    total_gets = scope.get('total_gets', 0)
+    coverage_pct = (traced * 100.0 / total_gets) if total_gets > 0 else 0
+    add('| `.get(khoá, mặc định)` bịa số trong Python | %d / %d kiểm / %d lời gọi (%.1f%%) |'
+        % (len([f for f in pipeline_fields if f['level'] == 'FABRICATED']),
+           traced, total_gets, coverage_pct))
+    # AQ-039/AQ-040.
+    scope = data.get('coherence_scope') or {}
+    deploy_scope_debt = data.get('deploy_scope') or {}
+    runs = scope.get('runs') or {}
+    inc = scope.get('incidents') or {}
+    add('| State cùng một lần chạy | %d / %d tệp có dấu, %d lần chạy khác nhau |'
+        % (runs.get('files_stamped', 0), runs.get('files_present', 0),
+           len(runs.get('distinct_runs') or [])))
+    reconcile_debt = data.get('reconcile_scope') or {}
+    add('| Tổng crypto khớp số finding | %s |' % reconcile_debt.get('crypto', '-'))
+    add('| Đơn vị lỗ hổng đối chiếu được | %s |' % reconcile_debt.get('vulns', '-'))
+    add('| Nguồn hostname sau quy kết | %s |' % reconcile_debt.get('attribution', '-'))
+    add('| Điểm vào triển khai khớp `package.json` | %s |'
+        % ('có — %s' % (deploy_scope_debt.get('entrypoint') or '?')
+           if not (data.get('deploy') or []) else 'KHÔNG — %d vi phạm'
+           % len(data.get('deploy') or [])))
+    add('| Sự cố đang mở truy nguợc được về quan sát | %d / %d |'
+        % (inc.get('checked', 0), inc.get('open', 0)))
+    if inc.get('invalidated'):
+        add('| Sự cố đã thu hồi (giữ lại để rà) | %d |' % inc['invalidated'])
+    add('')
+    add('Mỗi hàng trên là **phạm vi của một bộ audit cụ thể**, không phải của cả')
+    add('hệ thống. Một hàng `0 / 86` nghĩa là bộ đó soi 86 chỗ và cả 86 đều sạch;')
+    add('nó không nói gì về những chỗ bộ đó không soi tới. AQ-038/AQ-041 liệt kê')
+    add('các lớp lỗi nằm ngoài mọi hàng ở đây.')
     add('')
 
     if verdict['blockers']:
@@ -435,7 +558,10 @@ def main():
     # 10 — va no van duoc quy trinh chi dinh la tep phai doc dau moi phien.
     try:
         import generate_handoff
-        generate_handoff.main()
+        # AQ-046. Truyen KET LUAN sang, khong de HANDOFF tu tinh lai: hai phep
+        # tinh doc lap tren cung mot du lieu la dung cach de hai tep lech nhau
+        # lan nua, va lan truoc chung da lech.
+        generate_handoff.main(verdict)
     except Exception as error:  # noqa: BLE001
         print('[WARN] khong sinh duoc HANDOFF.md: %s' % error, file=sys.stderr)
 
@@ -453,6 +579,10 @@ def main():
           % (verdict['stages'], verdict['failed_stages'],
              '' if not verdict.get('unknown_stages')
              else ', %d không khai trạng thái' % verdict['unknown_stages']))
+    if verdict.get('duplicate_stages'):
+        print('                     %d dòng ghi cho %d stage thật — %d tên bị lặp'
+              % (verdict['stages'], verdict.get('distinct_stages', 0),
+                 verdict['duplicate_stages']))
     portal_missing = [f for f in (data.get('portal') or [])
                       if f['level'] == 'MISSING']
     print('Trường portal      : %d đọc sai / %d truy cập'
@@ -462,12 +592,46 @@ def main():
     print('Trường Telegram    : %d đọc sai / %d truy cập'
           % (len(telegram_missing), len(data.get('telegram') or [])))
     pipeline_fields = data.get('pipeline_fields') or []
+    scope = data.get('pipeline_fields_scope') or {}
     fabricated = [f for f in pipeline_fields if f['level'] == 'FABRICATED']
-    print('Trường Python      : %d số liệu giả / %d truy cập lần được'
-          % (len(fabricated), len(pipeline_fields)))
+    traced = scope.get('traced', len(pipeline_fields))
+    total_gets = scope.get('total_gets', 0)
+    coverage_pct = (traced * 100.0 / total_gets) if total_gets > 0 else 0
+    print('Trường Python      : %d số liệu giả / %d kiểm / %d lời gọi (%.1f%%)'
+          % (len(fabricated), traced, total_gets, coverage_pct))
     escapes = data.get('escapes') or []
     print('Portal escape      : %d chưa escape / %d biểu thức innerHTML'
           % (len([f for f in escapes if f['level'] == 'UNESCAPED']), len(escapes)))
+    # AQ-039/AQ-040. Hai bất biến này chặn được merge, nên chúng phải đọc được
+    # ở bản tóm tắt — một blocker chỉ hiện lúc đã đỏ thì không ai biết nó tồn
+    # tại cho tới lần đầu nó chặn.
+    scope = data.get('coherence_scope') or {}
+    runs = scope.get('runs') or {}
+    inc = scope.get('incidents') or {}
+    print('Gắn kết lần chạy   : %d/%d tệp có dấu, %d lần chạy khác nhau'
+          % (runs.get('files_stamped', 0), runs.get('files_present', 0),
+             len(runs.get('distinct_runs') or [])))
+    print('Nguồn gốc sự cố    : %d/%d sự cố đang mở truy ngược được%s'
+          % (inc.get('checked', 0), inc.get('open', 0),
+             ', %d đã thu hồi' % inc['invalidated'] if inc.get('invalidated') else ''))
+    deploy_scope = data.get('deploy_scope') or {}
+    print('Điểm vào triển khai: %s (%d vi phạm, %d route đối chiếu)'
+          % (deploy_scope.get('entrypoint') or 'KHONG XAC DINH',
+             len(data.get('deploy') or []), deploy_scope.get('routes_checked', 0)))
+    reconcile_scope = data.get('reconcile_scope') or {}
+    # AQ-045. Dòng này in phạm vi của HAI bất biến trong khi bộ dò chạy BỐN.
+    # `attribution` và `suppressed` — hai bất biến vừa đóng AQ-002 và AQ-045 —
+    # chạy thật nhưng không xuất hiện ở đâu trên màn hình cổng, nên không ai
+    # đối chiếu được chúng đã đo cái gì. Một phép kiểm chạy mà không khai phạm
+    # vi đọc lên giống hệt một phép kiểm không chạy: đúng lớp lỗi mà chính bộ
+    # dò này tồn tại để bắt. In đủ bốn, theo đúng thứ tự `INVARIANTS`.
+    print('Đối chiếu lược đồ  : %d vi phạm | crypto %s | vuln %s'
+          % (len(data.get('reconcile') or []),
+             reconcile_scope.get('crypto', '-'), reconcile_scope.get('vulns', '-')))
+    print('                     quy kết %s'
+          % reconcile_scope.get('attribution', '-'))
+    print('                     lọc nhiễu %s'
+          % reconcile_scope.get('suppressed', '-'))
     print('Tuổi đầu vào       : %s'
           % ' | '.join('%s %s' % (name.replace('.json', ''),
                                   'KHONG RO' if age is None else '%.1fh' % age)

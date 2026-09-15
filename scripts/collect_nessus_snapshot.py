@@ -67,19 +67,29 @@ class NessusCollector:
             'Content-Type': 'application/json'
         })
 
+    # AQ-021. `status: 'on'` từ `/scanners` là trạng thái LIÊN KẾT của scanner
+    # daemon (nó có đang kết nối với Nessus manager hay không) — KHÔNG phải
+    # trạng thái của một job quét cụ thể. Bản đồ cũ `'on' -> 'running'` mượn
+    # đúng cái tên một job đang chạy dùng, nên `scanner_status: running` đứng
+    # cạnh `scan_age_hours: 158` đọc như "đã quét suốt 158 giờ" — một mâu
+    # thuẫn không hề tồn tại. Scanner online liên tục là bình thường; bản quét
+    # gần nhất xong từ lâu là một sự thật KHÁC, và `scan_stale` bên dưới mới
+    # là trường trả lời đúng câu đó.
+    SCANNER_LINK_STATUS = {'on': 'online', 'off': 'offline'}
+
     def get_scanner_status(self):
-        """Get scanner status"""
+        """Trạng thái LIÊN KẾT của scanner daemon — không nói gì về một job quét."""
         try:
             resp = self.session.get(f'{self.nessus_url}/scanners', timeout=10)
             resp.raise_for_status()
             data = resp.json()
             if data.get('scanners'):
                 scanner = data['scanners'][0]
-                status = scanner.get('status', 'unknown')
-                return 'running' if status == 'on' else 'ready'
-            return 'unknown'
+                raw = scanner.get('status', 'unknown')
+                return self.SCANNER_LINK_STATUS.get(raw, 'unknown'), raw
+            return 'unknown', None
         except Exception as e:
-            return 'error'
+            return 'error', None
 
     def find_scan_by_name(self, target_name):
         """Find scan by name (primary: Home Network Discovery)"""
@@ -149,6 +159,31 @@ class NessusCollector:
                 'info': 0
             }
 
+            # AQ-021 / AQ-041, ba vòng chưa trả: `assets.json` cộng lại ra 399
+            # lỗ hổng, `nessus_status.json` khai `total: 64`, trên cùng một bản
+            # quét. Chênh 6.2 lần, và ba vòng audit đọc nó như một con số sai.
+            #
+            # Không con số nào sai. Chúng đếm hai ĐƠN VỊ khác nhau:
+            #
+            #   `vulnerabilities[]` của Nessus đã gộp theo plugin — mỗi phần tử
+            #   là một plugin kèm `count` = số host dính. 64 = số plugin riêng
+            #   biệt.
+            #
+            #   `assets[].vulnerability_count` cộng severity theo từng host, nên
+            #   nó đếm lượt (host × plugin). 399 = số lượt.
+            #
+            # Lỗi thật nằm ở chỗ cả hai cùng mang tên `total`, và không tệp nào
+            # nói mình đếm gì. Nên đây không phải bài toán sửa một phép đếm —
+            # mà là bài toán đặt tên cho đơn vị, rồi ghi cả hai để còn đối chiếu
+            # được. Sửa một trong hai con số cho "khớp" sẽ phá đúng cái thông
+            # tin mà nó đang mang.
+            instances = 0
+            for vuln in vulnerabilities:
+                try:
+                    instances += max(1, int(vuln.get('count') or 1))
+                except (TypeError, ValueError):
+                    instances += 1
+
             for vuln in vulnerabilities:
                 severity = vuln.get('severity', -1)
                 if severity == 4:
@@ -176,7 +211,14 @@ class NessusCollector:
                 'medium': severity_counts['medium'],
                 'low': severity_counts['low'],
                 'info': severity_counts['info'],
-                'total': len(vulnerabilities)
+                # `total` giữ nguyên nghĩa cũ để không consumer nào đổi nghĩa
+                # dưới chân, nhưng từ đây nó đi kèm nhãn đơn vị của chính mình.
+                'total': len(vulnerabilities),
+                'total_unit': 'distinct_plugins',
+                'distinct_plugins': len(vulnerabilities),
+                # Đơn vị mà `assets[].vulnerability_count` đang cộng. Có trường
+                # này thì hai tệp mới đối chiếu được bằng một phép so tổng.
+                'total_instances': instances,
             }
 
         except Exception as e:
@@ -205,8 +247,9 @@ class NessusCollector:
             'nessus_endpoint': 'https://localhost:8834'
         }
 
-        status = self.get_scanner_status()
+        status, raw_status = self.get_scanner_status()
         output['scanner_status'] = status
+        output['scanner_status_raw'] = raw_status
 
         # Try to find "Home Network Discovery" scan first
         scan_data = self.find_scan_by_name('Home Network Discovery')
@@ -227,7 +270,10 @@ class NessusCollector:
                 'medium': 0,
                 'low': 0,
                 'info': 0,
-                'total': 0
+                'total': 0,
+                'total_unit': 'distinct_plugins',
+                'distinct_plugins': 0,
+                'total_instances': 0,
             })
 
         return output

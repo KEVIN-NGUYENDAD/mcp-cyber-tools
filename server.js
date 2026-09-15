@@ -52,14 +52,36 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
+// FAIL-SAFE. `process.exit(1)` o day bien mot promise lac trong MOT tool thanh
+// cai chet cua CA 90 tool con lai — ke ca nhung tool dang chay do va nhung tool
+// khong lien quan gi toi loi.
+//
+// Mot unhandledRejection KHONG phai mot trang thai hong: no la mot ket qua loi
+// khong ai bat, gan nhu luon nam gon trong mot lan goi tool. Ranh gioi cach ly
+// dung la LOI GOI do — SDK MCP da bat ngoai le nem ra tu handler va tra ve cho
+// client — chu khong phai tien trinh.
+//
+// Van ghi day du, va ghi DANH DAU: mot su co bi nuot im lang cung te hai y het
+// mot su co lam sap dich vu. Nen no xuat hien o stderr voi nhan rieng de dem
+// duoc, va tien trinh song tiep.
+let rejectionCount = 0;
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('[CRASH-UNHANDLED-REJECTION]', {
-    reason,
-    promise,
-    stack: reason?.stack
+  rejectionCount += 1;
+  console.error('[UNHANDLED-REJECTION-SURVIVED]', {
+    count: rejectionCount,
+    name: reason?.name || typeof reason,
+    message: reason?.message ?? String(reason),
+    stack: reason?.stack,
+    promise: String(promise)
   });
-  process.exit(1);
+  console.error(
+    `[UNHANDLED-REJECTION-SURVIVED] Tien trinh KHONG thoat — ${rejectionCount} promise lac tu khi khoi dong. ` +
+    `Mot tool loi khong duoc keo sap 90 tool con lai.`);
 });
+
+// `uncaughtException` o tren VAN giu `process.exit(1)`, va do la co y: sau mot
+// ngoai le khong bat, trang thai tien trinh that su khong con dam bao. Hai thu
+// nay khac nhau — gop chung lai la ly do vi sao lan truoc ca hai cung thoat.
 
 const server = new McpServer({
   name: "cyber-tools",

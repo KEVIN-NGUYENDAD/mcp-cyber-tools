@@ -40,13 +40,47 @@ MODULES = [
 # hai lenh la mot cong chan se co lan chi chay mot nua.
 EXTRA_SUITES = [
     ('telegram_truth', 'test_telegram_fields'),
+    # PHASE 1. Cau noi sang `node --test`: che danh tinh + ket noi lai la ma
+    # JavaScript, nhung chung phai do bang CUNG mot lenh nhu phan Python, neu
+    # khong se co lan chi chay mot nua.
+    ('telegram_truth', 'test_bot_runtime'),
+    # PHASE 1. Co HAI duong gui Telegram (bot Node, script Python) nen co hai
+    # ban sao cua bo che. Hai ban sao khong kiem chung nhau se troi khoi nhau,
+    # va cai troi ra se la mot duong ro ma khong ai nhin.
+    ('telegram_truth', 'test_redaction_parity'),
     ('sensor_coverage', 'test_coverage_refresh'),
     ('sensor_coverage', 'test_auto_validate'),
     ('ioc_quality', 'test_ioc_quality'),
+    # PHASE 1. Bo loc tien trinh Windows. Phan lon ca kiem la ca AM TINH: mot bo
+    # loc tieng on chi duoc kiem theo chieu "co loc duoc khong" se im lang dung
+    # vao lop tan cong dung nhi phan hop le.
+    ('ioc_quality', 'test_os_whitelist'),
+    ('crypto_inventory', 'test_crypto_inventory'),
+    ('nessus_snapshot', 'test_nessus_snapshot'),
+    ('deploy_truth', 'test_deploy_truth'),
     ('green_defaults', 'test_green_defaults'),
     ('portal_hardening', 'test_portal_hardening'),
     ('gate_integrity', 'test_gate_integrity'),
     ('fixtures', 'test_scoring_fixtures'),
+    ('sqlite_mirror', 'test_sqlite_mirror'),
+    # AQ-045. `schema_reconcile_audit` giu bon bat bien ma cong chan merge tren
+    # do, nhung chinh no chua tung duoc kiem. Mot bo do chua bao gio duoc chung
+    # minh la BAO DUOC thi `0 vi pham` cua no khong phan biet duoc voi `khong
+    # chay` — dung lop loi AQ-030 da day.
+    ('schema_reconcile', 'test_schema_reconcile'),
+    # AQ-050. Ban ghi mot lan chay phai noi ve dung lan chay do. So stage tung
+    # phinh 36 -> 41 -> 43 vi mot script ngoai pipeline append vao ban ghi cua
+    # lan chay da ket thuc; mau so cua "0 that bai" bi thoi len theo.
+    ('pipeline_ledger', 'test_pipeline_ledger'),
+    # AQ-048. Mot bo kiem khong chay duoc phai doc ra khac mot bo kiem dat —
+    # `TONG: 443/443 dat` canh chu TRUOT la mot mau so tu co lai theo so bo con
+    # song sot, tuc mot default xanh trong chinh dong cong in ra.
+    ('suite_isolation', 'test_suite_isolation'),
+    # AUDIT_SECURITY_AND_DATA.md, 4 CRITICAL. Bo nay TIEM payload that vao lop
+    # truyen lenh (cmd.exe, PowerShell), vao HTTP, vao git — roi hoi payload co
+    # duoc THUC THI khong. Mot ca chi doc ma nguon se van xanh vao ngay ai do
+    # viet lai bang cu phap khac, nen phan quyet dinh phai la hanh vi.
+    ('exec_safety', 'test_exec_safety'),
 ]
 
 
@@ -71,7 +105,7 @@ def main():
         except Exception as error:  # noqa: BLE001
             broken.append((name, '%s: %s' % (type(error).__name__, error)))
 
-    code = harness.render(suites)
+    code = harness.render(suites, missing=len(broken))
 
     if broken:
         print('')

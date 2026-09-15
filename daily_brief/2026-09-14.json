@@ -1,84 +1,66 @@
 {
-  "timestamp": "2026-09-14T08:13:25.363617",
+  "timestamp": "2026-09-14T13:53:55.318425",
   "date": "2026-09-14",
   "incident_summary": {
-    "total_open": 2,
+    "total_open": 1,
     "critical": 0,
-    "high": 2,
+    "high": 1,
     "medium": 0,
     "low": 0,
-    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 2 HIGH"
+    "summary_text": "S\u1ef1 c\u1ed1 m\u1edf: 0 CRITICAL, 1 HIGH"
   },
   "priority_summary": {
     "top_5": [
       {
         "rank": 1,
-        "title": "C\u1ea3i thi\u1ec7n Threat Hunting",
-        "priority": "HIGH",
-        "time_estimate": "N/A",
-        "reason": "threat_hunting component weak"
-      },
-      {
-        "rank": 2,
-        "title": "X\u1eed l\u00fd: Level Change",
-        "priority": "CRITICAL",
-        "time_estimate": "1-2 hours",
-        "reason": "Level Change"
-      },
-      {
-        "rank": 3,
         "title": "C\u1ea3i thi\u1ec7n Waap",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
         "reason": "waap component weak"
       },
       {
-        "rank": 4,
-        "title": "C\u1ea3i thi\u1ec7n Incidents",
+        "rank": 2,
+        "title": "C\u1ea3i thi\u1ec7n Security Events",
         "priority": "MEDIUM",
         "time_estimate": "N/A",
-        "reason": "incidents component weak"
+        "reason": "security_events component weak"
+      },
+      {
+        "rank": 3,
+        "title": "C\u1ea3i thi\u1ec7n Crypto",
+        "priority": "MEDIUM",
+        "time_estimate": "N/A",
+        "reason": "crypto component weak"
+      },
+      {
+        "rank": 4,
+        "title": "Patch 192.168.0.1 (Router)",
+        "priority": "HIGH",
+        "time_estimate": "4-8 hours",
+        "reason": "High vulnerability count"
       },
       {
         "rank": 5,
-        "title": "Patch 192.168.0.1 (Router)",
+        "title": "Patch 192.168.0.10 (Server)",
         "priority": "HIGH",
         "time_estimate": "4-8 hours",
         "reason": "High vulnerability count"
       }
     ],
-    "critical_count": 1,
+    "critical_count": 0,
     "high_count": 2,
-    "summary_text": "\u01afu ti\u00ean: 1 CRITICAL, 2 HIGH"
+    "summary_text": "\u01afu ti\u00ean: 0 CRITICAL, 2 HIGH"
   },
   "change_summary": {
-    "total_changes": 1,
-    "changes_by_category": {
-      "Risk": 1
-    },
-    "changes_by_severity": {
-      "CRITICAL": 1
-    },
-    "critical_incidents": [
-      {
-        "timestamp": "2026-09-14T08:13:03.369773",
-        "category": "Risk",
-        "type": "Level Change",
-        "severity": "CRITICAL",
-        "description": "M\u1ee9c r\u1ee7i ro thay \u0111\u1ed5i: LOW \u2192 HIGH",
-        "details": {
-          "previous_level": "LOW",
-          "current_level": "HIGH",
-          "previous_score": 3,
-          "current_score": 31
-        }
-      }
-    ],
-    "summary_text": "1 s\u1ef1 ki\u1ec7n CRITICAL, 0 s\u1ef1 ki\u1ec7n HIGH"
+    "total_changes": 0,
+    "changes_by_category": {},
+    "changes_by_severity": {},
+    "critical_incidents": [],
+    "summary_text": "Kh\u00f4ng c\u00f3 thay \u0111\u1ed5i"
   },
   "vulnerability_summary": {
     "scan_name": "Home Network Discovery",
-    "scan_age_hours": 157.6,
+    "scan_age_hours": 163.3,
     "total_findings": 64,
     "critical": 0,
     "high": 0,
@@ -103,7 +85,7 @@
   "waap_summary": {
     "domain": "sentinelops.fyi",
     "ssl_status": "valid",
-    "days_until_expiry": 79,
+    "days_until_expiry": 78,
     "health_score": 80,
     "grade": "B",
     "status": "healthy",
@@ -177,33 +159,40 @@
     ]
   },
   "crypto_summary": {
-    "health_score": 100,
+    "health_score": 90,
     "total_findings": 19,
     "certificate_findings": 4,
     "weak_cipher_count": 0,
     "severity_breakdown": {
       "CRITICAL": 0,
       "HIGH": 0,
-      "MEDIUM": 0,
+      "MEDIUM": 2,
       "LOW": 0,
-      "INFO": 0
+      "INFO": 17,
+      "UNKNOWN": 0
     },
     "newly_expired_certs": 0,
     "new_weak_ciphers": 0
   },
   "risk_assessment": {
-    "risk_level": "LOW",
-    "risk_score": 6,
+    "risk_level": "MEDIUM",
+    "risk_score": 5,
     "risk_factors": [
-      "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 2 HIGH \u0111ang m\u1edf (+3.0 \u0111i\u1ec3m r\u1ee7i ro)",
       "waap: WAAP health_score 80 (+2.0 \u0111i\u1ec3m r\u1ee7i ro)",
-      "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.52 \u0111i\u1ec3m r\u1ee7i ro)",
-      "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 158 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay."
+      "incidents: 0 s\u1ef1 c\u1ed1 CRITICAL, 1 HIGH \u0111ang m\u1edf (2 b\u1ea3n ghi \u0111\u00e3 \u0111\u00f3ng/thu h\u1ed3i, kh\u00f4ng t\u00ednh \u0111i\u1ec3m) (+1.5 \u0111i\u1ec3m r\u1ee7i ro)",
+      "crypto: crypto inventory score 90 (+0.6 \u0111i\u1ec3m r\u1ee7i ro)",
+      "security_events: 3 \u0111\u0103ng nh\u1eadp th\u1ea5t b\u1ea1i, 0 s\u1ef1 ki\u1ec7n CRITICAL, 5 c\u1ea3nh b\u00e1o (+0.26 \u0111i\u1ec3m r\u1ee7i ro)",
+      "Th\u00e0nh ph\u1ea7n `asset` d\u1ef1a tr\u00ean b\u1ea3n qu\u00e9t Nessus 163 gi\u1edd tu\u1ed5i (ng\u01b0\u1ee1ng 48): \"0 CRITICAL\" l\u00e0 ph\u00e1t bi\u1ec3u v\u1ec1 l\u00fac qu\u00e9t, kh\u00f4ng ph\u1ea3i v\u1ec1 h\u00f4m nay.",
+      "N\u0103ng l\u1ef1c \"USB Device Activity\" \u0111ang M\u00d9 n\u00ean th\u00e0nh ph\u1ea7n `security_events` ch\u1ec9 \u0111\u01b0\u1ee3c t\u00ednh tr\u00ean 50% tr\u1ecdng s\u1ed1 c\u1ee7a n\u00f3. scripts\\enable_forensic_logs.ps1 (c\u1ea7n Administrator) S\u1ee9c kho\u1ebb 87 m\u00e0 th\u00e0nh ph\u1ea7n n\u00e0y khai ch\u1ec9 n\u00f3i v\u1ec1 ph\u1ea7n c\u00f2n quan s\u00e1t \u0111\u01b0\u1ee3c.",
+      "N\u0103ng l\u1ef1c \"Scheduled Task Execution\" \u0111ang M\u00d9 n\u00ean th\u00e0nh ph\u1ea7n `threat_hunting` ch\u1ec9 \u0111\u01b0\u1ee3c t\u00ednh tr\u00ean 67% tr\u1ecdng s\u1ed1 c\u1ee7a n\u00f3. scripts\\enable_forensic_logs.ps1 (c\u1ea7n Administrator) S\u1ee9c kho\u1ebb 100 m\u00e0 th\u00e0nh ph\u1ea7n n\u00e0y khai ch\u1ec9 n\u00f3i v\u1ec1 ph\u1ea7n c\u00f2n quan s\u00e1t \u0111\u01b0\u1ee3c.",
+      "Capability floor \u00e1p d\u1ee5ng: 2 n\u0103ng l\u1ef1c ph\u00e1t hi\u1ec7n \u0111ang m\u00f9 (Scheduled Task Execution, USB Device Activity), n\u00ean risk_level n\u00e2ng t\u1eeb LOW l\u00ean MEDIUM. overall_score gi\u1eef nguy\u00ean."
     ],
     "critical_count": 0,
-    "high_count": 2,
+    "high_count": 1,
     "scale": "risk_ascending",
     "source": "state/risk_score.json",
-    "generated_at": "2026-09-14T08:13:19.795089"
-  }
+    "generated_at": "2026-09-14T13:53:49.946442"
+  },
+  "run_id": "RUN-20260914T135326-48c449",
+  "run_scope": "PIPELINE"
 }

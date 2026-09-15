@@ -6,12 +6,30 @@ services:
     plan: free
     rootDir: .
     buildCommand: npm install
-    startCommand: node web-server.js
+    # AQ-007 / AQ-030, sáu vòng audit. Dòng này từng là `node web-server.js` —
+    # một server thứ hai, chỉ phục vụ daily_brief, không biết tới `web/app.js`.
+    # `package.json` khai `web/server.js`, và mọi công portal của bốn sprint gần
+    # nhất nằm trong tệp Render không chạy. Trang người dùng thật sự mở là một
+    # bản khác với bản được kiểm.
+    #
+    # Không ghi lại đường dẫn ở đây: ghi hai lần thì trôi lần nữa. `npm start`
+    # để `package.json` là chỗ duy nhất nói đâu là điểm vào, và
+    # `deploy_truth_audit.py` chặn merge nếu hai bên lại lệch.
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 3000
+      # EXP-02. Khoa cho moi route /api. `sync: false` = Render HOI gia tri luc
+      # deploy va khong bao gio ghi no vao tep nay. Khong dat thi /api tra 503:
+      # co y — mot khoa bi quen phai lam dich vu tu choi, khong duoc lam no mo.
+      - key: API_KEY
+        sync: false
+      # Danh sach origin duoc phep goi cheo (ngan cach bang dau phay). Bo trong
+      # thi khong origin ngoai nao qua duoc; trang dashboard cung goc van chay.
+      - key: ALLOWED_ORIGINS
+        sync: false
     autoDeploy: git
     branch: develop
     routes:

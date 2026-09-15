@@ -2,44 +2,57 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T08:16:20.018034
+Cập nhật: 2026-09-14T23:17:14.255654
 
-## Sprint vừa xong
+## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit | `ba86908` |
-| Branch | `develop` |
-| Tiêu đề | Merge pull request #44 from KEVIN-NGUYENDAD/feature/gate-integrity |
+| Commit lúc chạy | `dfb29b9` |
+| Branch | `feature/invalidation-and-run-isolation` |
+| Tiêu đề | chore: finalize sprint state, handoff, debt register and db mirror status |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
+
+Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
+**trước**; công của sprint này chưa có định danh. Đó là thứ tự đúng —
+cổng chạy trước khi commit — không phải một con số trễ.
 
 ## Cổng merge
 
 | | |
 |---|---|
-| PASS | 94 |
-| EMPTY | 5 |
+| **Đủ điều kiện merge** | **CÓ** |
+
+| | |
+|---|---|
+| PASS | 93 |
+| EMPTY | 6 |
 | BLIND | 0 |
 | FAIL | 0 |
-| Pipeline | 28 stage, 0 thất bại |
-| Toàn vẹn bằng chứng | 0 vi phạm / 434 chỉ báo |
+| Pipeline | 29 stage, 0 thất bại |
+| Toàn vẹn bằng chứng | 0 vi phạm / 570 chỉ báo _(đo cách đây 3.7 giờ)_ |
 
 ## Trạng thái thật (đọc từ state/)
 
 | | |
 |---|---|
-| Risk Score | 6/100 |
-| Risk Level | LOW |
-| Sự cố đang mở | 2 |
+| Risk Score | 5/100 |
+| Risk Level | MEDIUM |
+| Sự cố đang mở | 1 |
 | └ CRITICAL | 0 |
-| └ HIGH | 2 |
+| └ HIGH | 1 |
 | Phát hiện cấp điều hành | 2 |
 | └ cảnh báo chất lượng | 0 |
 | Rule không kết luận được | 2 |
 
 ## Vùng quan sát
 
-| Nguồn / Năng lực | Trạng thái |
+Hai bảng dưới đây trả lời hai câu hỏi khác nhau, và một bảng xanh không
+bù được cho bảng kia đỏ.
+
+### Mù nguồn — nguồn có mở để đọc được không
+
+| Nguồn | Trạng thái |
 |---|---|
 | `defender` | covered |
 | `firewall` | covered |
@@ -49,11 +62,21 @@ Cập nhật: 2026-09-14T08:16:20.018034
 | `processes` | covered |
 | `network` | covered |
 | `ioc` | covered |
-| **Security Log** | covered |
-| **Process Creation** | covered |
-| **Script Block Logging** | covered |
-| **Scheduled Task Execution** | blind |
-| **USB Device Activity** | blind |
+
+### Mù năng lực — thứ ta cần có được ghi lại không
+
+| Năng lực | Trạng thái | Cách sửa |
+|---|---|---|
+| Security Log | covered | — |
+| Process Creation | covered | — |
+| Script Block Logging | covered | — |
+| Scheduled Task Execution | **blind** | scripts\enable_forensic_logs.ps1 (cần Administrator) |
+| USB Device Activity | **blind** | scripts\enable_forensic_logs.ps1 (cần Administrator) |
+
+> **2 năng lực đang mù.** Một nguồn `covered` KHÔNG có nghĩa là kỹ
+> thuật tương ứng quan sát được: `persistence` mở được, nhưng
+> *Scheduled Task Execution* thì không được ghi ở đâu cả. Điểm rủi ro
+> đã rút trọng số tương ứng và không được phép xuống `LOW`.
 
 _Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
 

@@ -59,7 +59,7 @@ def base_data():
                                 {'name': 'B', 'status': 'success'}]},
         'integrity': {'ok': True, 'total_violations': 0},
         'tests_ok': True, 'tests_detail': '',
-        'portal': [], 'telegram': [], 'pipeline_fields': [], 'escapes': [],
+        'portal': [], 'telegram': [], 'pipeline_fields': [], 'pipeline_fields_scope': {'findings': [], 'traced': 0, 'total_gets': 0, 'file_count': 0}, 'escapes': [],
     }
 
 
@@ -142,7 +142,8 @@ def run():
                  'generate_daily_brief.py'):
         suite.check('  -> co soi %s' % name, name in pfa.FILES)
 
-    findings = pfa.audit()
+    audit_result = pfa.audit()
+    findings = audit_result['findings'] if isinstance(audit_result, dict) else audit_result
     fabricated = [f for f in findings if f['level'] == 'FABRICATED']
     suite.check('Khong con so lieu gia trong pipeline Python',
                 not fabricated,
@@ -245,6 +246,134 @@ def run():
                 'protection_coverage' in app)
     suite.check('Portal co duong doc health_score chinh thuc',
                 'function waapHealth(' in app)
+
+    # -- AQ-046: hai tep sinh cung mot lan chay phai khai cung mot ket luan ---
+    # Ngay 14/09 luc 13:41:52, `TECHNICAL_DEBT.md` ket luan "Du dieu kien merge:
+    # KHONG" trong khi `HANDOFF.md` — sinh cung giay, tu cung nguon — in bon con
+    # so dep va khuyen "chay `npm run gate` truoc khi mo PR". Khong tep nao noi
+    # doi ve mot con so; tep thu hai chi khong mang theo CAU TRA LOI.
+    #
+    # Do la tep dau vao cua moi phien, nen im lang o day doc len la "dang on".
+    import generate_handoff
+
+    blocked = {'merge_ready': False, 'summary': {},
+               'blockers': ['bo kiem phat hien truot (TONG: 337/340 dat)']}
+    text = generate_handoff.build(blocked)
+    suite.check('Cong chan -> HANDOFF in ro KHONG du dieu kien merge',
+                '**Đủ điều kiện merge** | **KHÔNG**' in text,
+                'khong tim thay hang ket luan')
+    suite.check('Cong chan -> HANDOFF liet ke blocker',
+                '337/340' in text, 'blocker khong duoc chep sang')
+    nextup = text[text.index('## Việc tiếp theo'):]
+    suite.check('Cong chan -> viec dau tien la blocker, khong phai "chay gate"',
+                nextup.index('Cổng đang chặn') < nextup.index('AUDIT_QUEUE'),
+                'loi khuyen dung truoc blocker')
+
+    passing = {'merge_ready': True, 'summary': {}, 'blockers': []}
+    suite.check('Cong mo -> HANDOFF in ro CO du dieu kien merge',
+                '**Đủ điều kiện merge** | **CÓ**' in generate_handoff.build(passing))
+
+    # Chay tay, ngoai mot lan chay cong: khong co ket luan nao de chep. Bang cong
+    # khi do la mot nua cau tra loi, va nua cau tra loi o day doc giong "dang on"
+    # — nen phai khai thang la chua biet, khong duoc im.
+    standalone = generate_handoff.build(None)
+    suite.check('Khong co verdict -> KHAI la chua biet, khong im lang',
+                'Chưa biết cổng có cho merge hay không' in standalone)
+    suite.check('Khong co verdict -> KHONG bia ra mot ket luan',
+                'Đủ điều kiện merge' not in standalone)
+
+    # -- AQ-047: nang luc mu phai cham toi diem rui ro -----------------------
+    # `sensor_coverage.json` tach "nguon co mo duoc khong" khoi "thu ta can co
+    # duoc ghi khong", va noi thang hai nang luc dang mu. Roi khong ai doc: engine
+    # rui ro chi biet mot loai mu, nen dau ra la LOW tren mot may khong thay tac
+    # vu dinh ky — mot trong nhung ky thuat duy tri pho bien nhat.
+    import calculate_risk_score as crs
+
+    coverage = state('sensor_coverage.json') or {}
+    caps = coverage.get('detection_capabilities') or []
+    blind_caps = [c for c in caps if c.get('status') == 'blind']
+    suite.check('Moi nang luc deu duoc anh xa ve mot thanh phan rui ro',
+                all(c.get('key') in crs.CAPABILITY_COMPONENT for c in caps),
+                str([c.get('key') for c in caps
+                     if c.get('key') not in crs.CAPABILITY_COMPONENT]))
+    suite.check('Moi thanh phan duoc anh xa toi deu co trong WEIGHTS',
+                all(v in crs.WEIGHTS for v in crs.CAPABILITY_COMPONENT.values()))
+
+    risk = state('risk_score.json') or {}
+    notes = ' '.join(risk.get('notes') or [])
+    if blind_caps:
+        for capability in blind_caps:
+            label = capability.get('label') or capability.get('key')
+            suite.check('Nang luc mu "%s" duoc GOI TEN trong notes' % label,
+                        label in notes,
+                        'mot dong "2 nang luc mu" khong giup ai di bat kenh nao')
+        suite.check('Con nang luc mu -> risk_level KHONG duoc la LOW',
+                    risk.get('risk_level') != 'LOW',
+                    'nhan %r' % risk.get('risk_level'))
+        suite.check('  -> va co dong giai thich vi sao khong LOW',
+                    'Capability floor' in notes)
+    else:
+        suite.check('Khong con nang luc mu -> khong can san nang muc', True)
+
+    # -- AQ-043 / AQ-044: bo audit khong chay duoc PHAI noi ra ---------------
+    # Vong 9 do `0/7 tep co dau` va vong 10-11 do `7/7`; ca hai lan
+    # `run_coherence_audit` deu ket luan "0 vi pham". Cung ma, cung ket luan, du
+    # lieu nguoc nhau — vi bo do chi biet noi "khong thay vi pham", va cau do
+    # khong phan biet duoc "da soi, sach" voi "khong soi duoc gi".
+    #
+    # Nua con lai nam o `state_manager`: `except ImportError: pass` bo dau lan
+    # chay im lang, nen import hong -> moi tep khong dau -> phep so khong kich
+    # hoat -> cong xanh vi dung cai ly do le ra phai chan no.
+    import run_coherence_audit
+
+    unstamped_state = {name: {'present': True, 'run_id': None}
+                       for name in ('risk_score.json', 'incidents.json')}
+    real_run_ids = run_coherence_audit.run_ids
+    try:
+        run_coherence_audit.run_ids = lambda: unstamped_state
+        findings, _ = run_coherence_audit.audit_runs()
+    finally:
+        run_coherence_audit.run_ids = real_run_ids
+    levels = [f['level'] for f in findings]
+    suite.check('Moi tep deu KHONG dau -> UNEVALUABLE, khong phai "0 vi pham"',
+                'UNEVALUABLE' in levels, str(levels))
+
+    mixed_state = {'risk_score.json': {'present': True, 'run_id': 'RUN-A'},
+                   'incidents.json': {'present': True, 'run_id': None}}
+    try:
+        run_coherence_audit.run_ids = lambda: mixed_state
+        findings, _ = run_coherence_audit.audit_runs()
+    finally:
+        run_coherence_audit.run_ids = real_run_ids
+    suite.check('Mot phan khong dau -> UNSTAMPED, khong lang le roi khoi mau so',
+                'UNSTAMPED' in [f['level'] for f in findings])
+
+    try:
+        run_coherence_audit.run_ids = lambda: {}
+        findings, _ = run_coherence_audit.audit_runs()
+    finally:
+        run_coherence_audit.run_ids = real_run_ids
+    suite.check('Khong doc duoc tep nao -> UNEVALUABLE',
+                'UNEVALUABLE' in [f['level'] for f in findings])
+
+    # Ca hai muc do phai CHAN merge, khong chi hien ra bang.
+    for level in ('UNEVALUABLE', 'UNSTAMPED'):
+        data = base_data()
+        data['coherence'] = [{'level': level, 'file': 'state/',
+                              'field': 'run_id', 'detail': 'gia lap'}]
+        data['coherence_scope'] = {}
+        suite.check('%s -> BI CHAN' % level,
+                    any(level in b for b in sprint_gate.evaluate(data)['blockers']),
+                    str(sprint_gate.evaluate(data)['blockers'])[:90])
+
+    # AQ-043: mat dau lan chay phai duoc GHI VAO TEP, khong duoc nuot.
+    manager_src = read('state_manager.py')
+    manager_code = '\n'.join(l for l in manager_src.splitlines()
+                             if not l.strip().startswith('#'))
+    suite.check('state_manager khong con nuot ImportError bang `pass`',
+                'except ImportError:\n        pass' not in manager_code)
+    suite.check('  -> va khai `UNSTAMPED` thay vi im lang',
+                "'UNSTAMPED'" in manager_code)
 
     return suite
 

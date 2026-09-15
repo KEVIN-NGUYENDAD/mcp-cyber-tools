@@ -64,3 +64,38 @@ test_*.sh
 # khien may khac doc duoc mot tien trinh khong ton tai tren may ho.
 state/.tool_validation.lock
 state/logs/tool_validation_auto.log
+.pr_body.md
+
+# Sprint DB-1: ban sao SQLite cua state/*.json.
+#
+# KHONG commit — va ly do khong phai "tep nhi phan thi phien".
+#
+# `state/*.json` duoc theo doi trong git va la Source of Truth. Commit ca ban
+# sao nghia la mot su that co HAI ban trong lich su, va chung se lech: mot PR
+# sua JSON ma quen dung lai .db thi diff van xanh, con nguoi checkout ra doc
+# .db se doc mot trang thai khong con ton tai. Mot ban sao dan xuat commit vao
+# repo thoi lam ban sao va bat dau lam nguon canh tranh.
+#
+# Ngoai ra .db la nhi phan: git khong merge duoc, nen moi PR cham vao state se
+# thanh mot xung dot phai giai bang tay tren mot tep khong ai doc duoc.
+#
+# Dung lai bat cu luc nao: `npm run db:mirror` (~1 giay).
+# -wal / -shm la trang thai runtime cua MOT tien trinh, khong bao gio commit.
+state/sentinelops.db
+state/sentinelops.db-wal
+state/sentinelops.db-shm
+
+# EXP-02 (AUDIT_SECURITY_AND_DATA.md). `state/*.json` la du lieu SOC cua mot
+# mang that: IP noi bo, dia chi MAC, so lo hong tung thiet bi, ket qua san
+# credential-dumping, lich su canh bao. `web/server.js` phuc vu chung qua
+# `/api/state/:filename` va `render.yaml` deploy cong khai tu nhanh `develop`.
+#
+# Commit chung nghia la mot ban do ha tang di kem lich su git: xoa o HEAD khong
+# xoa duoc o cac commit truoc. Repo chuyen sang public mot lan la lo vinh vien.
+#
+# Trang thai la thu MOT MAY sinh ra luc chay, khong phai ma nguon. No song trong
+# thu muc lam viec va trong ban sao SQLite; git khong phai noi luu no.
+# Dung lai: `npm run pipeline` (hoac bat cu script sinh state nao).
+state/*.json
+state/**/*.json
+state/history/*.prev

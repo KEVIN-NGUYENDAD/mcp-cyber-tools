@@ -18,6 +18,7 @@ from collections import defaultdict
 
 # Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
 from state_manager import write_state_atomic, read_state_safe
+import run_context
 
 try:
     import requests
@@ -41,8 +42,18 @@ class IntelligencePipeline:
         self.daily_brief_dir.mkdir(exist_ok=True)
 
         self.log_file = self.logs_dir / 'pipeline.log'
+
+        # AQ-040. Mở lần chạy TRƯỚC stage đầu tiên: `run_stage()` sao chép
+        # `os.environ` cho mỗi tiến trình con, nên mọi stage thừa hưởng cùng một
+        # định danh, và `write_state_atomic` đóng dấu nó lên mọi tệp state.
+        #
+        # Từ đây một người đọc state không phải suy ra "các tệp này có cùng một
+        # lần chạy không" từ dấu thời gian — câu trả lời nằm trong tệp.
+        self.run_id = run_context.begin_run()
+
         self.pipeline_results = {
             'timestamp': datetime.now().isoformat(),
+            'run_id': self.run_id,
             'stages': [],
             'status': 'running',
             'summary': {}
@@ -528,7 +539,7 @@ class IntelligencePipeline:
             'Sensor Coverage Refresh',
             self.scripts_dir / 'refresh_sensor_coverage.py',
             'Re-probing which sources can still be read',
-            args=['--auto-validate']
+            args=[]
         )
         success = success and ok
 

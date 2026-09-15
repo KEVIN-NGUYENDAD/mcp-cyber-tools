@@ -17,6 +17,42 @@ from typing import Any, Callable, Dict, Optional
 logger = logging.getLogger(__name__)
 
 
+def write_manifest_entry(file_path: str, data: Any, run_id: str = None) -> None:
+    """
+    Track state file in run_manifest.json for coherence validation.
+
+    Called after successful atomic write to record file metadata.
+    """
+    try:
+        manifest_path = Path(file_path).parent / 'run_manifest.json'
+        manifest = {}
+
+        if manifest_path.exists():
+            try:
+                with open(manifest_path, 'r', encoding='utf-8') as f:
+                    manifest = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                manifest = {}
+
+        file_key = Path(file_path).name
+        file_info = {
+            'generated_at': data.get('generated_at') if isinstance(data, dict) else None,
+            'size': len(json.dumps(data, indent=2)) if isinstance(data, dict) else 0
+        }
+
+        if 'files' not in manifest:
+            manifest['files'] = {}
+        manifest['files'][file_key] = file_info
+        manifest['run_id'] = run_id or (data.get('run_id') if isinstance(data, dict) else None)
+        manifest['manifest_updated_at'] = __import__('datetime').datetime.now().isoformat()
+
+        with open(manifest_path, 'w', encoding='utf-8') as f:
+            json.dump(manifest, f, indent=2)
+
+    except Exception as e:
+        logger.debug(f"[MANIFEST] Failed to track {file_path}: {e}")
+
+
 def write_state_atomic(
     file_path: str,
     data: Any,
@@ -53,6 +89,38 @@ def write_state_atomic(
     import time
     file_path = Path(file_path)
 
+    # AQ-040. Đóng dấu lần chạy ngay tại chỗ ghi, không ở từng script.
+    #
+    # 40 script ghi state qua hàm này. Sửa từng script là cách đã chứng minh
+    # không scale ở AQ-014: một lần đổi khoá làm hỏng năm consumer và Builder
+    # sửa được một. Ở đây có đúng một cửa ra, nên dấu lần chạy đặt ở cửa đó.
+    #
+    # `stamp()` không ghi đè `run_id` đã có, nên một payload cố ý mang lần chạy
+    # khác vẫn giữ nguyên.
+    try:
+        import run_context
+        data = run_context.stamp(data)
+    except ImportError:
+        # AQ-043. Dòng này từng là `pass`, kèm lời biện hộ "mất dấu lần chạy,
+        # không mất dữ liệu". Lời biện hộ đó đúng về dữ liệu và sai về hậu quả:
+        # `run_coherence_audit` đếm tệp CÓ dấu và báo vi phạm khi các dấu lệch
+        # nhau — nên một tệp KHÔNG dấu nào cả lặng lẽ rơi khỏi phép đếm, và cổng
+        # xanh. Import hỏng → mất dấu → coherence `0 vi phạm` → merge được.
+        #
+        # Đây đúng là lớp lỗi hàng đợi này đã đóng hai mươi lần ở chỗ khác, và
+        # tôi vừa viết lại nó ở đây. Một `except: pass` trên đường ghi state là
+        # một default xanh, bất kể lời bình luận cạnh nó nói gì.
+        #
+        # Nên: khai vắng mặt, đừng nuốt. `UNSTAMPED` khác `STANDALONE` — cái
+        # sau là chạy tay có chủ ý, cái này là một sự cố hạ tầng.
+        if isinstance(data, dict):
+            data.setdefault('run_id', None)
+            data.setdefault('run_scope', 'UNSTAMPED')
+            data.setdefault(
+                'run_scope_reason',
+                'khong import duoc run_context tu state_manager — tep nay khong '
+                'truy nguoc duoc ve mot lan chay')
+
     try:
         # Ensure parent directory exists
         file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -80,6 +148,10 @@ def write_state_atomic(
                 # On Windows: ReplaceFileW (via os.replace), on POSIX: rename() with overwrite
                 os.replace(temp_path, str(file_path))
                 logger.debug(f"[ATOMIC] Successfully wrote {file_path} (atomic, attempt {attempt + 1})")
+
+                # Track in manifest after successful write
+                run_id = data.get('run_id') if isinstance(data, dict) else None
+                write_manifest_entry(str(file_path), data, run_id)
                 return
 
             except (OSError, PermissionError) as e:
