@@ -4012,3 +4012,52 @@ dòng `0 vi phạm` trên cùng màn hình cổng.
 ---
 
 *Vòng 15, BUILDER TEAM B 2026-09-14. LOOP MODE.*
+
+---
+
+# VÒNG 16 — BUILDER (TEAM B) · 2026-09-14
+
+## AQ-050 · Pipeline Stage Inflation — ĐÓNG (có bằng chứng)
+
+**Triệu chứng nhận vào:** số stage trên màn hình cổng tăng dần qua các lần gọi —
+`36 → 41 → 43` — trong khi `run_intelligence_pipeline` không thêm một việc nào.
+
+**Ba giả thuyết được đặt ra: stage leak / handoff append / pipeline metadata drift.**
+Đo trực tiếp `logs/pipeline_results.json`: **45 dòng ghi, 29 tên stage phân biệt**,
+`Generate Handoff` xuất hiện **17 lần**. Không phải leak, không phải drift — là
+**handoff append**, đúng giả thuyết thứ hai.
+
+**Gốc.** `generate_handoff` **không phải** một stage của pipeline. Nó không có mặt
+trong `run_intelligence_pipeline.run()`; nó chạy từ `npm run handoff` và từ chính
+`sprint_gate.py:546`. Nhưng `main()` của nó append vô điều kiện một dòng
+`Generate Handoff` vào `logs/pipeline_results.json` — tức vào bản ghi của một lần
+chạy **đã kết thúc**. Mỗi lần chạy cổng cộng thêm một dòng. Bản ghi của lần chạy A
+dần dần kể cả những việc làm sau khi A kết thúc.
+
+**Vì sao đây không phải lỗi hiển thị.** Con số bị thổi phồng là **mẫu số** của dòng
+`0 thất bại`. Cổng đọc `45 stage, 0 thất bại` đang báo cáo về 45 việc mà pipeline
+chỉ làm 29. Cùng họ với AQ-013: một con số trên màn hình cổng không còn là một phép
+đo của thứ nó tự xưng là đang đo.
+
+**Sửa — hai đầu, không phải một.**
+
+1. `generate_handoff._record_stage()` chỉ ghi khi `run_context.run_id()` của tiến
+   trình này **bằng** `run_id` trong tệp. Chạy tay → `STANDALONE`, không đụng vào.
+   Bản ghi của lần chạy khác → `LAN CHAY KHAC`, không đụng vào. Và khi có ghi thì
+   **ghi đè theo tên**, không append: gọi ba lần trong cùng một lần chạy vẫn là một
+   stage.
+2. `sprint_gate.evaluate()` **chặn merge** khi bản ghi có tên stage lặp, và nêu cả
+   hai con số (`n dòng ghi cho m stage thật`). Sửa một đường ghi thì lần sau một
+   đường ghi khác hở lại sẽ im lặng; bộ dò thì không.
+
+**Bằng chứng:** `tests/pipeline_ledger/test_pipeline_ledger.py` — **14/14**. Khoá cả
+năm nhánh của đường ghi và cả hai chiều của bộ dò (lặp → chặn; không lặp → im, vẫn
+đủ điều kiện merge), gồm đúng hình dạng thật `45 dòng / 29 stage`.
+**Mutation:** vô hiệu hoá bộ dò trùng tên → `14 → 11`; vô hiệu hoá điều kiện
+`run_id` trong đường ghi → `14 → 13`. Cả hai phục hồi về `14/14`.
+
+**Đã dọn bản ghi hiện có:** gỡ 16 dòng `Generate Handoff` bịa, `45 → 29`, kèm
+`stages_note` nói rõ đã gỡ gì và vì sao — không xoá lặng lẽ.
+
+**Cổng sau khi sửa:** `Bộ kiểm 486/486` · `Pipeline: 29 stage, 0 thất bại` ·
+`KET QUA: DU DIEU KIEN MERGE`.
