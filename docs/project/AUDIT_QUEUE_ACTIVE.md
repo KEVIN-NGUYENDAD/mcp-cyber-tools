@@ -1,55 +1,109 @@
 # AUDIT_QUEUE_ACTIVE.md
-**Last updated:** 2026-09-14 · **Status:** LOOP MODE · **Context:** Distilled for token efficiency
+**Last updated:** 2026-09-14 (vòng 15, BUILDER TEAM B) · **Status:** LOOP MODE · **Context:** Distilled for token efficiency
+
+> **Cảnh báo về chính tệp này.** Bản trước của nó mô tả trạng thái vòng 7 và liệt kê
+> `0 CRITICAL + 8 HIGH` với các ID (AQ-030/033/034/024/016–018/029) đã đóng từ lâu,
+> trong khi `AUDIT_QUEUE.md` đã chạy tới vòng 14 với một tập mục hoàn toàn khác.
+> Một Builder đọc tệp này sẽ sửa nhầm tám mục đã xong và bỏ sót sáu mục đang mở.
+> Đây là cùng lỗi AQ-046 ở một tệp khác: tệp tóm tắt tụt lại sau nguồn của nó.
+> **Quy tắc từ đây: tệp này chỉ được cập nhật trong cùng lần chạy với vòng audit mới.**
 
 ---
 
-## TOP 5 CRITICAL (Open)
+## TỒN ĐỌNG — 0 CRITICAL · 1 HIGH (mới, hạ tầng bộ kiểm)
 
-| ID | Root Cause | Impact | Status |
-|---|---|---|---|
-| **AQ-019 / AQ-031** | `ioc_quality.py:308` miễn trừ HIGH khỏi noise; behavior intact, data varies | Risk oscillates 10→3 without code change; 436→356→266 indicators across runs | ✅ Vòng 7: fixture khoá ROUTINE_HINTS lọc ở mọi mức (SYSTEM SID HIGH/CRITICAL), tách khỏi DEV_HINTS — `tests/ioc_quality/test_ioc_quality.py`, chạy trong `test:detection` / gate |
-| **AQ-020 / AQ-032** | `collect_crypto_inventory.py:137` ghi int, dòng 147 đọc chuỗi; `severity_counts[0]=17, [2]=2` pero `MEDIUM=0` | `crypto_score` hằng 100; `total_findings 19` cạnh `severity_breakdown sum 0` | ✅ Vòng 7: `normalize_severity()` chuẩn hoá tại điểm đọc + bất biến tự kiểm (`sum(breakdown) == len(findings)`) đã có trong code; fixture khoá lại bằng `tests/crypto_inventory/test_crypto_inventory.py`, chạy trong `test:detection` / gate |
-| **AQ-021** | Nessus state: `total 64`; assets.json: `sum 399`; daily_brief: in cả hai | Brief tự mâu thuẫn 3.4×; scan 158h tuổi, `scanner_status: running` | ✅ Vòng 7: không phải lỗi đếm — 64 (plugin) và 399 (lượt host×plugin) đều đúng, khác đơn vị (`total_unit`/`total_instances` đã có từ vòng trước trong `nessus_status.json`); `generate_daily_brief.py` giờ in cả hai kèm nhãn + `scan_stale` (ngưỡng 48h); `get_scanner_status()` đổi nhãn `'on' → 'online'` (không còn `'running'`, tên trạng thái LIÊN KẾT scanner, không phải job đang chạy) — `tests/nessus_snapshot/test_nessus_snapshot.py`, chạy trong `test:detection` / gate |
-| **AQ-013 / AQ-026** | `sprint_gate.py:181` + `generate_handoff.py:112` đọc `s.get('success', True)` nhưng writer dùng `status` | Pipeline luôn 0 fail; cổng merge không thể nói không | ✅ Vòng 6: đã sửa (status is None → BLOCKER) |
-| **AQ-002** | `attribution.full == 602/602` nhưng `hostname == 'unresolved'` trên 11/11 assets | Claim FULL attribution trong khi toàn bộ target host unknown | ✅ Vòng 7: không phải bịa — `attribution_quality()` cấu trúc không thể trả FULL cho một chỉ báo có hệ thống `hostname_source == 'unresolved'` (đã sửa từ vòng trước); gần hết `FULL` đến từ `hostname_source: local host` (máy đang chạy tự biết tên nó, hợp lệ và có ý), mọi peer ở xa không phân giải được đều là `PARTIAL`. `score_file()` giờ khai `by_hostname_source` + `attribution_note` cạnh `by_attribution` để đối chiếu được mà không cần đọc code. Verified trên state thật: `hunting_lateral_movement.json` → `FULL: 224, PARTIAL: 2` khớp `local host: 226, unresolved: 2` (0 unresolved lẫn vào FULL) — fixture khoá bất biến này bằng `tests/ioc_quality/test_ioc_quality.py`, chạy trong `test:detection` / gate |
+| ID | Hạng | Trạng thái vòng 15 |
+|---|---|---|
+| **AQ-046** | CRITICAL | ✅ `generate_handoff.build(verdict)` in `Đủ điều kiện merge` + khối `Đang chặn` từ chính `sprint_gate.evaluate()`; `verdict=None` (chạy tay) nói thẳng "chưa biết" thay vì in nửa câu trả lời. Khoá bằng `tests/gate_integrity/test_gate_integrity.py:250` — kiểm **cả hai nhánh** chặn/thông cộng nhánh standalone, đúng điều kiện nghiệm thu vòng 14 đặt ra |
+| **AQ-045** | CRITICAL | ✅ `ioc_quality.py:601` ghi lại `by_severity` sau lọc, số trước lọc chuyển sang `by_severity_including_noise` + `by_severity_note`. Đo thật: `{INFO 226}` / `{INFO 422, HIGH 6}`, HIGH trong kept = **0**, Risk **23 → 5**. Bất biến `sum(by_severity) == len(kept)` nằm trong `schema_reconcile_audit.check_suppressed_severity`, cổng chặn trên `SUPPRESSED_COUNTED` / `NOISE_SCORED` |
+| **AQ-002** | CRITICAL | ✅ (14 vòng) Bất biến đúng không phải `%FULL <= %asset có hostname` — tiền đề đó sai vì `assets.json` là kho một lần quét, còn 616/618 `FULL` là chính máy đang chạy. Bất biến đã cài: **`FULL` phải đi kèm hostname có nguồn ghi rõ**. Đo thật: `FULL 224 / PARTIAL 2` khớp `local host 226 / unresolved 2` — 0 `unresolved` lọt vào `FULL` |
+| **AQ-047** | HIGH | ✅ `calculate_risk_score.py` đọc `capability_summary`; mỗi năng lực mù rút trọng số thành phần tương ứng (`security_events` 50%, `threat_hunting` 67%) và sinh `notes` nêu **tên** năng lực; capability floor nâng `LOW → MEDIUM` khi còn năng lực mù |
+| **AQ-044** | HIGH | ✅ `run_coherence_audit.py` có `UNEVALUABLE` (3 chỗ); `sprint_gate.py:256` coi `UNEVALUABLE` và `UNSTAMPED` là **blocker**, không phải cảnh báo |
+| **AQ-043** | HIGH | ✅ `state_manager.py:103` — `except ImportError` thôi nuốt: ghi `run_scope: 'UNSTAMPED'` + `run_scope_reason`. `UNSTAMPED` khác `STANDALONE`: cái sau là chạy tay có chủ ý, cái này là sự cố hạ tầng |
 
----
+| **AQ-048** | HIGH | ❌ **MỚI, chưa sửa.** Bộ kiểm trượt một lần trong bốn, **không do mã**: `test_sqlite_mirror` → `PermissionError [WinError 32]`, kéo theo `test_deploy_truth` trượt vì `tests/deploy_truth/_fixture/` là thư mục **cố định** chứ không phải `mkdtemp()`. Ba lần chạy sau: `472/472` ×3; riêng từng bộ: 11/11 và 29/29. Chi tiết + sprint đề xuất ở `AUDIT_QUEUE.md` · AQ-048 |
 
-## TOP 5 HIGH (Open)
+**Đang mở: 1 (0 CRITICAL, 1 HIGH — AQ-048). Đã trả tích luỹ: 41.**
 
-| ID | Root Cause | Impact | Status |
-|---|---|---|---|
-| **AQ-030 / AQ-007** | `render.yaml`: `node web-server.js`; bộ ghi HTML ở `send_daily_brief_telegram.py:278`, không trong pipeline | Portal `web/app.js` (đã sửa 86/86 XSS) không được deploy; user mở `latest.html` (09-13) | ✅ Vòng 7: Đã sửa lần trước — `render.yaml` khởi động `npm start` (parse từ `package.json` → `web/server.js`); `generate_daily_brief.py` gọi `write_html_brief()` ngay sau `save_brief()`, độc lập với `send_daily_brief_telegram.py`, nên `/latest` cập nhật đồng bộ với JSON, không chờ Telegram chạy. `deploy_truth_audit.py` đối chiếu điểm vào + route handlers. Fixture khoá: (1) cấu hình repo không lệch; (2) bộ dò phát hiện lệch khi có; (3) HTML sinh CÙNG lúc với JSON; (4) main() không có nhanh Telegram xen giữa hai lần ghi — `tests/deploy_truth/test_deploy_truth.py` 11/11, chạy trong `test:detection` / gate |
-| **AQ-033 / AQ-028 / AQ-022** | `generate_handoff.py` là lệnh thủ công, không run sau merge/pipeline; đọc cache `tool_validation.json` | HANDOFF.md mô tả sprint trước; Risk 10→3, indicators 602→497 không phản ánh | ❌ Handoff thành stage + live read |
-| **AQ-023** | `analyze_firewall()` chỉ return 20 hoặc 90; không đọc 3 profile + `blocked_connections` | Hằng số được trình bày như số đo | ✅ Vòng 6: sửa, chấm theo profile; enabled is None → None |
-| **AQ-034 / AQ-025** | `pipeline_field_audit.py` scope 76 file nhưng coverage 17.1% (106/619 calls); TECHNICAL_DEBT.md in `0` trần | Công cụ tự in phạm vi; tiêu đề bỏ dòng đó | ❌ In mẫu số; phát hiện hàm nạp state theo cấu trúc |
-| **AQ-024** | `web/app.js:1630-1631` dùng `\|\| 'MEDIUM'`; không lọc suppressed (208); không sort top-10 | Portal in 577 mối đe doạ (giá trị cache); sự thật 369; chỉ báo thiếu severity bịa "MEDIUM" | 🔶 Số đếm sửa; default severity vẫn bịa |
-
----
-
-## AQ-035 · ✅ CLOSED
-**Issue:** `state/` không atomicity. Lúc audit: `risk_score.json` (08:11:54, lần N) khai `credential_dumping 6C` nhưng `hunting_credential_dumping.json` (08:12:27, lần N+1) = 0 chỉ báo. Risk 31/HIGH đang trích dẫn 6 chỉ báo không tồn tại.
-
-**Root:** Pipeline ghi stage-by-stage vào `state/` mà không `run_id` hoặc ảnh chụp nguyên tử. Lần N+1 bắt đầu trong lúc N chưa xong.
-
-**Fix (commit `2fbc6d6`):** `write_manifest_entry()` ghi `run_id/generated_at/size` mỗi lần ghi nguyên tử (`state_manager.py`); `run_coherence_audit.py` thêm `check_manifest_complete()` kiểm đủ 7 tệp COHERENT_SET trong `state/run_manifest.json`; `sprint_gate.py` chặn merge trên `MANIFEST_INCOMPLETE` cạnh `MIXED_RUN` đã có. Verified: cùng `run_id` trên 7 tệp → PASS; sửa lệch 1 `run_id` → BI CHAN đúng; phục hồi → PASS 93/EMPTY 6/BLIND 0/FAIL 0.
+> **Mục tiêu `CRITICAL = 0, HIGH = 0` đạt được trên hàng đợi nhận vào đầu vòng 15**
+> (AQ-046/045/002/047/044/043 — toàn bộ đóng, có bằng chứng). AQ-048 là mục **phát
+> sinh trong chính vòng này**, tìm ra nhờ chạy bộ kiểm nhiều lần. Nó không được sửa
+> ở đây vì nằm ngoài phạm vi và chạm vào hai bộ kiểm không liên quan tới hàng đợi —
+> báo ra thay vì lặng lẽ để đó, vì một cổng thỉnh thoảng đỏ vì lý do không phải lỗi
+> mã sẽ bị học cách chạy lại cho tới khi xanh.
 
 ---
 
-## OPEN DEBT SUMMARY
+## VIỆC VÒNG 15 LÀM — bịt lỗ hổng cuối: bộ dò chưa từng được kiểm
 
-**Trạng thái tích luỹ:**
-- ✅ Closed (vòng 1–6): AQ-001, 003, 006, 008, 009, 010, 012, 014, 015, 026, 023, 013
-- ✅ Closed (vòng 7): AQ-019/031, AQ-020/032, AQ-021, AQ-035, AQ-002, AQ-030/007
-- ❌ Open CRITICAL: 0
-- ❌ Open HIGH: 5 (AQ-030, 033, 024, 034, AQ-016–018, 029 remainder)
-- **Total:** ~8 items, **0 CRITICAL + 8 HIGH**
+Sáu mục trên đã có bản sửa trong mã tại HEAD. Vòng 14 đo trên commit cũ hơn nên
+báo chúng còn mở — đó là chênh lệch giữa auditor và cây làm việc, không phải nợ.
 
-**Next Audit Focus:**
-1. **AQ-033/028/022:** Handoff thành stage + live read
-2. **AQ-034/025:** Pipeline field audit mẫu số
-3. **AQ-024:** Default severity "MEDIUM" vẫn bịa
+Nhưng khi đối chiếu *bản sửa* với *bằng chứng bản sửa được giữ*, còn đúng một lỗ:
+
+**`scripts/schema_reconcile_audit.py` giữ bốn bất biến mà cổng chặn merge trên đó —
+và chính nó chưa có một phép kiểm nào.** Nó in `TONG: 0 vi pham`. Câu đó có thể
+nghĩa là "hai đầu mọi phép cộng khớp", hoặc nghĩa là "không phép kiểm nào chạy".
+Nhìn từ cổng, hai câu trả lời giống hệt nhau. Đó đúng là lớp lỗi AQ-030 đã dạy, và
+là lý do AQ-045/AQ-002 chưa thể đóng: bất biến của chúng đúng **hôm nay**, không có
+gì khoá lại cho ngày mai.
+
+**Đã thêm:** `tests/schema_reconcile/test_schema_reconcile.py` — **21/21**.
+Không ca nào hỏi "hôm nay có vi phạm không". Mỗi ca tiêm đúng một loại lệch vào một
+`state/` giả trong thư mục tạm rồi hỏi bộ dò **có báo không**, và gỡ ra rồi hỏi nó
+**có im lại không**:
+
+- `SUPPRESSED_COUNTED` + `NOISE_SCORED` (AQ-045), kèm hai ca âm: chỉ báo bị lọc
+  *tồn tại* là bình thường — phải im; còn một `HIGH` thật thì khai `HIGH` là đúng —
+  cũng phải im (không dương tính giả).
+- `ATTRIBUTION_UNBACKED` (AQ-002), kèm ngoại lệ hợp lệ `local host` phải im và
+  `PARTIAL` trên peer `unresolved` phải im.
+- `SUM_MISMATCH` / `CONSTANT_SCORE` / `NO_TOTAL` (AQ-020), gồm đúng hình dạng
+  `score 100` trên `19 finding` chưa phân loại.
+- `UNIT_UNDECLARED` / `UNIT_MISSING` / `UNIT_MISMATCH` (AQ-021), gồm ca `399 luot`
+  cạnh `64 plugin` **khai đủ đơn vị → phải im**: đây chính là con số tám vòng audit
+  gọi nhầm là "lỗi đếm".
+- Vắng mặt không được đọc thành sạch: không có state → `KHONG DOC DUOC`, không bịa.
+- `len(INVARIANTS) == 4` và cả bốn đều khai phạm vi — thêm một check mà quên nối vào
+  `INVARIANTS` sẽ không còn im lặng.
+
+**Đã kiểm chứng phép kiểm bắt được thật (mutation):** vô hiệu hoá `if counted != kept`
+trong bộ dò → suite tụt `21/21 → 20/21`; phục hồi → `21/21`. Một fixture chưa từng
+được chứng minh là **trượt được** thì chưa phải bằng chứng.
+
+**Đã sửa kèm:** `sprint_gate.py:600` in phạm vi của **hai** bất biến trong khi bộ dò
+chạy **bốn** — `attribution` và `suppressed` chạy thật nhưng không hiện ở đâu trên
+màn hình cổng. Cùng một lỗi: phép kiểm chạy mà không khai phạm vi đọc lên giống hệt
+phép kiểm không chạy. Nay in đủ bốn dòng.
 
 ---
 
-*Token-efficient tracking. Full AUDIT_QUEUE.md archived; historical rounds 1–6 summarized in HANDOFF drift notes.*
+## CỔNG — 2026-09-14, vòng 15
+
+    PASS 93 | EMPTY 6 | BLIND 0 | FAIL 0
+    Bộ kiểm phát hiện : ĐẠT  (TONG: 472/472 dat)      <- 451 + 21 mới
+    Toàn vẹn bằng chứng: 0 vi phạm / 570 chỉ báo
+    Pipeline           : 38 stage, 0 thất bại
+    Đối chiếu lược đồ  : 0 vi phạm | crypto 19/19, score 90 | vuln assets 399 luot
+                         quy kết   570 chi bao | local host 570, unresolved 2
+                         lọc nhiễu lateral 226/226 | persistence 96/96 | proc 46/46
+    Gắn kết lần chạy   : 7/7 tệp có dấu
+    KET QUA: DU DIEU KIEN MERGE
+
+---
+
+## NEXT AUDIT FOCUS
+
+Hàng đợi hết CRITICAL và HIGH. Hai chỗ đáng soi tiếp, **không phải** để mở rộng
+phạm vi mà vì cả hai là cùng một câu hỏi "bộ dò có báo được không":
+
+1. **Độ phủ trường Python 16.7%** (109 kiểm / 652 lời gọi). Mẫu số đã được in ra
+   (AQ-034), nên con số này trung thực — nhưng 543 lời gọi đọc state vẫn ngoài tầm
+   đối chiếu. Đây là nợ đã ghi nhận, không phải drift.
+2. **Các bộ dò khác chưa có mutation test.** `schema_reconcile` vừa được chứng minh
+   là trượt được; `deploy_truth`, `run_coherence_audit`, `portal_escape_audit` thì
+   chưa. Cùng lập luận vừa dùng ở đây áp thẳng sang chúng.
+
+---
+
+*Token-efficient tracking. Lịch sử đầy đủ ở `AUDIT_QUEUE.md` (vòng 1–15).*
