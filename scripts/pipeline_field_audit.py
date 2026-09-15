@@ -293,11 +293,17 @@ def audit():
     findings = []
     for filename in FILES:
         findings.extend(audit_file(filename))
-    return findings
+    return {
+        'findings': findings,
+        'traced': len(findings),
+        'total_gets': sum(coverage(name) for name in FILES),
+        'file_count': len(FILES),
+    }
 
 
 def main():
-    findings = audit()
+    result = audit()
+    findings = result['findings']
     fabricated = [f for f in findings if f['level'] == 'FABRICATED']
     missing = [f for f in findings if f['level'] == 'MISSING']
     unknown = [f for f in findings if f['level'] == 'UNKNOWN']
@@ -324,8 +330,9 @@ def main():
                                           finding['field'],
                                           finding['detail'][:60]))
 
-    total_gets = sum(coverage(name) for name in FILES)
-    traced = len(findings)
+    traced = result['traced']
+    total_gets = result['total_gets']
+    file_count = result['file_count']
     print('')
     print('TONG: %d truy cap | %d dung | %d so lieu gia | %d thieu khoa | '
           '%d khong kiem duoc'
@@ -333,7 +340,7 @@ def main():
     print('PHAM VI: lan duoc %d / %d loi goi `.get(key, default)` trong %d tep. '
           '%d loi goi con lai doc state qua duong khac (self.state[...], tham so '
           'ham, lop boc) va bo audit nay KHONG thay.'
-          % (traced, total_gets, len(FILES), max(0, total_gets - traced)))
+          % (traced, total_gets, file_count, max(0, total_gets - traced)))
     return 1 if fabricated else 0
 
 

@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T19:42:41.345227
+Cập nhật: 2026-09-14T20:02:26.966127
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `2407cb7` |
+| Commit lúc chạy | `5f1a097` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | docs: Sprint 17 HIGH items audit (AQ-024, AQ-034 fixed; AQ-033 open) |
+| Tiêu đề | fix: AQ-033 add handoff as tracked pipeline stage 29 |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
@@ -29,7 +29,7 @@ cổng chạy trước khi commit — không phải một con số trễ.
 | EMPTY | 6 |
 | BLIND | 0 |
 | FAIL | 0 |
-| Pipeline | 29 stage, 0 thất bại |
+| Pipeline | 32 stage, 0 thất bại |
 | Toàn vẹn bằng chứng | 0 vi phạm / 570 chỉ báo _(vừa đo)_ |
 
 ## Trạng thái thật (đọc từ state/)
