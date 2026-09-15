@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T19:37:42.632714
+Cập nhật: 2026-09-14T19:42:41.345227
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `60723be` |
+| Commit lúc chạy | `2407cb7` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | chore: save Sprint 17 state and handoff |
+| Tiêu đề | docs: Sprint 17 HIGH items audit (AQ-024, AQ-034 fixed; AQ-033 open) |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
@@ -29,7 +29,7 @@ cổng chạy trước khi commit — không phải một con số trễ.
 | EMPTY | 6 |
 | BLIND | 0 |
 | FAIL | 0 |
-| Pipeline | 28 stage, 0 thất bại |
+| Pipeline | 29 stage, 0 thất bại |
 | Toàn vẹn bằng chứng | 0 vi phạm / 570 chỉ báo _(vừa đo)_ |
 
 ## Trạng thái thật (đọc từ state/)
@@ -82,14 +82,9 @@ _Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
 
 ## Việc tiếp theo
 
-**Sprint 17 Status:** CRITICAL = 0, HIGH = 5 (AQ-033, AQ-034, AQ-024, AQ-016–029 remainder)
-- AQ-024: Fixed (default severity UNKNOWN, suppressed filter, top-10 sort)
-- AQ-034: Fixed (denominator 109/645 shown)
-- AQ-033: Open (handoff as tracked pipeline stage — requires pipeline system mod)
-
-1. AQ-033: Add handoff as pipeline stage 29 (complex, low priority now)
-2. Verify AQ-016–029 remainder items in full AUDIT_QUEUE.md
-3. Merge PR #46 and redeploy
+1. Đọc `docs/project/AUDIT_QUEUE.md` — còn CRITICAL/HIGH thì sửa trước.
+2. Đọc `docs/project/TECHNICAL_DEBT.md` — nợ đo được và nợ ghi nhận.
+3. `npm run gate` trước khi mở PR.
 
 ## Tài liệu handoff viết tay
 

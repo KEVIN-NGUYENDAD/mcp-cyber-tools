@@ -318,12 +318,37 @@ def build(verdict=None):
 def main(verdict=None):
     """AQ-046. `verdict` là kết quả `sprint_gate.evaluate()` của CHÍNH lần chạy
     này. Không có nó thì tệp phải nói là không có — xem `build()`."""
+    import time
+    start_time = time.time()
+
     if not os.path.isdir(DOCS_DIR):
         os.makedirs(DOCS_DIR)
     with io.open(HANDOFF_FILE, 'w', encoding='utf-8') as handle:
         handle.write(build(verdict))
+
+    duration = time.time() - start_time
+    handoff_path = os.path.relpath(HANDOFF_FILE, PROJECT_ROOT)
+
+    pipeline_results_path = os.path.join(PROJECT_ROOT, 'logs', 'pipeline_results.json')
+    pipeline_data = read_json('pipeline_results.json', 'logs')
+    if pipeline_data:
+        pipeline_data['stages'].append({
+            'name': 'Generate Handoff',
+            'status': 'success',
+            'duration': duration,
+            'output': {
+                'status': 'success',
+                'handoff': handoff_path
+            }
+        })
+        try:
+            with io.open(pipeline_results_path, 'w', encoding='utf-8') as handle:
+                json.dump(pipeline_data, handle, indent=2, ensure_ascii=False)
+        except (IOError, OSError):
+            pass
+
     print(json.dumps({'status': 'success',
-                      'handoff': os.path.relpath(HANDOFF_FILE, PROJECT_ROOT)},
+                      'handoff': handoff_path},
                      indent=2, ensure_ascii=False))
     return 0
 
