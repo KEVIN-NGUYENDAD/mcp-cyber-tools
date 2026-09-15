@@ -88,6 +88,19 @@ def run_ids():
     return found
 
 
+def check_manifest_complete():
+    """Verify all COHERENT_SET files tracked in run_manifest.json."""
+    manifest_path = os.path.join(STATE_DIR, 'run_manifest.json')
+    try:
+        with io.open(manifest_path, encoding='utf-8') as f:
+            manifest = json.load(f)
+        tracked = set(manifest.get('files', {}).keys())
+        expected = set(COHERENT_SET)
+        return expected.issubset(tracked)
+    except (ValueError, IOError, OSError):
+        return False
+
+
 def audit_runs():
     findings = []
     stamps = run_ids()
@@ -139,12 +152,21 @@ def audit_runs():
                       % (len(distinct), ', '.join(sorted(distinct))),
         })
 
+    manifest_complete = check_manifest_complete()
+    if not manifest_complete:
+        findings.append({
+            'level': 'MANIFEST_INCOMPLETE', 'file': 'state/', 'field': 'run_manifest.json',
+            'detail': 'manifest missing files — khong tep nao trong tap gan ket '
+                      'co trong run_manifest.json',
+        })
+
     return findings, {
         'files_checked': len(COHERENT_SET),
         'files_present': len(present),
         'files_stamped': len(present) - len(unstamped),
         'unstamped': unstamped,
         'distinct_runs': sorted(distinct),
+        'manifest_complete': manifest_complete,
     }
 
 
