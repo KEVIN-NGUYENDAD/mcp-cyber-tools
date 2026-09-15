@@ -3929,8 +3929,13 @@ tục**, không phải điều kiện đủ để gọi lần trượt kia là k
 
 ---
 
-## AQ-050 · Pipeline Stage Count Inflation — MỞ (DB-1, TASK 4)
+## AQ-050 · Pipeline Stage Count Inflation — MỞ (DB-1, TASK 4) → **ĐÃ ĐÓNG ở vòng 16**
 
+> **Đọc kèm mục `AQ-050 · Pipeline Stage Inflation — ĐÓNG` bên dưới.** Mục này là
+> *báo cáo phát hiện* viết trong DB-1, giữ nguyên để lưu bằng chứng lúc phát hiện
+> (`34 / 45 dòng ghi · 29 stage thật`). Bản sửa nằm ở vòng 16, chạy song song —
+> đừng đọc chữ "MỞ" ở đây thành trạng thái hôm nay.
+>
 > ID theo yêu cầu đặt hàng. **AQ-049 không tồn tại** — khoảng trống có chủ ý, đừng
 > đi tìm.
 
@@ -4061,3 +4066,49 @@ năm nhánh của đường ghi và cả hai chiều của bộ dò (lặp → c
 
 **Cổng sau khi sửa:** `Bộ kiểm 486/486` · `Pipeline: 29 stage, 0 thất bại` ·
 `KET QUA: DU DIEU KIEN MERGE`.
+
+## AQ-048 · Gate Flakiness — ĐÓNG (vòng 16)
+
+**Nhận vào từ vòng 15:** bộ kiểm trượt một lần trong bốn trên Windows, không do mã.
+`test_sqlite_mirror` ném `PermissionError [WinError 32]` ngay đầu `run()` khi một
+lần chạy trước để lại handle SQLite chưa đóng trên thư mục `_fixture` **cố định**.
+
+**Phần đáng ngại không phải cái ném — là cái in ra sau đó:**
+
+    Bộ kiểm phát hiện : TRƯỢT  (TONG: 443/443 dat)
+
+`443/443 dat` đọc y hệt một lần chạy sạch. 29 ca của bộ bị vỡ không trách vào **tử
+số**, chúng biến mất khỏi **mẫu số**. Một mẫu số tự co lại theo số bộ còn chạy được
+thì **luôn** khớp tử số — đây là một default xanh nằm trong đúng dòng duy nhất mà
+`sprint_gate.run_tests()` trích ra (`startswith('TONG:')`) để in lên màn hình cổng.
+Mã thoát vẫn đỏ, nhưng con số người đọc nhìn thấy thì xanh, và một cổng đỏ mà số
+liệu xanh là một cổng sẽ bị học cách chạy lại cho tới khi xanh.
+
+**Sửa — ba đầu:**
+
+1. `harness.render(suites, missing=n)` in `TONG: x/y dat, n BO KIEM KHONG CHAY DUOC
+   (mau so thieu)` và trả mã thoát khác 0 **kể cả khi mọi ca chạy được đều đạt**.
+   Vắng mặt được khai ngay trên dòng cổng đọc, không chỉ trong mã thoát.
+2. `run_all.py` thật sự truyền `missing=len(broken)` — bất biến trên vô nghĩa nếu
+   chỗ gọi thật vẫn gọi `render(suites)`. Có ca kiểm khoá đúng chuỗi gọi đó.
+3. `test_sqlite_mirror` và `test_deploy_truth` chuyển `_fixture/` cố định sang
+   `tempfile.mkdtemp()` + `rmtree(ignore_errors=True)`, cùng khuôn với
+   `tests/schema_reconcile/`. Thư mục dùng chung qua các lần chạy là đường lây
+   nhiễm giữa các lần chạy, và là thứ đã ném WinError 32 ngay từ đầu.
+
+**Bằng chứng:** `tests/suite_isolation/test_suite_isolation.py` — **8/8**. Ngoài hai
+chiều của dòng `TONG:`, nó quét **cả cây kiểm** để không bộ nào còn dùng thư mục
+fixture cố định, và không còn `_fixture/` sót lại trên đĩa — nên lỗi này không quay
+lại qua một bộ kiểm mới viết sau.
+
+**Ổn định:** `494/494` × 4 lần chạy liên tiếp. Cổng: `DU DIEU KIEN MERGE`.
+
+---
+
+## TỔNG KẾT VÒNG 16
+
+`0 CRITICAL · 0 HIGH`. AQ-050 và AQ-048 đều đóng có bằng chứng và có mutation/bộ dò
+khoá lại. Bộ kiểm `486 → 494`. Hai mục vòng này chung một hình dạng: **một con số
+trên màn hình cổng không còn là phép đo của thứ nó tự xưng đang đo** — AQ-050 thổi
+mẫu số của `0 thất bại`, AQ-048 co mẫu số của `x/y dat`. Cả hai được sửa bằng cách
+bắt mẫu số nói ra nó đếm cái gì.

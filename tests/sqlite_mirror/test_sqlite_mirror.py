@@ -37,6 +37,7 @@ import os
 import shutil
 import sqlite3
 import sys
+import tempfile
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(TESTS_DIR))
@@ -48,7 +49,11 @@ for path in (os.path.join(PROJECT_ROOT, 'scripts'),
 from harness import Suite  # noqa: E402
 import sqlite_mirror as M  # noqa: E402
 
-FIXTURE_DIR = os.path.join(TESTS_DIR, '_fixture')
+# AQ-048. Thu muc CO DINH: neu mot lan chay truoc de lai mot handle SQLite
+# chua dong thi `rmtree` nem `PermissionError [WinError 32]` ngay dau ham `run()`,
+# va ca bo kiem nay khong chay duoc — mot su co ha tang doc len giong het mot bat
+# bien vo. Thu muc tam thi moi lan chay co cho rieng, khong ai dam len ai.
+FIXTURE_DIR = tempfile.mkdtemp(prefix='sqlite_mirror_')
 
 ASSETS_DOC = {
     'timestamp': '2026-09-14T00:00:00',
@@ -120,8 +125,9 @@ def run():
 
     old_state, old_db = M.STATE_DIR, M.DB_PATH
     if os.path.exists(FIXTURE_DIR):
-        shutil.rmtree(FIXTURE_DIR)
-    os.makedirs(FIXTURE_DIR)
+        shutil.rmtree(FIXTURE_DIR, ignore_errors=True)
+    if not os.path.exists(FIXTURE_DIR):
+        os.makedirs(FIXTURE_DIR)
     M.STATE_DIR = FIXTURE_DIR
     M.DB_PATH = os.path.join(FIXTURE_DIR, 'test.db')
 

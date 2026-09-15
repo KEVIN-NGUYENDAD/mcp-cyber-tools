@@ -73,8 +73,16 @@ def logon_event(event_id, source_ip=None, process=None):
             '_tool': 'huntLateralMovement'}
 
 
-def render(suites):
-    """In kết quả và trả về mã thoát. 0 nếu mọi ca đều đạt."""
+def render(suites, missing=0):
+    """In kết quả và trả về mã thoát. 0 nếu mọi ca đều đạt.
+
+    AQ-048. `missing` là số bộ kiểm KHÔNG CHẠY ĐƯỢC. Nó phải đi vào chính dòng
+    `TONG:` chứ không chỉ vào mã thoát, vì đó là dòng duy nhất cổng trích ra và
+    in lên màn hình. Khi một bộ vỡ, dòng cũ in `TONG: 443/443 dat` — đọc y hệt
+    một lần chạy sạch — đứng cạnh chữ `TRƯỢT`, và 29 ca chưa từng chạy không
+    xuất hiện ở đâu. Mẫu số tự co lại theo số bộ còn chạy được là một default
+    xanh: nó luôn khớp tử số.
+    """
     total = failed = 0
     for suite in suites:
         total += len(suite.results)
@@ -86,5 +94,9 @@ def render(suites):
             suffix = ('  [%s]' % row['detail']) if (row['detail'] and not row['ok']) else ''
             print('  %s %s%s' % (mark, row['label'], suffix))
     print('')
-    print('TONG: %d/%d dat' % (total - failed, total))
-    return 1 if failed else 0
+    if missing:
+        print('TONG: %d/%d dat, %d BO KIEM KHONG CHAY DUOC (mau so thieu)'
+              % (total - failed, total, missing))
+    else:
+        print('TONG: %d/%d dat' % (total - failed, total))
+    return 1 if (failed or missing) else 0

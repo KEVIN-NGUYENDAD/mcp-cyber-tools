@@ -22,6 +22,8 @@ from __future__ import print_function
 import io
 import os
 import sys
+import shutil
+import tempfile
 import types
 
 TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -53,9 +55,9 @@ def run():
                 findings == [], str(findings))
 
     # -- 2. Bo do van nhan ra lech khi CO lech (tai tao dung loi goc) ------
-    tmp_dir = os.path.join(TESTS_DIR, '_fixture')
-    if not os.path.exists(tmp_dir):
-        os.makedirs(tmp_dir)
+    # AQ-048. Thu muc tam, khong phai `TESTS_DIR/_fixture` co dinh: mot thu muc
+    # dung chung qua cac lan chay la mot duong lay nhiem giua cac lan chay.
+    tmp_dir = tempfile.mkdtemp(prefix='deploy_truth_')
     tmp_render = os.path.join(tmp_dir, 'render.yaml')
     tmp_package = os.path.join(tmp_dir, 'package.json')
 
@@ -88,6 +90,7 @@ def run():
                     str(matched_findings))
     finally:
         dta.RENDER_YAML, dta.PACKAGE_JSON = old_render_path, old_package_path
+        shutil.rmtree(tmp_dir, ignore_errors=True)
 
     # -- 3. Ban HTML sinh CUNG luc voi JSON, khong cho Telegram ------------
     calls = []
