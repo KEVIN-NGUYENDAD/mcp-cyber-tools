@@ -95,6 +95,7 @@
 | **REPOSITORY_MAP.md** | 8 min | File structure and organization | Developers |
 | **DATA_FLOW.md** | 10 min | How data moves through the system | Backend devs |
 | **STATE_FILES.md** | 3 min | Reference for all data files | Everyone |
+| **SQLITE_MIRROR_STATUS.md** | 5 min | SQLite mirror: what it is, what it is NOT (no cutover, no PostgreSQL) | Developers |
 
 ### Operational Guides
 
