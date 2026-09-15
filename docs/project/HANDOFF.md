@@ -2,15 +2,15 @@
 
 Sinh tự động bởi `scripts/generate_handoff.py`. **Đừng sửa tay** — mọi con số dưới đây đọc thẳng từ `state/` lúc chạy.
 
-Cập nhật: 2026-09-14T22:40:05.049469
+Cập nhật: 2026-09-14T23:17:14.255654
 
 ## Trạng thái kho lúc chạy cổng
 
 | | |
 |---|---|
-| Commit lúc chạy | `7e3074a` |
+| Commit lúc chạy | `dfb29b9` |
 | Branch | `feature/invalidation-and-run-isolation` |
-| Tiêu đề | fix(pipeline): AQ-050 — one run, one stage count |
+| Tiêu đề | chore: finalize sprint state, handoff, debt register and db mirror status |
 | Cây làm việc | CÓ THAY ĐỔI CHƯA COMMIT |
 
 Cây làm việc có thay đổi chưa commit, nên commit ở trên là của sprint
@@ -30,7 +30,7 @@ cổng chạy trước khi commit — không phải một con số trễ.
 | BLIND | 0 |
 | FAIL | 0 |
 | Pipeline | 29 stage, 0 thất bại |
-| Toàn vẹn bằng chứng | 0 vi phạm / 570 chỉ báo _(đo cách đây 3.0 giờ)_ |
+| Toàn vẹn bằng chứng | 0 vi phạm / 570 chỉ báo _(đo cách đây 3.7 giờ)_ |
 
 ## Trạng thái thật (đọc từ state/)
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
+import crypto from 'crypto';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -32,9 +33,67 @@ if (!STATE_DIR) {
   STATE_DIR = PRIMARY_STATE_DIR;
 }
 
+// ============================================================================
+// EXP-02 — XÁC THỰC CHO /api
+// ============================================================================
+//
+// `app.use(cors())` không giới hạn nguồn + không có lớp xác thực nào = mọi
+// trang web bất kỳ đọc được `/api/state/assets.json`. Danh sách allowlist bên
+// dưới chưa từng là một lớp bảo vệ: nó chỉ liệt kê *chính xác* những tệp nhạy
+// cảm nào được phép lấy.
+//
+// Quy tắc fail-closed: không có `API_KEY` thì `/api` **từ chối**, chứ không mở.
+// Một biến môi trường bị quên phải đọc ra là "chưa cấu hình", không được đọc ra
+// là "không cần khoá" — đó đúng là kiểu mặc-định-xanh mà repo này cấm.
+const API_KEY = process.env.API_KEY || '';
+// Được gắn bằng `app.use('/api', ...)`, nên `req.path` ở trong middleware là
+// phần SAU tiền tố: `/health`, không phải `/api/health`.
+const PUBLIC_PATHS = new Set(['/health']); // Render health check gọi đường này
+
+if (!API_KEY) {
+  console.warn('[SECURITY] Chưa đặt API_KEY — mọi route /api sẽ trả 503. '
+    + 'Đặt API_KEY trong môi trường (Render: Environment) rồi deploy lại.');
+}
+
+function requireApiKey(req, res, next) {
+  if (PUBLIC_PATHS.has(req.path)) return next();
+
+  if (!API_KEY) {
+    return res.status(503).json({
+      error: 'API chưa được cấu hình xác thực',
+      detail: 'Biến môi trường API_KEY chưa đặt. API từ chối phục vụ thay vì mở công khai.'
+    });
+  }
+
+  const presented = req.get('x-api-key') || (req.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!presented || !safeEqual(presented, API_KEY)) {
+    console.warn('[SECURITY] Từ chối %s %s (thiếu hoặc sai API key)', req.method, req.path);
+    return res.status(401).json({ error: 'Thiếu hoặc sai API key', header: 'x-api-key' });
+  }
+  return next();
+}
+
+// So sánh theo thời gian hằng: `===` trên chuỗi thoát sớm ở ký tự lệch đầu tiên
+// và rò rỉ độ dài tiền tố khớp qua thời gian phản hồi.
+function safeEqual(a, b) {
+  const bufA = Buffer.from(String(a));
+  const bufB = Buffer.from(String(b));
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
+}
+
 // Middleware
-app.use(cors());
+// CORS đóng mặc định: chỉ những origin được khai trong ALLOWED_ORIGINS mới qua.
+// Không khai thì không origin nào qua — trang tĩnh cùng gốc vẫn gọi được vì
+// same-origin không đi qua CORS.
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
+  .split(',').map(s => s.trim()).filter(Boolean);
+app.use(cors({
+  origin: ALLOWED_ORIGINS.length ? ALLOWED_ORIGINS : false,
+  credentials: false
+}));
 app.use(express.json());
+app.use('/api', requireApiKey);
 app.use(express.static(path.join(__dirname)));
 
 console.log('[SERVER] SentinelOps Web Server starting...');
@@ -147,14 +206,12 @@ console.log('[ROUTES] Convenience routes registered');
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  const stateDir = STATE_DIR;
-  const files = fs.readdirSync(stateDir).filter(f => f.endsWith('.json'));
-
+  // Duong nay CONG KHAI (health check cua Render goi no), nen no khong duoc
+  // khai duong dan he thong hay so luong tep trang thai — do la trinh sat ha
+  // tang mien phi cho nguoi chua co khoa.
   res.json({
     status: 'operational',
-    timestamp: new Date().toISOString(),
-    state_files: files.length,
-    state_directory: stateDir
+    timestamp: new Date().toISOString()
   });
 });
 

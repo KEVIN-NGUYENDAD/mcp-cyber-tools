@@ -19,8 +19,14 @@ Audit identified Telegram bot credentials (token + chat ID) exposed in 6 files w
 
 ### Exposed Credentials
 
-**Telegram Bot Token**: `8779048449:AAHHRr2aWnp50EiMcGgfGSUuNp2aVnLgU4Q`  
-**Chat ID**: `8814186709`
+**Telegram Bot Token**: `[DA XOA — xem ghi chu ben duoi]`  
+**Chat ID**: `[DA XOA]`
+
+> **Sua ngay 2026-09-14 (SEC-02).** Bao cao nay tung IN NGUYEN token trong
+> chinh phan 'da khac phuc'. Mot bao cao khac phuc ma in lai bi mat bi lo la
+> mot lan lo THU HAI, khong phai bang chung da va. Gia tri da duoc go khoi
+> tep; token phai duoc XOAY qua @BotFather thi su co nay moi that su dong,
+> vi no van nam trong lich su git cua repo nay.
 
 ### Files with Hardcoded Credentials
 
@@ -40,7 +46,7 @@ Audit identified Telegram bot credentials (token + chat ID) exposed in 6 files w
 ### ✅ TASK 1: Remove Hardcoded Credentials
 
 **scripts/get_chat_id.py**
-- Before: `bot_token = '8779048449:AAHHRr2aWnp50EiMcGgfGSUuNp2aVnLgU4Q'`
+- Before: `bot_token = '<token bi hardcode — da go khoi tai lieu nay>'`
 - After: Loads from `.env` → `os.getenv('TELEGRAM_BOT_TOKEN')`
 - Added error handling for missing credentials
 - Status: ✅ FIXED
@@ -232,7 +238,7 @@ hotfix/telegram-token-exposure-remediation branch:
 Verify no exposed credentials remain:
 ```bash
 # Check for hardcoded tokens
-git grep "AAHHRr2aWnp50EiMcGgfGSUuNp2aVnLgU4Q"  # Should return 0
+git grep "AAHHRr"                                 # Should return 0
 git grep "8779048449:AAH"                         # Should return 0
 
 # Check git history is clean

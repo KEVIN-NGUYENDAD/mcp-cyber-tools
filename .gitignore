@@ -84,3 +84,18 @@ state/logs/tool_validation_auto.log
 state/sentinelops.db
 state/sentinelops.db-wal
 state/sentinelops.db-shm
+
+# EXP-02 (AUDIT_SECURITY_AND_DATA.md). `state/*.json` la du lieu SOC cua mot
+# mang that: IP noi bo, dia chi MAC, so lo hong tung thiet bi, ket qua san
+# credential-dumping, lich su canh bao. `web/server.js` phuc vu chung qua
+# `/api/state/:filename` va `render.yaml` deploy cong khai tu nhanh `develop`.
+#
+# Commit chung nghia la mot ban do ha tang di kem lich su git: xoa o HEAD khong
+# xoa duoc o cac commit truoc. Repo chuyen sang public mot lan la lo vinh vien.
+#
+# Trang thai la thu MOT MAY sinh ra luc chay, khong phai ma nguon. No song trong
+# thu muc lam viec va trong ban sao SQLite; git khong phai noi luu no.
+# Dung lai: `npm run pipeline` (hoac bat cu script sinh state nao).
+state/*.json
+state/**/*.json
+state/history/*.prev

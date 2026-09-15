@@ -8,6 +8,7 @@ from pathlib import Path
 
 # Import atomic write functions for file safety (TD-L3-001, TD-L3-002, TD-L3-003)
 from state_manager import write_state_atomic, read_state_safe
+from telemetry_redaction import redact
 
 
 def load_credentials():
@@ -125,9 +126,11 @@ def send_via_telegram(message: str, bot_token: str, chat_id: str) -> bool:
     """Send message to Telegram"""
     api_url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
 
+    # Che o day, khong o cho dung chuoi. Day la diem duy nhat tin nhan roi khoi
+    # may — moi cho soan tin moi them sau nay deu di qua day.
     payload = {
         'chat_id': chat_id,
-        'text': message,
+        'text': redact(message),
         'parse_mode': 'HTML'
     }
 

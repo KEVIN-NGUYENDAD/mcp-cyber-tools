@@ -3,6 +3,8 @@ import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs';
 import path from 'path';
 import { paths } from './paths.js';
+import { installRedaction } from './redact.js';
+import { ResilientPolling } from './resilientPolling.js';
 
 dotenv.config();
 
@@ -130,18 +132,41 @@ class TelegramCommandCenter {
     console.log('[INIT] Starting bot with polling enabled...');
 
     this.bot = new TelegramBot(this.token, { polling: true });
+
+    // Boc truoc khi dang ky handler: moi tin nhan roi khoi may deu di qua day.
+    installRedaction(this.bot);
+
+    this.polling = new ResilientPolling(this.bot, {
+      onEvent: (event) => this.recordPollingEvent(event)
+    });
+
     this.setupHandlers();
   }
 
+  // Su kien ket noi duoc ghi ra tep de nguoi truc doc duoc lich su gian doan sau
+  // khi da xay ra. Nhat ky PM2 bi cat vong, va cau hoi "luc 3 gio sang bot co
+  // song khong" phai tra loi duoc vao 9 gio sang.
+  recordPollingEvent(event) {
+    try {
+      const file = path.join(paths.stateDir, 'bot_connectivity.json');
+      let log = { events: [] };
+      if (fs.existsSync(file)) {
+        try { log = JSON.parse(fs.readFileSync(file, 'utf8')); }
+        catch { log = { events: [] }; }
+      }
+      log.events = [...(log.events || []), event].slice(-200);
+      log.last_event = event;
+      log.updated_at = new Date().toISOString();
+      fs.writeFileSync(file, JSON.stringify(log, null, 2));
+    } catch (error) {
+      console.error('[CONNECTIVITY] Khong ghi duoc nhat ky ket noi:', error.message);
+    }
+  }
+
   async start() {
-    return new Promise((resolve) => {
-      console.log('[START] Polling Started');
-      this.bot.on('polling_error', (error) => {
-        console.error('[ERROR] Polling error:', error.message);
-      });
-      console.log('[STATUS] Bot Ready - Listening for commands');
-      resolve();
-    });
+    console.log('[START] Polling Started');
+    this.polling.start();
+    console.log('[STATUS] Bot Ready - Listening for commands');
   }
 
   setupHandlers() {
@@ -1558,17 +1583,17 @@ async function main() {
   console.log('[MAIN] Bot Ready - Awaiting Telegram commands');
 
   // Handle graceful shutdown
-  process.on('SIGINT', () => {
+  // Dung watchdog TRUOC khi dung polling, neu khong nhip tim se hieu viec tat
+  // co y dinh la mot su co va mo mot vong ket noi lai trong luc dang thoat.
+  const shutdown = () => {
     console.log('[SHUTDOWN] Stopping bot...');
+    bot.polling.stop();
     bot.bot.stopPolling();
     process.exit(0);
-  });
+  };
 
-  process.on('SIGTERM', () => {
-    console.log('[SHUTDOWN] Stopping bot...');
-    bot.bot.stopPolling();
-    process.exit(0);
-  });
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 }
 
 // Run if this file is executed directly

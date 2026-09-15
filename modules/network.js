@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { runCmd, runPowerShell, formatResponse } from "./shared.js";
+import { runCmd, runCmdArgs, runPowerShell, formatResponse, hostSchema } from "./shared.js";
 
 export function registerNetworkTools(server) {
   // 1. IPCONFIG
@@ -78,11 +78,12 @@ export function registerNetworkTools(server) {
     "ping",
     "Ping a host",
     {
-      host: z.string(),
-      count: z.coerce.number().optional()
+      host: hostSchema,
+      count: z.coerce.number().int().min(1).max(20).optional()
     },
     async ({ host, count = 4 }) => {
-      const result = runCmd(`ping -n ${count} ${host}`);
+      // INJ-01: mảng đối số, không dòng lệnh. `host` không bao giờ được cmd.exe đọc.
+      const result = runCmdArgs("ping", ["-n", String(count), host]);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -92,10 +93,10 @@ export function registerNetworkTools(server) {
     "tracert",
     "Trace route to host",
     {
-      host: z.string()
+      host: hostSchema
     },
     async ({ host }) => {
-      const result = runCmd(`tracert ${host}`);
+      const result = runCmdArgs("tracert", [host]);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -105,12 +106,11 @@ export function registerNetworkTools(server) {
     "nslookup",
     "DNS lookup",
     {
-      host: z.string(),
-      server: z.string().optional()
+      host: hostSchema,
+      server: hostSchema.optional()
     },
     async ({ host, server }) => {
-      const cmd = server ? `nslookup ${host} ${server}` : `nslookup ${host}`;
-      const result = runCmd(cmd);
+      const result = runCmdArgs("nslookup", server ? [host, server] : [host]);
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -120,18 +120,21 @@ export function registerNetworkTools(server) {
     "scanPort",
     "Check if TCP port is open",
     {
-      host: z.string(),
-      port: z.coerce.number()
+      host: hostSchema,
+      port: z.coerce.number().int().min(1).max(65535)
     },
     async ({ host, port }) => {
+      // INJ-02: `$host`/`$port` do PowerShell đọc từ biến môi trường, không do
+      // JavaScript nội suy vào thân script. `$Host` là biến tự động của
+      // PowerShell nên tham số đổi tên thành `target`.
       const result = runPowerShell(`
-        $result = Test-NetConnection -ComputerName ${host} -Port ${port} -WarningAction SilentlyContinue;
+        $result = Test-NetConnection -ComputerName $target -Port ([int]$port) -WarningAction SilentlyContinue;
         @{
           ComputerName = $result.ComputerName;
           RemotePort = $result.RemotePort;
           TcpTestSucceeded = $result.TcpTestSucceeded;
         } | ConvertTo-Json
-      `);
+      `, { target: host, port });
       return formatResponse(result.success, result.data, result.error);
     }
   );

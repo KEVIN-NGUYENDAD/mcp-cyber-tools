@@ -32,6 +32,7 @@ from pathlib import Path
 
 # Atomic write / safe read (TD-L3-001, TD-L3-002, TD-L3-003)
 from state_manager import write_state_atomic, read_state_safe
+from telemetry_redaction import redact
 
 try:
     import requests
@@ -122,7 +123,9 @@ def safe_send_message(message, project_root, dedup_key=None, dedup_state=None,
                 'detail': 'thiếu TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID'}
 
     api_url = 'https://api.telegram.org/bot{}/sendMessage'.format(bot_token)
-    payload = {'chat_id': chat_id, 'text': message, 'parse_mode': 'HTML'}
+    # Che o diem duy nhat tin nhan roi khoi may. Ho so dieu tra chua duong dan
+    # tien trinh that, nen day la duong ro ro nhat trong ca he.
+    payload = {'chat_id': chat_id, 'text': redact(message), 'parse_mode': 'HTML'}
 
     try:
         response = requests.post(api_url, json=payload, timeout=10)

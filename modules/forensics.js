@@ -1,7 +1,57 @@
 import { z } from "zod";
 import fs from "fs";
+import nodePath from "path";
+import { fileURLToPath } from "url";
 import { execSync } from "child_process";
 import { runPowerShell, formatResponse } from "./shared.js";
+
+// EXP-01. `readLogFile` nhan duong dan tu client va doc thang, khong ranh gioi:
+// no doc duoc `.env`, tuc chinh MCP la duong lay lai token ma SEC-01 vua go
+// khoi cac tep. Ranh gioi la thu muc `logs/` cua repo.
+const PROJECT_ROOT = nodePath.dirname(nodePath.dirname(fileURLToPath(import.meta.url)));
+const LOG_ROOT = nodePath.resolve(PROJECT_ROOT, "logs");
+
+// Tra ve duong dan tuyet doi da chuan hoa, hoac NEM LOI neu no nam ngoai logs/.
+// Phan quyet dua tren KET QUA resolve chu khong tren chuoi dau vao: `logs/../.env`,
+// `..\\.env`, hay duong dan tuyet doi `C:\\...\\.env` deu resolve ra ngoai LOG_ROOT
+// va deu bi chan boi cung mot phep so sanh.
+function resolveInsideLogRoot(input) {
+  const raw = String(input === undefined || input === null ? "" : input).trim();
+  if (!raw) throw new Error("Duong dan rong");
+  if (raw.includes("\0")) throw new Error("Duong dan chua ky tu NUL");
+  // Chan som va noi ro ly do — de nguoi goi sua duoc, thay vi nhan mot loi
+  // "khong tim thay tep" mo ho.
+  if (/(^|[\\/])\.\.([\\/]|$)/.test(raw)) {
+    throw new Error("Duong dan chua '..' — khong duoc di ra khoi logs/");
+  }
+
+  const resolved = nodePath.resolve(LOG_ROOT, raw);
+  // `relative` la phep so sanh dung tren Windows: no xu ly ca hai kieu gach va
+  // ca hoa/thuong. So sanh bang startsWith tren chuoi se cho `logs-backup` lot.
+  if (isOutside(LOG_ROOT, resolved)) {
+    throw new Error(`Chi doc duoc tep ben trong ${LOG_ROOT} — tu choi: ${resolved}`);
+  }
+
+  // Symlink/junction tro ra ngoai VAN resolve ra mot duong dan ben trong, nen
+  // phai kiem lai sau khi giai lien ket. Tep chua ton tai thi de readFileSync
+  // bao ENOENT nhu binh thuong.
+  let real;
+  try {
+    real = fs.realpathSync(resolved);
+  } catch (err) {
+    if (err.code === "ENOENT") return resolved;
+    throw err;
+  }
+  if (isOutside(fs.realpathSync(LOG_ROOT), real)) {
+    throw new Error(`Lien ket tro ra ngoai ${LOG_ROOT} — tu choi: ${real}`);
+  }
+  return real;
+}
+
+function isOutside(root, candidate) {
+  const rel = nodePath.relative(root, candidate);
+  return rel === ".." || rel.startsWith(".." + nodePath.sep) || nodePath.isAbsolute(rel);
+}
 
 export function registerForensicsTools(server) {
   // 1. CHECKHASH
@@ -12,7 +62,12 @@ export function registerForensicsTools(server) {
       path: z.string()
     },
     async ({ path }) => {
-      const result = runPowerShell(`Get-FileHash -Path "${path}" -Algorithm SHA256 | ConvertTo-Json`);
+      // INJ-02: `$targetPath` do PowerShell doc tu bien moi truong. Khong con
+      // chuoi nao duoc noi truoc khi ma hoa, nen `path: "$(calc)"` la mot duong
+      // dan khong ton tai chu khong phai mot lenh.
+      const result = runPowerShell(
+        `Get-FileHash -LiteralPath $targetPath -Algorithm SHA256 | ConvertTo-Json`,
+        { targetPath: path });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -26,10 +81,19 @@ export function registerForensicsTools(server) {
       lines: z.coerce.number().optional()
     },
     async ({ path, lines = 100 }) => {
+      let target;
       try {
-        const content = fs.readFileSync(path, "utf8");
-        const allLines = content.split("\\n");
-        const output = allLines.slice(-lines).join("\\n");
+        target = resolveInsideLogRoot(path);
+      } catch (err) {
+        // Tu choi phai doc ra la TU CHOI, khong phai mot tep rong.
+        return formatResponse(false, "", `[EXP-01] ${err.message}`);
+      }
+      try {
+        const content = fs.readFileSync(target, "utf8");
+        // Dau tach cu la "\\n" (gach cheo + chu n) trong ma nguon, nen no khong
+        // bao gio khop dau xuong dong that: tool "doc N dong cuoi" tra ve ca tep.
+        const allLines = content.split(/\r?\n/);
+        const output = allLines.slice(-lines).join("\n");
         return formatResponse(true, output);
       } catch (err) {
         return formatResponse(false, "", err.message);
@@ -46,7 +110,7 @@ export function registerForensicsTools(server) {
     },
     async ({ path }) => {
       const result = runPowerShell(`
-        $file = Get-Item "${path}" -Force -ErrorAction SilentlyContinue;
+        $file = Get-Item -LiteralPath $targetPath -Force -ErrorAction SilentlyContinue;
         if ($file) {
           @{
             FullPath = $file.FullName;
@@ -60,7 +124,7 @@ export function registerForensicsTools(server) {
         } else {
           "File not found"
         }
-      `);
+      `, { targetPath: path });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -171,19 +235,24 @@ export function registerForensicsTools(server) {
       // Mac dinh moi: dung nhung thu muc ma ADS thuc su xuat hien — file tai ve
       // mang Zone.Identifier, va %TEMP% la noi thu duoc tha xuong. Quet ca o dia
       // thi dung han trong 30 giay, nen pham vi phai co gioi han va phai noi ro.
-      const targets = path
-        ? [path]
-        : ["$env:USERPROFILE\\Downloads", "$env:USERPROFILE\\Desktop",
-           "$env:USERPROFILE\\Documents", "$env:TEMP"];
-      const psList = targets.map(t => `"${t}"`).join(", ");
+      //
+      // INJ-02: danh sach mac dinh la HANG SO nam trong tep nay; duong dan do
+      // nguoi dung dua vao di rieng qua bien moi truong `$userTarget`, khong bao
+      // gio duoc noi vao nguon PowerShell truoc khi ma hoa.
+      const defaultTargets = '"$env:USERPROFILE\\Downloads", "$env:USERPROFILE\\Desktop", '
+        + '"$env:USERPROFILE\\Documents", "$env:TEMP"';
 
       const result = runPowerShell(`
         $ErrorActionPreference = 'SilentlyContinue'
         $scanned = New-Object System.Collections.ArrayList
         $rows = New-Object System.Collections.ArrayList
 
-        foreach ($target in @(${psList})) {
-          $full = $ExecutionContext.InvokeCommand.ExpandString($target)
+        $targets = if ($userTarget) { @($userTarget) } else { @(${defaultTargets}) }
+        foreach ($target in $targets) {
+          # Chi bung bien moi truong cho danh sach MAC DINH (hang so trong tep
+          # nay). Duong dan nguoi dung dua vao dung nguyen van.
+          $full = if ($userTarget) { $target }
+                  else { $ExecutionContext.InvokeCommand.ExpandString($target) }
           if (-not (Test-Path $full)) { continue }
           [void]$scanned.Add($full)
           $items = if ((Get-Item $full -ErrorAction SilentlyContinue).PSIsContainer) {
@@ -215,7 +284,7 @@ export function registerForensicsTools(server) {
           Streams = $limited
         } | ConvertTo-Json -Depth 5 -Compress
         exit 0
-      `);
+      `, { userTarget: path || "" });
 
       if (!result.success) return formatResponse(result.success, result.data, result.error);
 
@@ -249,14 +318,15 @@ export function registerForensicsTools(server) {
     {
       path: z.string().optional()
     },
-    async ({ path = "$env:USERPROFILE\\Downloads" }) => {
+    async ({ path = null }) => {
       const result = runPowerShell(`
         $suspExtensions = @('.exe', '.dll', '.scr', '.bat', '.cmd', '.vbs', '.ps1');
-        Get-ChildItem -Path "${path}" -Recurse -ErrorAction SilentlyContinue |
+        $root = if ($targetPath) { $targetPath } else { Join-Path $env:USERPROFILE 'Downloads' }
+        Get-ChildItem -LiteralPath $root -Recurse -ErrorAction SilentlyContinue |
         Where-Object { $_.Extension -in $suspExtensions } |
         Select-Object FullName, Length, LastWriteTime, @{Name='FileType';Expression={$_.Extension}} |
         ConvertTo-Json
-      `);
+      `, { targetPath: path });
       return formatResponse(result.success, result.data, result.error);
     }
   );
