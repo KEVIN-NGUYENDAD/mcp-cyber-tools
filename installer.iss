@@ -24,7 +24,7 @@ SolidCompression=yes
 PrivilegesRequired=admin
 AllowUNCPath=no
 ShowLanguageDialog=no
-LicenseFile=LICENSE
+; LicenseFile=LICENSE (optional - not included in deployment)
 InfoBeforeFile=
 AllowNoIcons=yes
 
@@ -33,7 +33,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "{#SourceExe}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "LICENSE"; DestDir: "{app}"; Flags: ignoreversion
+; Source: "LICENSE"; DestDir: "{app}"; Flags: ignoreversion (optional - not included)
 Source: ".env.example"; DestDir: "{app}"; Flags: ignoreversion
 
 [Code]
@@ -80,7 +80,7 @@ english.FinishLabel=Installation complete
 english.FinishLabelNoIcons=Installation complete (no shortcuts created)
 
 [Run]
-Filename: "{app}\nssm.exe"; Parameters: "start SentinelOpsAgent"; Flags: nowait postinstall skipifsilent; Description: "Start service"; Flags: hidewizard
+Filename: "{app}\nssm.exe"; Parameters: "start SentinelOpsAgent"; Flags: nowait postinstall skipifsilent hidewizard; Description: "Start service"
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
