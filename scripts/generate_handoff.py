@@ -172,6 +172,25 @@ def build():
         add('_%s_' % coverage['freshness_note'])
         add('')
 
+    # Runtime strategy là quyết định viết tay, không đọc từ state/. Nó nằm ở
+    # đây vì tệp này bị ghi đè mỗi lần chạy — mọi thứ chèn tay vào HANDOFF.md
+    # sẽ mất. Nguồn sự thật đầy đủ: docs/project/PROJECT_READY_STATE.md.
+    add('## Runtime')
+    add('')
+    add('| Vai trò | Thành phần |')
+    add('|---|---|')
+    add('| Primary Runtime | `sentinel_agent.exe` |')
+    add('| Fallback Runtime | `sentinel_agent.cmd` |')
+    add('')
+    add('**Fallback Removal Criteria** — xoá `sentinel_agent.cmd` khi cả ba đạt:')
+    add('')
+    add('- 7 ngày Production Monitoring')
+    add('- 0 lần cần fallback')
+    add('- 0 crash của exe')
+    add('')
+    add('Chi tiết và ngày bắt đầu đếm: `docs/project/PROJECT_READY_STATE.md`.')
+    add('')
+
     add('## Việc tiếp theo')
     add('')
     add('1. Đọc `docs/project/AUDIT_QUEUE.md` — còn CRITICAL/HIGH thì sửa trước.')

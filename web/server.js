@@ -7,12 +7,26 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// When packaged with pkg, code executes from a read-only virtual snapshot. UI
+// assets are embedded there, but state/ and daily_brief/ are mutable runtime
+// data that must resolve to the real filesystem beside the .exe.
+const EXE_DIR = process.pkg ? path.dirname(process.execPath) : null;
+
+const ASSET_DIR =
+  [__dirname, path.join(__dirname, '..', 'web')].find((dir) =>
+    fs.existsSync(path.join(dir, 'index.html'))
+  ) || __dirname;
+
+const DATA_ROOT =
+  [EXE_DIR, EXE_DIR && path.join(EXE_DIR, '..'), path.join(__dirname, '..')]
+    .filter(Boolean)
+    .find((dir) => fs.existsSync(path.join(dir, 'state'))) ||
+  path.join(__dirname, '..');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Determine state directory - use __dirname as primary source
-// web/server.js is in PROJECT_ROOT/web/, so ../state gets to PROJECT_ROOT/state
-const PRIMARY_STATE_DIR = path.join(__dirname, '..', 'state');
+const PRIMARY_STATE_DIR = path.join(DATA_ROOT, 'state');
 const possibleDirs = [
   process.env.STATE_DIR,
   PRIMARY_STATE_DIR,
@@ -35,11 +49,11 @@ if (!STATE_DIR) {
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(ASSET_DIR));
 
 console.log('[SERVER] SentinelOps Web Server starting...');
 console.log('[SERVER] State directory:', STATE_DIR);
-console.log('[SERVER] Serving from:', __dirname);
+console.log('[SERVER] Serving from:', ASSET_DIR);
 console.log('[SERVER] Node environment:', process.env.NODE_ENV || 'development');
 
 // ============================================================================
@@ -202,7 +216,7 @@ app.get('/api/status', (req, res) => {
 // DAILY BRIEF ROUTES
 // ============================================================================
 
-const BRIEF_DIR = path.join(__dirname, '..', 'daily_brief');
+const BRIEF_DIR = path.join(DATA_ROOT, 'daily_brief');
 const BRIEF_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 // List available briefs - one entry per date, newest first
@@ -270,13 +284,13 @@ app.get('/api/daily-brief/:date', (req, res) => {
 
 // Serve index.html for root
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(ASSET_DIR, 'index.html'));
 });
 
 // Fallback for single-page app routing
 app.get('*', (req, res) => {
   if (!req.path.startsWith('/api/')) {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(ASSET_DIR, 'index.html'));
   } else {
     res.status(404).json({ error: 'API endpoint not found', path: req.path });
   }

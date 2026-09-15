@@ -5,6 +5,8 @@
   "main": "web/server.js",
   "scripts": {
     "start": "node web/server.js",
+    "build:bundle": "esbuild web/server.js --bundle --platform=node --target=node22 --format=cjs --outfile=dist/bundle.cjs --banner:js=\"const __IMU__=require('url').pathToFileURL(__filename).href;\" --define:import.meta.url=__IMU__",
+    "build:agent": "npm run build:bundle && pkg . --output dist/sentinel_agent.exe --public",
     "dev": "node web/server.js",
     "probe": "python scripts/sensor_probe.py",
     "validate": "python scripts/tool_validator.py",
@@ -28,11 +30,28 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bin": {
+    "sentinel_agent": "dist/bundle.cjs"
+  },
+  "pkg": {
+    "assets": [
+      "web/index.html",
+      "web/app.js"
+    ],
+    "targets": [
+      "node22-win-x64"
+    ],
+    "outputPath": "dist"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "cors": "^2.8.6",
     "express": "^4.22.2",
     "node-telegram-bot-api": "^0.61.0",
     "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.22.0",
+    "esbuild": "^0.28.2"
   }
 }

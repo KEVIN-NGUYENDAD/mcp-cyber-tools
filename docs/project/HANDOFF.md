@@ -76,6 +76,21 @@ Cập nhật: 2026-09-14T08:16:20.018034
 
 _Cả hai nửa vừa đo trong cùng một lần chạy tool_validator._
 
+## Runtime
+
+| Vai trò | Thành phần |
+|---|---|
+| Primary Runtime | `sentinel_agent.exe` |
+| Fallback Runtime | `sentinel_agent.cmd` |
+
+**Fallback Removal Criteria** — xoá `sentinel_agent.cmd` khi cả ba đạt:
+
+- 7 ngày Production Monitoring
+- 0 lần cần fallback
+- 0 crash của exe
+
+Chi tiết và ngày bắt đầu đếm: `docs/project/PROJECT_READY_STATE.md`.
+
 ## Việc tiếp theo
 
 1. Đọc `docs/project/AUDIT_QUEUE.md` — còn CRITICAL/HIGH thì sửa trước.
