@@ -67,19 +67,29 @@ class NessusCollector:
             'Content-Type': 'application/json'
         })
 
+    # AQ-021. `status: 'on'` từ `/scanners` là trạng thái LIÊN KẾT của scanner
+    # daemon (nó có đang kết nối với Nessus manager hay không) — KHÔNG phải
+    # trạng thái của một job quét cụ thể. Bản đồ cũ `'on' -> 'running'` mượn
+    # đúng cái tên một job đang chạy dùng, nên `scanner_status: running` đứng
+    # cạnh `scan_age_hours: 158` đọc như "đã quét suốt 158 giờ" — một mâu
+    # thuẫn không hề tồn tại. Scanner online liên tục là bình thường; bản quét
+    # gần nhất xong từ lâu là một sự thật KHÁC, và `scan_stale` bên dưới mới
+    # là trường trả lời đúng câu đó.
+    SCANNER_LINK_STATUS = {'on': 'online', 'off': 'offline'}
+
     def get_scanner_status(self):
-        """Get scanner status"""
+        """Trạng thái LIÊN KẾT của scanner daemon — không nói gì về một job quét."""
         try:
             resp = self.session.get(f'{self.nessus_url}/scanners', timeout=10)
             resp.raise_for_status()
             data = resp.json()
             if data.get('scanners'):
                 scanner = data['scanners'][0]
-                status = scanner.get('status', 'unknown')
-                return 'running' if status == 'on' else 'ready'
-            return 'unknown'
+                raw = scanner.get('status', 'unknown')
+                return self.SCANNER_LINK_STATUS.get(raw, 'unknown'), raw
+            return 'unknown', None
         except Exception as e:
-            return 'error'
+            return 'error', None
 
     def find_scan_by_name(self, target_name):
         """Find scan by name (primary: Home Network Discovery)"""
@@ -237,8 +247,9 @@ class NessusCollector:
             'nessus_endpoint': 'https://localhost:8834'
         }
 
-        status = self.get_scanner_status()
+        status, raw_status = self.get_scanner_status()
         output['scanner_status'] = status
+        output['scanner_status_raw'] = raw_status
 
         # Try to find "Home Network Discovery" scan first
         scan_data = self.find_scan_by_name('Home Network Discovery')

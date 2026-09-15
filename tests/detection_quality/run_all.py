@@ -43,6 +43,8 @@ EXTRA_SUITES = [
     ('sensor_coverage', 'test_coverage_refresh'),
     ('sensor_coverage', 'test_auto_validate'),
     ('ioc_quality', 'test_ioc_quality'),
+    ('crypto_inventory', 'test_crypto_inventory'),
+    ('nessus_snapshot', 'test_nessus_snapshot'),
     ('green_defaults', 'test_green_defaults'),
     ('portal_hardening', 'test_portal_hardening'),
     ('gate_integrity', 'test_gate_integrity'),
