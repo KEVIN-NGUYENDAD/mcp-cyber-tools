@@ -240,7 +240,7 @@ export function registerIncidentTools(server) {
     async ({ logName = "Security", count = 1000 }) => {
       const result = runPowerShell(`
         $ErrorActionPreference = 'SilentlyContinue'
-        $rows = @(Get-WinEvent -LogName '${logName}' -MaxEvents ${count} -ErrorAction SilentlyContinue |
+        $rows = @(Get-WinEvent -LogName $logName -MaxEvents $count -ErrorAction SilentlyContinue |
           ForEach-Object {
             # Thong diep su kien thi thoang chua ky tu dieu khien tho (0x00-0x1F
             # ngoai tab/CR/LF). ConvertTo-Json nha chung ra nguyen ven, va
@@ -259,7 +259,7 @@ export function registerIncidentTools(server) {
           })
         # Trang thai cau hinh cua log di kem bang chung. Thieu no thi "0 ban ghi"
         # cua mot log DANG TAT doc y het "0 ban ghi" cua mot log rong that.
-        $info = Get-WinEvent -ListLog '${logName}' -ErrorAction SilentlyContinue
+        $info = Get-WinEvent -ListLog $logName -ErrorAction SilentlyContinue
         [PSCustomObject]@{
           LogEnabled  = [bool]$info.IsEnabled
           LogRecords  = [string]$info.RecordCount
@@ -267,7 +267,7 @@ export function registerIncidentTools(server) {
           Events      = $rows
         } | ConvertTo-Json -Depth 5 -Compress
         exit 0
-      `);
+      `, { logName, count: String(count) });
 
       if (!result.success) return formatResponse(false, "", result.error);
 
@@ -331,7 +331,7 @@ export function registerIncidentTools(server) {
       // ban cu de quy toan bo profile, va cai do khong the ve dich trong 30s.
       const result = runPowerShell(`
         $ErrorActionPreference = 'SilentlyContinue'
-        $start = (Get-Date).AddDays(-${days})
+        $start = (Get-Date).AddDays(-$days)
         $events = New-Object System.Collections.ArrayList
 
         function Add-Row($time, $source, $type, $detail) {
@@ -390,11 +390,11 @@ export function registerIncidentTools(server) {
           }
         }
 
-        $sorted = @($events | Sort-Object Time -Descending | Select-Object -First ${limit})
+        $sorted = @($events | Sort-Object Time -Descending | Select-Object -First $limit)
         [PSCustomObject]@{ WindowStart = $start.ToString('o'); Total = $events.Count; Events = $sorted } |
           ConvertTo-Json -Depth 5 -Compress
         exit 0
-      `);
+      `, { days: String(days), limit: String(limit) });
 
       if (!result.success) return formatResponse(false, "", result.error);
 
