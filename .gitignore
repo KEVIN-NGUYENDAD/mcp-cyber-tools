@@ -59,6 +59,11 @@ SentinelOps_Backup_*.zip
 test_*.ps1
 test_*.sh
 
+# Installer build output. SentinelOps-Setup.exe la ~30 MB va duoc phat hanh
+# qua GitHub Release artifact, khong qua git. Thu muc nay truoc day khong bi
+# ignore — mot lenh `git add .` se commit ca bo cai vao repo.
+Output/
+
 # Sprint 16: dau vet runtime cua viec tu lam moi nua ket qua tool.
 # Khoa la trang thai cua MOT may tai MOT thoi diem; commit no vao repo se
 # khien may khac doc duoc mot tien trinh khong ton tai tren may ho.
