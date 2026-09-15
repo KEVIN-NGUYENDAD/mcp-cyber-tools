@@ -19,14 +19,13 @@ Audit identified Telegram bot credentials (token + chat ID) exposed in 6 files w
 
 ### Exposed Credentials
 
-**Telegram Bot Token**: `[DA XOA — xem ghi chu ben duoi]`  
-**Chat ID**: `[DA XOA]`
+**Telegram Bot Token**: `YOUR_TELEGRAM_BOT_TOKEN` (placeholder - never commit real tokens)  
+**Chat ID**: `YOUR_TELEGRAM_CHAT_ID` (placeholder - never commit real IDs)
 
-> **Sua ngay 2026-09-14 (SEC-02).** Bao cao nay tung IN NGUYEN token trong
-> chinh phan 'da khac phuc'. Mot bao cao khac phuc ma in lai bi mat bi lo la
-> mot lan lo THU HAI, khong phai bang chung da va. Gia tri da duoc go khoi
-> tep; token phai duoc XOAY qua @BotFather thi su co nay moi that su dong,
-> vi no van nam trong lich su git cua repo nay.
+> **CRITICAL (2026-09-14 SEC-02 Finding).** This report previously printed raw tokens
+> in the "remediation" section itself, resulting in a SECOND exposure incident.
+> Tokens have been replaced with placeholders; the token MUST be rotated via @BotFather
+> for the incident to be resolved, because the token remains in git history.
 
 ### Files with Hardcoded Credentials
 

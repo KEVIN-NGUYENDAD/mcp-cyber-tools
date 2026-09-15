@@ -11,7 +11,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ logName = "System", count = 50 }) => {
-      const result = runPowerShell(`Get-WinEvent -LogName '${logName}' -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -LogName $logName -MaxEvents $count -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`, { logName, count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -24,7 +24,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 100 }) => {
-      const result = runPowerShell(`Get-WinEvent -LogName 'Security' -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -LogName 'Security' -MaxEvents $count -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`, { count: String(count) });
 
       if (result.success && result.data) {
         try {
@@ -50,7 +50,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 100 }) => {
-      const result = runPowerShell(`Get-WinEvent -LogName 'System' -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -LogName 'System' -MaxEvents $count -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`, { count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -63,7 +63,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 100 }) => {
-      const result = runPowerShell(`Get-WinEvent -LogName 'Application' -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -LogName 'Application' -MaxEvents $count -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, LevelDisplayName, Message | ConvertTo-Json -Depth 5`, { count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -102,7 +102,7 @@ export function registerEventLogsTools(server) {
       count: z.coerce.number().optional()
     },
     async ({ count = 100 }) => {
-      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='Windows PowerShell'} -MaxEvents ${count} -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-WinEvent -FilterHashtable @{LogName='Windows PowerShell'} -MaxEvents $count -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, Message | ConvertTo-Json -Depth 5`, { count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
@@ -123,10 +123,10 @@ export function registerEventLogsTools(server) {
       const result = runPowerShell(`
         $ErrorActionPreference = 'SilentlyContinue'
         $rows = @(
-          Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4625,4778,4779} -MaxEvents ${count} -ErrorAction SilentlyContinue |
+          Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624,4625,4778,4779} -MaxEvents $count -ErrorAction SilentlyContinue |
           ForEach-Object { [PSCustomObject]@{ TimeCreated = $_.TimeCreated; Id = $_.Id; Source = 'Security'; Fallback = $false; Message = ([string]$_.Message) } }
         ) + @(
-          Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-TerminalServices-LocalSessionManager/Operational'; Id=21,22,23,24,25,39,40} -MaxEvents ${count} -ErrorAction SilentlyContinue |
+          Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-TerminalServices-LocalSessionManager/Operational'; Id=21,22,23,24,25,39,40} -MaxEvents $count -ErrorAction SilentlyContinue |
           ForEach-Object {
             $msg = [string]$_.Message
             # 'Source Network Address: LOCAL' nghia la dang nhap tai may, khong
@@ -136,10 +136,10 @@ export function registerEventLogsTools(server) {
             [PSCustomObject]@{ TimeCreated = $_.TimeCreated; Id = $_.Id; Source = 'TerminalServices'; Fallback = $true; RemoteAddress = $addr; IsRemote = ($addr -ne $null -and $addr -ne 'LOCAL'); Message = $msg }
           }
         )
-        $rows = @($rows | Sort-Object TimeCreated -Descending | Select-Object -First ${count})
+        $rows = @($rows | Sort-Object TimeCreated -Descending | Select-Object -First $count)
         if ($rows.Count -eq 0) { Write-Output '[]' } else { Write-Output ($rows | ConvertTo-Json -Depth 5 -Compress) }
         exit 0
-      `);
+      `, { count: String(count) });
       return formatResponse(result.success, result.data, result.error);
     }
   );

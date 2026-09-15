@@ -36,7 +36,7 @@ export function registerPersistenceTools(server) {
       limit: z.coerce.number().optional()
     },
     async ({ limit = 100 }) => {
-      const result = runPowerShell(`Get-ScheduledTask | Where-Object { $_.State -ne 'Disabled' } | Select-Object TaskName, TaskPath, State, @{Name='LastRun';Expression={$_.LastRunTime}} | Select-Object -First ${limit} | ConvertTo-Json -Depth 5`);
+      const result = runPowerShell(`Get-ScheduledTask | Where-Object { $_.State -ne 'Disabled' } | Select-Object TaskName, TaskPath, State, @{Name='LastRun';Expression={$_.LastRunTime}} | Select-Object -First $limit | ConvertTo-Json -Depth 5`, { limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
