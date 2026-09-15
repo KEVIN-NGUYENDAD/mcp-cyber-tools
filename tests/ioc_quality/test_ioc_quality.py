@@ -202,6 +202,35 @@ def run():
                                              '-> mimikatz']},
                                'credential_dumping')[0] == iq.NOISE_SELF)
 
+    # AQ-019/AQ-031 fixture. Su co goc: 4648 logon vao chinh SYSTEM account
+    # (SID s-1-5-18) mang nhan HIGH vi Event ID, duoc MIEN TRU khoi loc, chiem
+    # 58% risk score toan he thong. ROUTINE_HINTS la su that ve CHU THE (SID),
+    # khong phai phong doan theo ten tien trinh nhu DEV_HINTS -- nen no phai
+    # loc o MOI muc, ke ca HIGH/CRITICAL. Day la fixture khoa lai hanh vi do,
+    # de mot lan sua sau nay khong lam risk score dao dong lai (10->3, 436->
+    # 356->266 chi bao giua cac lan chay) ma khong ai phat hien qua code review.
+    routine_high = {'severity': 'HIGH',
+                     'evidence': ['Logon Type:\t\t5', 'Security ID:\t\ts-1-5-18']}
+    klass_routine_high, reason_routine_high = iq.noise_class(routine_high,
+                                                              'lateral_movement')
+    suite.check('SYSTEM SID (s-1-5-18) o muc HIGH -> VAN bi loc la ROUTINE',
+                klass_routine_high == iq.NOISE_ROUTINE, str(klass_routine_high))
+    suite.check('  -> ly do noi ro la hoat dong nen, khong phai bia',
+                bool(reason_routine_high) and 'hệ thống' in reason_routine_high,
+                reason_routine_high)
+
+    routine_critical = dict(routine_high, severity='CRITICAL')
+    klass_routine_crit, _ = iq.noise_class(routine_critical, 'lateral_movement')
+    suite.check('Cung SID o muc CRITICAL -> VAN bi loc (khac DEV_HINTS)',
+                klass_routine_crit == iq.NOISE_ROUTINE, str(klass_routine_crit))
+
+    # Doi chieu: DEV_HINTS van duoc mien tru o HIGH/CRITICAL (hanh vi co y,
+    # khong phai loi) -- hai bang gop khong con gop nua.
+    dev_critical = {'severity': 'CRITICAL', 'evidence': ['Path=C:\\tools\\git.exe']}
+    klass_dev_crit, _ = iq.noise_class(dev_critical, 'suspicious_processes')
+    suite.check('DEV_HINTS o CRITICAL van duoc mien tru (khong giong ROUTINE_HINTS)',
+                klass_dev_crit is None, str(klass_dev_crit))
+
     # Tieng on bi chan tran, nhung diem tho phai con de kiem lai duoc.
     noisy = iq.score_indicator(
         dict(complete_event_indicator(), process='node',
@@ -288,5 +317,10 @@ def run():
 
 
 if __name__ == '__main__':
+    if sys.platform == 'win32':
+        try:
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+        except AttributeError:
+            pass
     from harness import render
     sys.exit(render([run()]))

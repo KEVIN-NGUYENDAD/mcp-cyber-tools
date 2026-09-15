@@ -37,21 +37,37 @@ class DailyBriefGenerator:
                 return None
         return None
 
+    # AQ-021. `nessus_status.json` mang `total: 64` (số plugin riêng biệt) và
+    # `assets.json` cộng ra 399 (số lượt host×plugin) — cả hai ĐÚNG, chỉ khác
+    # đơn vị (xem chú thích trong `collect_nessus_snapshot.py:get_scan_details`).
+    # Bug thật không phải ở phép đếm mà ở chỗ brief cũ chỉ in "64" trần, không
+    # nhãn đơn vị, nên đọc như mâu thuẫn với số 399 mà `generate_asset_summary()`
+    # in ở phần khác của cùng bản brief. Ở đây in cả `total_instances` cạnh
+    # `total_findings` (đã gắn nhãn đơn vị) để không con số nào đứng một mình.
+    ASSET_SCAN_STALE_HOURS = 48
+
     def generate_vulnerability_summary(self):
         """Generate vulnerability summary from Nessus data"""
         nessus_data = self.load_json('nessus_status.json')
         if not nessus_data:
             return None
 
+        age = nessus_data.get('scan_age_hours', 0)
         return {
             'scan_name': nessus_data.get('scan_name', 'Unknown'),
-            'scan_age_hours': nessus_data.get('scan_age_hours', 0),
+            'scan_age_hours': age,
+            'scan_stale': isinstance(age, (int, float)) and age > self.ASSET_SCAN_STALE_HOURS,
             'total_findings': nessus_data.get('total', 0),
+            'total_findings_unit': nessus_data.get('total_unit', 'distinct_plugins'),
+            'total_instances': nessus_data.get('total_instances', nessus_data.get('total', 0)),
             'critical': nessus_data.get('critical', 0),
             'high': nessus_data.get('high', 0),
             'medium': nessus_data.get('medium', 0),
             'low': nessus_data.get('low', 0),
             'info': nessus_data.get('info', 0),
+            # `scanner_status` giờ là 'online'/'offline' -- trạng thái liên kết
+            # của scanner daemon, không phải "đang quét". Xem
+            # `collect_nessus_snapshot.py:get_scanner_status`.
             'scanner_status': nessus_data.get('scanner_status', 'unknown')
         }
 

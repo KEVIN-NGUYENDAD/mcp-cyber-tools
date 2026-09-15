@@ -7,9 +7,9 @@
 
 | ID | Root Cause | Impact | Status |
 |---|---|---|---|
-| **AQ-019 / AQ-031** | `ioc_quality.py:308` miễn trừ HIGH khỏi noise; behavior intact, data varies | Risk oscillates 10→3 without code change; 436→356→266 indicators across runs | ❌ Fixture test needed before close |
-| **AQ-020 / AQ-032** | `collect_crypto_inventory.py:137` ghi int, dòng 147 đọc chuỗi; `severity_counts[0]=17, [2]=2` pero `MEDIUM=0` | `crypto_score` hằng 100; `total_findings 19` cạnh `severity_breakdown sum 0` | ❌ Khoá int→string ánh xạ |
-| **AQ-021** | Nessus state: `total 64`; assets.json: `sum 399`; daily_brief: in cả hai | Brief tự mâu thuẫn 3.4×; scan 158h tuổi, `scanner_status: running` | ❌ Atomicity + age check |
+| **AQ-019 / AQ-031** | `ioc_quality.py:308` miễn trừ HIGH khỏi noise; behavior intact, data varies | Risk oscillates 10→3 without code change; 436→356→266 indicators across runs | ✅ Vòng 7: fixture khoá ROUTINE_HINTS lọc ở mọi mức (SYSTEM SID HIGH/CRITICAL), tách khỏi DEV_HINTS — `tests/ioc_quality/test_ioc_quality.py`, chạy trong `test:detection` / gate |
+| **AQ-020 / AQ-032** | `collect_crypto_inventory.py:137` ghi int, dòng 147 đọc chuỗi; `severity_counts[0]=17, [2]=2` pero `MEDIUM=0` | `crypto_score` hằng 100; `total_findings 19` cạnh `severity_breakdown sum 0` | ✅ Vòng 7: `normalize_severity()` chuẩn hoá tại điểm đọc + bất biến tự kiểm (`sum(breakdown) == len(findings)`) đã có trong code; fixture khoá lại bằng `tests/crypto_inventory/test_crypto_inventory.py`, chạy trong `test:detection` / gate |
+| **AQ-021** | Nessus state: `total 64`; assets.json: `sum 399`; daily_brief: in cả hai | Brief tự mâu thuẫn 3.4×; scan 158h tuổi, `scanner_status: running` | ✅ Vòng 7: không phải lỗi đếm — 64 (plugin) và 399 (lượt host×plugin) đều đúng, khác đơn vị (`total_unit`/`total_instances` đã có từ vòng trước trong `nessus_status.json`); `generate_daily_brief.py` giờ in cả hai kèm nhãn + `scan_stale` (ngưỡng 48h); `get_scanner_status()` đổi nhãn `'on' → 'online'` (không còn `'running'`, tên trạng thái LIÊN KẾT scanner, không phải job đang chạy) — `tests/nessus_snapshot/test_nessus_snapshot.py`, chạy trong `test:detection` / gate |
 | **AQ-013 / AQ-026** | `sprint_gate.py:181` + `generate_handoff.py:112` đọc `s.get('success', True)` nhưng writer dùng `status` | Pipeline luôn 0 fail; cổng merge không thể nói không | ✅ Vòng 6: đã sửa (status is None → BLOCKER) |
 | **AQ-002** | `attribution.full == 602/602` nhưng `hostname == 'unresolved'` trên 11/11 assets | Claim FULL attribution trong khi toàn bộ target host unknown | ❌ Chờ audit chi tiết |
 
@@ -40,16 +40,17 @@
 
 **Trạng thái tích luỹ:**
 - ✅ Closed (vòng 1–6): AQ-001, 003, 006, 008, 009, 010, 012, 014, 015, 026, 023, 013
-- ❌ Open CRITICAL: 5 (AQ-019, 020, 021, 002, 035)
+- ✅ Closed (vòng 7): AQ-019/031, AQ-020/032, AQ-021
+- ❌ Open CRITICAL: 2 (AQ-002, AQ-035)
 - ❌ Open HIGH: 5 (AQ-030, 033, 024, 034, AQ-016–018, 029 remainder)
-- **Total:** ~13 items, **5 CRITICAL + 8 HIGH**
+- **Total:** ~10 items, **2 CRITICAL + 8 HIGH**
 
 **Next Audit Focus:**
-1. **AQ-035 (NEW):** Run isolation — state consistency
-2. **AQ-019/031:** Fixture test required
-3. **AQ-020/032:** Int/string key mapping
-4. **AQ-021:** Atomicity + scan age
-5. **AQ-002:** Attribution vs hostname
+1. **AQ-035:** Run isolation — state consistency
+2. **AQ-002:** Attribution vs hostname
+3. **AQ-030/007:** Portal entrypoint không được deploy
+4. **AQ-033/028/022:** Handoff thành stage + live read
+5. **AQ-034/025:** Pipeline field audit mẫu số
 
 ---
 
