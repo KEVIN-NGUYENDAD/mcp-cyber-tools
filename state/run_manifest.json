@@ -1,11 +1,11 @@
 {
   "files": {
     "tool_validation.json": {
-      "generated_at": "2026-09-14T19:14:31.764473",
-      "size": 43906
+      "generated_at": "2026-09-14T19:23:31.947647",
+      "size": 43904
     },
     "sensor_coverage.json": {
-      "generated_at": "2026-09-14T19:14:31.764473",
+      "generated_at": "2026-09-14T19:23:31.947647",
       "size": 8766
     },
     "risk_score.json": {
@@ -38,5 +38,5 @@
     }
   },
   "run_id": null,
-  "manifest_updated_at": "2026-09-14T19:14:31.813048"
+  "manifest_updated_at": "2026-09-14T19:23:31.984787"
 }

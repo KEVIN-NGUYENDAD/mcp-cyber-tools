@@ -11,7 +11,7 @@
 | **AQ-020 / AQ-032** | `collect_crypto_inventory.py:137` ghi int, dòng 147 đọc chuỗi; `severity_counts[0]=17, [2]=2` pero `MEDIUM=0` | `crypto_score` hằng 100; `total_findings 19` cạnh `severity_breakdown sum 0` | ✅ Vòng 7: `normalize_severity()` chuẩn hoá tại điểm đọc + bất biến tự kiểm (`sum(breakdown) == len(findings)`) đã có trong code; fixture khoá lại bằng `tests/crypto_inventory/test_crypto_inventory.py`, chạy trong `test:detection` / gate |
 | **AQ-021** | Nessus state: `total 64`; assets.json: `sum 399`; daily_brief: in cả hai | Brief tự mâu thuẫn 3.4×; scan 158h tuổi, `scanner_status: running` | ✅ Vòng 7: không phải lỗi đếm — 64 (plugin) và 399 (lượt host×plugin) đều đúng, khác đơn vị (`total_unit`/`total_instances` đã có từ vòng trước trong `nessus_status.json`); `generate_daily_brief.py` giờ in cả hai kèm nhãn + `scan_stale` (ngưỡng 48h); `get_scanner_status()` đổi nhãn `'on' → 'online'` (không còn `'running'`, tên trạng thái LIÊN KẾT scanner, không phải job đang chạy) — `tests/nessus_snapshot/test_nessus_snapshot.py`, chạy trong `test:detection` / gate |
 | **AQ-013 / AQ-026** | `sprint_gate.py:181` + `generate_handoff.py:112` đọc `s.get('success', True)` nhưng writer dùng `status` | Pipeline luôn 0 fail; cổng merge không thể nói không | ✅ Vòng 6: đã sửa (status is None → BLOCKER) |
-| **AQ-002** | `attribution.full == 602/602` nhưng `hostname == 'unresolved'` trên 11/11 assets | Claim FULL attribution trong khi toàn bộ target host unknown | ❌ Chờ audit chi tiết |
+| **AQ-002** | `attribution.full == 602/602` nhưng `hostname == 'unresolved'` trên 11/11 assets | Claim FULL attribution trong khi toàn bộ target host unknown | ✅ Vòng 7: không phải bịa — `attribution_quality()` cấu trúc không thể trả FULL cho một chỉ báo có hệ thống `hostname_source == 'unresolved'` (đã sửa từ vòng trước); gần hết `FULL` đến từ `hostname_source: local host` (máy đang chạy tự biết tên nó, hợp lệ và có ý), mọi peer ở xa không phân giải được đều là `PARTIAL`. `score_file()` giờ khai `by_hostname_source` + `attribution_note` cạnh `by_attribution` để đối chiếu được mà không cần đọc code. Verified trên state thật: `hunting_lateral_movement.json` → `FULL: 224, PARTIAL: 2` khớp `local host: 226, unresolved: 2` (0 unresolved lẫn vào FULL) — fixture khoá bất biến này bằng `tests/ioc_quality/test_ioc_quality.py`, chạy trong `test:detection` / gate |
 
 ---
 
@@ -40,17 +40,16 @@
 
 **Trạng thái tích luỹ:**
 - ✅ Closed (vòng 1–6): AQ-001, 003, 006, 008, 009, 010, 012, 014, 015, 026, 023, 013
-- ✅ Closed (vòng 7): AQ-019/031, AQ-020/032, AQ-021, AQ-035
-- ❌ Open CRITICAL: 1 (AQ-002)
+- ✅ Closed (vòng 7): AQ-019/031, AQ-020/032, AQ-021, AQ-035, AQ-002
+- ❌ Open CRITICAL: 0
 - ❌ Open HIGH: 5 (AQ-030, 033, 024, 034, AQ-016–018, 029 remainder)
-- **Total:** ~9 items, **1 CRITICAL + 8 HIGH**
+- **Total:** ~8 items, **0 CRITICAL + 8 HIGH**
 
 **Next Audit Focus:**
-1. **AQ-002:** Attribution vs hostname
-2. **AQ-030/007:** Portal entrypoint không được deploy
-3. **AQ-033/028/022:** Handoff thành stage + live read
-4. **AQ-034/025:** Pipeline field audit mẫu số
-5. **AQ-024:** Default severity "MEDIUM" vẫn bịa
+1. **AQ-030/007:** Portal entrypoint không được deploy
+2. **AQ-033/028/022:** Handoff thành stage + live read
+3. **AQ-034/025:** Pipeline field audit mẫu số
+4. **AQ-024:** Default severity "MEDIUM" vẫn bịa
 
 ---
 
