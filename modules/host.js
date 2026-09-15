@@ -88,9 +88,9 @@ export function registerHostTools(server) {
         Select-Object DisplayName, DisplayVersion, Publisher, InstallDate -ErrorAction SilentlyContinue |
         Where-Object { $_.DisplayName -ne $null } |
         Sort-Object DisplayName |
-        Select-Object -First ${limit} |
+        Select-Object -First $limit |
         ConvertTo-Json
-      `);
+      `, { limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );

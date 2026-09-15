@@ -158,9 +158,9 @@ export function registerNetworkTools(server) {
             ProcessName = $process.Name;
           }
         } |
-        Select-Object -First ${limit} |
+        Select-Object -First $limit |
         ConvertTo-Json
-      `);
+      `, { limit: String(limit) });
       return formatResponse(result.success, result.data, result.error);
     }
   );
