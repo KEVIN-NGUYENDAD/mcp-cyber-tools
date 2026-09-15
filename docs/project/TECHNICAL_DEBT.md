@@ -2,7 +2,7 @@
 
 Sinh tự động bởi `scripts/sprint_gate.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T20:02:26
+Cập nhật: 2026-09-14T20:02:47
 
 ## Cổng merge
 
@@ -15,7 +15,7 @@ Cập nhật: 2026-09-14T20:02:26
 | FAIL | 0 |
 | Bộ kiểm phát hiện | ĐẠT |
 | Toàn vẹn bằng chứng | 0 vi phạm / 570 chỉ báo |
-| Pipeline | 32 stage, 0 thất bại |
+| Pipeline | 33 stage, 0 thất bại |
 | Trường portal đọc từ state không tồn tại | 0 / 28 truy cập soi được |
 | Trường Telegram đọc từ state không tồn tại | 0 / 15 truy cập soi được |
 | Tuổi `tool_validation.json` | 0.4 giờ |
