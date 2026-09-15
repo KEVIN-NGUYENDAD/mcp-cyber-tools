@@ -92,9 +92,9 @@
           "unmeasured": [
             "protection_active"
           ],
-          "note": "Do PHAM VI BAO VE (SSL/WAF/CDN/protection). KHONG phai `waap_score.health_score` \u2014 do la mot phep do khac, tren sau thanh phan khac, tu mot tep khac. Hai con so nay khong duoc dung thay nhau."
+          "note": "Do PHAM VI BAO VE (SSL/WAF/CDN/protection). KHONG phai `waap_score.health_score` — do la mot phep do khac, tren sau thanh phan khac, tu mot tep khac. Hai con so nay khong duoc dung thay nhau."
         },
-        "security_summary_note": "Moi truong co ba gia tri: true / false / null. `null` la CHUA DO DUOC \u2014 no khong duoc cong diem lan tru diem. Chua do duoc: protection_active.",
+        "security_summary_note": "Moi truong co ba gia tri: true / false / null. `null` la CHUA DO DUOC — no khong duoc cong diem lan tru diem. Chua do duoc: protection_active.",
         "run_id": "RUN-20260914T135326-48c449",
         "run_scope": "PIPELINE"
       }
@@ -343,7 +343,7 @@
         "hunting_type": "Lateral Movement",
         "data_source": "LIVE_OBSERVED",
         "observable": true,
-        "coverage_reason": "\u0110\u00e3 \u0111\u1ecdc \u0111\u01b0\u1ee3c ngu\u1ed3n",
+        "coverage_reason": "Đã đọc được nguồn",
         "total_indicators": 428,
         "critical": 0,
         "high": 6,
@@ -359,7 +359,7 @@
         "hunting_type": "Credential Dumping",
         "data_source": "LIVE_OBSERVED",
         "observable": true,
-        "coverage_reason": "\u0110\u00e3 \u0111\u1ecdc \u0111\u01b0\u1ee3c ngu\u1ed3n",
+        "coverage_reason": "Đã đọc được nguồn",
         "total_indicators": 0,
         "critical": 0,
         "high": 0,
@@ -386,7 +386,7 @@
           "local host": 368,
           "unresolved": 2
         },
-        "attribution_note": "Hau het `FULL` den tu `hostname_source: local host` \u2014 may dang chay tu biet ten no, va mot lan quet mang khong bao gio biet ten do ro hon. Day la ngoai le HOP LE va co y, khong phai nhan suy tu `assets.json`: moi he thong o xa khong phan giai duoc ten deu la `PARTIAL`. Doi chieu bang nay voi `by_attribution` \u2014 `FULL` ma nguon la `unresolved` moi la nhan bia.",
+        "attribution_note": "Hau het `FULL` den tu `hostname_source: local host` — may dang chay tu biet ten no, va mot lan quet mang khong bao gio biet ten do ro hon. Day la ngoai le HOP LE va co y, khong phai nhan suy tu `assets.json`: moi he thong o xa khong phan giai duoc ten deu la `PARTIAL`. Doi chieu bang nay voi `by_attribution` — `FULL` ma nguon la `unresolved` moi la nhan bia.",
         "by_evidence": {
           "COMPLETE": 278,
           "PARTIAL": 90
@@ -481,7 +481,7 @@
         "tools_refresh": {
           "state": "fresh",
           "age_hours": 0.1,
-          "note": "K\u1ebft qu\u1ea3 tool c\u00f2n trong ng\u01b0\u1ee1ng 20 gi\u1edd."
+          "note": "Kết quả tool còn trong ngưỡng 20 giờ."
         }
       }
     },
@@ -508,6 +508,24 @@
       "name": "Daily Brief",
       "status": "success",
       "duration": 0.34256815910339355
+    },
+    {
+      "name": "Generate Handoff",
+      "status": "success",
+      "duration": 0.08952593803405762,
+      "output": {
+        "status": "success",
+        "handoff": "docs\\project\\HANDOFF.md"
+      }
+    },
+    {
+      "name": "Generate Handoff",
+      "status": "success",
+      "duration": 0.0930938720703125,
+      "output": {
+        "status": "success",
+        "handoff": "docs\\project\\HANDOFF.md"
+      }
     }
   ],
   "status": "success",
