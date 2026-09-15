@@ -80,7 +80,10 @@ TOOL_ARGS = {
     'processByPid': {'pid': 4},                      # PID 4 = System, luôn có
     'checkHash': {'path': os.path.join(PROJECT_ROOT, 'package.json')},
     'fileMetadata': {'path': os.path.join(PROJECT_ROOT, 'package.json')},
-    'readLogFile': {'path': os.path.join(PROJECT_ROOT, 'package.json'), 'lines': 5},
+    # EXP-01: readLogFile chi con doc duoc ben trong logs/. Fixture cu tro toi
+    # package.json nen tu ngay do no do — va mot fixture do vi bi CHAN dung doc
+    # nham thanh "tool hong".
+    'readLogFile': {'path': 'pipeline.log', 'lines': 5},
     'collectEvidence': {'incidentId': 'VALIDATION-PROBE'},
     'eventLogs': {'logName': 'System', 'count': 10},
     'timeline': {'days': 1},

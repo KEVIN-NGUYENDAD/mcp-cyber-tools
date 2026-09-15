@@ -405,3 +405,41 @@ Tiêm ngược ba lỗi vừa sửa, mỗi lần đúng một ca trượt, phụ
 5. **INJ-03, EXP-01, ERR-01, DAT-01/02/03 chưa động tới** — nằm ngoài phạm vi
    vòng này. `eventHub.js` vẫn bọc nháy thủ công; `readLogFile` vẫn đọc được
    đường dẫn bất kỳ, kể cả `.env`.
+
+---
+
+## KHẮC PHỤC — vòng 2 (2026-09-14): EXP-01
+
+**`readLogFile` bị nhốt trong `logs/`.** `modules/forensics.js` — `resolveInsideLogRoot()`
+quyết định theo **kết quả `path.resolve`**, không theo chuỗi đầu vào, nên `..\.env`,
+`../.env`, `logs/../.env` và đường dẫn tuyệt đối `C:\...\.env` đều rơi vào cùng một
+phép chặn. So sánh bằng `path.relative` chứ không `startsWith`, vì `startsWith` cho
+thư mục anh em `logs-backup` lọt qua trên Windows. Sau đó `fs.realpathSync` kiểm lại
+một lần nữa để symlink/junction trỏ ra ngoài không đi vòng được.
+
+Đo thật (gọi chính handler, không đọc mã):
+
+| đầu vào | kết quả |
+|---|---|
+| `..\.env` | `ERROR: [EXP-01] Duong dan chua '..'` |
+| `C:\GitHub\mcp-cyber-tools\.env` | `ERROR: [EXP-01] Chi doc duoc tep ben trong ...\logs` |
+| `C:\Windows\win.ini` | từ chối |
+| `..\logs-backup\x.log` | từ chối |
+| `pipeline.log` *(đối chứng)* | đọc được |
+
+Ca kiểm không chỉ hỏi "có báo lỗi không" mà đối chiếu với nội dung `.env` thật trên
+đĩa: **nội dung không được lọt ra**, dù thông báo có hình dạng gì.
+
+**Kèm theo:** `content.split("\n")` là gạch-chéo-cộng-chữ-n trong mã nguồn, không
+bao giờ khớp dấu xuống dòng thật — tham số `lines` là vô hiệu và tool "đọc N dòng
+cuối" vẫn trả về cả tệp. Sửa thành `/\r?\n/`. Fixture `readLogFile` trong
+`scripts/tool_validator.py` trỏ tới `package.json` nên sẽ đỏ từ nay — đổi sang
+`pipeline.log`; một fixture đỏ vì bị **chặn đúng** sẽ bị đọc nhầm thành "tool hỏng".
+
+**Mutation:** bỏ hàng rào (`return raw`) → **33/37**; khôi phục → **37/37**.
+Cổng: **614/614 · ĐỦ ĐIỀU KIỆN MERGE**.
+
+**Hệ quả cần biết:** `readLogFile` từ nay **không** đọc được log hệ thống ngoài repo
+(`C:\Windows\Logs`, log ứng dụng bên thứ ba). Với một công cụ DFIR đó là mất mát
+thật. Nếu cần, cách đúng là một danh sách gốc cho phép đọc từ cấu hình
+(`MCP_LOG_ROOTS`), không phải nới lại hàng rào — chưa làm, chưa ai yêu cầu.
