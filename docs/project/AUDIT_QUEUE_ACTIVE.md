@@ -19,7 +19,7 @@
 
 | ID | Root Cause | Impact | Status |
 |---|---|---|---|
-| **AQ-030 / AQ-007** | `render.yaml`: `node web-server.js`; bộ ghi HTML ở `send_daily_brief_telegram.py:278`, không trong pipeline | Portal `web/app.js` (đã sửa 86/86 XSS) không được deploy; user mở `latest.html` (09-13) | ❌ Chọn entrypoint, đưa brief HTML vào pipeline |
+| **AQ-030 / AQ-007** | `render.yaml`: `node web-server.js`; bộ ghi HTML ở `send_daily_brief_telegram.py:278`, không trong pipeline | Portal `web/app.js` (đã sửa 86/86 XSS) không được deploy; user mở `latest.html` (09-13) | ✅ Vòng 7: Đã sửa lần trước — `render.yaml` khởi động `npm start` (parse từ `package.json` → `web/server.js`); `generate_daily_brief.py` gọi `write_html_brief()` ngay sau `save_brief()`, độc lập với `send_daily_brief_telegram.py`, nên `/latest` cập nhật đồng bộ với JSON, không chờ Telegram chạy. `deploy_truth_audit.py` đối chiếu điểm vào + route handlers. Fixture khoá: (1) cấu hình repo không lệch; (2) bộ dò phát hiện lệch khi có; (3) HTML sinh CÙNG lúc với JSON; (4) main() không có nhanh Telegram xen giữa hai lần ghi — `tests/deploy_truth/test_deploy_truth.py` 11/11, chạy trong `test:detection` / gate |
 | **AQ-033 / AQ-028 / AQ-022** | `generate_handoff.py` là lệnh thủ công, không run sau merge/pipeline; đọc cache `tool_validation.json` | HANDOFF.md mô tả sprint trước; Risk 10→3, indicators 602→497 không phản ánh | ❌ Handoff thành stage + live read |
 | **AQ-023** | `analyze_firewall()` chỉ return 20 hoặc 90; không đọc 3 profile + `blocked_connections` | Hằng số được trình bày như số đo | ✅ Vòng 6: sửa, chấm theo profile; enabled is None → None |
 | **AQ-034 / AQ-025** | `pipeline_field_audit.py` scope 76 file nhưng coverage 17.1% (106/619 calls); TECHNICAL_DEBT.md in `0` trần | Công cụ tự in phạm vi; tiêu đề bỏ dòng đó | ❌ In mẫu số; phát hiện hàm nạp state theo cấu trúc |
@@ -40,16 +40,15 @@
 
 **Trạng thái tích luỹ:**
 - ✅ Closed (vòng 1–6): AQ-001, 003, 006, 008, 009, 010, 012, 014, 015, 026, 023, 013
-- ✅ Closed (vòng 7): AQ-019/031, AQ-020/032, AQ-021, AQ-035, AQ-002
+- ✅ Closed (vòng 7): AQ-019/031, AQ-020/032, AQ-021, AQ-035, AQ-002, AQ-030/007
 - ❌ Open CRITICAL: 0
 - ❌ Open HIGH: 5 (AQ-030, 033, 024, 034, AQ-016–018, 029 remainder)
 - **Total:** ~8 items, **0 CRITICAL + 8 HIGH**
 
 **Next Audit Focus:**
-1. **AQ-030/007:** Portal entrypoint không được deploy
-2. **AQ-033/028/022:** Handoff thành stage + live read
-3. **AQ-034/025:** Pipeline field audit mẫu số
-4. **AQ-024:** Default severity "MEDIUM" vẫn bịa
+1. **AQ-033/028/022:** Handoff thành stage + live read
+2. **AQ-034/025:** Pipeline field audit mẫu số
+3. **AQ-024:** Default severity "MEDIUM" vẫn bịa
 
 ---
 
