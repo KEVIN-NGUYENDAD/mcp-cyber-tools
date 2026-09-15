@@ -60,6 +60,10 @@ EXTRA_SUITES = [
     # phinh 36 -> 41 -> 43 vi mot script ngoai pipeline append vao ban ghi cua
     # lan chay da ket thuc; mau so cua "0 that bai" bi thoi len theo.
     ('pipeline_ledger', 'test_pipeline_ledger'),
+    # AQ-048. Mot bo kiem khong chay duoc phai doc ra khac mot bo kiem dat —
+    # `TONG: 443/443 dat` canh chu TRUOT la mot mau so tu co lai theo so bo con
+    # song sot, tuc mot default xanh trong chinh dong cong in ra.
+    ('suite_isolation', 'test_suite_isolation'),
 ]
 
 
@@ -84,7 +88,7 @@ def main():
         except Exception as error:  # noqa: BLE001
             broken.append((name, '%s: %s' % (type(error).__name__, error)))
 
-    code = harness.render(suites)
+    code = harness.render(suites, missing=len(broken))
 
     if broken:
         print('')

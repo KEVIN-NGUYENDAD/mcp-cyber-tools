@@ -10,7 +10,7 @@
 
 ---
 
-## TỒN ĐỌNG — 0 CRITICAL · 1 HIGH (hạ tầng bộ kiểm)
+## TỒN ĐỌNG — 0 CRITICAL · 0 HIGH
 
 | ID | Hạng | Trạng thái vòng 16 |
 |---|---|---|
@@ -21,11 +21,11 @@
 | **AQ-044** | HIGH | ✅ `run_coherence_audit.py` có `UNEVALUABLE` (3 chỗ); `sprint_gate.py:256` coi `UNEVALUABLE` và `UNSTAMPED` là **blocker**, không phải cảnh báo |
 | **AQ-043** | HIGH | ✅ `state_manager.py:103` — `except ImportError` thôi nuốt: ghi `run_scope: 'UNSTAMPED'` + `run_scope_reason`. `UNSTAMPED` khác `STANDALONE`: cái sau là chạy tay có chủ ý, cái này là sự cố hạ tầng |
 
-| **AQ-048** | HIGH | ❌ **MỚI, chưa sửa.** Bộ kiểm trượt một lần trong bốn, **không do mã**: `test_sqlite_mirror` → `PermissionError [WinError 32]`, kéo theo `test_deploy_truth` trượt vì `tests/deploy_truth/_fixture/` là thư mục **cố định** chứ không phải `mkdtemp()`. Ba lần chạy sau: `472/472` ×3; riêng từng bộ: 11/11 và 29/29. Chi tiết + sprint đề xuất ở `AUDIT_QUEUE.md` · AQ-048 |
+| **AQ-048** | HIGH | ✅ **Vòng 16.** Phần đáng ngại không phải cái ném mà là cái in ra: `TRƯỢT (TONG: 443/443 dat)` — 29 ca của bộ vỡ không trách vào **tử số**, chúng biến mất khỏi **mẫu số**, nên con số luôn khớp. Sửa ba đầu: `harness.render(..., missing=n)` in `n BO KIEM KHONG CHAY DUOC (mau so thieu)` ngay trên dòng `TONG:` mà cổng trích ra và trả mã thoát ≠ 0 kể cả khi mọi ca chạy được đều đạt; `run_all` thật sự truyền `missing=`; `test_sqlite_mirror` + `test_deploy_truth` chuyển `_fixture/` cố định sang `mkdtemp()`. `tests/suite_isolation/` **8/8**, quét cả cây kiểm nên lỗi không quay lại qua bộ mới. Ổn định `494/494` ×4 |
 
 | **AQ-050** | HIGH | ✅ **Vòng 16.** Chẩn đoán của DB-1 đúng và đã đo lại độc lập: `45 dòng ghi / 29 tên`, `Generate Handoff` ×17 — **handoff append**, không phải stage leak cũng không phải metadata drift. Sửa **hai đầu**: (1) `_record_stage()` chỉ ghi khi `run_id` tiến trình **khớp** `run_id` trong tệp, và **ghi đè theo tên** chứ không append — chạy tay → `STANDALONE`, bản ghi lần chạy khác → `LAN CHAY KHAC`, cả hai không đụng vào; (2) `sprint_gate.evaluate()` **chặn** khi có tên stage lặp, nêu cả `n dòng ghi` lẫn `m stage thật` — đúng chỗ `gate_integrity:109` bỏ sót vì chỉ hỏi `bool(stages)`. Con số bị thổi không vô hại: nó là **mẫu số** của `0 thất bại`. `tests/pipeline_ledger/` **14/14**; mutation `14→11` (tắt bộ dò) và `14→13` (tắt điều kiện `run_id`). Bản ghi cũ dọn `45 → 29` kèm `stages_note`. **AQ-049 không tồn tại** — khoảng trống có chủ ý |
 
-**Đang mở: 1 (0 CRITICAL, 1 HIGH — AQ-048). Đã trả tích luỹ: 42.**
+**Đang mở: 0. Đã trả tích luỹ: 43.**
 
 > **Mục tiêu `CRITICAL = 0, HIGH = 0` đạt được trên hàng đợi nhận vào đầu vòng 15**
 > (AQ-046/045/002/047/044/043 — toàn bộ đóng, có bằng chứng). AQ-048 là mục **phát
@@ -83,7 +83,7 @@ phép kiểm không chạy. Nay in đủ bốn dòng.
 ## CỔNG — 2026-09-14, vòng 16
 
     PASS 93 | EMPTY 6 | BLIND 0 | FAIL 0
-    Bộ kiểm phát hiện : ĐẠT  (TONG: 486/486 dat)      <- 472 + 14 (AQ-050)
+    Bộ kiểm phát hiện : ĐẠT  (TONG: 494/494 dat)      <- 472 + 14 (AQ-050) + 8 (AQ-048)
     Toàn vẹn bằng chứng: 0 vi phạm / 570 chỉ báo
     Pipeline           : 29 stage, 0 thất bại        <- 45 trước AQ-050
     Đối chiếu lược đồ  : 0 vi phạm | crypto 19/19, score 90 | vuln assets 399 luot
