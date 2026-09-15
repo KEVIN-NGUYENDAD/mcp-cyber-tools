@@ -2,7 +2,7 @@
 
 Sinh tự động bởi `scripts/sprint_gate.py`. Đừng sửa tay — sửa nguồn.
 
-Cập nhật: 2026-09-14T20:02:47
+Cập nhật: 2026-09-14T22:40:05
 
 ## Cổng merge
 
@@ -15,14 +15,14 @@ Cập nhật: 2026-09-14T20:02:47
 | FAIL | 0 |
 | Bộ kiểm phát hiện | ĐẠT |
 | Toàn vẹn bằng chứng | 0 vi phạm / 570 chỉ báo |
-| Pipeline | 33 stage, 0 thất bại |
+| Pipeline | 29 stage, 0 thất bại |
 | Trường portal đọc từ state không tồn tại | 0 / 28 truy cập soi được |
 | Trường Telegram đọc từ state không tồn tại | 0 / 15 truy cập soi được |
-| Tuổi `tool_validation.json` | 0.4 giờ |
-| Tuổi `pipeline_results.json` | 6.2 giờ |
-| Tuổi `sensor_coverage.json` | 0.4 giờ |
+| Tuổi `tool_validation.json` | 3.0 giờ |
+| Tuổi `pipeline_results.json` | 8.8 giờ |
+| Tuổi `sensor_coverage.json` | 3.0 giờ |
 | Biểu thức innerHTML chưa escape | 0 / 85 biểu thức trong sink |
-| `.get(khoá, mặc định)` bịa số trong Python | 0 / 109 kiểm / 649 lời gọi (16.8%) |
+| `.get(khoá, mặc định)` bịa số trong Python | 0 / 111 kiểm / 654 lời gọi (17.0%) |
 | State cùng một lần chạy | 7 / 7 tệp có dấu, 1 lần chạy khác nhau |
 | Tổng crypto khớp số finding | 19/19 phan loai, score 90 |
 | Đơn vị lỗ hổng đối chiếu được | assets 399 luot | nessus 64 plugin, 399 luot |

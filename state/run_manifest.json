@@ -35,8 +35,12 @@
     "executive_findings.json": {
       "generated_at": "2026-09-14T13:53:50.158919",
       "size": 6850
+    },
+    "sqlite_mirror.json": {
+      "generated_at": null,
+      "size": 1170
     }
   },
   "run_id": null,
-  "manifest_updated_at": "2026-09-14T19:37:40.832861"
+  "manifest_updated_at": "2026-09-14T22:36:35.227468"
 }
